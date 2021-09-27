@@ -42,8 +42,30 @@ public class Term implements Comparable<Term> {
     /** Merges a {@link Term} into this one (destructive merging).
      * @param other The other {@link Term} to be merged into this one.
      */
-    public void merge(@NotNull Term other) {
-        throw new UnsupportedOperationException("Not implemented yet.");    // TODO : not implemented yet
+    public void merge(@NotNull Term other) {    // TODO : needed?
+        if ( this.equals(other) ) {
+            this.postingList.merge(other.postingList);
+        } else {
+            throw new ImpossibleMergeException("Terms " + this + " and " + other + " cannot be merged.");
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Term term1 = (Term) o;
+
+        if (!postingList.equals(term1.postingList)) return false;
+        return term.equals(term1.term);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = postingList.hashCode();
+        result = 31 * result + term.hashCode();
+        return result;
     }
 
     @Override
@@ -51,11 +73,23 @@ public class Term implements Comparable<Term> {
         return this.term.compareTo(term.term);
     }
 
+    @Override
+    public String toString() {
+        return term + ": " + postingList;
+    }
+
     /** This exception is thrown when no documents associated with
      * the {@link Term} are found.*/
     public static class NoDocumentsAssociatedWithTerm extends Exception {
         public NoDocumentsAssociatedWithTerm(String msg) {
             super(msg);
+        }
+    }
+
+    /** Exception thrown if merging terms is impossible. */
+    public static class ImpossibleMergeException extends RuntimeException {
+        public ImpossibleMergeException(String errorMessage) {
+            super(errorMessage);
         }
     }
 }

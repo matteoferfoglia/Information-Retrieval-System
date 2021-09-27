@@ -3,6 +3,7 @@ package components;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -158,5 +159,10 @@ public class PostingList {
     /** @return The size of this {@link PostingList}. */
     public int size() {
         return postings.size();
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(postings.toArray());
     }
 }
