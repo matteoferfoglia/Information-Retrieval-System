@@ -119,6 +119,22 @@ public class Posting implements Comparable<Posting> {
             return this.docId-documentIdentifier.docId;
         }
 
+        /** Two {@link Posting}s are equals if they have the same docID. */
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            DocumentIdentifier that = (DocumentIdentifier) o;
+
+            return docId == that.docId;
+        }
+
+        @Override
+        public int hashCode() {
+            return docId;
+        }
+
         /** This exception is thrown when no more {@link DocumentIdentifier} can be generated.*/
         public static class NoMoreDocIdsAvailable extends Exception {
             public NoMoreDocIdsAvailable(String msg) {

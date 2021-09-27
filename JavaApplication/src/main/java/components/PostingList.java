@@ -3,7 +3,6 @@ package components;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -30,19 +29,27 @@ public class PostingList {
     }
 
     /** Constructor.
-     * Creates a new instance of this class starting from an array of {@link Posting}s.
-     * @param postings The array of {@link Posting}s. */
-    private PostingList(@NotNull Posting[] postings) {
+     * Creates a new instance of this class starting from a {@link List} of {@link Posting}s.
+     * @param postings The list of {@link Posting}s. */
+    private PostingList(@NotNull List<Posting> postings) {
         Objects.requireNonNull(postings, "The input argument cannot be null.");
-        this.postings = Arrays.asList(postings);
+        this.postings = postings;
         setSkipPointers();
     }
 
     /** Merges the {@link PostingList} given as parameter into this one (destructive merging).
+     * Only distinct {@link Posting}s are kept (see {@link Posting#equals(Object)} and the
+     * resulting {@link PostingList} (this one) is sorted.
      * @param other The other {@link PostingList} to be merged into this one. */
-    public void merge(@NotNull PostingList other) {
-        Objects.requireNonNull(other, "Cannot merge with null.");
-        throw new UnsupportedOperationException("Not implemented yet"); // TODO : not implemented yet
+    public void merge(PostingList other) {
+        if(other==null) {
+            return;
+        }
+        this.postings.addAll(other.postings);
+        this.postings = this.postings.parallelStream()
+                            .distinct()
+                            .sorted()
+                            .collect(Collectors.toList());
     }
 
     /** Returns a new instance of {@link PostingList} which is the union of the
@@ -55,7 +62,29 @@ public class PostingList {
     public static PostingList union(@NotNull PostingList a, @NotNull PostingList b) {
         Objects.requireNonNull(a, "Input Parameter cannot be null.");
         Objects.requireNonNull(b, "Input Parameter cannot be null.");
-        throw new UnsupportedOperationException("Not implemented yet"); // TODO : not implemented yet
+
+        List<Posting> a_ = a.postings,
+                      b_ = b.postings;
+        ArrayList<Posting> union = new ArrayList<>(a_.size()+ b_.size());
+        int i=0, j=0, comparison;
+        while(i<a_.size() && j<b_.size()) {
+            comparison = a_.get(i).compareTo(b_.get(j));
+            if( comparison == 0 ) {
+                union.add(a_.get(i++));
+                j++;
+            } else if (comparison < 0) {
+                union.add(a_.get(i++));
+            } else {
+                union.add(b_.get(j++));
+            }
+        }
+        union.addAll( a_.subList(i, a_.size()) );
+        union.addAll(b_.subList(j, b_.size()) );
+        union.trimToSize();
+
+        return new PostingList(union);
+
+        // TODO : positional union not implemented yet
     }
 
     /** Returns a new instance of {@link PostingList} which is the intersection of the
@@ -68,7 +97,28 @@ public class PostingList {
     public static PostingList intersection(@NotNull PostingList a, @NotNull PostingList b) {
         Objects.requireNonNull(a, "Input Parameter cannot be null.");
         Objects.requireNonNull(b, "Input Parameter cannot be null.");
-        throw new UnsupportedOperationException("Not implemented yet"); // TODO : not implemented yet
+
+        List<Posting> a_ = a.postings,
+                      b_ = b.postings;
+
+        ArrayList<Posting> intersection = new ArrayList<>(a_.size());
+        int i=0, j=0, comparison;
+        while(i<a_.size() && j<b_.size()) {
+            comparison = a_.get(i).compareTo(b_.get(j));
+            if( comparison == 0 ) {
+                intersection.add(a_.get(i++));
+                j++;
+            } else if ( comparison < 0 ) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+        intersection.trimToSize();
+
+        return new PostingList(intersection);
+
+        // TODO : positional intersect not implemented yet
     }
 
     /** Sets the skip pointers for this instance of {@link PostingList}.
