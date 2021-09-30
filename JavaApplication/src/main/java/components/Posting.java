@@ -2,6 +2,8 @@ package components;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import util.SynchronizedCounter;
+import util.Utils;
 
 import java.util.Objects;
 
@@ -100,7 +102,7 @@ public class Posting implements Comparable<Posting> {
         private final int docId;
 
         /** Static counter to generate new docIDs without duplicates.*/
-        private static int counter = Integer.MIN_VALUE;
+        private final static SynchronizedCounter counter = new SynchronizedCounter();
 
         /** Constructor.
          * Creates a new instance of this class, without any duplicates.
@@ -108,10 +110,11 @@ public class Posting implements Comparable<Posting> {
          *                                  (overflow of the counter).
          */
         public DocumentIdentifier() throws NoMoreDocIdsAvailable {
-             if( counter==Integer.MAX_VALUE ) {
-                 throw new NoMoreDocIdsAvailable("No more distinct document identifier available.");
-             }
-             this.docId = counter++;
+            try {
+                this.docId = counter.postIncrement();   // saves the counter value before incrementing
+            } catch (SynchronizedCounter.CounterOverflowException e) {
+                throw new NoMoreDocIdsAvailable(Utils.stackTraceToString(e));
+            }
         }
 
         @Override
