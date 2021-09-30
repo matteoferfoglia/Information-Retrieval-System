@@ -1,9 +1,12 @@
 package components;
 
+import org.apache.commons.collections4.Trie;
+import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.jetbrains.annotations.NotNull;
+import util.Properties;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /** Class representing the corpus for the Information Retrieval System.
  *
@@ -17,9 +20,8 @@ public class Corpus {
 
     public Corpus() {
         // TODO : not implemented yet
-        this.corpus = new HashMap<>();  // TODO : is HashMap the most suitable data structure?
+        this.corpus = new ConcurrentHashMap<>();  // TODO : is this the most suitable data structure?
         throw new UnsupportedOperationException("Not implemented yet");
     }
-
 
 }

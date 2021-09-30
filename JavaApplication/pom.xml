@@ -92,6 +92,7 @@
                 <version>3.0.0</version>
                 <executions>
                     <execution>
+                        <phase>install</phase>
                         <goals>
                             <goal>java</goal>
                         </goals>
@@ -99,7 +100,7 @@
                 </executions>
                 <configuration>
                     <mainClass>${project.main.class}</mainClass>
-                    <!--                    <commandlineArgs></commandlineArgs>-->
+                    <!-- <commandlineArgs></commandlineArgs> -->
                 </configuration>
             </plugin>
 
@@ -138,6 +139,34 @@
                 </executions>
             </plugin>
 
+            <!-- Assembly all dependencies into a single JAR file -->
+            <!-- TODO: when assembly everything into a single JAR, user-specific property file is not savable anymore -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${project.main.class}</mainClass>
+                        </manifest>
+                    </archive>
+                    <finalName>${project.build.finalName}</finalName>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
@@ -167,6 +196,13 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>13.0</version>
+        </dependency>
+
+        <!-- PatriciaTrie data structure -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.4</version>
         </dependency>
     </dependencies>
 
