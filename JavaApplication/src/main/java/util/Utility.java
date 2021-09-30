@@ -5,7 +5,7 @@ import java.io.StringWriter;
 
 /** Utility class.
  * @author Matteo Ferfoglia */
-public class Utils {
+public class Utility {
 
     /**
      * @param e An exception.

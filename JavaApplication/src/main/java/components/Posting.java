@@ -3,7 +3,7 @@ package components;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import util.SynchronizedCounter;
-import util.Utils;
+import util.Utility;
 
 import java.util.Objects;
 
@@ -113,7 +113,7 @@ public class Posting implements Comparable<Posting> {
             try {
                 this.docId = counter.postIncrement();   // saves the counter value before incrementing
             } catch (SynchronizedCounter.CounterOverflowException e) {
-                throw new NoMoreDocIdsAvailable(Utils.stackTraceToString(e));
+                throw new NoMoreDocIdsAvailable(Utility.stackTraceToString(e));
             }
         }
 
