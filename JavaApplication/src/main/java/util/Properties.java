@@ -3,10 +3,7 @@ package util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Objects;
 
 /**
@@ -67,10 +64,19 @@ public class Properties {
 
         // create and load user-specific application properties, if different from defaultProps
         appProperties = new java.util.Properties( defaultProps );
-        try (InputStream in = getInputResource(applicationPropertyFileName) ) {
-            if( in!=null ) {
-                defaultProps.load(in);
+        File userSpecificPropertyFile = new File(applicationPropertyFileName);
+        try {
+            if( !userSpecificPropertyFile.exists() ) {
+                if( ! userSpecificPropertyFile.createNewFile() ) {
+                    // Fail during file creation
+                    throw new IOException("Unable to create the file.");
+                }
             }
+        } catch (IOException e) {
+            System.err.println("User-specific properties will not be saved neither used.");
+        }
+        try (FileInputStream in = new FileInputStream(userSpecificPropertyFile) ) {
+            defaultProps.load(in);
         } catch (IOException e) {
             System.err.println("Impossible to load user-specific properties for the application. " +
                                "Default properties will be used.");
@@ -86,8 +92,7 @@ public class Properties {
             loadProperties();
         }
 
-        //noinspection ConstantConditions // NullPointerException is possible when loading the resource, but it is catched
-        try (FileOutputStream out = new FileOutputStream(classLoader.getResource(applicationPropertyFileName).getFile()) ) {
+        try (FileOutputStream out = new FileOutputStream(applicationPropertyFileName) ) {
             appProperties.store(out, Objects.requireNonNull(comment));
         } catch (IOException | NullPointerException e) {
             System.err.println("Impossible to save.");

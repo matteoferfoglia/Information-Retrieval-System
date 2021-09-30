@@ -140,7 +140,6 @@
             </plugin>
 
             <!-- Assembly all dependencies into a single JAR file -->
-            <!-- TODO: when assembly everything into a single JAR, user-specific property file is not savable anymore -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
