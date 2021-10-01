@@ -60,7 +60,8 @@ public class Movie extends Document {
         // saves movie id as key and corresponding title as value
         Map<Integer,Movie> movieNames =
                 Files.readAllLines(openFile.apply(movieMetadataFile).toPath())
-                     .parallelStream()
+                     .stream()
+                      // parallelStream() causes IllegalThreadStateException (can't destroy threadgroup)
                      .map(aMovie -> {
                          String[] movieFields = aMovie.split("\t");
                          // TODO : improve: you can use also the other metadata of movies!
@@ -76,21 +77,22 @@ public class Movie extends Document {
         // saves movie id as key and corresponding description as value // TODO : code duplication here
         Map<Integer,Movie> movieDescriptions =
                 Files.readAllLines(openFile.apply(movieDescriptionFile).toPath())
-                        .parallelStream()
-                        .map(aMovie -> {
-                            String[] movieFields = aMovie.split("\t");
-                            return new AbstractMap.SimpleEntry<>(Integer.parseInt(movieFields[0])/*id*/,movieFields[1]/*description*/);
-                        })
-                        .collect(Collectors.toConcurrentMap(
-                                Map.Entry::getKey,
-                                entry -> new Movie("", entry.getValue())
-                                // DuplicateKeyException if two equal keys are found
-                        ));
+                     .stream()
+                     // parallelStream() causes IllegalThreadStateException (can't destroy threadgroup)
+                     .map(aMovie -> {
+                         String[] movieFields = aMovie.split("\t");
+                         return new AbstractMap.SimpleEntry<>(Integer.parseInt(movieFields[0])/*id*/,movieFields[1]/*description*/);
+                     })
+                     .collect(Collectors.toConcurrentMap(
+                             Map.Entry::getKey,
+                             entry -> new Movie("", entry.getValue())
+                             // DuplicateKeyException if two equal keys are found
+                     ));
 
         // Merge movie names with corresponding descriptions
         // movie id as key, corresponding movie as value
         Map<Integer, Movie> movies = Stream.of(movieNames, movieDescriptions)
-                .parallel()
+                 //.parallel() makes the program slower during the termination
                 .map(Map::entrySet)
                 .flatMap(Collection::stream)
                 .collect(

@@ -25,7 +25,8 @@ public class Corpus {
         AtomicBoolean exceptionFlag = new AtomicBoolean(false); // becomes true if an exception is thrown in lambda function
 
         this.corpus = documents
-                .parallelStream()
+                .stream()
+                 // parallelStream() causes IllegalThreadStateException (can't destroy threadgroup)
                 .map(aDocument -> {
                     try {
                         return new AbstractMap.SimpleEntry<>(new Posting.DocumentIdentifier(), aDocument);
