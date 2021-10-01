@@ -28,4 +28,11 @@ public abstract class Document {
     protected void setContent(@NotNull String content) {
         this.content = content;
     }
+
+    /** Getter for {@link #content}.
+     * @return The content of this instance. */
+    @NotNull
+    public String getContent() {
+        return content;
+    }
 }

@@ -26,6 +26,9 @@ public class Main {
         try {
             Corpus corpus = Movie.createCorpus();
             System.out.println(corpus.head(3));
+
+            InformationRetrievalSystem ir = new InformationRetrievalSystem(corpus);
+            System.out.println();
         } catch (Posting.DocumentIdentifier.NoMoreDocIdsAvailable | URISyntaxException | IOException e) {
             e.printStackTrace();
         }
