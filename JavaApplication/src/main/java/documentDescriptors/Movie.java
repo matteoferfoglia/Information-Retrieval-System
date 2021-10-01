@@ -64,7 +64,7 @@ public class Movie extends Document {
         Map<Integer,Movie> movieNames =
              openFile.apply(movieMetadataFile)
                      .lines()
-                      // parallelStream() causes IllegalThreadStateException (can't destroy threadgroup)
+                     .parallel()
                      .map(aMovie -> {
                          String[] movieFields = aMovie.split("\t");
                          // TODO : improve: you can use also the other metadata of movies!
@@ -81,7 +81,7 @@ public class Movie extends Document {
         Map<Integer,Movie> movieDescriptions =
              openFile.apply(movieDescriptionFile)
                      .lines()
-                      // parallelStream() causes IllegalThreadStateException (can't destroy threadgroup)
+                     .parallel()
                      .map(aMovie -> {
                          String[] movieFields = aMovie.split("\t");
                          return new AbstractMap.SimpleEntry<>(Integer.parseInt(movieFields[0])/*id*/,movieFields[1]/*description*/);
@@ -95,7 +95,7 @@ public class Movie extends Document {
         // Merge movie names with corresponding descriptions
         // movie id as key, corresponding movie as value
         Map<Integer, Movie> movies = Stream.of(movieNames, movieDescriptions)
-                 //.parallel() makes the program slower during the termination
+                .parallel()
                 .map(Map::entrySet)
                 .flatMap(Collection::stream)
                 .collect(

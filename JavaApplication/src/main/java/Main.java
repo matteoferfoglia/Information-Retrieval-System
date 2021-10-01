@@ -3,7 +3,6 @@ import components.Posting;
 import documentDescriptors.Movie;
 import util.Properties;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 
 /**
@@ -32,5 +31,7 @@ public class Main {
         } catch (Posting.DocumentIdentifier.NoMoreDocIdsAvailable | URISyntaxException e) {
             e.printStackTrace();
         }
+
+        System.exit(0); // terminate the JVM, normal termination
     }
 }
