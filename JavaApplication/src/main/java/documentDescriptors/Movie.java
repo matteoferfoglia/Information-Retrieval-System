@@ -6,9 +6,12 @@ import components.Posting;
 import org.jetbrains.annotations.NotNull;
 import util.FunctionThrowingException;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,15 +55,19 @@ public class Movie extends Document {
                movieDescriptionFile = folderName + "/plot_summaries.txt",
                movieMetadataFile    = folderName + "/movie.metadata.tsv";
 
-        // Function to open a file, given its name (path to the file)
-        FunctionThrowingException<String, File, URISyntaxException> openFile = filePath ->
-                new File(Objects.requireNonNull(Movie.class.getClassLoader().getResource(filePath), "Invalid null resource").toURI());
+        // Function to open a file, given its name (path to the file), and returns it as BufferedReader
+        FunctionThrowingException<String, BufferedReader, URISyntaxException> openFile = filePath ->
+                new BufferedReader(
+                        new InputStreamReader(
+                                Objects.requireNonNull(Movie.class.getClassLoader().getResourceAsStream(filePath), "Invalid null resource")
+                        )
+                );
 
         // Read movie names
         // saves movie id as key and corresponding title as value
         Map<Integer,Movie> movieNames =
-                Files.readAllLines(openFile.apply(movieMetadataFile).toPath())
-                     .stream()
+             openFile.apply(movieMetadataFile)
+                     .lines()
                       // parallelStream() causes IllegalThreadStateException (can't destroy threadgroup)
                      .map(aMovie -> {
                          String[] movieFields = aMovie.split("\t");
@@ -76,9 +83,9 @@ public class Movie extends Document {
         // Read movie descriptions
         // saves movie id as key and corresponding description as value // TODO : code duplication here
         Map<Integer,Movie> movieDescriptions =
-                Files.readAllLines(openFile.apply(movieDescriptionFile).toPath())
-                     .stream()
-                     // parallelStream() causes IllegalThreadStateException (can't destroy threadgroup)
+             openFile.apply(movieDescriptionFile)
+                     .lines()
+                      // parallelStream() causes IllegalThreadStateException (can't destroy threadgroup)
                      .map(aMovie -> {
                          String[] movieFields = aMovie.split("\t");
                          return new AbstractMap.SimpleEntry<>(Integer.parseInt(movieFields[0])/*id*/,movieFields[1]/*description*/);
