@@ -15,7 +15,7 @@ public class Term implements Comparable<Term> {
 
     /** The term associated with this instance.*/
     @NotNull
-    private final String term;
+    private final String term;  // TODO : needed? In InvertedIndex there is the term as key for the list of terms
 
     /** Constructor.
      * @param posting The {@link Posting} to be used to construct the
@@ -48,6 +48,18 @@ public class Term implements Comparable<Term> {
         } else {
             throw new ImpossibleMergeException("Terms " + this + " and " + other + " cannot be merged.");
         }
+    }
+
+    /** @return the {@link PostingList} associated with this instance. */
+    @NotNull
+    public PostingList getPostingList() {
+        return postingList;
+    }
+
+    /** @return the term associated with this instance. */
+    @NotNull
+    public String getTerm() {
+        return term;
     }
 
     @Override

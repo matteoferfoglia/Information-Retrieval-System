@@ -1,9 +1,6 @@
 package components;
 
-import org.apache.commons.collections4.Trie;
-import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.jetbrains.annotations.NotNull;
-import util.Properties;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,10 +15,19 @@ public class Corpus {
     @NotNull
     private final Map<Posting, Document> corpus;
 
+    /** Default Constructor. Creates an empty-corpus. */
     public Corpus() {
         // TODO : not implemented yet
         this.corpus = new ConcurrentHashMap<>();  // TODO : is this the most suitable data structure?
         throw new UnsupportedOperationException("Not implemented yet");
     }
+
+    /** Getter for the {@link #corpus}.
+     * @return the {@link #corpus}. */
+    @NotNull
+    public Map<Posting,Document> getCorpus() {
+        return corpus;
+    }
+
 
 }
