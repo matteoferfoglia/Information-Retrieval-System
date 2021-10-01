@@ -7,6 +7,11 @@ import util.Utility;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /** An instance of this class is an Inverted Index for a {@link Corpus}
@@ -27,6 +32,10 @@ public class InvertedIndex {
 
     /** Constructor. */
     public InvertedIndex(@NotNull Corpus corpus) {
+
+        AtomicReference<Double> progressValue = new AtomicReference<>((double) 0);   // used only to show the indexing progress
+        AtomicLong numberOfAlreadyProcessedDocuments = new AtomicLong(0);
+
         short invertedIndexType = Short.parseShort( Properties.appProperties.getProperty("index.dataStructure.type") );
         switch( invertedIndexType ) {
             case 1 :
@@ -39,7 +48,18 @@ public class InvertedIndex {
                 invertedIndex = new Hashtable<>();
         }
 
-        // TODO : a thread could periodically read the current size of the InvertedIndex and print the progress bar wrt. the size of the corpus being indexed
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        Thread progressControllerThread = new Thread( () -> {
+            final double epsilon = 0.001;
+            double oldProgressValue = progressValue.get();
+            progressValue.set(Math.round( (0.0+numberOfAlreadyProcessedDocuments.get()) / corpus.size() * 10000) / 100.0);
+            if( progressValue.get() - oldProgressValue > epsilon ) {
+                System.out.print(progressValue + " % \t ");
+            }
+        });
+        System.out.println("Indexing started");
+        final int DELAY_PROGRESS_CONTROLLER = 5;    // seconds
+        scheduler.scheduleAtFixedRate(progressControllerThread, DELAY_PROGRESS_CONTROLLER, DELAY_PROGRESS_CONTROLLER, TimeUnit.SECONDS);
 
         // Indexing
         invertedIndex.putAll(
@@ -51,7 +71,8 @@ public class InvertedIndex {
                           Posting.DocumentIdentifier docIdThisDocument = anEntry.getKey();
 
                           // Return a Map having tokens as keys and the corresponding List<Terms> as values, for the document in this entry
-                          return tokens.parallelStream()
+                          Set<Map.Entry<String,Term>> entrySet =
+                                 tokens.parallelStream()
                                        .map( aToken -> new AbstractMap.SimpleEntry<>( aToken, new Term(new Posting(docIdThisDocument), aToken) ) )
                                        .collect(
                                            Collectors.toConcurrentMap(
@@ -64,6 +85,8 @@ public class InvertedIndex {
                                            )
                                        )
                                       .entrySet();
+                          numberOfAlreadyProcessedDocuments.getAndIncrement();
+                          return entrySet;
                       })
                       .flatMap(Collection::stream /*outputs all entries (token,term) from all the documents*/)
                       .collect(
@@ -77,6 +100,19 @@ public class InvertedIndex {
                             )
                       )
         );
+
+        // Join the thread used to print the indexing progress
+        scheduler.shutdown();
+        try {
+            short awaitTermination = 10;    // us
+            if (!scheduler.awaitTermination(awaitTermination, TimeUnit.MICROSECONDS)) {
+                System.out.println("Still waiting after " + awaitTermination + " us.");
+            }
+        } catch (InterruptedException e) {
+            System.err.println("Indexing progress controller thread not joined.");
+            e.printStackTrace();
+        }
+        System.out.println("\nIndexing ended");
     }
 
     /** @return the dictionary as sorted {@link java.util.List} of {@link String}s (the terms). */

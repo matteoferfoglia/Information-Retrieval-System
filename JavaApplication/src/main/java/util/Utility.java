@@ -5,7 +5,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /** Utility class.
  * @author Matteo Ferfoglia */
@@ -15,8 +17,7 @@ public class Utility {
      * {@link String} (eventually with duplicates) obtained from the {@link components.Document}.*/
     @NotNull
     public static List<String> tokenize(@NotNull Document document) {
-        // TODO : not implemented yet
-        throw new UnsupportedOperationException("Not implemented yet");
+        return Arrays.stream(document.getContent().split(" ")).collect(Collectors.toList());    // TODO : not implemented yet
     }
 
     /**

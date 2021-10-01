@@ -7,12 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import util.FunctionThrowingException;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,11 +40,10 @@ public class Movie extends Document {
 
     /** Create a {@link Corpus} of {@link Movie}s.
      * @throws components.Posting.DocumentIdentifier.NoMoreDocIdsAvailable If no more {@link components.Posting.DocumentIdentifier}s can be generated.
-     * @throws URISyntaxException If an exception is thrown while getting the URI of the files containing the information.
-     * @throws IOException If an exception is thrown while reading a file containing the information. */
+     * @throws URISyntaxException If an exception is thrown while getting the URI of the files containing the information. */
     @NotNull
     public static Corpus createCorpus()
-            throws Posting.DocumentIdentifier.NoMoreDocIdsAvailable, URISyntaxException, IOException {
+            throws Posting.DocumentIdentifier.NoMoreDocIdsAvailable, URISyntaxException {
         // TODO : this method is just a draft
 
         // Path to find files

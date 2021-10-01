@@ -77,4 +77,9 @@ public class Corpus {
     public String toString() {
         return corpus.toString();
     }
+
+    /** @return The size (number of documents) in this {@link Corpus}. */
+    public int size() {
+        return corpus.size();
+    }
 }

@@ -29,7 +29,7 @@ public class Main {
 
             InformationRetrievalSystem ir = new InformationRetrievalSystem(corpus);
             System.out.println();
-        } catch (Posting.DocumentIdentifier.NoMoreDocIdsAvailable | URISyntaxException | IOException e) {
+        } catch (Posting.DocumentIdentifier.NoMoreDocIdsAvailable | URISyntaxException e) {
             e.printStackTrace();
         }
     }
