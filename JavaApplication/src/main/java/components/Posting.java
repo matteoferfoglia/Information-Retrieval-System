@@ -15,11 +15,12 @@ public class Posting implements Comparable<Posting> {
     @NotNull
     private final DocumentIdentifier docId;
 
-    /** The object that saves the position at which the term (referred to this
+    /*/** The object that saves the position at which the term (referred to this
      * {@link Posting}) compares in the document to which this {@link Posting}
      * refers.*/
-    @NotNull
-    private final Positions positions;
+    /*@NotNull
+    private final Positions positions;  // TODO : positions not handled yet
+    */
 
     /** The skip pointer needed to implement a skip list*/
     @Nullable
@@ -27,19 +28,19 @@ public class Posting implements Comparable<Posting> {
 
     /** Constructor. Given a {@link DocumentIdentifier} and a {@link Positions}
      * object, creates a new instance of this class.
-     * @param docId The {@link DocumentIdentifier}.
-     * @param positions The {@link Positions} object (see the description of the class).*/
-    public Posting(@NotNull DocumentIdentifier docId, @NotNull Positions positions) {
+     * @param docId The {@link DocumentIdentifier}.*/
+     //* @param positions The {@link Positions} object (see the description of the class). */
+    public Posting(@NotNull DocumentIdentifier docId/*, @NotNull Positions positions*/) {
         this.docId = Objects.requireNonNull(docId, "The docId cannot be null");
-        this. positions = Objects.requireNonNull(positions, "The positions object cannot be null.");
+//        this. positions = Objects.requireNonNull(positions, "The positions object cannot be null.");  // TODO : positions not handled yet
         // TODO : skipPointer not handled yet.
     }
 
-    /** @return the number of occurrences of the {@link Term} associated with this
-     * {@link Posting} (i.e., the term-frequency value). */
-    public int tf() {
-        return positions.size();
-    }
+//    /** @return the number of occurrences of the {@link Term} associated with this
+//     * {@link Posting} (i.e., the term-frequency value). */
+//    public int tf() {
+//        return positions.size();    // TODO : positions not handled yet
+//    }
 
     /** @return true if this instance has a skip pointer, false otherwise. */
     public boolean hasSkipPointer() {

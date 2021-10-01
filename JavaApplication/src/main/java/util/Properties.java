@@ -39,8 +39,7 @@ public class Properties {
 
     /** The {@link ClassLoader} instance to use to load resources. */
     @NotNull
-    private static final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-
+    private static final ClassLoader classLoader = Properties.class.getClassLoader();
 
     /** Load application properties.
      * First, default properties are loaded from the file named as specified in

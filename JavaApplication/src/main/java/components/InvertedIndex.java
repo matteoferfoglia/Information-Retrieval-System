@@ -46,13 +46,13 @@ public class InvertedIndex {
                 corpus.getCorpus()
                       .entrySet()
                       .parallelStream()
-                      .map( anEntry -> {    // an entry consists of a posting (key) and the corresponding document (value)
-                          List<String> tokens = Utility.tokenize(anEntry.getValue());
-                          Posting posting = anEntry.getKey();
+                      .map( anEntry -> {
+                          List<String> tokens = Utility.tokenize(anEntry.getValue());   // TODO : tokenization should return as a map also the position where the token is found in the document (for phrase query)
+                          Posting.DocumentIdentifier docIdThisDocument = anEntry.getKey();
 
                           // Return a Map having tokens as keys and the corresponding List<Terms> as values, for the document in this entry
                           return tokens.parallelStream()
-                                       .map( aToken -> new AbstractMap.SimpleEntry<>( aToken, new Term(posting, aToken) ) )
+                                       .map( aToken -> new AbstractMap.SimpleEntry<>( aToken, new Term(new Posting(docIdThisDocument), aToken) ) )
                                        .collect(
                                            Collectors.toConcurrentMap(
                                                Map.Entry::getKey,
