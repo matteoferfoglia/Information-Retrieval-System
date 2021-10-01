@@ -12,11 +12,16 @@ import java.net.URISyntaxException;
 public class Main {
 
     public static void main(String[] args) {
+
         Properties.loadProperties();
+        /* // Examples with Properties
+        Properties.appProperties.list(System.out);
+        Properties.appProperties.setProperty("testProp", "0");
         Properties.appProperties.list(System.out);
         Properties.appProperties.setProperty("testProp", "1");
         Properties.appProperties.list(System.out);
         Properties.saveCurrentProperties("Changed testProp");
+        */
 
         try {
             Corpus corpus = Movie.createCorpus();
