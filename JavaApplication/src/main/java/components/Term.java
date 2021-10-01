@@ -43,7 +43,7 @@ public class Term implements Comparable<Term> {
      * @param other The other {@link Term} to be merged into this one.
      */
     public void merge(@NotNull Term other) {    // TODO : needed?
-        if ( this.equals(other) ) {
+        if ( this.term.equals(other.term) ) {
             this.postingList.merge(other.postingList);
         } else {
             throw new ImpossibleMergeException("Terms " + this + " and " + other + " cannot be merged.");
@@ -87,7 +87,7 @@ public class Term implements Comparable<Term> {
 
     @Override
     public String toString() {
-        return term + ": " + postingList;
+        return "{" + term + ": " + postingList + "}";
     }
 
     /** This exception is thrown when no documents associated with
