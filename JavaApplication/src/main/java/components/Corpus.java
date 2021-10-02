@@ -26,7 +26,7 @@ public class Corpus implements Serializable {
         AtomicBoolean exceptionFlag = new AtomicBoolean(false); // becomes true if an exception is thrown in lambda function
 
         this.corpus = documents
-                .parallelStream()
+                .stream().unordered().parallel()
                 .map(aDocument -> {
                     try {
                         return new AbstractMap.SimpleEntry<>(new Posting.DocumentIdentifier(), aDocument);
@@ -59,7 +59,7 @@ public class Corpus implements Serializable {
         int howManyDocsToReturn = Math.min(Math.max(howMany, 0), corpus.size());
         final Comparator<? super Map.Entry<Posting.DocumentIdentifier, Document>> keyComparator = Map.Entry.comparingByKey();
         return corpus .entrySet()
-                      .stream()
+                      .stream().sequential()
                       .sorted(keyComparator)
                       .limit(howManyDocsToReturn)
                       .map(entry -> entry.getKey() + " = " + entry.getValue())

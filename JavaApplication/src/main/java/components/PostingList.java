@@ -48,7 +48,7 @@ public class PostingList implements Serializable {
             return;
         }
         this.postings.addAll(other.postings);
-        this.postings = this.postings.parallelStream()
+        this.postings = this.postings.stream().sequential()
                             .distinct()
                             .sorted()
                             .collect(Collectors.toList());
@@ -154,7 +154,7 @@ public class PostingList implements Serializable {
 
     /** Sort this instance.*/
     private void sort() {
-        postings = postings.stream().sorted().collect(Collectors.toList());
+        postings = postings.stream().sequential().sorted().collect(Collectors.toList());
     }
 
     /** @return The size of this {@link PostingList}. */

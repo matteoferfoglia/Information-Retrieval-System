@@ -78,14 +78,14 @@ public class InvertedIndex implements Serializable {
         invertedIndex.putAll(
                 corpus.getCorpus()
                       .entrySet()
-                      .parallelStream()
+                      .stream().unordered().sequential()
                       .map( anEntry -> {
                           List<String> tokens = Utility.tokenize(anEntry.getValue());   // TODO : tokenization should return as a map also the position where the token is found in the document (for phrase query)
                           Posting.DocumentIdentifier docIdThisDocument = anEntry.getKey();
 
                           // Return a Map having tokens as keys and the corresponding List<Terms> as values, for the document in this entry
                           Set<Map.Entry<String,Term>> entrySet =
-                                 tokens.parallelStream()
+                                 tokens.stream().unordered().parallel()
                                        .map( aToken -> new AbstractMap.SimpleEntry<>( aToken, new Term(new Posting(docIdThisDocument), aToken) ) )
                                        .collect(
                                            Collectors.toConcurrentMap(
@@ -117,9 +117,9 @@ public class InvertedIndex implements Serializable {
         // Join the thread used to print the indexing progress
         scheduler.shutdown();
         try {
-            short awaitTermination = 10;    // us
-            if (!scheduler.awaitTermination(awaitTermination, TimeUnit.MICROSECONDS)) {
-                System.out.println("Still waiting after " + awaitTermination + " us.");
+            short awaitTermination = 1;    // s
+            if (!scheduler.awaitTermination(awaitTermination, TimeUnit.SECONDS)) {
+                System.err.println("Still waiting for thread termination after " + awaitTermination + " s.");
             }
         } catch (InterruptedException e) {
             System.err.println("Indexing progress controller thread not joined.");
@@ -131,7 +131,7 @@ public class InvertedIndex implements Serializable {
     /** @return the dictionary as sorted {@link java.util.List} of {@link String}s (the terms). */
     public List<String> getDictionary() {
         return invertedIndex.keySet()
-                            .stream()
+                            .stream().sequential()
                             .sorted()
                             .collect(Collectors.toList());
     }
