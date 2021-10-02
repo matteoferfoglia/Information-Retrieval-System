@@ -49,7 +49,7 @@ public class InvertedIndex implements Serializable {
                 invertedIndex = new Hashtable<>();
         }
 
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(0);
         Thread progressControllerThread = new Thread( () -> {
             final double epsilon = 0.001;
             double oldProgressValue = progressValue.get();
@@ -59,26 +59,20 @@ public class InvertedIndex implements Serializable {
                 currentProgress = progressValue.toString();
                 System.out.print(currentProgress + " % \t ");
             }
-            if( numberOfAlreadyProcessedDocuments.get() == corpus.size() ) {
-                try {
-                    if( currentProgress.equals(progressValue.toString())  ) {
-                        System.out.print("100 % \t ");
-                    }
-                    Thread.currentThread().join();
-                } catch (InterruptedException e) {
-                    System.err.println("Unable to join the progressControllerThread.\n" + Utility.stackTraceToString(e));
-                }
+            if( numberOfAlreadyProcessedDocuments.get() == corpus.size() && ! currentProgress.equals(progressValue.toString())  ) {
+                // Avoid duplicate prints
+                System.out.print("100 % \t ");
             }
         });
         System.out.println("Indexing started");
         final int DELAY_PROGRESS_CONTROLLER = 5;    // seconds
-        scheduler.scheduleAtFixedRate(progressControllerThread, DELAY_PROGRESS_CONTROLLER, DELAY_PROGRESS_CONTROLLER, TimeUnit.SECONDS);
+        scheduler.scheduleWithFixedDelay(progressControllerThread, DELAY_PROGRESS_CONTROLLER, DELAY_PROGRESS_CONTROLLER, TimeUnit.SECONDS);
 
         // Indexing
         invertedIndex.putAll(
                 corpus.getCorpus()
                       .entrySet()
-                      .stream().unordered().sequential()
+                      .stream().unordered().parallel()
                       .map( anEntry -> {
                           List<String> tokens = Utility.tokenize(anEntry.getValue());   // TODO : tokenization should return as a map also the position where the token is found in the document (for phrase query)
                           Posting.DocumentIdentifier docIdThisDocument = anEntry.getKey();
