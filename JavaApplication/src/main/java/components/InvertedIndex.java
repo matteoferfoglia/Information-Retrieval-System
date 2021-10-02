@@ -54,8 +54,20 @@ public class InvertedIndex implements Serializable {
             final double epsilon = 0.001;
             double oldProgressValue = progressValue.get();
             progressValue.set(Math.round( (0.0+numberOfAlreadyProcessedDocuments.get()) / corpus.size() * 10000) / 100.0);
+            String currentProgress = "";
             if( progressValue.get() - oldProgressValue > epsilon ) {
-                System.out.print(progressValue + " % \t ");
+                currentProgress = progressValue.toString();
+                System.out.print(currentProgress + " % \t ");
+            }
+            if( numberOfAlreadyProcessedDocuments.get() == corpus.size() ) {
+                try {
+                    if( currentProgress.equals(progressValue.toString())  ) {
+                        System.out.print("100 % \t ");
+                    }
+                    Thread.currentThread().join();
+                } catch (InterruptedException e) {
+                    System.err.println("Unable to join the progressControllerThread.\n" + Utility.stackTraceToString(e));
+                }
             }
         });
         System.out.println("Indexing started");
