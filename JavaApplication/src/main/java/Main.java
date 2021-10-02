@@ -32,6 +32,5 @@ public class Main {
             e.printStackTrace();
         }
 
-        System.exit(0); // terminate the JVM, normal termination
     }
 }

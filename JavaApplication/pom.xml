@@ -100,6 +100,7 @@
                 </executions>
                 <configuration>
                     <mainClass>${project.main.class}</mainClass>
+                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
                     <!-- <commandlineArgs></commandlineArgs> -->
                 </configuration>
             </plugin>
@@ -194,7 +195,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>13.0</version>
+            <version>22.0.0</version>
         </dependency>
 
         <!-- PatriciaTrie data structure -->
