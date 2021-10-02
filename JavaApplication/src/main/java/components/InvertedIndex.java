@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import util.Properties;
 import util.Utility;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 /** An instance of this class is an Inverted Index for a {@link Corpus}
  * of documents.
  * @author Matteo Ferfoglia*/
-public class InvertedIndex {
+public class InvertedIndex implements Serializable {
 
     /** The inverted index, i.e., a {@link Map} having tokens as keys and a {@link Term}
      * as corresponding values, where the {@link Term} in the entry, if tokenized,

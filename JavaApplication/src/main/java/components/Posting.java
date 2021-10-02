@@ -5,11 +5,12 @@ import org.jetbrains.annotations.Nullable;
 import util.SynchronizedCounter;
 import util.Utility;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /** Class representing a Posting.
  * @author Matteo Ferfoglia.*/
-public class Posting implements Comparable<Posting> {
+public class Posting implements Comparable<Posting>, Serializable {
 
     /** The {@link DocumentIdentifier} of the document associated with this posting. */
     @NotNull
@@ -67,7 +68,6 @@ public class Posting implements Comparable<Posting> {
     public static class Positions {
 
         /** Array of positions. */
-        @NotNull
         private final int[] positions;
 
         // NOTE: this instance could save the Document and the Term too,
@@ -98,7 +98,7 @@ public class Posting implements Comparable<Posting> {
      *
      * @author Matteo Ferfoglia
      */
-    public static class DocumentIdentifier implements Comparable<DocumentIdentifier> {
+    public static class DocumentIdentifier implements Comparable<DocumentIdentifier>, Serializable {
         /** The Document identifier of the document associated with this posting. */
         private final int docId;
 

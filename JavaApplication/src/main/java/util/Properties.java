@@ -18,13 +18,13 @@ public class Properties {
     /** Name of the file with the properties for the application.
      * The file must be placed in the resource folder ('resources'). */
     @NotNull
-    public static final String defaultPropertyFileName = "properties.default.env";
+    private static final String defaultPropertyFileName = "properties.default.env";
 
     /** Name of the file with the user-specific properties for the application.
      * The user may have changed default properties (if the application allows).
      * The file must be placed in the resource folder ('resources'). */
     @NotNull
-    public static final String applicationPropertyFileName = "properties.userSpecific.env";
+    private static final String applicationPropertyFileName = "properties.userSpecific.env";
 
     /** The properties to use in the application.
      * This attribute consists in a new instance of {@link java.util.Properties},
@@ -41,13 +41,14 @@ public class Properties {
     @NotNull
     private static final ClassLoader classLoader = Properties.class.getClassLoader();
 
-    /** Load application properties.
+    /** Load application properties and create the working directory for the application.
      * First, default properties are loaded from the file named as specified in
      * {@link #defaultPropertyFileName}, then, user-specific properties will be
      * loaded from the file named as specified in {@link #applicationPropertyFileName},
      * if the file is found. The latest properties are used, but, if they are
-     * not available, default properties are used.*/
-    public static void loadProperties() {
+     * not available, default properties are used.
+     * @throws IOException If I/O Exceptions are thrown when creating the working directory. */
+    public static void loadProperties() throws IOException {
 
         wasLoadPropertiesInvoked = true;    // saves that this method was invoked
 
@@ -62,6 +63,8 @@ public class Properties {
         }
 
         // create and load user-specific application properties, if different from defaultProps
+        Utility.createWorkingDirectory(defaultProps.getProperty("workingDirectory_name"));
+
         appProperties = new java.util.Properties( defaultProps );
         File userSpecificPropertyFile = new File(applicationPropertyFileName);
         try {
@@ -84,8 +87,9 @@ public class Properties {
     }
 
     /** Save current user-specific properties, assuming they have changed.
-     * @param comment The comment associated with the save ("log"). */
-    public static void saveCurrentProperties(@NotNull String comment) {
+     * @param comment The comment associated with the save ("log").
+     * @throws IOException If I/O Exceptions are thrown when creating the working directory. */
+    public static void saveCurrentProperties(@NotNull String comment) throws IOException {
 
         if( !wasLoadPropertiesInvoked) {
             loadProperties();

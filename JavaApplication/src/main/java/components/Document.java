@@ -2,11 +2,12 @@ package components;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /** An instance of this class represents a document.
  * @author Matteo Ferfoglia */
-public abstract class Document {
+public abstract class Document implements Serializable {
 
     /** The content of this instance. */
     @NotNull

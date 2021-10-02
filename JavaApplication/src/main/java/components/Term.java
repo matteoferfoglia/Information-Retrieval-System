@@ -2,12 +2,13 @@ package components;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /** This class represents a Term.
  *
  * @author Matteo Ferfoglia*/
-public class Term implements Comparable<Term> {
+public class Term implements Comparable<Term>, Serializable {
 
     /** The {@link PostingList} associated with this {@link Term}. */
     @NotNull

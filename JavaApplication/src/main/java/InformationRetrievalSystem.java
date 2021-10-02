@@ -2,13 +2,14 @@ import components.Corpus;
 import components.InvertedIndex;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * This class represents an Information Retrieval System.
  * @author Matteo Ferfoglia
  */
-public class InformationRetrievalSystem {
+public class InformationRetrievalSystem implements Serializable {
 
     /** The {@link Corpus}. */
     @NotNull

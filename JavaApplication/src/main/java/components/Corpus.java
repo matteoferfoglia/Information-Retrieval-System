@@ -3,6 +3,7 @@ package components;
 import org.jetbrains.annotations.NotNull;
 import util.Utility;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
 /** Class representing the corpus for the Information Retrieval System.
  *
  * @author  Matteo Ferfoglia */
-public class Corpus {
+public class Corpus implements Serializable {
 
     /** The corpus, saved as relationships (with a {@link java.util.Map})
      * between a {@link Posting} and the corresponding {@link Document}. */
