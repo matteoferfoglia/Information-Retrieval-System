@@ -63,7 +63,20 @@ public class Properties {
         }
 
         // create and load user-specific application properties, if different from defaultProps
-        Utility.createWorkingDirectory(defaultProps.getProperty("workingDirectory_name"));
+        File file_workingDirectory = new File(
+                Objects.requireNonNull(
+                        defaultProps.getProperty("workingDirectory_name"),
+                    "The name of the working directory to create cannot be null"
+                )
+        );
+        if( !file_workingDirectory.isDirectory() ) {
+            if( ( file_workingDirectory.exists() && !file_workingDirectory.delete() ) || !file_workingDirectory.mkdir() ) {
+                // If the folder exists but cannot be deleted or if it cannot be created
+                throw new IOException("Unable to create the directory " + file_workingDirectory.getAbsolutePath());
+            } else {
+                System.out.println("Working directory \"" + file_workingDirectory.getAbsolutePath() + "\" created.");
+            }
+        }
 
         appProperties = new java.util.Properties( defaultProps );
         File userSpecificPropertyFile = new File(applicationPropertyFileName);
