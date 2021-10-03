@@ -43,6 +43,13 @@ public class Posting implements Comparable<Posting>, Serializable {
 //        return positions.size();    // TODO : positions not handled yet
 //    }
 
+
+    /** Getter for {@link #docId}.
+     * @return the {@link #docId} associated with this instance. */
+    public @NotNull DocumentIdentifier getDocId() {
+        return docId;
+    }
+
     /** @return true if this instance has a skip pointer, false otherwise. */
     public boolean hasSkipPointer() {
         return skipPointer==null;

@@ -26,13 +26,19 @@ public class InvertedIndex implements Serializable {
     @NotNull
     private final Map<String,Term> invertedIndex;   // a Term has a posting list
 
+    /** The {@link Corpus} on which indexing is done. */
+    @NotNull
+    private final Corpus corpus;    // just the reference
+
     /*/** The phonetic hash. */   /*  // TODO : implement phoneticHash
     @NotNull
     private final ConcurrentHashMap<String, List<Term>> phoneticHash;
     */
 
     /** Constructor. */
-    public InvertedIndex(@NotNull Corpus corpus) {
+    public InvertedIndex(@NotNull final Corpus corpus) {
+
+        this.corpus = Objects.requireNonNull(corpus, "The corpus cannot be null");
 
         AtomicReference<Double> progressValue = new AtomicReference<>((double) 0);   // used only to show the indexing progress
         AtomicLong numberOfAlreadyProcessedDocuments = new AtomicLong(0);
@@ -128,5 +134,21 @@ public class InvertedIndex implements Serializable {
                             .stream().sequential()
                             .sorted()
                             .collect(Collectors.toList());
+    }
+
+    /** Getter for {@link #corpus}.
+     * @return The {@link Corpus} on which indexing was done for this instance. */
+    public @NotNull Corpus getCorpus() {
+        return corpus;
+    }
+
+    /** Getter for a {@link PostingList} associated with a
+     * {@link Term} in this instance.
+     * @param normalizedToken The normalized term.
+     * @return The {@link PostingList} associated with the desired term or null
+     *          if it is not found in this {@link InvertedIndex}. */
+    public final PostingList getPostingList(String normalizedToken) {
+        Term t = invertedIndex.get(normalizedToken);
+        return t==null ? null : t.getPostingList();
     }
 }

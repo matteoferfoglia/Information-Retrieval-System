@@ -26,4 +26,9 @@ public class InformationRetrievalSystem implements Serializable {
         this.invertedIndex = new InvertedIndex(corpus);
     }
 
+    /** Getter for the {@link InvertedIndex}. */
+    @NotNull
+    public final InvertedIndex getInvertedIndex() {
+        return invertedIndex;
+    }
 }

@@ -18,6 +18,11 @@ public class PostingList implements Serializable {
     @NotNull
     private List<Posting> postings;   // TODO: a built-in array may be faster but must be kept ordered
 
+    /** Constructor. Creates an empty {@link PostingList}. */
+    public PostingList() {
+        this(new ArrayList<>(0));
+    }
+
     /** Constructor.
      * Creates a new instance of this class starting from a {@link Posting}.
      * @param posting The {@link Posting} used to create the new {@link PostingList}.
@@ -35,7 +40,7 @@ public class PostingList implements Serializable {
      * @param postings The list of {@link Posting}s. */
     private PostingList(@NotNull List<Posting> postings) {
         Objects.requireNonNull(postings, "The input argument cannot be null.");
-        this.postings = postings;
+        this.postings = postings.stream().unordered().distinct().collect(Collectors.toList());
         setSkipPointers();
     }
 
@@ -132,24 +137,32 @@ public class PostingList implements Serializable {
 
         final int numberOfPostings = postings.size();
         final int numberOfSkipPointers = (int) Math.round(Math.sqrt(numberOfPostings));
-        final int skipPointerStep = numberOfPostings / numberOfSkipPointers; // The distance between two successive skipPointers
-        int[] skipPointerPositions = IntStream.range(1, numberOfPostings)
-                                              .filter(x -> x % skipPointerStep == 0)
-                                              .toArray();
-
-        // Set the skipPointers
         int skipPointerPositionPrevious = 0;
-        for (int skipPointerPosition : skipPointerPositions) {    // TODO : can be parallelized
-            for (int j = skipPointerPositionPrevious; j < skipPointerPosition; j++) {
-                postings.get(j).setSkipPointer( postings.get(skipPointerPosition) );
+        if( numberOfSkipPointers>0 ) {
+            final int skipPointerStep = numberOfPostings / numberOfSkipPointers; // The distance between two successive skipPointers
+            int[] skipPointerPositions = IntStream.range(1, numberOfPostings)
+                    .filter(x -> x % skipPointerStep == 0)
+                    .toArray();
+
+            // Set the skipPointers
+            for (int skipPointerPosition : skipPointerPositions) {    // TODO : can be parallelized
+                for (int j = skipPointerPositionPrevious; j < skipPointerPosition; j++) {
+                    postings.get(j).setSkipPointer(postings.get(skipPointerPosition));
+                }
+                skipPointerPositionPrevious = skipPointerPosition;
             }
-            skipPointerPositionPrevious = skipPointerPosition;
         }
         // Set null the skipPointers for the posting over the last skipPointer
         for( ; skipPointerPositionPrevious<numberOfPostings; skipPointerPositionPrevious++) {
             postings.get(skipPointerPositionPrevious).setSkipPointer( null );
         }
 
+    }
+
+    /** @return This instance as {@link List} of {@link Posting}s. */
+    @NotNull
+    public List<Posting> toList() {
+        return postings;
     }
 
     /** Sort this instance.*/

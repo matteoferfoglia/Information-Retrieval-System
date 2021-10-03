@@ -47,6 +47,25 @@ public class Corpus implements Serializable {
         }
     }
 
+
+
+    /**
+     * @param postings The {@link List} of {@link Posting}s for which the
+     *                 corresponding {@link List} of {@link Document}s is
+     *                 wanted.
+     * @return the {@link List} of {@link Document}s in this {@link Corpus}
+     * for which the {@link components.Posting.DocumentIdentifier} is present
+     * in any of the {@link Posting} in the parameter. */
+    @NotNull
+    public List<Document> getDocuments(@NotNull List<Posting> postings) {
+        return Objects.requireNonNull(postings, "List of postings cannot be null")
+                .stream().unordered().parallel()
+                .map(aPosting -> corpus.get(aPosting.getDocId()))
+                .filter(Objects::nonNull)
+                .distinct() // more postings may refer to the same document
+                .collect(Collectors.toList());
+    }
+
     /** Returns the head of this instance, i.e., the first documents,
      * ordered according to their {@link components.Posting.DocumentIdentifier}.
      * This method can be used for printing purposes (e.g., during testing).
