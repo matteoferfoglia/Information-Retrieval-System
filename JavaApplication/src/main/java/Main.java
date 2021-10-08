@@ -32,14 +32,14 @@ public class Main {
 
             // For saving/loading the IRSystem as file
             String fileName_irSystem = Properties.appProperties.getProperty("workingDirectory_name") + "/irSystem";
-            File   file_irSystem     = new File(fileName_irSystem);
+            File file_irSystem = new File(fileName_irSystem);
 
             // Load the IR System if already exists
             InformationRetrievalSystem ir;
 
             //noinspection SwitchStatementWithTooFewBranches
-            switch( file_irSystem.isFile() ? 1 : 0 ) {
-                case 1 :    // file exists
+            switch (file_irSystem.isFile() ? 1 : 0) {
+                case 1:    // file exists
                     System.out.println("Loading the IRSystem from file system");
                     ObjectInputStream ois = new ObjectInputStream(
                             new BufferedInputStream(
@@ -48,7 +48,7 @@ public class Main {
                     );
                     try {
                         Object irSystem_object = ois.readObject();
-                        if( irSystem_object instanceof InformationRetrievalSystem ) {
+                        if (irSystem_object instanceof InformationRetrievalSystem) {
                             ir = (InformationRetrievalSystem) irSystem_object;
                             System.out.println("IRSystem loaded from the file system.");
                             break;
@@ -72,7 +72,7 @@ public class Main {
             }
 
             // Serialize and save the IR System to the file system
-            if( file_irSystem.createNewFile() ) {    // if file already exists will do nothing
+            if (file_irSystem.createNewFile()) {    // if file already exists will do nothing
                 System.out.println("File \"" + fileName_irSystem + "\" created.");
             } else {
                 System.out.println("File \"" + fileName_irSystem + "\" already exists. It will be replaced.");
@@ -89,7 +89,7 @@ public class Main {
 
             // Use the information retrieval system
             final long startTime = System.currentTimeMillis();
-            List<String> valueToSearch = Arrays.asList("Vidya","Bagchi","Kolkata");
+            List<String> valueToSearch = Arrays.asList("Vidya", "Bagchi", "Kolkata");
             BooleanExpression
                     be1 = new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, valueToSearch.get(0)),
                     be2 = new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, valueToSearch.get(1)),
@@ -98,7 +98,8 @@ public class Main {
                     new BooleanExpression(BooleanExpression.BINARY_OPERATOR.AND, be2, be3));
             List<Document> results = be.evaluate(ir.getInvertedIndex());
             final long stopTime = System.currentTimeMillis();
-            System.out.println(results.size() + " results for \"" + valueToSearch + "\" found in " + (stopTime-startTime) + " ms.");
+            System.out.println(results.size() + " result" + (results.size() > 1 ? "s" : "") +
+                    " for \"" + valueToSearch + "\" found in " + (stopTime - startTime) + " ms.");
 
         } catch (Posting.DocumentIdentifier.NoMoreDocIdsAvailable | URISyntaxException | IOException e) {
             e.printStackTrace();
