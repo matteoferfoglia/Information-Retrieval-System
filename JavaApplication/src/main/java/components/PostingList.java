@@ -10,21 +10,30 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-/** Class representing a {@link PostingList}.
- * @author Matteo Ferfoglia */
+/**
+ * Class representing a {@link PostingList}.
+ *
+ * @author Matteo Ferfoglia
+ */
 public class PostingList implements Serializable {
 
-    /** The actual posting list. */
+    /**
+     * The actual posting list.
+     */
     @NotNull
     private List<Posting> postings;   // TODO: a built-in array may be faster but must be kept ordered
 
-    /** Constructor. Creates an empty {@link PostingList}. */
+    /**
+     * Constructor. Creates an empty {@link PostingList}.
+     */
     public PostingList() {
         this(new ArrayList<>(0));
     }
 
-    /** Constructor.
+    /**
+     * Constructor.
      * Creates a new instance of this class starting from a {@link Posting}.
+     *
      * @param posting The {@link Posting} used to create the new {@link PostingList}.
      *                Immediately after the creation, this will be the only-one
      *                element in the list.
@@ -35,48 +44,39 @@ public class PostingList implements Serializable {
         this.postings.add(posting);
     }
 
-    /** Constructor.
+    /**
+     * Constructor.
      * Creates a new instance of this class starting from a {@link List} of {@link Posting}s.
-     * @param postings The list of {@link Posting}s. */
+     *
+     * @param postings The list of {@link Posting}s.
+     */
     private PostingList(@NotNull List<Posting> postings) {
         Objects.requireNonNull(postings, "The input argument cannot be null.");
         this.postings = postings.stream().unordered().distinct().collect(Collectors.toList());
         setSkipPointers();
     }
 
-    /** Merges the {@link PostingList} given as parameter into this one (destructive merging).
-     * Only distinct {@link Posting}s are kept (see {@link Posting#equals(Object)} and the
-     * resulting {@link PostingList} (this one) is sorted.
-     * @param other The other {@link PostingList} to be merged into this one. */
-    public void merge(PostingList other) {
-        if(other==null) {
-            return;
-        }
-        this.postings.addAll(other.postings);
-        this.postings = this.postings.stream().sequential()
-                            .distinct()
-                            .sorted()
-                            .collect(Collectors.toList());
-    }
-
-    /** Returns a new instance of {@link PostingList} which is the union of the
+    /**
+     * Returns a new instance of {@link PostingList} which is the union of the
      * two {@link PostingList}s given as parameters.
+     *
      * @param a A {@link PostingList}.
      * @param b The other {@link PostingList}.
      * @return a new instance of {@link PostingList} which is the union of the
-     *         two given {@link PostingList}s as parameters.*/
+     * two given {@link PostingList}s as parameters.
+     */
     @NotNull
     public static PostingList union(@NotNull PostingList a, @NotNull PostingList b) {
         Objects.requireNonNull(a, "Input Parameter cannot be null.");
         Objects.requireNonNull(b, "Input Parameter cannot be null.");
 
         List<Posting> a_ = a.postings,
-                      b_ = b.postings;
-        ArrayList<Posting> union = new ArrayList<>(a_.size()+ b_.size());
-        int i=0, j=0, comparison;
-        while(i<a_.size() && j<b_.size()) {
+                b_ = b.postings;
+        ArrayList<Posting> union = new ArrayList<>(a_.size() + b_.size());
+        int i = 0, j = 0, comparison;
+        while (i < a_.size() && j < b_.size()) {
             comparison = a_.get(i).compareTo(b_.get(j));
-            if( comparison == 0 ) {
+            if (comparison == 0) {
                 union.add(a_.get(i++));
                 j++;
             } else if (comparison < 0) {
@@ -85,8 +85,8 @@ public class PostingList implements Serializable {
                 union.add(b_.get(j++));
             }
         }
-        union.addAll( a_.subList(i, a_.size()) );
-        union.addAll(b_.subList(j, b_.size()) );
+        union.addAll(a_.subList(i, a_.size()));
+        union.addAll(b_.subList(j, b_.size()));
         union.trimToSize();
 
         return new PostingList(union);
@@ -94,28 +94,31 @@ public class PostingList implements Serializable {
         // TODO : positional union not implemented yet
     }
 
-    /** Returns a new instance of {@link PostingList} which is the intersection of the
+    /**
+     * Returns a new instance of {@link PostingList} which is the intersection of the
      * two {@link PostingList}s given as parameters.
+     *
      * @param a A {@link PostingList}.
      * @param b The other {@link PostingList}.
      * @return a new instance of {@link PostingList} which is the union of the
-     *         two given {@link PostingList}s as parameters.*/
+     * two given {@link PostingList}s as parameters.
+     */
     @NotNull
     public static PostingList intersection(@NotNull PostingList a, @NotNull PostingList b) {
         Objects.requireNonNull(a, "Input Parameter cannot be null.");
         Objects.requireNonNull(b, "Input Parameter cannot be null.");
 
         List<Posting> a_ = a.postings,
-                      b_ = b.postings;
+                b_ = b.postings;
 
         ArrayList<Posting> intersection = new ArrayList<>(a_.size());
-        int i=0, j=0, comparison;
-        while(i<a_.size() && j<b_.size()) {
+        int i = 0, j = 0, comparison;
+        while (i < a_.size() && j < b_.size()) {
             comparison = a_.get(i).compareTo(b_.get(j));
-            if( comparison == 0 ) {
+            if (comparison == 0) {
                 intersection.add(a_.get(i++));
                 j++;
-            } else if ( comparison < 0 ) {
+            } else if (comparison < 0) {
                 i++;
             } else {
                 j++;
@@ -128,9 +131,29 @@ public class PostingList implements Serializable {
         // TODO : positional intersect not implemented yet
     }
 
-    /** Sets the skip pointers for this instance of {@link PostingList}.
+    /**
+     * Merges the {@link PostingList} given as parameter into this one (destructive merging).
+     * Only distinct {@link Posting}s are kept (see {@link Posting#equals(Object)} and the
+     * resulting {@link PostingList} (this one) is sorted.
+     *
+     * @param other The other {@link PostingList} to be merged into this one.
+     */
+    public void merge(PostingList other) {
+        if (other == null) {
+            return;
+        }
+        this.postings.addAll(other.postings);
+        this.postings = this.postings.stream().sequential()
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Sets the skip pointers for this instance of {@link PostingList}.
      * &radic;p evenly spaced skip pointers will be created, with p = the
-     * number of elements in this {@link PostingList}. */
+     * number of elements in this {@link PostingList}.
+     */
     private void setSkipPointers() {
 
         sort();   // the postingList MUST be sorted
@@ -138,7 +161,7 @@ public class PostingList implements Serializable {
         final int numberOfPostings = postings.size();
         final int numberOfSkipPointers = (int) Math.round(Math.sqrt(numberOfPostings));
         int skipPointerPositionPrevious = 0;
-        if( numberOfSkipPointers>0 ) {
+        if (numberOfSkipPointers > 0) {
             final int skipPointerStep = numberOfPostings / numberOfSkipPointers; // The distance between two successive skipPointers
             int[] skipPointerPositions = IntStream.range(1, numberOfPostings)
                     .filter(x -> x % skipPointerStep == 0)
@@ -153,24 +176,30 @@ public class PostingList implements Serializable {
             }
         }
         // Set null the skipPointers for the posting over the last skipPointer
-        for( ; skipPointerPositionPrevious<numberOfPostings; skipPointerPositionPrevious++) {
-            postings.get(skipPointerPositionPrevious).setSkipPointer( null );
+        for (; skipPointerPositionPrevious < numberOfPostings; skipPointerPositionPrevious++) {
+            postings.get(skipPointerPositionPrevious).setSkipPointer(null);
         }
 
     }
 
-    /** @return This instance as {@link List} of {@link Posting}s. */
+    /**
+     * @return This instance as {@link List} of {@link Posting}s.
+     */
     @NotNull
     public List<Posting> toList() {
         return postings;
     }
 
-    /** Sort this instance.*/
+    /**
+     * Sort this instance.
+     */
     private void sort() {
         postings = postings.stream().sequential().sorted().collect(Collectors.toList());
     }
 
-    /** @return The size of this {@link PostingList}. */
+    /**
+     * @return The size of this {@link PostingList}.
+     */
     public int size() {
         return postings.size();
     }

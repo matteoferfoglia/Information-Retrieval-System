@@ -15,18 +15,25 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-/** An instance of this class is an Inverted Index for a {@link Corpus}
+/**
+ * An instance of this class is an Inverted Index for a {@link Corpus}
  * of documents.
- * @author Matteo Ferfoglia*/
+ *
+ * @author Matteo Ferfoglia
+ */
 public class InvertedIndex implements Serializable {
 
-    /** The inverted index, i.e., a {@link Map} having tokens as keys and a {@link Term}
+    /**
+     * The inverted index, i.e., a {@link Map} having tokens as keys and a {@link Term}
      * as corresponding values, where the {@link Term} in the entry, if tokenized,
-     * returns the corresponding key. */
+     * returns the corresponding key.
+     */
     @NotNull
-    private final Map<String,Term> invertedIndex;   // a Term has a posting list
+    private final Map<String, Term> invertedIndex;   // a Term has a posting list
 
-    /** The {@link Corpus} on which indexing is done. */
+    /**
+     * The {@link Corpus} on which indexing is done.
+     */
     @NotNull
     private final Corpus corpus;    // just the reference
 
@@ -35,7 +42,9 @@ public class InvertedIndex implements Serializable {
     private final ConcurrentHashMap<String, List<Term>> phoneticHash;
     */
 
-    /** Constructor. */
+    /**
+     * Constructor.
+     */
     public InvertedIndex(@NotNull final Corpus corpus) {
 
         this.corpus = Objects.requireNonNull(corpus, "The corpus cannot be null");
@@ -43,12 +52,12 @@ public class InvertedIndex implements Serializable {
         AtomicReference<Double> progressValue = new AtomicReference<>((double) 0);   // used only to show the indexing progress
         AtomicLong numberOfAlreadyProcessedDocuments = new AtomicLong(0);
 
-        short invertedIndexType = Short.parseShort( Properties.appProperties.getProperty("index.dataStructure.type") );
-        switch( invertedIndexType ) {
-            case 1 :
+        short invertedIndexType = Short.parseShort(Properties.appProperties.getProperty("index.dataStructure.type"));
+        switch (invertedIndexType) {
+            case 1:
                 invertedIndex = new ConcurrentHashMap<>();
                 break;
-            case 2 :
+            case 2:
                 invertedIndex = new PatriciaTrie<>();
                 break;
             default:    // 0 or anything else
@@ -56,16 +65,16 @@ public class InvertedIndex implements Serializable {
         }
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(0);
-        Thread progressControllerThread = new Thread( () -> {
+        Thread progressControllerThread = new Thread(() -> {
             final double epsilon = 0.001;
             double oldProgressValue = progressValue.get();
-            progressValue.set(Math.round( (0.0+numberOfAlreadyProcessedDocuments.get()) / corpus.size() * 10000) / 100.0);
+            progressValue.set(Math.round((0.0 + numberOfAlreadyProcessedDocuments.get()) / corpus.size() * 10000) / 100.0);
             String currentProgress = "";
-            if( progressValue.get() - oldProgressValue > epsilon ) {
+            if (progressValue.get() - oldProgressValue > epsilon) {
                 currentProgress = progressValue.toString();
                 System.out.print(currentProgress + " % \t ");
             }
-            if( numberOfAlreadyProcessedDocuments.get() == corpus.size() && ! currentProgress.equals(progressValue.toString())  ) {
+            if (numberOfAlreadyProcessedDocuments.get() == corpus.size() && !currentProgress.equals(progressValue.toString())) {
                 // Avoid duplicate prints
                 System.out.print("100 % \t ");
             }
@@ -77,41 +86,41 @@ public class InvertedIndex implements Serializable {
         // Indexing
         invertedIndex.putAll(
                 corpus.getCorpus()
-                      .entrySet()
-                      .stream().unordered().parallel()
-                      .map( anEntry -> {
-                          List<String> tokens = Utility.tokenize(anEntry.getValue());   // TODO : tokenization should return as a map also the position where the token is found in the document (for phrase query)
-                          Posting.DocumentIdentifier docIdThisDocument = anEntry.getKey();
+                        .entrySet()
+                        .stream().unordered().parallel()
+                        .map(anEntry -> {
+                            List<String> tokens = Utility.tokenize(anEntry.getValue());   // TODO : tokenization should return as a map also the position where the token is found in the document (for phrase query)
+                            Posting.DocumentIdentifier docIdThisDocument = anEntry.getKey();
 
-                          // Return a Map having tokens as keys and the corresponding List<Terms> as values, for the document in this entry
-                          Set<Map.Entry<String,Term>> entrySet =
-                                 tokens.stream().unordered().parallel()
-                                       .map( aToken -> new AbstractMap.SimpleEntry<>( aToken, new Term(new Posting(docIdThisDocument), aToken) ) )
-                                       .collect(
-                                           Collectors.toConcurrentMap(
-                                               Map.Entry::getKey,
-                                               Map.Entry::getValue,
-                                               (term1, term2) -> {  // Merge terms with the same token
-                                                   term1.merge(term2);
-                                                   return term1;
-                                               }
-                                           )
-                                       )
-                                      .entrySet();
-                          numberOfAlreadyProcessedDocuments.getAndIncrement();
-                          return entrySet;
-                      })
-                      .flatMap(Collection::stream /*outputs all entries (token,term) from all the documents*/)
-                      .collect(
-                            Collectors.toMap(
-                                Map.Entry::getKey,
-                                Map.Entry::getValue,
-                                (term1, term2) -> {  // Merge terms with the same token
-                                    term1.merge(term2);
-                                    return term1;
-                                }
-                            )
-                      )
+                            // Return a Map having tokens as keys and the corresponding List<Terms> as values, for the document in this entry
+                            Set<Map.Entry<String, Term>> entrySet =
+                                    tokens.stream().unordered().parallel()
+                                            .map(aToken -> new AbstractMap.SimpleEntry<>(aToken, new Term(new Posting(docIdThisDocument), aToken)))
+                                            .collect(
+                                                    Collectors.toConcurrentMap(
+                                                            Map.Entry::getKey,
+                                                            Map.Entry::getValue,
+                                                            (term1, term2) -> {  // Merge terms with the same token
+                                                                term1.merge(term2);
+                                                                return term1;
+                                                            }
+                                                    )
+                                            )
+                                            .entrySet();
+                            numberOfAlreadyProcessedDocuments.getAndIncrement();
+                            return entrySet;
+                        })
+                        .flatMap(Collection::stream /*outputs all entries (token,term) from all the documents*/)
+                        .collect(
+                                Collectors.toMap(
+                                        Map.Entry::getKey,
+                                        Map.Entry::getValue,
+                                        (term1, term2) -> {  // Merge terms with the same token
+                                            term1.merge(term2);
+                                            return term1;
+                                        }
+                                )
+                        )
         );
 
         // Join the thread used to print the indexing progress
@@ -128,27 +137,35 @@ public class InvertedIndex implements Serializable {
         System.out.println("\nIndexing ended");
     }
 
-    /** @return the dictionary as sorted {@link java.util.List} of {@link String}s (the terms). */
+    /**
+     * @return the dictionary as sorted {@link java.util.List} of {@link String}s (the terms).
+     */
     public List<String> getDictionary() {
         return invertedIndex.keySet()
-                            .stream().sequential()
-                            .sorted()
-                            .collect(Collectors.toList());
+                .stream().sequential()
+                .sorted()
+                .collect(Collectors.toList());
     }
 
-    /** Getter for {@link #corpus}.
-     * @return The {@link Corpus} on which indexing was done for this instance. */
+    /**
+     * Getter for {@link #corpus}.
+     *
+     * @return The {@link Corpus} on which indexing was done for this instance.
+     */
     public @NotNull Corpus getCorpus() {
         return corpus;
     }
 
-    /** Getter for a {@link PostingList} associated with a
+    /**
+     * Getter for a {@link PostingList} associated with a
      * {@link Term} in this instance.
+     *
      * @param normalizedToken The normalized term.
      * @return The {@link PostingList} associated with the desired term or null
-     *          if it is not found in this {@link InvertedIndex}. */
+     * if it is not found in this {@link InvertedIndex}.
+     */
     public final PostingList getPostingList(String normalizedToken) {
         Term t = invertedIndex.get(normalizedToken);
-        return t==null ? null : t.getPostingList();
+        return t == null ? null : t.getPostingList();
     }
 }
