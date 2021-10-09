@@ -365,8 +365,13 @@ public class Movie extends Document implements Externalizable {
         }
     }
 
+    /**
+     * @return The movie title followed by (one tab spaced) the JSON representation of the object.
+     */
     @Override
     public String toString() {
+
+        assert title != null;
         assert languageKeys != null;
         assert countryKeys != null;
         assert genreKeys != null;
@@ -376,6 +381,7 @@ public class Movie extends Document implements Externalizable {
                     .filter(Objects::nonNull)
                     .map(mapKeyToValue::get)
                     .filter(Objects::nonNull)
+                    .map(value -> "\"" + mapKeyToValue.get(value) + "\"")
                     .collect(Collectors.toList());
             return values.size() > 0 ? (", " + fieldName + ": " + values) : "";
         };
@@ -384,16 +390,16 @@ public class Movie extends Document implements Externalizable {
         String countries_ = keyListToValueListAsString.apply(countryKeys, "countryKeys", countries);
         String genres_ = keyListToValueListAsString.apply(genreKeys, "genreKeys", genres);
 
-        return "{movie: {" +
-                "title: " + title + '\'' +
-                (releaseDate != null ? (", releaseDate: " + releaseDate) : "") +
-                (boxOfficeRevenue > 0 ? (", boxOfficeRevenue: " + boxOfficeRevenue + " $") : "") +
+        return title + "\t{" +
+                "title: \"" + title.replaceAll("\"", "'") + "\"" +
+                (releaseDate != null ? (", releaseDate: \"" + releaseDate.atStartOfDay() + ":00Z\"") : "") +
+                (boxOfficeRevenue > 0 ? (", boxOfficeRevenue: \"" + boxOfficeRevenue + " $\"") : "") +
                 (runningTime > 0 ? (", runningTime: " + runningTime) : "") +
                 (languages_.isEmpty() ? "" : languages_) +
                 (countries_.isEmpty() ? "" : countries_) +
                 (genres_.isEmpty() ? "" : genres_) +
-                (description != null && !description.trim().isEmpty() ? (", description: " + description) : "") +
-                "} }";
+                (description != null && !description.trim().isEmpty() ? (", description: \"" + description.replaceAll("\"", "'") + "\"") : "") +
+                "}";
     }
 
     /**
