@@ -160,7 +160,7 @@ public class Movie extends Document implements Externalizable {
                         .map(entry -> {
                             String key = entry.getKey();
                             String value = (String) entry.getValue();
-                            Movie.languages.putIfAbsent(key, value);
+                            concurrentMap.putIfAbsent(key, value);
                             return key;
                         })
                         .collect(Collectors.toList());
@@ -381,7 +381,7 @@ public class Movie extends Document implements Externalizable {
                     .filter(Objects::nonNull)
                     .map(mapKeyToValue::get)
                     .filter(Objects::nonNull)
-                    .map(value -> "\"" + mapKeyToValue.get(value) + "\"")
+                    .map(value -> "\"" + value + "\"")
                     .collect(Collectors.toList());
             return values.size() > 0 ? (", " + fieldName + ": " + values) : "";
         };
