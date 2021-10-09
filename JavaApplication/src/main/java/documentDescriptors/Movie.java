@@ -39,19 +39,19 @@ public class Movie extends Document implements Externalizable {
      * value its corresponding language.
      */
     @NotNull
-    private static final ConcurrentMap<String, String> languages = new ConcurrentHashMap<>();
+    private static ConcurrentMap<String, String> languages = new ConcurrentHashMap<>();
     /**
      * Map having as key an index value for the movie production
      * country, and as value its corresponding country.
      */
     @NotNull
-    private static final ConcurrentMap<String, String> countries = new ConcurrentHashMap<>();
+    private static ConcurrentMap<String, String> countries = new ConcurrentHashMap<>();
     /**
      * Map having as key an index value for the movie genre, and
      * as value its corresponding genre.
      */
     @NotNull
-    private static final ConcurrentMap<String, String> genres = new ConcurrentHashMap<>();
+    private static ConcurrentMap<String, String> genres = new ConcurrentHashMap<>();
     /**
      * The title of the movie.
      */
@@ -346,8 +346,8 @@ public class Movie extends Document implements Externalizable {
 
                     if (Modifier.isFinal(f.getModifiers())) {
                         //modifiers.setInt(f, f.getModifiers() & ~Modifier.FINAL);    // the field will not be final anymore, if it was
-                        Logger.getLogger(this.getClass().getCanonicalName())
-                                .log(Level.WARNING, "The field " + f + " is final and was not set");
+//                        Logger.getLogger(this.getClass().getCanonicalName())
+//                                .log(Level.WARNING, "The field " + f + " is final and was not set");
                     } else {
                         if (Modifier.isStatic(f.getModifiers())) {
                             f.set(null, read);
