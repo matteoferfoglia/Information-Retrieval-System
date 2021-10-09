@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -70,6 +71,27 @@ public class Utility {
                 .map(entry -> new AbstractMap.SimpleEntry<String, Object>((String) entry.getKey(), entry.getValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+    }
+
+    /**
+     * Generalization of {@link java.util.function.BiFunction} to take
+     * three input arguments and produce one output argument.
+     * From <a href="https://stackoverflow.com/a/19649473">Stackoverflow</a>.
+     * @param <A> Input type for argument 1.
+     * @param <B> Input type for argument 2.
+     * @param <C> Input type for argument 3.
+     * @param <R> Output type.
+     */
+    @FunctionalInterface
+    public interface TriFunction<A,B,C,R> {
+
+        R apply(A a, B b, C c);
+
+        default <V> TriFunction<A, B, C, V> andThen(
+                Function<? super R, ? extends V> after) {
+            Objects.requireNonNull(after);
+            return (A a, B b, C c) -> after.apply(apply(a, b, c));
+        }
     }
 
 }
