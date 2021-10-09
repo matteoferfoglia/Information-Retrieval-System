@@ -1,14 +1,14 @@
 package util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import components.Document;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -24,7 +24,8 @@ public class Utility {
      */
     @NotNull
     public static List<String> tokenize(@NotNull Document document) {
-        return Arrays.stream(document.getContent().split(" "))
+        return Arrays.stream(Objects.requireNonNull(Objects.requireNonNull(document).getContent())
+                        .getEntireTextContent().split(" "))
                 .map(Utility::normalize)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -57,6 +58,18 @@ public class Utility {
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         return sw.toString();
+    }
+
+    /**
+     * Convert a string in JSON format to a {@link Map}.
+     */
+    @NotNull
+    public static Map<String, ?> convertFromJsonToMap(@NotNull final String stringInJsonFormat) throws JsonProcessingException {
+        return ((HashMap<?, ?>) new ObjectMapper().readValue(Objects.requireNonNull(stringInJsonFormat), HashMap.class))
+                .entrySet().stream().unordered().parallel() // order does not matter in JSON entries
+                .map(entry -> new AbstractMap.SimpleEntry<String, Object>((String) entry.getKey(), entry.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
     }
 
 }
