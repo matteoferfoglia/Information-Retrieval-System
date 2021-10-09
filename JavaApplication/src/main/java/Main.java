@@ -9,6 +9,7 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Matteo Ferfoglia
@@ -88,7 +89,9 @@ public class Main {
             oos.close();
 
             // Use the information retrieval system
-            final long startTime = System.currentTimeMillis();
+
+            // First attempt
+            long startTime = System.currentTimeMillis();
             List<String> valueToSearch = Arrays.asList("Vidya", "Bagchi", "Kolkata");
             BooleanExpression
                     be1 = new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, valueToSearch.get(0)),
@@ -97,9 +100,33 @@ public class Main {
             BooleanExpression be = new BooleanExpression(BooleanExpression.BINARY_OPERATOR.AND, be1,
                     new BooleanExpression(BooleanExpression.BINARY_OPERATOR.AND, be2, be3));
             List<Document> results = be.evaluate(ir.getInvertedIndex());
-            final long stopTime = System.currentTimeMillis();
+            long stopTime = System.currentTimeMillis();
             System.out.println(results.size() + " result" + (results.size() > 1 ? "s" : "") +
-                    " for \"" + valueToSearch + "\" found in " + (stopTime - startTime) + " ms.");
+                    " for \"" + valueToSearch + "\" found in " + (stopTime - startTime) + " ms:");
+            System.out.println("-\t" + results.stream().map(Object::toString).collect(Collectors.joining("\n-\t")));
+
+            // Second attempt   // TODO : refactoring to avoid code duplication
+            startTime = System.currentTimeMillis();
+            valueToSearch = Arrays.asList("Space", "Jam");
+            be1 = new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, valueToSearch.get(0));
+            be2 = new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, valueToSearch.get(1));
+            be = new BooleanExpression(BooleanExpression.BINARY_OPERATOR.AND, be1, be2);
+            results = be.evaluate(ir.getInvertedIndex());
+            stopTime = System.currentTimeMillis();
+            System.out.println(results.size() + " result" + (results.size() > 1 ? "s" : "") +
+                    " for \"" + valueToSearch + "\" found in " + (stopTime - startTime) + " ms:");
+            System.out.println("-\t" + results.stream().map(Object::toString).collect(Collectors.joining("\n-\t")));
+
+            // Thirsd attempt   // TODO : refactoring to avoid code duplication
+            startTime = System.currentTimeMillis();
+            valueToSearch = Arrays.asList("hand");
+            be1 = new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, valueToSearch.get(0));
+            results = be1.evaluate(ir.getInvertedIndex());
+            stopTime = System.currentTimeMillis();
+            System.out.println(results.size() + " result" + (results.size() > 1 ? "s" : "") +
+                    " for \"" + valueToSearch + "\" found in " + (stopTime - startTime) + " ms. First 5 results:");
+            System.out.println("-\t" + results.stream().limit(5).map(Object::toString).collect(Collectors.joining("\n-\t")));
+
 
         } catch (Posting.DocumentIdentifier.NoMoreDocIdsAvailable | URISyntaxException | IOException e) {
             e.printStackTrace();
