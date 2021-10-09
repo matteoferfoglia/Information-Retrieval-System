@@ -88,7 +88,7 @@ public class Main {
             oos.close();
 
             // Use the information retrieval system
-            final int MAX_N_RESULTS = 5;
+            final int MAX_N_RESULTS = 10;
             System.out.println(andQueryAndReturnResultsAsString(ir, Arrays.asList("Vidya", "Bagchi", "Kolkata"), MAX_N_RESULTS));
             System.out.println(andQueryAndReturnResultsAsString(ir, Arrays.asList("Space", "jam"), MAX_N_RESULTS));
             System.out.println(andQueryAndReturnResultsAsString(ir, Collections.singletonList("hand"), MAX_N_RESULTS));
@@ -117,11 +117,15 @@ public class Main {
         sb.append(results.size()).append(" result").append(results.size() > 1 ? "s" : "").append(" for (\"")
                 .append(String.join("\" AND \"", stringsToBePresent))
                 .append("\") found in ").append(endTime - startTime)
-                .append(" ms.");
+                .append(" ms. ");
         if (results.size() > 1) {
-            sb.append("First ")
-                    .append(Math.min(maxNumberOfResultsToReturn, results.size()))
-                    .append(" results");
+            if (results.size() > maxNumberOfResultsToReturn) {
+                sb.append("First ")
+                        .append(maxNumberOfResultsToReturn)
+                        .append(" results");
+            } else {
+                sb.append("Results");
+            }
         }
         if (results.size() > 0) {
             sb.append(":\n-\t")
