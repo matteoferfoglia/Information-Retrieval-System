@@ -272,7 +272,7 @@ public class Movie extends Document implements Externalizable {
         Map<Integer, Movie> movieDescriptions =
                 openFile.apply(movieDescriptionFile)
                         .lines()
-                        .parallel()
+                        .unordered().parallel()
                         .map(aMovie -> {
                             String[] movieFields = aMovie.split("\t");
                             return new AbstractMap.SimpleEntry<>(Integer.parseInt(movieFields[0])/*id*/, movieFields[1]/*description*/);
@@ -286,7 +286,7 @@ public class Movie extends Document implements Externalizable {
         // Merge movie names with corresponding descriptions
         // movie id as key, corresponding movie as value
         Map<Integer, Movie> movies = Stream.of(movieNames, movieDescriptions)
-                .parallel()
+                .unordered().parallel()
                 .map(Map::entrySet)
                 .flatMap(Collection::stream)
                 .collect(
@@ -311,8 +311,13 @@ public class Movie extends Document implements Externalizable {
                         )
                 );
 
-        // Create the corpus
-        return new Corpus(movies.values());
+        // Create the corpus avoiding movies without the title
+        return new Corpus(
+                movies.values()
+                        .stream().unordered().parallel()
+                        .filter(aMovie -> aMovie.title != null)
+                        .collect(Collectors.toList())
+        );
 
     }
 
@@ -400,6 +405,28 @@ public class Movie extends Document implements Externalizable {
                 (genres_.isEmpty() ? "" : genres_) +
                 (description != null && !description.trim().isEmpty() ? (", description: \"" + description.replaceAll("\"", "'") + "\"") : "") +
                 "}";
+    }
+
+    @Override
+    public int compareTo(@NotNull Document otherDocument) {
+
+        if (!(Objects.requireNonNull(otherDocument) instanceof Movie)) {
+            throw new IllegalArgumentException("Incompatible type: the argument must be an instance of class " +
+                    this.getClass().getCanonicalName());
+        }
+
+        Movie otherMovie = (Movie) otherDocument;
+
+        if (title == null && otherMovie.title == null) {
+            return 0;
+        }
+        if (title == null) {
+            return -1;
+        }
+        if (otherMovie.title == null) {
+            return +1;
+        }
+        return title.compareTo(otherMovie.title);
     }
 
     /**

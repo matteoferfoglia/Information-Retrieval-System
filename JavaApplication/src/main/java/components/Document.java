@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  *
  * @author Matteo Ferfoglia
  */
-public abstract class Document implements Serializable {
+public abstract class Document implements Serializable, Comparable<Document> {
 
     /**
      * The content of this instance.
