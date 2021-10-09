@@ -13,6 +13,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -84,10 +85,13 @@ public class InvertedIndex implements Serializable {
         scheduler.scheduleWithFixedDelay(progressControllerThread, DELAY_PROGRESS_CONTROLLER, DELAY_PROGRESS_CONTROLLER, TimeUnit.SECONDS);
 
         // Indexing
+        Predicate<Map.Entry<Posting.DocumentIdentifier, Document>> documentContentNotNullPredicate =
+                entry -> entry != null && entry.getKey() != null && entry.getValue() != null && entry.getValue().getContent() != null;
         invertedIndex.putAll(
                 corpus.getCorpus()
                         .entrySet()
                         .stream().unordered().parallel()
+                        .filter(documentContentNotNullPredicate)
                         .map(anEntry -> {
                             List<String> tokens = Utility.tokenize(anEntry.getValue());   // TODO : tokenization should return as a map also the position where the token is found in the document (for phrase query)
                             Posting.DocumentIdentifier docIdThisDocument = anEntry.getKey();

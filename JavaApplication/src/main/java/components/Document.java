@@ -1,9 +1,13 @@
 package components;
 
+import javafx.util.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * An instance of this class represents a document.
@@ -15,15 +19,15 @@ public abstract class Document implements Serializable {
     /**
      * The content of this instance.
      */
-    @NotNull
-    private String content;   // TODO: The content of the document does not need to be stored in RAM, but the system must know hot to retrieve it quickly. This may be the task of "getContent()
+    @Nullable
+    private Content content;   // TODO: The content of the document does not need to be stored in RAM, but the system must know hot to retrieve it quickly. This may be the task of "getContent()
 
     /**
      * Constructor.
      *
      * @param content The content of the document.
      */
-    public Document(@NotNull String content) {
+    public Document(@NotNull Content content) {
         this.content = Objects.requireNonNull(content, "The content cannot be null.");
     }
 
@@ -31,7 +35,6 @@ public abstract class Document implements Serializable {
      * Constructor.
      */
     protected Document() {
-        this("");
     }
 
     /**
@@ -39,8 +42,8 @@ public abstract class Document implements Serializable {
      *
      * @return The content of this instance.
      */
-    @NotNull
-    public String getContent() {
+    @Nullable
+    public Content getContent() {
         return content;
     }
 
@@ -49,7 +52,118 @@ public abstract class Document implements Serializable {
      *
      * @param content The content.
      */
-    protected void setContent(@NotNull String content) {
+    protected void setContent(@NotNull final Content content) {
         this.content = content;
+    }
+
+    /**
+     * Class representing the content of a {@link Document}.
+     * Different part of the document may have different ranks.
+     */
+    public static class Content implements Serializable {
+
+        /**
+         * {@link List} of {@link RankedSubcontent}.
+         * The list is sorted according to the order in which the subcontent appears
+         * in the document.
+         */
+        private final List<RankedSubcontent> content;
+
+        /**
+         * Constructor.
+         *
+         * @param rankedSubcontentList The list of {@link RankedSubcontent}s present in
+         *                             this instance of {@link Document}. The list should be sorted according to the
+         *                             order in which it appears in the document.
+         */
+        public Content(@NotNull List<@NotNull RankedSubcontent> rankedSubcontentList) {
+            this.content = Objects.requireNonNull(rankedSubcontentList);
+        }
+
+        /**
+         * @return The entire content of this instance.
+         */
+        @NotNull
+        public String getEntireTextContent() {
+            return content.stream().sequential()
+                    .map(RankedSubcontent::getContent)
+                    .collect(Collectors.joining("\n"));
+        }
+
+        /**
+         * Class representing a ranked subcontent.
+         */
+        public static class RankedSubcontent implements Comparable<RankedSubcontent>, Serializable {
+            /**
+             * The ranked subcontent.
+             */
+            private final Pair<@NotNull ContentRank, @NotNull String> rankedSubcontent;
+
+            /**
+             * Constructor.
+             *
+             * @param rank       The rank for this subcontent.
+             * @param subcontent The subcontent.
+             */
+            public RankedSubcontent(@NotNull ContentRank rank, @NotNull String subcontent) {
+                this.rankedSubcontent = new Pair<>(Objects.requireNonNull(rank), Objects.requireNonNull(subcontent));
+            }
+
+            /**
+             * @return the rank of this instance.
+             */
+            @NotNull
+            public ContentRank getRank() {
+                return rankedSubcontent.getKey();
+            }
+
+            /**
+             * @return the content of this instance.
+             */
+            @NotNull
+            public String getContent() {
+                return rankedSubcontent.getValue();
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+
+                RankedSubcontent that = (RankedSubcontent) o;
+
+                return rankedSubcontent.equals(that.rankedSubcontent);
+            }
+
+            @Override
+            public int hashCode() {
+                return rankedSubcontent.hashCode();
+            }
+
+            @Override
+            public String toString() {
+                return getContent();
+            }
+
+            /**
+             * Compare this instance with the given one according to {@link ContentRank#compareTo(RankedSubcontent)}.
+             *
+             * @param rankedSubcontent The other instance used for the comparison.
+             */
+            @SuppressWarnings("JavaDoc")    // Warning: Javadoc pointing to itself
+            @Override
+            public int compareTo(@NotNull Document.Content.RankedSubcontent rankedSubcontent) {
+                return this.getRank().compareTo(rankedSubcontent.getRank());
+            }
+
+            /**
+             * The rank for a part of a {@link Content}.
+             */
+            public interface ContentRank extends Comparable<ContentRank>, Serializable {
+
+            }
+
+        }
+
     }
 }
