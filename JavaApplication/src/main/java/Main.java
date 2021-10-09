@@ -1,14 +1,13 @@
 import components.Corpus;
-import components.Document;
 import components.Posting;
 import documentDescriptors.Movie;
+import org.jetbrains.annotations.NotNull;
 import query.BooleanExpression;
 import util.Properties;
 
 import java.io.*;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -89,48 +88,51 @@ public class Main {
             oos.close();
 
             // Use the information retrieval system
-
-            // First attempt
-            long startTime = System.currentTimeMillis();
-            List<String> valueToSearch = Arrays.asList("Vidya", "Bagchi", "Kolkata");
-            BooleanExpression
-                    be1 = new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, valueToSearch.get(0)),
-                    be2 = new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, valueToSearch.get(1)),
-                    be3 = new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, valueToSearch.get(2));
-            BooleanExpression be = new BooleanExpression(BooleanExpression.BINARY_OPERATOR.AND, be1,
-                    new BooleanExpression(BooleanExpression.BINARY_OPERATOR.AND, be2, be3));
-            List<Document> results = be.evaluate(ir.getInvertedIndex());
-            long stopTime = System.currentTimeMillis();
-            System.out.println(results.size() + " result" + (results.size() > 1 ? "s" : "") +
-                    " for \"" + valueToSearch + "\" found in " + (stopTime - startTime) + " ms:");
-            System.out.println("-\t" + results.stream().map(Object::toString).collect(Collectors.joining("\n-\t")));
-
-            // Second attempt   // TODO : refactoring to avoid code duplication
-            startTime = System.currentTimeMillis();
-            valueToSearch = Arrays.asList("Space", "Jam");
-            be1 = new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, valueToSearch.get(0));
-            be2 = new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, valueToSearch.get(1));
-            be = new BooleanExpression(BooleanExpression.BINARY_OPERATOR.AND, be1, be2);
-            results = be.evaluate(ir.getInvertedIndex());
-            stopTime = System.currentTimeMillis();
-            System.out.println(results.size() + " result" + (results.size() > 1 ? "s" : "") +
-                    " for \"" + valueToSearch + "\" found in " + (stopTime - startTime) + " ms:");
-            System.out.println("-\t" + results.stream().map(Object::toString).collect(Collectors.joining("\n-\t")));
-
-            // Thirsd attempt   // TODO : refactoring to avoid code duplication
-            startTime = System.currentTimeMillis();
-            valueToSearch = Arrays.asList("hand");
-            be1 = new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, valueToSearch.get(0));
-            results = be1.evaluate(ir.getInvertedIndex());
-            stopTime = System.currentTimeMillis();
-            System.out.println(results.size() + " result" + (results.size() > 1 ? "s" : "") +
-                    " for \"" + valueToSearch + "\" found in " + (stopTime - startTime) + " ms. First 5 results:");
-            System.out.println("-\t" + results.stream().limit(5).map(Object::toString).collect(Collectors.joining("\n-\t")));
-
+            final int MAX_N_RESULTS = 5;
+            System.out.println(andQueryAndReturnResultsAsString(ir, Arrays.asList("Vidya", "Bagchi", "Kolkata"), MAX_N_RESULTS));
+            System.out.println(andQueryAndReturnResultsAsString(ir, Arrays.asList("Space", "jam"), MAX_N_RESULTS));
+            System.out.println(andQueryAndReturnResultsAsString(ir, Collections.singletonList("hand"), MAX_N_RESULTS));
 
         } catch (Posting.DocumentIdentifier.NoMoreDocIdsAvailable | URISyntaxException | IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    static String andQueryAndReturnResultsAsString(@NotNull final InformationRetrievalSystem irs,
+                                                   @NotNull final Collection<@NotNull String> stringsToBePresent,
+                                                   int maxNumberOfResultsToReturn) {
+        long startTime, endTime;
+        StringBuilder sb = new StringBuilder();
+        startTime = System.currentTimeMillis();
+
+        BooleanExpression be = Objects.requireNonNull(stringsToBePresent)
+                .stream()
+                .map(aValueToBePresent -> new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, aValueToBePresent))
+                .reduce((b1, b2) -> new BooleanExpression(BooleanExpression.BINARY_OPERATOR.AND, b1, b2))
+                .orElse(new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, ""));
+
+        List<?> results = be.evaluate(Objects.requireNonNull(irs).getInvertedIndex());
+        endTime = System.currentTimeMillis();
+        sb.append(results.size()).append(" result").append(results.size() > 1 ? "s" : "").append(" for (\"")
+                .append(String.join("\" AND \"", stringsToBePresent))
+                .append("\") found in ").append(endTime - startTime)
+                .append(" ms.");
+        if (results.size() > 1) {
+            sb.append("First ")
+                    .append(Math.min(maxNumberOfResultsToReturn, results.size()))
+                    .append(" results");
+        }
+        if (results.size() > 0) {
+            sb.append(":\n-\t")
+                    .append(
+                            results.stream()
+                                    .limit(maxNumberOfResultsToReturn)
+                                    .map(Object::toString)
+                                    .collect(Collectors.joining("\n-\t"))
+                    );
+        }
+
+        return sb.toString();
     }
 }
