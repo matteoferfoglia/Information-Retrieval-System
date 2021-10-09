@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
  */
 public class Utility {
 
+    private static final String REGEX__NOT__VALID_CHARACTERS = "[^a-zA-Z0-9 ]";
+    private static final String REGEX_MULTIPLE_SPACES = " +";
+
     /**
      * Tokenize a {@link components.Document} and return the {@link java.util.List} of tokens as
      * {@link String} (eventually with duplicates) obtained from the {@link components.Document}.
@@ -26,7 +29,9 @@ public class Utility {
     @NotNull
     public static List<String> tokenize(@NotNull Document document) {
         return Arrays.stream(Objects.requireNonNull(Objects.requireNonNull(document).getContent())
-                        .getEntireTextContent().split(" "))
+                        .getEntireTextContent()
+                        .replaceAll(REGEX__NOT__VALID_CHARACTERS, " ")
+                        .replaceAll(REGEX_MULTIPLE_SPACES, " ").split(" "))
                 .map(Utility::normalize)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -43,7 +48,11 @@ public class Utility {
     @Nullable
     public static String normalize(@NotNull String token) {
         // TODO : not implemented yet, just a draft
-        String toReturn = token.replaceAll("[^a-zA-Z0-9]", "").trim();
+        String toReturn = token
+                .replaceAll(REGEX__NOT__VALID_CHARACTERS, " ")
+                .replaceAll(REGEX_MULTIPLE_SPACES, " ") // TODO : refactoring : same code in the previous method
+                .toLowerCase(Locale.ROOT)
+                .trim();
         return toReturn.isEmpty() ? null : toReturn;
     }
 
@@ -77,13 +86,14 @@ public class Utility {
      * Generalization of {@link java.util.function.BiFunction} to take
      * three input arguments and produce one output argument.
      * From <a href="https://stackoverflow.com/a/19649473">Stackoverflow</a>.
+     *
      * @param <A> Input type for argument 1.
      * @param <B> Input type for argument 2.
      * @param <C> Input type for argument 3.
      * @param <R> Output type.
      */
     @FunctionalInterface
-    public interface TriFunction<A,B,C,R> {
+    public interface TriFunction<A, B, C, R> {
 
         R apply(A a, B b, C c);
 
