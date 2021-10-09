@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -90,10 +91,24 @@ public abstract class Document implements Serializable {
                     .collect(Collectors.joining("\n"));
         }
 
+        public interface Summable<T> {
+            /**
+             * @param t The other instance
+             * @return the sum of this instance with the other.
+             */
+            int sum(@NotNull T t);
+
+            /**
+             * @param tCollection The collection of other instances to be sum to this one.
+             * @return the sum of this instance with the sum of all the other.
+             */
+            int sum(@NotNull Collection<@NotNull T> tCollection);
+        }
+
         /**
          * Class representing a ranked subcontent.
          */
-        public static class RankedSubcontent implements Comparable<RankedSubcontent>, Serializable {
+        public abstract static class RankedSubcontent implements Comparable<RankedSubcontent>, Summable<RankedSubcontent>, Serializable {
             /**
              * The ranked subcontent.
              */

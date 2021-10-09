@@ -39,19 +39,19 @@ public class Movie extends Document implements Externalizable {
      * value its corresponding language.
      */
     @NotNull
-    private static ConcurrentMap<String, String> languages = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, String> languages = new ConcurrentHashMap<>();
     /**
      * Map having as key an index value for the movie production
      * country, and as value its corresponding country.
      */
     @NotNull
-    private static ConcurrentMap<String, String> countries = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, String> countries = new ConcurrentHashMap<>();
     /**
      * Map having as key an index value for the movie genre, and
      * as value its corresponding genre.
      */
     @NotNull
-    private static ConcurrentMap<String, String> genres = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, String> genres = new ConcurrentHashMap<>();
     /**
      * The title of the movie.
      */
@@ -206,16 +206,16 @@ public class Movie extends Document implements Externalizable {
         {
             // Creation of the ranked subcontents
             List<Content.RankedSubcontent> rankedSubcontents = new ArrayList<>();
-            rankedSubcontents.add(new Content.RankedSubcontent(new MovieContentRank(MovieContentRank.Rank.TITLE), this.title));
+            rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.TITLE), this.title));
             if (this.releaseDate != null) { // may be null
-                rankedSubcontents.add(new Content.RankedSubcontent(new MovieContentRank(MovieContentRank.Rank.RELEASE_DATE), String.valueOf(this.releaseDate)));
+                rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.RELEASE_DATE), String.valueOf(this.releaseDate)));
             }
-            rankedSubcontents.add(new Content.RankedSubcontent(new MovieContentRank(MovieContentRank.Rank.BOX_OFFICE_REVENUE), String.valueOf(this.boxOfficeRevenue)));
-            rankedSubcontents.add(new Content.RankedSubcontent(new MovieContentRank(MovieContentRank.Rank.RUNNING_TIME), String.valueOf(this.runningTime)));
-            rankedSubcontents.add(new Content.RankedSubcontent(new MovieContentRank(MovieContentRank.Rank.LANGUAGE), this.languageKeys.stream().map(languages::get).collect(Collectors.joining())));
-            rankedSubcontents.add(new Content.RankedSubcontent(new MovieContentRank(MovieContentRank.Rank.COUNTRY), this.countryKeys.stream().map(countries::get).collect(Collectors.joining())));
-            rankedSubcontents.add(new Content.RankedSubcontent(new MovieContentRank(MovieContentRank.Rank.GENRE), this.genreKeys.stream().map(genres::get).collect(Collectors.joining())));
-            rankedSubcontents.add(new Content.RankedSubcontent(new MovieContentRank(MovieContentRank.Rank.DESCRIPTION), this.description));
+            rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.BOX_OFFICE_REVENUE), String.valueOf(this.boxOfficeRevenue)));
+            rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.RUNNING_TIME), String.valueOf(this.runningTime)));
+            rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.LANGUAGE), this.languageKeys.stream().map(languages::get).collect(Collectors.joining())));
+            rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.COUNTRY), this.countryKeys.stream().map(countries::get).collect(Collectors.joining())));
+            rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.GENRE), this.genreKeys.stream().map(genres::get).collect(Collectors.joining())));
+            rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.DESCRIPTION), this.description));
             content = new Content(rankedSubcontents);
         }
 
@@ -367,15 +367,32 @@ public class Movie extends Document implements Externalizable {
 
     @Override
     public String toString() {
+        assert languageKeys != null;
+        assert countryKeys != null;
+        assert genreKeys != null;
+
+        Utility.TriFunction<List<String>, String, Map<String, String>, String> keyListToValueListAsString = (keyList, fieldName, mapKeyToValue) -> {
+            List<String> values = keyList.stream()
+                    .filter(Objects::nonNull)
+                    .map(mapKeyToValue::get)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            return values.size() > 0 ? (", " + fieldName + ": " + values) : "";
+        };
+
+        String languages_ = keyListToValueListAsString.apply(languageKeys, "languageKeys", languages);
+        String countries_ = keyListToValueListAsString.apply(countryKeys, "countryKeys", countries);
+        String genres_ = keyListToValueListAsString.apply(genreKeys, "genreKeys", genres);
+
         return "{movie: {" +
-                "title:" + title + '\'' +
-                ", releaseDate:" + releaseDate +
-                ", boxOfficeRevenue:" + boxOfficeRevenue +
-                ", runningTime:" + runningTime +
-                ", languageKeys:" + languageKeys +
-                ", countryKeys:" + countryKeys +
-                ", genreKeys:" + genreKeys +
-                ", description:'" + description + '\'' +
+                "title: " + title + '\'' +
+                (releaseDate != null ? (", releaseDate: " + releaseDate) : "") +
+                (boxOfficeRevenue > 0 ? (", boxOfficeRevenue: " + boxOfficeRevenue + " $") : "") +
+                (runningTime > 0 ? (", runningTime: " + runningTime) : "") +
+                (languages_.isEmpty() ? "" : languages_) +
+                (countries_.isEmpty() ? "" : countries_) +
+                (genres_.isEmpty() ? "" : genres_) +
+                (description != null && !description.trim().isEmpty() ? (", description: " + description) : "") +
                 "} }";
     }
 
@@ -431,6 +448,48 @@ public class Movie extends Document implements Externalizable {
 
             public int getRankValue() {
                 return rankValue;
+            }
+        }
+
+
+        /**
+         * Concrete cass extending {@link components.Document.Content.RankedSubcontent}.
+         */
+        static class MovieRankedSubcontent extends Content.RankedSubcontent {
+
+            /**
+             * Constructor.
+             *
+             * @param rank       The rank for this subcontent.
+             * @param subcontent The subcontent.
+             */
+            public MovieRankedSubcontent(@NotNull ContentRank rank, @NotNull String subcontent) {
+                super(Objects.requireNonNull(rank), Objects.requireNonNull(subcontent));
+            }
+
+            private static int sumRanks(@NotNull Document.Content.RankedSubcontent first, @NotNull Document.Content.RankedSubcontent second) {
+                return sumRanks(
+                        ((MovieContentRank) first.getRank()).rank.getRankValue(),
+                        ((MovieContentRank) second.getRank()).rank.getRankValue()
+                );
+            }
+
+            private static int sumRanks(int rank1, int rank2) {
+                return (Rank.values().length - rank1) + (Rank.values().length - rank2);
+            }
+
+            @Override
+            public int sum(@NotNull Document.Content.RankedSubcontent rankedSubcontent) {
+                return sumRanks(this, rankedSubcontent);
+            }
+
+            @Override
+            public int sum(@NotNull Collection<Content.RankedSubcontent> rankedSubcontents) {
+                return Objects.requireNonNull(rankedSubcontents)
+                        .stream().unordered()
+                        .map(aRank -> ((MovieContentRank) aRank.getRank()).rank.getRankValue())
+                        .reduce(MovieRankedSubcontent::sumRanks)
+                        .orElse(0);
             }
         }
     }
