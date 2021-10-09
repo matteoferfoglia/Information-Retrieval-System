@@ -22,13 +22,36 @@ public class Properties {
     @NotNull
     private static final String defaultPropertyFileName = "properties.default.env";
 
+
     /**
-     * Name of the file with the user-specific properties for the application.
+     * Name of the file with the user-specific properties for the application,
+     * to be accessed with static getter/setter.
      * The user may have changed default properties (if the application allows).
      * The file must be placed in the resource folder ('resources').
      */
-    @NotNull
-    private static final String applicationPropertyFileName = "properties.userSpecific.env";
+    private static class ApplicationPropertyFilePath {
+        /**
+         * The path.
+         */
+        @NotNull
+        private volatile static String applicationPropertyFilePath = "properties.userSpecific.env";
+
+        /**
+         * Get the {@link ApplicationPropertyFilePath}.
+         */
+        @NotNull
+        public static String get() {
+            return applicationPropertyFilePath;
+        }
+
+        /**
+         * Set the {@link ApplicationPropertyFilePath}.
+         */
+        public static void set(@NotNull String applicationPropertyFilePath) {
+            ApplicationPropertyFilePath.applicationPropertyFilePath = Objects.requireNonNull(applicationPropertyFilePath);
+        }
+    }
+
     /**
      * The {@link ClassLoader} instance to use to load resources.
      */
@@ -49,10 +72,44 @@ public class Properties {
     private volatile static boolean wasLoadPropertiesInvoked = false;
 
     /**
+     * Path of the working directory, saved as class (to allow updates via setter).
+     */
+    private static class WorkingDirectoryPath {
+        /**
+         * The path.
+         */
+        @NotNull
+        private volatile static String workingDirectoryPath = "";
+
+        /**
+         * The path of {@link ApplicationPropertyFilePath} before {@link #set(String)} was invoked.
+         */
+        @NotNull
+        private volatile static String oldApplicationPropertyFilePath = "";
+
+        /**
+         * Get the {@link WorkingDirectoryPath}.
+         */
+        @NotNull
+        public static String get() {
+            return workingDirectoryPath;
+        }
+
+        /**
+         * Set the {@link WorkingDirectoryPath}.
+         */
+        public static void set(@NotNull String workingDirectoryPath) {
+            oldApplicationPropertyFilePath = ApplicationPropertyFilePath.get();
+            workingDirectoryPath = Objects.requireNonNull(workingDirectoryPath);
+            ApplicationPropertyFilePath.set(workingDirectoryPath + '/' + oldApplicationPropertyFilePath);
+        }
+    }
+
+    /**
      * Load application properties and create the working directory for the application.
      * First, default properties are loaded from the file named as specified in
      * {@link #defaultPropertyFileName}, then, user-specific properties will be
-     * loaded from the file named as specified in {@link #applicationPropertyFileName},
+     * loaded from the file named as specified in {@link ApplicationPropertyFilePath},
      * if the file is found. The latest properties are used, but, if they are
      * not available, default properties are used.
      *
@@ -87,9 +144,10 @@ public class Properties {
                 System.out.println("Working directory \"" + file_workingDirectory.getAbsolutePath() + "\" created.");
             }
         }
+        WorkingDirectoryPath.set(file_workingDirectory.getAbsolutePath());
 
         appProperties = new java.util.Properties(defaultProps);
-        File userSpecificPropertyFile = new File(applicationPropertyFileName);
+        File userSpecificPropertyFile = new File(ApplicationPropertyFilePath.get());
         try {
             if (!userSpecificPropertyFile.exists()) {
                 if (!userSpecificPropertyFile.createNewFile()) {
@@ -121,7 +179,8 @@ public class Properties {
             loadProperties();
         }
 
-        try (FileOutputStream out = new FileOutputStream(applicationPropertyFileName)) {
+        try (FileOutputStream out = new FileOutputStream(ApplicationPropertyFilePath.get())) {
+            // TODO : to save in working directory
             appProperties.store(out, Objects.requireNonNull(comment));
         } catch (IOException | NullPointerException e) {
             System.err.println("Impossible to save.");
