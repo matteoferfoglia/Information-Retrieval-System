@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -56,7 +57,7 @@ public class Movie extends Document implements Externalizable {
      * The title of the movie.
      */
     @Nullable
-    private String title;
+    private String movieTitle;
     /**
      * The released date of the movie.
      */
@@ -65,11 +66,11 @@ public class Movie extends Document implements Externalizable {
     /**
      * The Box office revenue of the movie, in dollars.
      */
-    private long boxOfficeRevenue;
+    private long boxOfficeRevenue = -1;
     /**
      * Running time of the movie, in seconds.
      */
-    private int runningTime;
+    private int runningTime = -1;
 
     /**
      * The {@link List} of keys to the languages of the movie, taken from {@link #languages}.
@@ -111,7 +112,10 @@ public class Movie extends Document implements Externalizable {
      * contain the metadata in the correct order.
      */
     private Movie(Object[] metadata) {
-        this.title = (String) metadata[0];
+        super();
+        this.movieTitle = (String) metadata[0];
+        assert this.movieTitle != null;
+        super.setTitle(movieTitle);
         {
             // date time conversion
             String providedString = ((String) metadata[1]);
@@ -130,7 +134,7 @@ public class Movie extends Document implements Externalizable {
                     // day and month set to 0
                     yyyy = Integer.parseInt(yyyy_mm_dd[0]);
                 } else {
-                    throw new DateTimeException("No release date provided for " + this.title);
+                    throw new DateTimeException("No release date provided for " + this.movieTitle);
                 }
                 this.releaseDate = LocalDate.of(yyyy, mm, dd);
             } catch (DateTimeException e) {
@@ -193,7 +197,7 @@ public class Movie extends Document implements Externalizable {
                  @NotNull List<String> languageKeys, @NotNull List<String> countryKeys,
                  @NotNull List<String> genreKeys, @NotNull String movieDescription) {
         super();
-        this.title = Objects.requireNonNull(movieTitle);
+        this.movieTitle = Objects.requireNonNull(movieTitle);
         this.releaseDate = releaseDate;
         this.boxOfficeRevenue = boxOfficeRevenue;
         this.runningTime = runningTime;
@@ -206,7 +210,7 @@ public class Movie extends Document implements Externalizable {
         {
             // Creation of the ranked subcontents
             List<Content.RankedSubcontent> rankedSubcontents = new ArrayList<>();
-            rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.TITLE), this.title));
+            rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.TITLE), this.movieTitle));
             if (this.releaseDate != null) { // may be null
                 rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.RELEASE_DATE), String.valueOf(this.releaseDate)));
             }
@@ -219,6 +223,7 @@ public class Movie extends Document implements Externalizable {
             content = new Content(rankedSubcontents);
         }
 
+        super.setTitle(this.movieTitle);
         super.setContent(content);   // TODO : inefficient because a new string which is the concatenation is created
     }
 
@@ -294,11 +299,11 @@ public class Movie extends Document implements Externalizable {
                                 Map.Entry::getKey,
                                 Map.Entry::getValue,
                                 (movie1, movie2) -> {// Merging function
-                                    boolean areMetadataInMovie2 = movie1.title == null;
+                                    boolean areMetadataInMovie2 = movie1.movieTitle == null;
                                     Movie movieWithMetadati = areMetadataInMovie2 ? movie2 : movie1;
                                     Movie movieWithDescription = areMetadataInMovie2 ? movie1 : movie2;
                                     return new Movie(
-                                            Objects.requireNonNull(movieWithMetadati.title),
+                                            Objects.requireNonNull(movieWithMetadati.movieTitle),
                                             movieWithMetadati.releaseDate,
                                             movieWithMetadati.boxOfficeRevenue,
                                             movieWithMetadati.runningTime,
@@ -315,7 +320,7 @@ public class Movie extends Document implements Externalizable {
         return new Corpus(
                 movies.values()
                         .stream().unordered().parallel()
-                        .filter(aMovie -> aMovie.title != null)
+                        .filter(aMovie -> aMovie.movieTitle != null)
                         .collect(Collectors.toList())
         );
 
@@ -370,41 +375,34 @@ public class Movie extends Document implements Externalizable {
         }
     }
 
-    /**
-     * @return The movie title followed by (one tab spaced) the JSON representation of the object.
-     */
     @Override
-    public String toString() {
-
-        assert title != null;
+    public @NotNull LinkedHashMap<String, ?> toSortedMapOfProperties() {
+        assert movieTitle != null;
         assert languageKeys != null;
         assert countryKeys != null;
         assert genreKeys != null;
 
-        Utility.TriFunction<List<String>, String, Map<String, String>, String> keyListToValueListAsString = (keyList, fieldName, mapKeyToValue) -> {
-            List<String> values = keyList.stream()
-                    .filter(Objects::nonNull)
-                    .map(mapKeyToValue::get)
-                    .filter(Objects::nonNull)
-                    .map(value -> "\"" + value + "\"")
-                    .collect(Collectors.toList());
-            return values.size() > 0 ? (", " + fieldName + ": " + values) : "";
-        };
+        Utility.MyBiFunction<@NotNull List<@NotNull String>, Map<@NotNull String, @NotNull String>, @NotNull List<?>> keyListToValueList =
+                (keyList, mapKeyToValue) ->
+                        keyList.stream()
+                                .map(mapKeyToValue::get)
+                                .filter(Objects::nonNull)
+                                .collect(Collectors.toList());
 
-        String languages_ = keyListToValueListAsString.apply(languageKeys, "languageKeys", languages);
-        String countries_ = keyListToValueListAsString.apply(countryKeys, "countryKeys", countries);
-        String genres_ = keyListToValueListAsString.apply(genreKeys, "genreKeys", genres);
+        Function<@NotNull LocalDate, @NotNull String> dateToString = date -> date.atStartOfDay() + ":00Z";
 
-        return title + "\t{" +
-                "title: \"" + title.replaceAll("\"", "'") + "\"" +
-                (releaseDate != null ? (", releaseDate: \"" + releaseDate.atStartOfDay() + ":00Z\"") : "") +
-                (boxOfficeRevenue > 0 ? (", boxOfficeRevenue: \"" + boxOfficeRevenue + " $\"") : "") +
-                (runningTime > 0 ? (", runningTime: " + runningTime) : "") +
-                (languages_.isEmpty() ? "" : languages_) +
-                (countries_.isEmpty() ? "" : countries_) +
-                (genres_.isEmpty() ? "" : genres_) +
-                (description != null && !description.trim().isEmpty() ? (", description: \"" + description.replaceAll("\"", "'") + "\"") : "") +
-                "}";
+        LinkedHashMap<String, Object> mapOfProperties = new LinkedHashMap<>();
+
+        mapOfProperties.put("Title", movieTitle.replaceAll("\"", "'"));
+        mapOfProperties.put("Release date", releaseDate != null ? dateToString.apply(releaseDate) : null);
+        mapOfProperties.put("Box office revenue", boxOfficeRevenue > 0 ? boxOfficeRevenue + " $" : null);
+        mapOfProperties.put("Running time", runningTime > 0 ? runningTime / 60 + " min" : null);
+        mapOfProperties.put("Language", keyListToValueList.apply(languageKeys, languages));
+        mapOfProperties.put("Country", keyListToValueList.apply(genreKeys, genres));
+        mapOfProperties.put("Genre", keyListToValueList.apply(genreKeys, genres));
+        mapOfProperties.put("Description", description);
+
+        return mapOfProperties;
     }
 
     @Override
@@ -417,16 +415,16 @@ public class Movie extends Document implements Externalizable {
 
         Movie otherMovie = (Movie) otherDocument;
 
-        if (title == null && otherMovie.title == null) {
+        if (movieTitle == null && otherMovie.movieTitle == null) {
             return 0;
         }
-        if (title == null) {
+        if (movieTitle == null) {
             return -1;
         }
-        if (otherMovie.title == null) {
+        if (otherMovie.movieTitle == null) {
             return +1;
         }
-        return title.compareTo(otherMovie.title);
+        return movieTitle.compareTo(otherMovie.movieTitle);
     }
 
     /**

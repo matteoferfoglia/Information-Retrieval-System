@@ -1,13 +1,18 @@
 package components;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import javafx.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import util.Utility;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -16,6 +21,9 @@ import java.util.stream.Collectors;
  * @author Matteo Ferfoglia
  */
 public abstract class Document implements Serializable, Comparable<Document> {
+
+    @Nullable
+    private String title;
 
     /**
      * The content of this instance.
@@ -28,7 +36,8 @@ public abstract class Document implements Serializable, Comparable<Document> {
      *
      * @param content The content of the document.
      */
-    public Document(@NotNull Content content) {
+    public Document(@NotNull String title, @NotNull Content content) {
+        this.title = Objects.requireNonNull(title, "The document title cannot be null.");
         this.content = Objects.requireNonNull(content, "The content cannot be null.");
     }
 
@@ -54,8 +63,45 @@ public abstract class Document implements Serializable, Comparable<Document> {
      * @param content The content.
      */
     protected void setContent(@NotNull final Content content) {
-        this.content = content;
+        this.content = Objects.requireNonNull(content);
     }
+
+    /**
+     * Setter for {@link #title}.
+     *
+     * @param title The content.
+     */
+    protected void setTitle(@NotNull String title) {
+        this.title = Objects.requireNonNull(title);
+    }
+
+    @NotNull
+    public String toString() {
+        return title + "\t" + toJson();
+    }
+
+    /**
+     * @return The JSON representation of this instance
+     */
+    @NotNull
+    public String toJson() {
+        LinkedHashMap<?, ?> mapOfProperties = toSortedMapOfProperties();
+        try {
+            return Utility.convertToJson(mapOfProperties);
+        } catch (JsonProcessingException e) {
+            Logger.getLogger(this.getClass().getCanonicalName())
+                    .log(Level.WARNING, "Error during JSON serialization of " + mapOfProperties + ".", e);
+            return "{}";
+        }
+    }
+
+    /**
+     * @return A {@link LinkedHashMap} (sortedd) having as keys the names of
+     * the properties of this instance that you want to expose and as values
+     * the correspondent value of that attributes.
+     */
+    public abstract @NotNull LinkedHashMap<String, ?> toSortedMapOfProperties();
+
 
     /**
      * Class representing the content of a {@link Document}.
