@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -79,7 +80,19 @@ public class Utility {
                 .entrySet().stream().unordered().parallel() // order does not matter in JSON entries
                 .map(entry -> new AbstractMap.SimpleEntry<String, Object>((String) entry.getKey(), entry.getValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
 
+    /**
+     * Convert a given object to JSON format.
+     *
+     * @param object The object to convert to JSON.
+     * @return The string representing the given object in JSON format.
+     * @throws JsonProcessingException If an error occurs during the conversion to JSON.
+     */
+    @NotNull
+    public static String convertToJson(@NotNull Object object)
+            throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(Objects.requireNonNull(object));
     }
 
     /**
@@ -101,6 +114,29 @@ public class Utility {
                 Function<? super R, ? extends V> after) {
             Objects.requireNonNull(after);
             return (A a, B b, C c) -> after.apply(apply(a, b, c));
+        }
+
+        default <D,V> TriFunction<A, B, C, V> andThen(
+                BiFunction<? super R, D, ? extends V> after, D parameter) {
+            Objects.requireNonNull(after);
+            return (A a, B b, C c) -> after.apply(apply(a, b, c), parameter);
+        }
+    }
+
+    /**
+     * Generalization of {@link java.util.function.BiFunction}.
+     *
+     * @param <A> Input type for argument 1.
+     * @param <B> Input type for argument 2.
+     * @param <R> Output type.
+     */
+    @FunctionalInterface
+    public interface MyBiFunction<A, B, R> extends BiFunction<A,B,R> {
+
+        default <D,V> BiFunction<A,B,V> andThen(
+                BiFunction<? super R, D, V> after, D parameter) {
+            Objects.requireNonNull(after);
+            return (A a, B b) -> after.apply(apply(a, b), parameter);
         }
     }
 
