@@ -1,9 +1,9 @@
-package components;
+package it.units.informationretrieval.ir_boolean_model.entities;
 
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import it.units.informationretrieval.ir_boolean_model.utils.Properties;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.jetbrains.annotations.NotNull;
-import util.Properties;
-import util.Utility;
 
 import java.io.Serializable;
 import java.util.*;

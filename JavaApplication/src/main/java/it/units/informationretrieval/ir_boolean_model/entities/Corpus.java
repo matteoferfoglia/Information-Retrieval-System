@@ -1,7 +1,7 @@
-package components;
+package it.units.informationretrieval.ir_boolean_model.entities;
 
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
-import util.Utility;
 
 import java.io.Serializable;
 import java.util.*;
@@ -25,8 +25,8 @@ public class Corpus implements Serializable {
     /**
      * Default Constructor. Creates an empty-corpus.
      *
-     * @throws components.Posting.DocumentIdentifier.NoMoreDocIdsAvailable If no more {@link components.Posting.DocumentIdentifier}s
-     *                                                                     are available, hence the {@link Corpus} cannot be created.
+     * @throws Posting.DocumentIdentifier.NoMoreDocIdsAvailable If no more {@link Posting.DocumentIdentifier}s
+     *                               are available, hence the {@link Corpus} cannot be created.
      */
     public Corpus(Collection<? extends Document> documents) throws Posting.DocumentIdentifier.NoMoreDocIdsAvailable {
 
@@ -60,7 +60,7 @@ public class Corpus implements Serializable {
      *                 corresponding {@link List} of {@link Document}s is
      *                 wanted.
      * @return the {@link List} of {@link Document}s in this {@link Corpus}
-     * for which the {@link components.Posting.DocumentIdentifier} is present
+     * for which the {@link Posting.DocumentIdentifier} is present
      * in any of the {@link Posting} in the parameter.
      */
     @NotNull
@@ -75,7 +75,7 @@ public class Corpus implements Serializable {
 
     /**
      * Returns the head of this instance, i.e., the first documents,
-     * ordered according to their {@link components.Posting.DocumentIdentifier}.
+     * ordered according to their {@link Posting.DocumentIdentifier}.
      * This method can be used for printing purposes (e.g., during testing).
      *
      * @param howMany The number of documents to return. If it exceeds the total

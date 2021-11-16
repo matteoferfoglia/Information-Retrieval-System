@@ -1,9 +1,11 @@
-import components.Corpus;
-import components.Posting;
-import documentDescriptors.Movie;
+package it.units.informationretrieval.ir_boolean_model;
+
+import it.units.informationretrieval.ir_boolean_model.document_descriptors.Movie;
+import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
+import it.units.informationretrieval.ir_boolean_model.entities.Posting;
+import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
+import it.units.informationretrieval.ir_boolean_model.utils.Properties;
 import org.jetbrains.annotations.NotNull;
-import query.BooleanExpression;
-import util.Properties;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -93,7 +95,7 @@ public class Main {
             System.out.println(andQueryAndReturnResultsAsString(ir, Arrays.asList("Space", "jam"), MAX_N_RESULTS));
             System.out.println(andQueryAndReturnResultsAsString(ir, Collections.singletonList("hand"), MAX_N_RESULTS));
 
-        } catch (Posting.DocumentIdentifier.NoMoreDocIdsAvailable | URISyntaxException | IOException e) {
+        } catch ( URISyntaxException | IOException | Posting.DocumentIdentifier.NoMoreDocIdsAvailable e) {
             e.printStackTrace();
         }
 

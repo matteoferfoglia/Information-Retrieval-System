@@ -1,4 +1,4 @@
-package util;
+package it.units.informationretrieval.ir_boolean_model.utils;
 
 /**
  * An instance of this class is a synchronized integer counter,

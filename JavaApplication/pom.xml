@@ -5,14 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>it.units.informationretrieval</groupId>
-    <artifactId>IR-Boolean-Model</artifactId>
+    <artifactId>ir_boolean_model</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <name>Information Retrieval Project</name>
     <description>
         Project for the Information Retrieval course (A.Y. 2020-2021).
         This project implements an IR (Information Retrieval) System able to
-        answer boolean queries (Boolean model).
+        answer boolean ir_system.queries (Boolean model).
     </description>
 
     <developers>
@@ -28,11 +28,11 @@
     </developers>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
         <maven.required.version>3.5</maven.required.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.main.class>Main</project.main.class>
+        <project.main.class>ir_system.Main</project.main.class>
     </properties>
 
     <url/><!-- Avoid warning "No project URL defined - decoration links will not be relativized!" -->

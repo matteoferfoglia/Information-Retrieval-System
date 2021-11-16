@@ -1,10 +1,11 @@
-package components;
+package it.units.informationretrieval.ir_boolean_model.entities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import javafx.util.Pair;
+import it.units.informationretrieval.ir_boolean_model.utils.Pair;
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import it.units.informationretrieval.ir_boolean_model.utils.Properties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import util.Utility;
 
 import java.io.Serializable;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package util;
+package it.units.informationretrieval.ir_boolean_model.utils;
 
 import java.util.function.Function;
 

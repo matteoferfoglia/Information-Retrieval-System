@@ -1,10 +1,9 @@
-package components;
+package it.units.informationretrieval.ir_boolean_model.entities;
 
+import it.units.informationretrieval.ir_boolean_model.utils.SynchronizedCounter;
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import util.SynchronizedCounter;
-import util.Utility;
-
 import java.io.Serializable;
 import java.util.Objects;
 

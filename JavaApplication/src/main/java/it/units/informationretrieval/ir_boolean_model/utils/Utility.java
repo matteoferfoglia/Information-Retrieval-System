@@ -1,8 +1,8 @@
-package util;
+package it.units.informationretrieval.ir_boolean_model.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import components.Document;
+import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,8 +24,8 @@ public class Utility {
     private static final String REGEX_MULTIPLE_SPACES = " +";
 
     /**
-     * Tokenize a {@link components.Document} and return the {@link java.util.List} of tokens as
-     * {@link String} (eventually with duplicates) obtained from the {@link components.Document}.
+     * Tokenize a {@link Document} and return the {@link java.util.List} of tokens as
+     * {@link String} (eventually with duplicates) obtained from the {@link Document}.
      */
     @NotNull
     public static List<String> tokenize(@NotNull Document document) {
