@@ -1,13 +1,13 @@
-package documentDescriptors;
+package it.units.informationretrieval.ir_boolean_model.document_descriptors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import components.Corpus;
-import components.Document;
-import components.Posting;
+import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
+import it.units.informationretrieval.ir_boolean_model.entities.Document;
+import it.units.informationretrieval.ir_boolean_model.entities.Posting;
+import it.units.informationretrieval.ir_boolean_model.utils.FunctionThrowingException;
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import util.FunctionThrowingException;
-import util.Utility;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -233,8 +233,8 @@ public class Movie extends Document implements Externalizable {
     /**
      * Create a {@link Corpus} of {@link Movie}s.
      *
-     * @throws components.Posting.DocumentIdentifier.NoMoreDocIdsAvailable If no more {@link components.Posting.DocumentIdentifier}s can be generated.
-     * @throws URISyntaxException                                          If an exception is thrown while getting the URI of the files containing the information.
+     * @throws Posting.DocumentIdentifier.NoMoreDocIdsAvailable If no more {@link Posting.DocumentIdentifier}s can be generated.
+     * @throws URISyntaxException                               If an exception is thrown while getting the URI of the files containing the information.
      */
     @NotNull
     public static Corpus createCorpus()
@@ -250,7 +250,7 @@ public class Movie extends Document implements Externalizable {
         FunctionThrowingException<String, BufferedReader, URISyntaxException> openFile = filePath ->
                 new BufferedReader(
                         new InputStreamReader(
-                                Objects.requireNonNull(Movie.class.getClassLoader().getResourceAsStream(filePath), "Invalid null resource")
+                                Objects.requireNonNull(Movie.class.getResourceAsStream(filePath), "Invalid null resource")
                         )
                 );
 
@@ -428,7 +428,7 @@ public class Movie extends Document implements Externalizable {
     }
 
     /**
-     * Class implementing {@link components.Document.Content.RankedSubcontent.ContentRank} for {@link Movie}s.
+     * Class implementing {@link Content.RankedSubcontent.ContentRank} for {@link Movie}s.
      */
     private static class MovieContentRank implements Content.RankedSubcontent.ContentRank {
         /**
@@ -484,7 +484,7 @@ public class Movie extends Document implements Externalizable {
 
 
         /**
-         * Concrete cass extending {@link components.Document.Content.RankedSubcontent}.
+         * Concrete cass extending {@link Content.RankedSubcontent}.
          */
         static class MovieRankedSubcontent extends Content.RankedSubcontent {
 

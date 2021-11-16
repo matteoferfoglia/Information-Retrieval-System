@@ -1,19 +1,19 @@
-package query;
+package it.units.informationretrieval.ir_boolean_model.queries;
 
-import components.Document;
-import components.InvertedIndex;
-import components.PostingList;
+import it.units.informationretrieval.ir_boolean_model.entities.Document;
+import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex;
+import it.units.informationretrieval.ir_boolean_model.entities.PostingList;
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import util.Utility;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static components.PostingList.intersection;
-import static components.PostingList.union;
+import static it.units.informationretrieval.ir_boolean_model.entities.PostingList.intersection;
+import static it.units.informationretrieval.ir_boolean_model.entities.PostingList.union;
 
 /**
  * An instance of this class is a boolean expression to be evaluated
@@ -256,7 +256,7 @@ public class BooleanExpression {
                 }
             } else if (matchingPhrase != null) {
                 throw new UnsupportedOperationException("Not implemented yet");
-                // TODO : implement for phrasal queries (not implemented yet)
+                // TODO : implement for phrasal ir_system.queries (not implemented yet)
             } else {
                 throw new NullPointerException("The matching value either the matching phrase were null but they sould not.");
             }
@@ -304,12 +304,12 @@ public class BooleanExpression {
      */
     public enum BINARY_OPERATOR {
         /**
-         * AND operator. Both the {@link query.BooleanExpression}s (operands) must hold.
+         * AND operator. Both the {@link BooleanExpression}s (operands) must hold.
          */
         AND,
 
         /**
-         * OR operator. At least one of the {@link query.BooleanExpression}s (operands) must hold.
+         * OR operator. At least one of the {@link BooleanExpression}s (operands) must hold.
          */
         OR
     }

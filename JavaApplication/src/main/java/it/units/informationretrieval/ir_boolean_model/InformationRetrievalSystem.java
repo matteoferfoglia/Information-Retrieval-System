@@ -1,5 +1,7 @@
-import components.Corpus;
-import components.InvertedIndex;
+package it.units.informationretrieval.ir_boolean_model;
+
+import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
+import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;

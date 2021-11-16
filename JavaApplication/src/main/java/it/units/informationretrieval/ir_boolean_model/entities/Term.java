@@ -1,4 +1,4 @@
-package components;
+package it.units.informationretrieval.ir_boolean_model.entities;
 
 import org.jetbrains.annotations.NotNull;
 
