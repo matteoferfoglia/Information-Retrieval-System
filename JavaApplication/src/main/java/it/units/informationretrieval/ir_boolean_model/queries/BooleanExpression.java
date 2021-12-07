@@ -13,8 +13,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static it.units.informationretrieval.ir_boolean_model.entities.PostingList.intersection;
-import static it.units.informationretrieval.ir_boolean_model.entities.PostingList.union;
+import static it.units.informationretrieval.ir_boolean_model.entities.Posting.intersection;
+import static it.units.informationretrieval.ir_boolean_model.entities.Posting.union;
 
 /**
  * An instance of this class is a boolean expression to be evaluated
@@ -220,7 +220,7 @@ public class BooleanExpression {
      * @throws UnsupportedOperationException If the operator for the expression is unknown.
      */
     @NotNull
-    private PostingList evaluate_(@NotNull final InvertedIndex invertedIndex)
+    private List<Posting> evaluate_(@NotNull final InvertedIndex invertedIndex)
             throws UnsupportedOperationException {
         Objects.requireNonNull(invertedIndex, "The inverted index cannot be null.");
 
@@ -232,14 +232,14 @@ public class BooleanExpression {
             return booleanExpressions
                     .stream().unordered().parallel()
                     .map(expr -> expr.evaluate_(invertedIndex))
-                    .reduce((postingList1, postingList2) ->
+                    .reduce((listOfPostings1, listOfPostings2) ->
                             switch (Objects.requireNonNull(binaryOperator, "The operator is null, but should not.")) {
-                                case AND -> intersection(postingList1, postingList2);
-                                case OR -> union(postingList1, postingList2);
+                                case AND -> intersection(listOfPostings1, listOfPostings2);
+                                case OR -> union(listOfPostings1, listOfPostings2);
                                 //noinspection UnnecessaryDefault
                                 default -> throw new UnsupportedOperationException("Unknown operator");
                             })
-                    .orElse(new PostingList());
+                    .orElse(new ArrayList<>());
 
         } else {
 
@@ -247,10 +247,10 @@ public class BooleanExpression {
                 String normalizedToken = Utility.normalize(matchingValue);  // TODO : should be in the constructor?
                 if (normalizedToken == null) {
                     // The normalization return null, then no matches
-                    return new PostingList();
+                    return new ArrayList<>();
                 } else {
                     PostingList postingList = invertedIndex.getPostingList(normalizedToken);
-                    return postingList == null ? new PostingList() : postingList;
+                    return postingList == null ? new ArrayList<>() : postingList.toListOfPostings();
                 }
             } else if (matchingPhrase != null) {
                 throw new UnsupportedOperationException("Not implemented yet");
@@ -277,7 +277,6 @@ public class BooleanExpression {
         return invertedIndex.getCorpus()
                 .getDocuments(
                         evaluate_(invertedIndex)
-                                .toList()
                                 .stream()
                                 .map(Posting::getDocId)
                                 .distinct()

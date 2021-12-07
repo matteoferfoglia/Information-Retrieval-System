@@ -4,10 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -55,81 +52,6 @@ public class PostingList implements Serializable {
         Objects.requireNonNull(postings, "The input argument cannot be null.");
         this.postings = postings.stream().unordered().distinct().collect(Collectors.toList());
         setSkipPointers();
-    }
-
-    /**
-     * Returns a new instance of {@link PostingList} which is the union of the
-     * two {@link PostingList}s given as parameters.
-     *
-     * @param a A {@link PostingList}.
-     * @param b The other {@link PostingList}.
-     * @return a new instance of {@link PostingList} which is the union of the
-     * two given {@link PostingList}s as parameters.
-     */
-    @NotNull
-    public static PostingList union(@NotNull final PostingList a, @NotNull final PostingList b) {   // TODO: test
-        Objects.requireNonNull(a);
-        Objects.requireNonNull(b);
-
-        List<Posting> a_ = a.postings;
-        List<Posting> b_ = b.postings;
-        ArrayList<Posting> union = new ArrayList<>(a_.size() + b_.size());
-        int i = 0, j = 0, comparison;
-        while (i < a_.size() && j < b_.size()) {
-            comparison = a_.get(i).compareTo(b_.get(j));
-            if (comparison == 0) {
-                union.add(a_.get(i++));
-                j++;
-            } else if (comparison < 0) {
-                union.add(a_.get(i++));
-            } else {
-                union.add(b_.get(j++));
-            }
-        }
-        union.addAll(a_.subList(i, a_.size()));
-        union.addAll(b_.subList(j, b_.size()));
-        union.trimToSize();
-
-        return new PostingList(union);
-
-        // TODO : positional union not implemented yet
-    }
-
-    /**
-     * Returns a new instance of {@link PostingList} which is the intersection of the
-     * two {@link PostingList}s given as parameters.
-     *
-     * @param a A {@link PostingList}.
-     * @param b The other {@link PostingList}.
-     * @return a new instance of {@link PostingList} which is the union of the
-     * two given {@link PostingList}s as parameters.
-     */
-    @NotNull
-    public static PostingList intersection(@NotNull final PostingList a, @NotNull final PostingList b) {    //  TODO: test
-        Objects.requireNonNull(a);
-        Objects.requireNonNull(b);
-
-        List<Posting> a_ = a.postings,
-                b_ = b.postings;
-
-        ArrayList<Posting> intersection = new ArrayList<>(a_.size());
-        int i = 0, j = 0, comparison;
-        while (i < a_.size() && j < b_.size()) {
-            comparison = a_.get(i).compareTo(b_.get(j));
-            if (comparison == 0) {
-                intersection.add(a_.get(i++));
-                j++;
-            } else if (comparison < 0) {
-                i++;
-            } else {
-                j++;
-            }
-        }
-        intersection.trimToSize();
-
-        return new PostingList(intersection);
-
-        // TODO : positional intersect not implemented yet
     }
 
     /**
@@ -181,17 +103,17 @@ public class PostingList implements Serializable {
     }
 
     /**
-     * @return This instance as {@link List} of {@link Posting}s.
+     * @return This instance as unmodifiable {@link List} of {@link Posting}s.
      */
     @NotNull
-    public List<Posting> toList() {
-        return postings;
+    public List<Posting> toListOfPostings() {
+        return Collections.unmodifiableList(postings);
     }
 
     /**
      * Sort this instance.
      */
-    private void sort() {
+    private void sort() {   // TODO: benchmark
         postings = postings.stream().sequential().sorted().toList();
     }
 

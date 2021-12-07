@@ -7,6 +7,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -53,6 +55,76 @@ public class Posting implements Comparable<Posting>, Serializable {
         creationInstant = Instant.now();
 //        this. positions = Objects.requireNonNull(positions, "The positions object cannot be null.");  // TODO : positions not handled yet
         // TODO : skipPointer not handled yet.
+    }
+
+    /**
+     * Returns the {@link List} of {@link Posting} which is the union of the
+     * two {@link PostingList}s given as parameters.
+     *
+     * @param a A {@link PostingList}.
+     * @param b The other {@link PostingList}.
+     * @return the {@link List} of {@link Posting} which is the union of the
+     * two given {@link PostingList}s as parameters.
+     */
+    @NotNull
+    public static List<Posting> union(@NotNull final List<Posting> a, @NotNull final List<Posting> b) {   // TODO: test and benchmark
+        Objects.requireNonNull(a);
+        Objects.requireNonNull(b);
+
+        ArrayList<Posting> union = new ArrayList<>(a.size() + b.size());
+        int i = 0, j = 0, comparison;
+        while (i < a.size() && j < b.size()) {
+            comparison = a.get(i).compareTo(b.get(j));
+            if (comparison == 0) {
+                union.add(a.get(i++));
+                j++;
+            } else if (comparison < 0) {
+                union.add(a.get(i++));
+            } else {
+                union.add(b.get(j++));
+            }
+        }
+        union.addAll(a.subList(i, a.size()));
+        union.addAll(b.subList(j, b.size()));
+        union.trimToSize();
+
+        return union;
+
+        // TODO : positional union not implemented yet
+    }
+
+    /**
+     * Returns Returns the {@link List} of {@link Posting} which is the intersection of the
+     * two {@link PostingList}s given as parameters.
+     *
+     * @param a A {@link PostingList}.
+     * @param b The other {@link PostingList}.
+     * @return the {@link List} of {@link Posting} which is the union of the
+     * two given {@link PostingList}s as parameters.
+     */
+    @NotNull
+    public static List<Posting> intersection(@NotNull final List<Posting> a, @NotNull final List<Posting> b) {    //  TODO: test and benchmark
+        Objects.requireNonNull(a);
+        Objects.requireNonNull(b);
+
+        ArrayList<Posting> intersection = new ArrayList<>(a.size());
+        int i = 0, j = 0, comparison;
+        while (i < a.size() && j < b.size()) {
+            comparison = a.get(i).compareTo(b.get(j));
+            if (comparison == 0) {
+                intersection.add(a.get(i++));
+                j++;
+            } else if (comparison < 0) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+        intersection.trimToSize();
+
+        return intersection;
+
+        // TODO : positional intersect not implemented yet
     }
 
 //    /** @return the number of occurrences of the {@link Term} associated with this

@@ -32,9 +32,9 @@ public class Term implements Comparable<Term>, Serializable {
      *                new instance of {@link Term}.
      * @param term    The actual term for this instance.
      */
-    public Term(@NotNull Posting posting, @NotNull String term) {
-        this.postingList = new PostingList(Objects.requireNonNull(posting, "The input posting cannot be null."));
-        this.term = Objects.requireNonNull(term, "The input term cannot be null.");
+    public Term(@NotNull final Posting posting, @NotNull final String term) {
+        this.postingList = new PostingList(Objects.requireNonNull(posting));
+        this.term = Objects.requireNonNull(term);
     }
 
     /**
