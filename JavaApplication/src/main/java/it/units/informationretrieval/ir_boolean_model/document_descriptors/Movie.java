@@ -2,9 +2,9 @@ package it.units.informationretrieval.ir_boolean_model.document_descriptors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
+import it.units.informationretrieval.ir_boolean_model.entities.DocumentIdentifier;
 import it.units.informationretrieval.ir_boolean_model.entities.document.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.document.DocumentContent;
-import it.units.informationretrieval.ir_boolean_model.entities.document.DocumentIdentifier;
 import it.units.informationretrieval.ir_boolean_model.entities.document.RankedSubcontent;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.utils.FunctionThrowingException;
@@ -43,19 +43,19 @@ public class Movie extends Document implements Externalizable {
      * value its corresponding language.
      */
     @NotNull
-    private static ConcurrentMap<String, String> languages = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, String> languages = new ConcurrentHashMap<>();
     /**
      * Map having as key an index value for the movie production
      * country, and as value its corresponding country.
      */
     @NotNull
-    private static ConcurrentMap<String, String> countries = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, String> countries = new ConcurrentHashMap<>();
     /**
      * Map having as key an index value for the movie genre, and
      * as value its corresponding genre.
      */
     @NotNull
-    private static ConcurrentMap<String, String> genres = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, String> genres = new ConcurrentHashMap<>();
     /**
      * The title of the movie.
      */

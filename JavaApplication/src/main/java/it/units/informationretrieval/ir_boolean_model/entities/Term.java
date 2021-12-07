@@ -27,12 +27,12 @@ public class Term implements Comparable<Term>, Serializable {
     /**
      * Constructor.
      *
-     * @param posting The {@link Posting} to be used to construct the
-     *                new instance of {@link Term}.
-     * @param term    The actual term for this instance.
+     * @param postingList The {@link PostingList} to be used to construct the
+     *                    new instance of {@link Term}.
+     * @param term        The actual term for this instance.
      */
-    public Term(@NotNull final Posting posting, @NotNull final String term) {
-        this.postingList = new PostingList(Objects.requireNonNull(posting));
+    public Term(@NotNull final PostingList postingList, @NotNull final String term) {
+        this.postingList = Objects.requireNonNull(postingList);
         this.term = Objects.requireNonNull(term);
     }
 

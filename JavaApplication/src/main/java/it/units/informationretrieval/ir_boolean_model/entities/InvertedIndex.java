@@ -1,7 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
 import it.units.informationretrieval.ir_boolean_model.entities.document.Document;
-import it.units.informationretrieval.ir_boolean_model.entities.document.DocumentIdentifier;
 import it.units.informationretrieval.ir_boolean_model.utils.Properties;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.apache.commons.collections4.trie.PatriciaTrie;
@@ -101,7 +100,7 @@ public class InvertedIndex implements Serializable {
                             // Return a Map having tokens as keys and the corresponding List<Terms> as values, for the document in this entry
                             Set<Map.Entry<String, Term>> entrySet =
                                     tokens.stream().unordered().parallel()
-                                            .map(aToken -> new AbstractMap.SimpleEntry<>(aToken, new Term(new Posting(docIdThisDocument), aToken)))
+                                            .map(aToken -> new AbstractMap.SimpleEntry<>(aToken, new Term(new PostingList(new Posting(docIdThisDocument))/*TODO: resee this*/, aToken)))
                                             .collect(
                                                     Collectors.toConcurrentMap(
                                                             Map.Entry::getKey,

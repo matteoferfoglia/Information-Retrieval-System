@@ -1,6 +1,5 @@
-package it.units.informationretrieval.ir_boolean_model.entities.document;
+package it.units.informationretrieval.ir_boolean_model.entities;
 
-import it.units.informationretrieval.ir_boolean_model.entities.Posting;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.utils.SynchronizedCounter;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;

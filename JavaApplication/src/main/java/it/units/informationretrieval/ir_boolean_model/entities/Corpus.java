@@ -1,7 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
 import it.units.informationretrieval.ir_boolean_model.entities.document.Document;
-import it.units.informationretrieval.ir_boolean_model.entities.document.DocumentIdentifier;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +19,7 @@ public class Corpus implements Serializable {
 
     /**
      * The corpus, saved as relationships (with a {@link java.util.Map})
-     * between a {@link Posting} and the corresponding {@link Document}.
+     * between a {@link DocumentIdentifier} and the corresponding {@link Document}.
      */
     @NotNull
     private final Map<DocumentIdentifier, Document> corpus;
