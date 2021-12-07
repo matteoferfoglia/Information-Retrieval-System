@@ -5,10 +5,14 @@ module it.units.informationretrieval.ir_boolean_model {
     requires org.apache.commons.collections4;
     requires com.fasterxml.jackson.databind;
 
-    opens it.units.informationretrieval.ir_boolean_model.entities to java.logging;
-
     exports it.units.informationretrieval.ir_boolean_model.document_descriptors;
     exports it.units.informationretrieval.ir_boolean_model.entities;
     exports it.units.informationretrieval.ir_boolean_model.queries;
     exports it.units.informationretrieval.ir_boolean_model.utils;
+    exports it.units.informationretrieval.ir_boolean_model.entities.document;
+    exports it.units.informationretrieval.ir_boolean_model.exceptions;
+
+    opens it.units.informationretrieval.ir_boolean_model.entities to java.logging;
+    opens it.units.informationretrieval.ir_boolean_model.entities.document to java.logging;
+    opens it.units.informationretrieval.ir_boolean_model.exceptions to java.logging;
 }

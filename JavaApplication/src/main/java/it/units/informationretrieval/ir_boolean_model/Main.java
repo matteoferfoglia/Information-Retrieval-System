@@ -2,7 +2,7 @@ package it.units.informationretrieval.ir_boolean_model;
 
 import it.units.informationretrieval.ir_boolean_model.document_descriptors.Movie;
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
-import it.units.informationretrieval.ir_boolean_model.entities.Posting;
+import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
 import it.units.informationretrieval.ir_boolean_model.utils.Properties;
 import org.jetbrains.annotations.NotNull;
@@ -95,7 +95,7 @@ public class Main {
             System.out.println(andQueryAndReturnResultsAsString(ir, Arrays.asList("Space", "jam"), MAX_N_RESULTS));
             System.out.println(andQueryAndReturnResultsAsString(ir, Collections.singletonList("hand"), MAX_N_RESULTS));
 
-        } catch ( URISyntaxException | IOException | Posting.DocumentIdentifier.NoMoreDocIdsAvailable e) {
+        } catch (URISyntaxException | IOException | NoMoreDocIdsAvailable e) {
             e.printStackTrace();
         }
 

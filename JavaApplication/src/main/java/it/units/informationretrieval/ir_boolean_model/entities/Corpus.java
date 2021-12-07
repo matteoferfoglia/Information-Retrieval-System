@@ -1,5 +1,9 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
+import it.units.informationretrieval.ir_boolean_model.entities.document.Document;
+import it.units.informationretrieval.ir_boolean_model.entities.document.DocumentIdentifier;
+import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
+import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,15 +24,16 @@ public class Corpus implements Serializable {
      * between a {@link Posting} and the corresponding {@link Document}.
      */
     @NotNull
-    private final Map<Posting.DocumentIdentifier, Document> corpus;
+    private final Map<DocumentIdentifier, Document> corpus;
 
     /**
-     * Default Constructor. Creates an empty-corpus.
+     * Constructor. Creates a corpus from a {@link Collection}.
      *
-     * @throws Posting.DocumentIdentifier.NoMoreDocIdsAvailable If no more {@link Posting.DocumentIdentifier}s
+     * @param documents The {@link Collection} of {@link Document}s to use to create this instance.
+     * @throws NoMoreDocIdsAvailable If no more {@link DocumentIdentifier}s
      *                               are available, hence the {@link Corpus} cannot be created.
      */
-    public Corpus(Collection<? extends Document> documents) throws Posting.DocumentIdentifier.NoMoreDocIdsAvailable {
+    public Corpus(Collection<? extends Document> documents) throws NoMoreDocIdsAvailable {
 
         AtomicBoolean exceptionFlag = new AtomicBoolean(false); // becomes true if an exception is thrown in lambda function
 
@@ -36,8 +41,8 @@ public class Corpus implements Serializable {
                 .stream().unordered().parallel()
                 .map(aDocument -> {
                     try {
-                        return new AbstractMap.SimpleEntry<>(new Posting.DocumentIdentifier(), aDocument);
-                    } catch (Posting.DocumentIdentifier.NoMoreDocIdsAvailable noMoreDocIdsAvailable) {
+                        return new Pair<>(new DocumentIdentifier(), aDocument);
+                    } catch (NoMoreDocIdsAvailable noMoreDocIdsAvailable) {
                         System.err.println(Utility.stackTraceToString(noMoreDocIdsAvailable));
                         exceptionFlag.set(true);
                         return null;
@@ -50,7 +55,7 @@ public class Corpus implements Serializable {
                 ));
 
         if (exceptionFlag.get()) {
-            throw new Posting.DocumentIdentifier.NoMoreDocIdsAvailable("Exception thrown.");
+            throw new NoMoreDocIdsAvailable("Exception thrown.");
         }
     }
 
@@ -60,7 +65,7 @@ public class Corpus implements Serializable {
      *                 corresponding {@link List} of {@link Document}s is
      *                 wanted.
      * @return the {@link List} of {@link Document}s in this {@link Corpus}
-     * for which the {@link Posting.DocumentIdentifier} is present
+     * for which the {@link DocumentIdentifier} is present
      * in any of the {@link Posting} in the parameter.
      */
     @NotNull
@@ -75,7 +80,7 @@ public class Corpus implements Serializable {
 
     /**
      * Returns the head of this instance, i.e., the first documents,
-     * ordered according to their {@link Posting.DocumentIdentifier}.
+     * ordered according to their {@link DocumentIdentifier}.
      * This method can be used for printing purposes (e.g., during testing).
      *
      * @param howMany The number of documents to return. If it exceeds the total
@@ -85,7 +90,7 @@ public class Corpus implements Serializable {
     @NotNull
     public String head(int howMany) {
         int howManyDocsToReturn = Math.min(Math.max(howMany, 0), corpus.size());
-        final Comparator<? super Map.Entry<Posting.DocumentIdentifier, Document>> keyComparator = Map.Entry.comparingByKey();
+        final Comparator<? super Map.Entry<DocumentIdentifier, Document>> keyComparator = Map.Entry.comparingByKey();
         return corpus.entrySet()
                 .stream().sequential()
                 .sorted(keyComparator)
@@ -100,7 +105,7 @@ public class Corpus implements Serializable {
      * @return the {@link #corpus}.
      */
     @NotNull
-    public Map<Posting.DocumentIdentifier, Document> getCorpus() {
+    public Map<DocumentIdentifier, Document> getCorpus() {
         return corpus;
     }
 

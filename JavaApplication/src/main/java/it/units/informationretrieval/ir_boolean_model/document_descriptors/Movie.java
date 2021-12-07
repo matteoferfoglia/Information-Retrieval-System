@@ -2,8 +2,11 @@ package it.units.informationretrieval.ir_boolean_model.document_descriptors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
-import it.units.informationretrieval.ir_boolean_model.entities.Document;
-import it.units.informationretrieval.ir_boolean_model.entities.Posting;
+import it.units.informationretrieval.ir_boolean_model.entities.document.Document;
+import it.units.informationretrieval.ir_boolean_model.entities.document.DocumentContent;
+import it.units.informationretrieval.ir_boolean_model.entities.document.DocumentIdentifier;
+import it.units.informationretrieval.ir_boolean_model.entities.document.RankedSubcontent;
+import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.utils.FunctionThrowingException;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
@@ -206,10 +209,10 @@ public class Movie extends Document implements Externalizable {
         this.genreKeys = Objects.requireNonNull(genreKeys);
         this.description = Objects.requireNonNull(movieDescription);
 
-        final Content content;
+        final DocumentContent content;
         {
             // Creation of the ranked subcontents
-            List<Content.RankedSubcontent> rankedSubcontents = new ArrayList<>();
+            List<RankedSubcontent> rankedSubcontents = new ArrayList<>();
             rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.TITLE), this.movieTitle));
             if (this.releaseDate != null) { // may be null
                 rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.RELEASE_DATE), String.valueOf(this.releaseDate)));
@@ -220,7 +223,7 @@ public class Movie extends Document implements Externalizable {
             rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.COUNTRY), this.countryKeys.stream().map(countries::get).collect(Collectors.joining())));
             rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.GENRE), this.genreKeys.stream().map(genres::get).collect(Collectors.joining())));
             rankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.DESCRIPTION), this.description));
-            content = new Content(rankedSubcontents);
+            content = new DocumentContent(rankedSubcontents);
         }
 
         super.setTitle(this.movieTitle);
@@ -233,12 +236,12 @@ public class Movie extends Document implements Externalizable {
     /**
      * Create a {@link Corpus} of {@link Movie}s.
      *
-     * @throws Posting.DocumentIdentifier.NoMoreDocIdsAvailable If no more {@link Posting.DocumentIdentifier}s can be generated.
-     * @throws URISyntaxException                               If an exception is thrown while getting the URI of the files containing the information.
+     * @throws NoMoreDocIdsAvailable If no more {@link DocumentIdentifier}s can be generated.
+     * @throws URISyntaxException    If an exception is thrown while getting the URI of the files containing the information.
      */
     @NotNull
     public static Corpus createCorpus()
-            throws Posting.DocumentIdentifier.NoMoreDocIdsAvailable, URISyntaxException {
+            throws NoMoreDocIdsAvailable, URISyntaxException {
         // TODO : this method is just a draft
 
         // Path to find files
@@ -428,9 +431,9 @@ public class Movie extends Document implements Externalizable {
     }
 
     /**
-     * Class implementing {@link Content.RankedSubcontent.ContentRank} for {@link Movie}s.
+     * Class implementing {@link RankedSubcontent.ContentRank} for {@link Movie}s.
      */
-    private static class MovieContentRank implements Content.RankedSubcontent.ContentRank {
+    private static class MovieContentRank implements RankedSubcontent.ContentRank {
         /**
          * The rank.
          */
@@ -441,7 +444,7 @@ public class Movie extends Document implements Externalizable {
         }
 
         @Override
-        public int compareTo(@NotNull Document.Content.RankedSubcontent.ContentRank otherContentRank) {
+        public int compareTo(@NotNull RankedSubcontent.ContentRank otherContentRank) {
             if (Objects.requireNonNull(otherContentRank) instanceof MovieContentRank) {
                 return ((MovieContentRank) otherContentRank).rank.getRankValue() - this.rank.getRankValue();
             } else {
@@ -484,9 +487,9 @@ public class Movie extends Document implements Externalizable {
 
 
         /**
-         * Concrete cass extending {@link Content.RankedSubcontent}.
+         * Concrete cass extending {@link RankedSubcontent}.
          */
-        static class MovieRankedSubcontent extends Content.RankedSubcontent {
+        static class MovieRankedSubcontent extends RankedSubcontent {
 
             /**
              * Constructor.
@@ -498,7 +501,7 @@ public class Movie extends Document implements Externalizable {
                 super(Objects.requireNonNull(rank), Objects.requireNonNull(subcontent));
             }
 
-            private static int sumRanks(@NotNull Document.Content.RankedSubcontent first, @NotNull Document.Content.RankedSubcontent second) {
+            private static int sumRanks(@NotNull RankedSubcontent first, @NotNull RankedSubcontent second) {
                 return sumRanks(
                         ((MovieContentRank) first.getRank()).rank.getRankValue(),
                         ((MovieContentRank) second.getRank()).rank.getRankValue()
@@ -510,12 +513,12 @@ public class Movie extends Document implements Externalizable {
             }
 
             @Override
-            public int sum(@NotNull Document.Content.RankedSubcontent rankedSubcontent) {
+            public int sum(@NotNull RankedSubcontent rankedSubcontent) {
                 return sumRanks(this, rankedSubcontent);
             }
 
             @Override
-            public int sum(@NotNull Collection<Content.RankedSubcontent> rankedSubcontents) {
+            public int sum(@NotNull Collection<RankedSubcontent> rankedSubcontents) {
                 return Objects.requireNonNull(rankedSubcontents)
                         .stream().unordered()
                         .map(aRank -> ((MovieContentRank) aRank.getRank()).rank.getRankValue())

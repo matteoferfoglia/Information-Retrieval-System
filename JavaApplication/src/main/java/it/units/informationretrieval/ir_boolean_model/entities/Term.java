@@ -1,5 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
+import it.units.informationretrieval.ir_boolean_model.entities.document.Document;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;

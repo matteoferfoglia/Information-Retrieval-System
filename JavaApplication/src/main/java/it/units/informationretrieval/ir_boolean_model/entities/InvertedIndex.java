@@ -1,7 +1,9 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
-import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import it.units.informationretrieval.ir_boolean_model.entities.document.Document;
+import it.units.informationretrieval.ir_boolean_model.entities.document.DocumentIdentifier;
 import it.units.informationretrieval.ir_boolean_model.utils.Properties;
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.jetbrains.annotations.NotNull;
 
@@ -85,7 +87,7 @@ public class InvertedIndex implements Serializable {
         scheduler.scheduleWithFixedDelay(progressControllerThread, DELAY_PROGRESS_CONTROLLER, DELAY_PROGRESS_CONTROLLER, TimeUnit.SECONDS);
 
         // Indexing
-        Predicate<Map.Entry<Posting.DocumentIdentifier, Document>> documentContentNotNullPredicate =
+        Predicate<Map.Entry<DocumentIdentifier, Document>> documentContentNotNullPredicate =
                 entry -> entry != null && entry.getKey() != null && entry.getValue() != null && entry.getValue().getContent() != null;
         invertedIndex.putAll(
                 corpus.getCorpus()
@@ -94,7 +96,7 @@ public class InvertedIndex implements Serializable {
                         .filter(documentContentNotNullPredicate)
                         .map(anEntry -> {
                             List<String> tokens = Utility.tokenize(anEntry.getValue());   // TODO : tokenization should return as a map also the position where the token is found in the document (for phrase query)
-                            Posting.DocumentIdentifier docIdThisDocument = anEntry.getKey();
+                            DocumentIdentifier docIdThisDocument = anEntry.getKey();
 
                             // Return a Map having tokens as keys and the corresponding List<Terms> as values, for the document in this entry
                             Set<Map.Entry<String, Term>> entrySet =
