@@ -41,7 +41,7 @@ public class Main {
 
             switch (file_irSystem.isFile() ? 1 : 0) {
                 case 1:    // file exists
-                    System.out.println("Loading the IRSystem from file system");    // TODO: documents are NOT correctly de-serialized (title and content in class Document is null)
+                    System.out.println("Loading the IRSystem from file system");
                     ObjectInputStream ois = new ObjectInputStream(
                             new BufferedInputStream(
                                     new FileInputStream(file_irSystem)
