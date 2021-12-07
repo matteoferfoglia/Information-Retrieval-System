@@ -80,7 +80,7 @@ public class InvertedIndex implements Serializable {
                         .stream().unordered().parallel()
                         .filter(documentContentNotNullPredicate)
                         .map(InvertedIndex::getEntrySetOfTokensAndCorrespondingTermsFromADocument)
-                        .peek(ignored -> numberOfAlreadyProcessedDocuments.getAndIncrement())
+                        .peek(ignored -> numberOfAlreadyProcessedDocuments.getAndIncrement()/*TODO: threads must wait to increase this value: needed?*/)
                         .flatMap(Collection::stream /*outputs all entries from all the documents*/)
                         .collect(
                                 Collectors.toMap(
@@ -108,7 +108,8 @@ public class InvertedIndex implements Serializable {
                 .collect(
                         Collectors.toConcurrentMap(
                                 Map.Entry::getKey,
-                                Map.Entry::getValue))
+                                Map.Entry::getValue,
+                                (t1, t2) -> t1/*ignore duplicate tokens in the same document. TODO: resee this for positional indexing*/))
                 .entrySet();
     }
 
