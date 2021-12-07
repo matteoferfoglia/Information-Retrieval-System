@@ -39,7 +39,6 @@ public class Main {
             // Load the IR System if already exists
             InformationRetrievalSystem ir;
 
-            //noinspection SwitchStatementWithTooFewBranches
             switch (file_irSystem.isFile() ? 1 : 0) {
                 case 1:    // file exists
                     System.out.println("Loading the IRSystem from file system");
@@ -71,23 +70,23 @@ public class Main {
                     // Create the IR System
                     System.out.println("Creating the IR System");
                     ir = new InformationRetrievalSystem(corpus);
-            }
 
-            // Serialize and save the IR System to the file system
-            if (file_irSystem.createNewFile()) {    // if file already exists will do nothing
-                System.out.println("File \"" + fileName_irSystem + "\" created.");
-            } else {
-                System.out.println("File \"" + fileName_irSystem + "\" already exists. It will be replaced.");
+                    // Serialize and save the IR System to the file system
+                    if (file_irSystem.createNewFile()) {    // if file already exists will do nothing
+                        System.out.println("File \"" + fileName_irSystem + "\" created.");
+                    } else {
+                        System.out.println("File \"" + fileName_irSystem + "\" already exists. It will be replaced.");
+                    }
+                    ObjectOutputStream oos = new ObjectOutputStream(
+                            new BufferedOutputStream(
+                                    new FileOutputStream(fileName_irSystem, false)
+                            )
+                    );
+                    oos.writeObject(ir);
+                    System.out.println("IR System saved to file " + fileName_irSystem);
+                    oos.flush();
+                    oos.close();
             }
-            ObjectOutputStream oos = new ObjectOutputStream(
-                    new BufferedOutputStream(
-                            new FileOutputStream(fileName_irSystem, false)
-                    )
-            );
-            oos.writeObject(ir);
-            System.out.println("IR System saved to file " + fileName_irSystem);
-            oos.flush();
-            oos.close();
 
             // Use the information retrieval system
             final int MAX_N_RESULTS = 10;
