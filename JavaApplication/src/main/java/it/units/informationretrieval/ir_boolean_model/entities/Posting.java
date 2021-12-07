@@ -1,6 +1,5 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
-import it.units.informationretrieval.ir_boolean_model.entities.document.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.document.DocumentIdentifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +29,11 @@ public class Posting implements Comparable<Posting>, Serializable {
     @NotNull
     private final Instant creationInstant;
 
+//    /**
+//     * Array of positions in the document where the term appears.
+//     */
+//    private final int[] termPositionsInTheDocument;// TODO : positions not handled yet
+
 //    /** The object that saves the position at which the term (referred to this
 //     * {@link Posting}) compares in the document to which this {@link Posting}
 //     * refers.*/
@@ -44,16 +48,15 @@ public class Posting implements Comparable<Posting>, Serializable {
     private Posting forwardPointer = null;
 
     /**
-     * Constructor. Given a {@link DocumentIdentifier} and a {@link TermPositionsInADocument}
-     * object, creates a new instance of this class.
+     * Constructor. Given a {@link DocumentIdentifier}, creates a new instance of this class.
      *
      * @param docId The {@link DocumentIdentifier}.
      */
     //* @param positions The {@link TermPositionsInADocument} object (see the description of the class). */
-    public Posting(@NotNull DocumentIdentifier docId/*, @NotNull TermPositionsInADocument positions*/) {
+    public Posting(@NotNull DocumentIdentifier docId/*, @NotNull final int[] positions*/) {
         this.docId = Objects.requireNonNull(docId, "The docId cannot be null");
         creationInstant = Instant.now();
-//        this. positions = Objects.requireNonNull(positions, "The positions object cannot be null.");  // TODO : positions not handled yet
+//        this. positions = Objects.requireNonNull(positions);  // TODO : positions not handled yet
         // TODO : skipPointer not handled yet.
     }
 
@@ -130,7 +133,7 @@ public class Posting implements Comparable<Posting>, Serializable {
 //    /** @return the number of occurrences of the {@link Term} associated with this
 //     * {@link Posting} (i.e., the term-frequency value). */
 //    public int tf() {
-//        return positions.size();    // TODO : positions not handled yet
+//        return positions.length;    // TODO : positions not handled yet
 //    }
 
     /**
@@ -178,45 +181,6 @@ public class Posting implements Comparable<Posting>, Serializable {
      */
     public int compareCreationTimeTo(Posting posting) { // TODO: test
         return this.creationInstant.compareTo(posting.creationInstant);
-    }
-
-    /**
-     * An instance of this class stores <strong>without</strong> duplicates
-     * the positions in a {@link Document} in which the same {@link Term}
-     * compares.
-     *
-     * @author Matteo Ferfoglia
-     */
-    public static class TermPositionsInADocument {  // TODO: delete this inner class and make positions an attribute of the upper level class
-
-        /**
-         * Array of positions.
-         */
-        private final int[] positions;
-
-        // NOTE: this instance could save the Document and the Term too,
-        //       but they are not required and this would waste memory space.
-
-        /**
-         * Given a term and a document, creates a new instance of this class
-         * and saves the positions in which the term compares in the document.
-         *
-         * @param document The document.
-         * @param term     The term.
-         */
-        public TermPositionsInADocument(@NotNull Term term, @NotNull Document document) {
-            Objects.requireNonNull(term, "The term cannot be null.");
-            Objects.requireNonNull(document, "The document cannot be null.");
-            positions = new int[0];   // TODO: NOT implemented yet
-            throw new UnsupportedOperationException("Not implemented yet");
-        }
-
-        /**
-         * @return the number of positions in which the term appears in the document.
-         */
-        public int size() {
-            return positions.length;
-        }
     }
 
 }
