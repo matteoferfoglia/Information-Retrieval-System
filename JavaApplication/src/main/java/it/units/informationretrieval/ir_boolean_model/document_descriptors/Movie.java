@@ -345,33 +345,35 @@ public class Movie extends Document implements Externalizable {
     public void readExternal(ObjectInput oi) throws IOException, ClassNotFoundException {
 
         // Read in the same order they were written
-        try {
-            Field modifiers = Field.class.getDeclaredField("modifiers");
-            modifiers.setAccessible(true);
-            for (Field f : this.getClass().getDeclaredFields()) {
-                try {
-                    f.setAccessible(true);
-                    Object read = oi.readObject();
 
-                    if (Modifier.isFinal(f.getModifiers())) {
-                        //modifiers.setInt(f, f.getModifiers() & ~Modifier.FINAL);    // the field will not be final anymore, if it was
+//        try {
+//            Field modifiers = Field.class.getDeclaredField("modifiers");
+//            modifiers.setAccessible(true);
+        for (Field f : this.getClass().getDeclaredFields()) {
+            try {
+                f.setAccessible(true);
+                Object read = oi.readObject();
+
+                if (Modifier.isFinal(f.getModifiers())) {
+//                        modifiers.setInt(f, f.getModifiers() & ~Modifier.FINAL);    // the field will not be final anymore, if it was
 //                        Logger.getLogger(this.getClass().getCanonicalName())
 //                                .log(Level.WARNING, "The field " + f + " is final and was not set");
-                    } else {
+                } else {
                         if (Modifier.isStatic(f.getModifiers())) {
                             f.set(null, read);
                         } else {
                             f.set(this, read);
                         }
-                    }
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    Logger.getLogger(this.getClass().getCanonicalName())
-                            .log(Level.SEVERE, "Impossible to deserialize due to an exception", e);
                 }
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                Logger.getLogger(this.getClass().getCanonicalName())
+                        .log(Level.SEVERE, "Impossible to deserialize due to an exception", e);
             }
-        } catch (NoSuchFieldException | SecurityException ex) {
-            Logger.getLogger(this.getClass().getCanonicalName()).log(Level.SEVERE, "Exception thrown during the deserialization.", ex);
         }
+
+//        } catch (NoSuchFieldException | SecurityException ex) {
+//            Logger.getLogger(this.getClass().getCanonicalName()).log(Level.SEVERE, "Exception thrown during the deserialization.", ex);
+//        }
     }
 
     @Override
