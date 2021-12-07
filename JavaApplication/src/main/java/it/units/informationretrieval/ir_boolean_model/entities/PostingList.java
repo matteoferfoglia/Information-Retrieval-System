@@ -168,14 +168,14 @@ public class PostingList implements Serializable {
             // Set the skipPointers
             for (int skipPointerPosition : skipPointerPositions) {    // TODO : can be parallelized
                 for (int j = skipPointerPositionPrevious; j < skipPointerPosition; j++) {
-                    postings.get(j).setSkipPointer(postings.get(skipPointerPosition));
+                    postings.get(j).setForwardPointer(postings.get(skipPointerPosition));
                 }
                 skipPointerPositionPrevious = skipPointerPosition;
             }
         }
         // Set null the skipPointers for the posting over the last skipPointer
         for (; skipPointerPositionPrevious < numberOfPostings; skipPointerPositionPrevious++) {
-            postings.get(skipPointerPositionPrevious).setSkipPointer(null);
+            postings.get(skipPointerPositionPrevious).setForwardPointer(null);
         }
 
     }

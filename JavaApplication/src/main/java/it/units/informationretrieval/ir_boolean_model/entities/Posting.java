@@ -36,10 +36,10 @@ public class Posting implements Comparable<Posting>, Serializable {
 //
 
     /**
-     * The skip pointer needed to implement a skip list
+     * The forward pointer needed to implement a skip list.
      */
     @Nullable
-    private Posting skipPointer = null;
+    private Posting forwardPointer = null;
 
     /**
      * Constructor. Given a {@link DocumentIdentifier} and a {@link TermPositionsInADocument}
@@ -74,17 +74,17 @@ public class Posting implements Comparable<Posting>, Serializable {
      * @return true if this instance has a skip pointer, false otherwise.
      */
     public boolean hasSkipPointer() {
-        return skipPointer == null;
+        return forwardPointer == null;
     }
 
     /**
-     * Sets the {@link #skipPointer} of this instance to the given one.
+     * Sets the {@link #forwardPointer} of this instance to the given one.
      *
-     * @param skipPointer The skipPointer (i.e., the next {@link Posting} where
-     *                    to point).
+     * @param forwardPointer The skipPointer (i.e., the next {@link Posting} where
+     *                       to point).
      */
-    public void setSkipPointer(@Nullable Posting skipPointer) {
-        this.skipPointer = skipPointer;
+    public void setForwardPointer(@Nullable Posting forwardPointer) {
+        this.forwardPointer = forwardPointer;
     }
 
     @Override
