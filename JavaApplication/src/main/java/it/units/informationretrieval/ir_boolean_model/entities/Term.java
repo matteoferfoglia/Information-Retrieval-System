@@ -1,6 +1,5 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
-import it.units.informationretrieval.ir_boolean_model.entities.document.Document;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -40,7 +39,7 @@ public class Term implements Comparable<Term>, Serializable {
     /**
      * Returns the Inverse-Document-Frequency for this {@link Term}.
      *
-     * @param numberOfDocsInCorpus The total number of {@link Document}s in the {@link Corpus}.
+     * @param numberOfDocsInCorpus The total number of documents in the Corpus.
      * @return the Inverse-Document-Frequency for this {@link Term}.
      * @throws NoDocumentsAssociatedWithTermException If no documents associated with
      *                                                this {@link Term} are found.
