@@ -1,5 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.queries;
 
+import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex;
 import it.units.informationretrieval.ir_boolean_model.entities.Posting;
@@ -12,9 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import static it.units.informationretrieval.ir_boolean_model.entities.Posting.intersection;
-import static it.units.informationretrieval.ir_boolean_model.entities.Posting.union;
 
 /**
  * An instance of this class is a boolean expression to be evaluated
@@ -89,24 +87,35 @@ public class BooleanExpression {
     private final BINARY_OPERATOR binaryOperator;
 
     /**
+     * The {@link InformationRetrievalSystem} to use for evaluating this instance.
+     */
+    @NotNull
+    private final InformationRetrievalSystem informationRetrievalSystem;
+
+    /**
      * Constructor. Creates a non-aggregated {@link BooleanExpression}.
      *
-     * @param unaryOperator             The {@link UNARY_OPERATOR} to use.
-     * @param matchingValue             The {@link #matchingValue}. Must be null if matchingPhrase is non-null and cannot be null if matchingPhrase is null.
-     * @param matchingPhrase            The {@link #matchingPhrase}. Must be null if matchingValue is non-null and cannot be null if matchingValue is null.
-     * @param matchingPhraseMaxDistance The {@link #matchingPhraseMaxDistance}.
-     *                                  If the matchingPhrase is specified but this parameter is null,
-     *                                  then '1' will be considered as the maximum distance.
+     * @param unaryOperator              The {@link UNARY_OPERATOR} to use.
+     * @param matchingValue              The {@link #matchingValue}. Must be null if matchingPhrase is non-null and cannot be null if matchingPhrase is null.
+     * @param matchingPhrase             The {@link #matchingPhrase}. Must be null if matchingValue is non-null and cannot be null if matchingValue is null.
+     * @param matchingPhraseMaxDistance  The {@link #matchingPhraseMaxDistance}.
+     *                                   If the matchingPhrase is specified but this parameter is null,
+     *                                   then '1' will be considered as the maximum distance.
+     * @param informationRetrievalSystem The {@link InformationRetrievalSystem} on which to perform the query.
      * @throws IllegalArgumentException If both the parameters are null or non-null, or if the size of
      *                                  matchingPhraseMaxDistance parameter list is not equal to the size
      *                                  of the matchingPhrase minus one (if specified), or if the
      *                                  matchingPhraseMaxDistance contains non-positive (0 included)
      *                                  values.
-     */
+     */ // TODO : a lot of params: valuate if using builder pattern
     private BooleanExpression(@Nullable UNARY_OPERATOR unaryOperator,
                               @Nullable String matchingValue,
                               @Nullable List<String> matchingPhrase,
-                              @Nullable List<Integer> matchingPhraseMaxDistance) throws IllegalArgumentException {
+                              @Nullable List<Integer> matchingPhraseMaxDistance,
+                              @NotNull final InformationRetrievalSystem informationRetrievalSystem)
+            throws IllegalArgumentException {
+
+        this.informationRetrievalSystem = informationRetrievalSystem;
 
         // Check parameters
 
@@ -158,8 +167,9 @@ public class BooleanExpression {
      * @param unaryOperator The {@link UNARY_OPERATOR} to use. If it is null, {@link UNARY_OPERATOR#IDENTITY} will be use.
      * @param matchingValue The value to match.
      */
-    public BooleanExpression(@Nullable UNARY_OPERATOR unaryOperator, @NotNull String matchingValue) {
-        this(unaryOperator, Objects.requireNonNull(matchingValue, "The given value cannot be null"), null, null);
+    public BooleanExpression(@Nullable UNARY_OPERATOR unaryOperator, @NotNull String matchingValue,
+                             @NotNull final InformationRetrievalSystem informationRetrievalSystem) {
+        this(unaryOperator, Objects.requireNonNull(matchingValue, "The given value cannot be null"), null, null, informationRetrievalSystem);
     }
 
     /**
@@ -170,8 +180,9 @@ public class BooleanExpression {
      * @param unaryOperator  The {@link UNARY_OPERATOR} to use. If it is null, {@link UNARY_OPERATOR#IDENTITY} will be use.
      * @param matchingPhrase The phrase to match.
      */
-    public BooleanExpression(@Nullable UNARY_OPERATOR unaryOperator, @NotNull List<String> matchingPhrase) {
-        this(unaryOperator, null, Objects.requireNonNull(matchingPhrase, "The given value cannot be null"), null);
+    public BooleanExpression(@Nullable UNARY_OPERATOR unaryOperator, @NotNull List<String> matchingPhrase,
+                             @NotNull final InformationRetrievalSystem informationRetrievalSystem) {
+        this(unaryOperator, null, Objects.requireNonNull(matchingPhrase, "The given value cannot be null"), null, informationRetrievalSystem);
     }
 
     /**
@@ -188,8 +199,9 @@ public class BooleanExpression {
      */
     public BooleanExpression(@Nullable UNARY_OPERATOR unaryOperator,
                              @NotNull List<String> matchingPhrase,
-                             @NotNull List<Integer> matchingPhraseMaxDistance) {
-        this(unaryOperator, null, Objects.requireNonNull(matchingPhrase, "The given value cannot be null"), Objects.requireNonNull(matchingPhraseMaxDistance));
+                             @NotNull List<Integer> matchingPhraseMaxDistance,
+                             @NotNull final InformationRetrievalSystem informationRetrievalSystem) {
+        this(unaryOperator, null, Objects.requireNonNull(matchingPhrase, "The given value cannot be null"), Objects.requireNonNull(matchingPhraseMaxDistance), informationRetrievalSystem);
     }
 
     /**
@@ -202,6 +214,10 @@ public class BooleanExpression {
     public BooleanExpression(@NotNull BINARY_OPERATOR operator,
                              @NotNull BooleanExpression expr1,
                              @NotNull BooleanExpression expr2) {
+        this.informationRetrievalSystem = Objects.requireNonNull(
+                Objects.equals(expr1.informationRetrievalSystem, expr2.informationRetrievalSystem)
+                        ? expr1.informationRetrievalSystem : null,
+                "Given input parameters must refere to the same non-null IR System.");
         this.isAggregated = true;
         this.leftChildOperand = Objects.requireNonNull(expr1);
         this.rightChildOperand = Objects.requireNonNull(expr2);
@@ -209,20 +225,18 @@ public class BooleanExpression {
         this.matchingPhrase = null;
         this.unaryOperator = null;
         this.binaryOperator = Objects.requireNonNull(operator);
-        this.matchingPhraseMaxDistance = null;
+        this.matchingPhraseMaxDistance = null;  // TODO: valuate if using builder pattern
     }
 
     /**
      * Evaluate this expression on the given {@link InvertedIndex}.
      *
-     * @param invertedIndex The {@link InvertedIndex}.
      * @return the {@link PostingList} matching this {@link BooleanExpression}.
      * @throws UnsupportedOperationException If the operator for the expression is unknown.
      */
     @NotNull
-    private List<Posting> evaluate_(@NotNull final InvertedIndex invertedIndex)
+    private List<Posting> evaluate()
             throws UnsupportedOperationException {
-        Objects.requireNonNull(invertedIndex, "The inverted index cannot be null.");
 
         if (isAggregated) {
 
@@ -231,11 +245,11 @@ public class BooleanExpression {
             booleanExpressions.add(rightChildOperand);
             return booleanExpressions
                     .stream().unordered().parallel()
-                    .map(expr -> expr.evaluate_(invertedIndex))
+                    .map(BooleanExpression::evaluate)
                     .reduce((listOfPostings1, listOfPostings2) ->
                             switch (Objects.requireNonNull(binaryOperator, "The operator is null, but should not.")) {
-                                case AND -> intersection(listOfPostings1, listOfPostings2);
-                                case OR -> union(listOfPostings1, listOfPostings2);
+                                case AND -> Posting.intersection(listOfPostings1, listOfPostings2);
+                                case OR -> Posting.union(listOfPostings1, listOfPostings2);
                                 //noinspection UnnecessaryDefault
                                 default -> throw new UnsupportedOperationException("Unknown operator");
                             })
@@ -249,8 +263,7 @@ public class BooleanExpression {
                     // The normalization return null, then no matches
                     return new ArrayList<>();
                 } else {
-                    PostingList postingList = invertedIndex.getPostingListForToken(normalizedToken);
-                    return postingList == null ? new ArrayList<>() : postingList.toListOfPostings();
+                    return informationRetrievalSystem.getListOfPostingForToken(normalizedToken);
                 }
             } else if (matchingPhrase != null) {
                 throw new UnsupportedOperationException("Not implemented yet");
@@ -276,7 +289,7 @@ public class BooleanExpression {
             throws UnsupportedOperationException {
         return invertedIndex.getCorpus()
                 .getDocuments(
-                        evaluate_(invertedIndex)
+                        evaluate()
                                 .stream()
                                 .map(Posting::getDocId)
                                 .distinct()

@@ -189,8 +189,9 @@ public class InvertedIndex implements Serializable {
      * @return The {@link PostingList} associated with the desired term or null
      * if it is not found in this {@link InvertedIndex}.
      */
+    @NotNull
     public final PostingList getPostingListForToken(String normalizedToken) {   // TODO: test and benchmark
         Term t = invertedIndex.get(normalizedToken);
-        return t == null ? null : t.getPostingList();
+        return t == null ? new PostingList() : t.getPostingList();
     }
 }

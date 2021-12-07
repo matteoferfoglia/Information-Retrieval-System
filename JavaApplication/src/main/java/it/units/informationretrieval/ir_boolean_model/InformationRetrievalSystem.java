@@ -2,9 +2,11 @@ package it.units.informationretrieval.ir_boolean_model;
 
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
 import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex;
+import it.units.informationretrieval.ir_boolean_model.entities.Posting;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -42,5 +44,14 @@ public class InformationRetrievalSystem implements Serializable {
     @NotNull
     public final InvertedIndex getInvertedIndex() {
         return invertedIndex;
+    }
+
+    /**
+     * @param normalizedToken The token to search in the {@link #invertedIndex}.
+     * @return the {@link List} of {@link Posting} for the given token.
+     */
+    @NotNull
+    public List<Posting> getListOfPostingForToken(@NotNull final String normalizedToken) {  // TODO: test and benchmark
+        return invertedIndex.getPostingListForToken(normalizedToken).toListOfPostings();
     }
 }
