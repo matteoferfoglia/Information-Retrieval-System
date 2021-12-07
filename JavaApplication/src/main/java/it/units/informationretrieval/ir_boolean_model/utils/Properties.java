@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @author Matteo Ferfoglia
  */
-public class Properties {
+public class Properties {   // TODO: is this class needed?
 
     /**
      * Name of the file with the properties for the application.
@@ -79,7 +79,7 @@ public class Properties {
          * The path.
          */
         @NotNull
-        private volatile static String workingDirectoryPath = "";
+        private static final String workingDirectoryPath = "";
 
         /**
          * The path of {@link ApplicationPropertyFilePath} before {@link #set(String)} was invoked.
