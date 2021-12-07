@@ -56,13 +56,15 @@ public class Term implements Comparable<Term>, Serializable {
      * Merges a {@link Term} into this one (destructive merging).
      *
      * @param other The other {@link Term} to be merged into this one.
+     * @return this instance after merging.
      */
-    public void merge(@NotNull final Term other) {    // TODO : needed? // TODO: test and benchmark
+    public Term merge(@NotNull final Term other) {    // TODO : needed? // TODO: test and benchmark
         if (this.term.equals(other.term)) {
             this.postingList.merge(other.postingList);
         } else {
             throw new ImpossibleTermsMergingException(this, other);
         }
+        return this;
     }
 
     /**
