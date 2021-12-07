@@ -8,9 +8,9 @@ import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  *
  * @author Matteo Ferfoglia
  */
-public class Movie extends Document implements Externalizable {
+public class Movie extends Document implements Serializable {
 
     // TODO : re-see this very very long class
 
@@ -323,57 +323,6 @@ public class Movie extends Document implements Externalizable {
                         .collect(Collectors.toList())
         );
 
-    }
-
-    @Override
-    public void writeExternal(ObjectOutput oo) throws IOException {
-        for (Field f : this.getClass().getDeclaredFields()) {
-            try {
-                f.setAccessible(true);
-                oo.writeObject(f.get(this));
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                Logger.getLogger(this.getClass().getCanonicalName())
-                        .log(Level.SEVERE, "Impossible to serialize due to an exception", e);
-            }
-        }
-    }
-
-    /**
-     * All fields but final fields take part in the deserialization.
-     */
-    @Override
-    public void readExternal(ObjectInput oi) throws IOException, ClassNotFoundException {
-
-        // Read in the same order they were written
-
-//        try {
-//            Field modifiers = Field.class.getDeclaredField("modifiers");
-//            modifiers.setAccessible(true);
-        for (Field f : this.getClass().getDeclaredFields()) {
-            try {
-                f.setAccessible(true);
-                Object read = oi.readObject();
-
-                if (Modifier.isFinal(f.getModifiers())) {
-//                        modifiers.setInt(f, f.getModifiers() & ~Modifier.FINAL);    // the field will not be final anymore, if it was
-//                        Logger.getLogger(this.getClass().getCanonicalName())
-//                                .log(Level.WARNING, "The field " + f + " is final and was not set");
-                } else {
-                        if (Modifier.isStatic(f.getModifiers())) {
-                            f.set(null, read);
-                        } else {
-                            f.set(this, read);
-                        }
-                }
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                Logger.getLogger(this.getClass().getCanonicalName())
-                        .log(Level.SEVERE, "Impossible to deserialize due to an exception", e);
-            }
-        }
-
-//        } catch (NoSuchFieldException | SecurityException ex) {
-//            Logger.getLogger(this.getClass().getCanonicalName()).log(Level.SEVERE, "Exception thrown during the deserialization.", ex);
-//        }
     }
 
     @Override
