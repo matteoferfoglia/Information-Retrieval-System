@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -21,12 +22,18 @@ public class Posting implements Comparable<Posting>, Serializable {
     @NotNull
     private final DocumentIdentifier docId;
 
-    /*/** The object that saves the position at which the term (referred to this
-     * {@link Posting}) compares in the document to which this {@link Posting}
-     * refers.*/
-    /*@NotNull
-    private final Positions positions;  // TODO : positions not handled yet
-    */
+    /**
+     * The {@link java.time.Instant} at which this instance has been created.
+     */
+    @NotNull
+    private final Instant creationInstant;
+
+//    /** The object that saves the position at which the term (referred to this
+//     * {@link Posting}) compares in the document to which this {@link Posting}
+//     * refers.*/
+//    @NotNull
+//    private final TermPositionsInADocument positions;  // TODO : positions not handled yet
+//
 
     /**
      * The skip pointer needed to implement a skip list
@@ -35,14 +42,15 @@ public class Posting implements Comparable<Posting>, Serializable {
     private Posting skipPointer = null;
 
     /**
-     * Constructor. Given a {@link DocumentIdentifier} and a {@link Positions}
+     * Constructor. Given a {@link DocumentIdentifier} and a {@link TermPositionsInADocument}
      * object, creates a new instance of this class.
      *
      * @param docId The {@link DocumentIdentifier}.
      */
-    //* @param positions The {@link Positions} object (see the description of the class). */
-    public Posting(@NotNull DocumentIdentifier docId/*, @NotNull Positions positions*/) {
+    //* @param positions The {@link TermPositionsInADocument} object (see the description of the class). */
+    public Posting(@NotNull DocumentIdentifier docId/*, @NotNull TermPositionsInADocument positions*/) {
         this.docId = Objects.requireNonNull(docId, "The docId cannot be null");
+        creationInstant = Instant.now();
 //        this. positions = Objects.requireNonNull(positions, "The positions object cannot be null.");  // TODO : positions not handled yet
         // TODO : skipPointer not handled yet.
     }
@@ -52,7 +60,6 @@ public class Posting implements Comparable<Posting>, Serializable {
 //    public int tf() {
 //        return positions.size();    // TODO : positions not handled yet
 //    }
-
 
     /**
      * Getter for {@link #docId}.
@@ -81,8 +88,24 @@ public class Posting implements Comparable<Posting>, Serializable {
     }
 
     @Override
-    public int compareTo(Posting posting) {
+    public int compareTo(Posting posting) { // TODO: test
         return this.docId.compareTo(posting.docId);
+    }
+
+    /**
+     * Compares the {@link #creationInstant} of this instance with the {@link #creationInstant}
+     * of the one given as parameter.
+     *
+     * @param posting The other instance.
+     * @return an integer number which is:
+     * <ul>
+     *     <li> &lt; 0 if this instance is older than the other one;</li>
+     *     <li> = 0 if instances have the same age;</li>
+     *     <li> &gt; 0 otherwise.</li>
+     * </ul>
+     */
+    public int compareCreationTimeTo(Posting posting) { // TODO: test
+        return this.creationInstant.compareTo(posting.creationInstant);
     }
 
     /**
@@ -92,7 +115,7 @@ public class Posting implements Comparable<Posting>, Serializable {
      *
      * @author Matteo Ferfoglia
      */
-    public static class Positions {
+    public static class TermPositionsInADocument {  // TODO: delete this inner class and make positions an attribute of the upper level class
 
         /**
          * Array of positions.
@@ -109,7 +132,7 @@ public class Posting implements Comparable<Posting>, Serializable {
          * @param document The document.
          * @param term     The term.
          */
-        public Positions(@NotNull Term term, @NotNull Document document) {
+        public TermPositionsInADocument(@NotNull Term term, @NotNull Document document) {
             Objects.requireNonNull(term, "The term cannot be null.");
             Objects.requireNonNull(document, "The document cannot be null.");
             positions = new int[0];   // TODO: NOT implemented yet
