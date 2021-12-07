@@ -182,4 +182,12 @@ public class Posting implements Comparable<Posting>, Serializable {
         return this.creationInstant.compareTo(posting.creationInstant);
     }
 
+    @Override
+    public String toString() {
+        return "Posting{" +
+                "docId=" + docId +
+                ", creationInstant=" + creationInstant +
+                ", forwardPointer=" + forwardPointer +
+                '}';
+    }
 }
