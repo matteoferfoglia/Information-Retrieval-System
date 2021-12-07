@@ -249,7 +249,7 @@ public class BooleanExpression {
                     // The normalization return null, then no matches
                     return new ArrayList<>();
                 } else {
-                    PostingList postingList = invertedIndex.getPostingList(normalizedToken);
+                    PostingList postingList = invertedIndex.getPostingListForToken(normalizedToken);
                     return postingList == null ? new ArrayList<>() : postingList.toListOfPostings();
                 }
             } else if (matchingPhrase != null) {
