@@ -42,13 +42,13 @@ public class Term implements Comparable<Term>, Serializable {
      *
      * @param numberOfDocsInCorpus The total number of {@link Document}s in the {@link Corpus}.
      * @return the Inverse-Document-Frequency for this {@link Term}.
-     * @throws NoDocumentsAssociatedWithTerm If no documents associated with
-     *                                       this {@link Term} are found.
+     * @throws NoDocumentsAssociatedWithTermException If no documents associated with
+     *                                                this {@link Term} are found.
      */
-    public double idf(int numberOfDocsInCorpus) throws Exception {
+    public double idf(int numberOfDocsInCorpus) throws NoDocumentsAssociatedWithTermException {// TODO: test and benchmark
         int df = postingList.size();    // document frequency   // TODO : df ma be an attribute of the class (faster, but occupies memory spacer and must be eventually updated)
         if (df == 0) {
-            throw new NoDocumentsAssociatedWithTerm("No documents associated with this term");
+            throw new NoDocumentsAssociatedWithTermException(this);
         }
         return Math.log((double) numberOfDocsInCorpus / df);   // TODO : may be cached until any updated, as attribute
     }
@@ -58,11 +58,11 @@ public class Term implements Comparable<Term>, Serializable {
      *
      * @param other The other {@link Term} to be merged into this one.
      */
-    public void merge(@NotNull Term other) {    // TODO : needed?
+    public void merge(@NotNull final Term other) {    // TODO : needed? // TODO: test and benchmark
         if (this.term.equals(other.term)) {
             this.postingList.merge(other.postingList);
         } else {
-            throw new ImpossibleMergeException("Terms " + this + " and " + other + " cannot be merged.");
+            throw new ImpossibleTermsMergingException(this, other);
         }
     }
 
@@ -72,14 +72,6 @@ public class Term implements Comparable<Term>, Serializable {
     @NotNull
     public PostingList getPostingList() {
         return postingList;
-    }
-
-    /**
-     * @return the term associated with this instance.
-     */
-    @NotNull
-    public String getTerm() {
-        return term;
     }
 
     @Override
@@ -95,9 +87,7 @@ public class Term implements Comparable<Term>, Serializable {
 
     @Override
     public int hashCode() {
-        int result = postingList.hashCode();
-        result = 31 * result + term.hashCode();
-        return result;
+        return term.hashCode();
     }
 
     @Override
@@ -114,18 +104,19 @@ public class Term implements Comparable<Term>, Serializable {
      * This exception is thrown when no documents associated with
      * the {@link Term} are found.
      */
-    public static class NoDocumentsAssociatedWithTerm extends Exception {
-        public NoDocumentsAssociatedWithTerm(String msg) {
-            super(msg);
+    public static class NoDocumentsAssociatedWithTermException extends Exception {
+        public NoDocumentsAssociatedWithTermException(@NotNull final Term term) {
+            super("No documents associated with the term " + Objects.requireNonNull(term));
         }
     }
 
     /**
      * Exception thrown if merging terms is impossible.
      */
-    public static class ImpossibleMergeException extends RuntimeException {
-        public ImpossibleMergeException(String errorMessage) {
-            super(errorMessage);
+    public static class ImpossibleTermsMergingException extends RuntimeException {
+        public ImpossibleTermsMergingException(@NotNull final Term term1, @NotNull final Term term2) {
+            super("Terms " + Objects.requireNonNull(term1) + " and " +
+                    Objects.requireNonNull(term2) + " cannot be merged.");
         }
     }
 }
