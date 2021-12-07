@@ -4,12 +4,11 @@ import it.units.informationretrieval.ir_boolean_model.entities.document.Document
 import it.units.informationretrieval.ir_boolean_model.entities.document.DocumentIdentifier;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.utils.Pair;
-import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -33,18 +32,17 @@ public class Corpus implements Serializable {
      * @throws NoMoreDocIdsAvailable If no more {@link DocumentIdentifier}s
      *                               are available, hence the {@link Corpus} cannot be created.
      */
-    public Corpus(Collection<? extends Document> documents) throws NoMoreDocIdsAvailable {
+    public Corpus(@NotNull Collection<? extends Document> documents) throws NoMoreDocIdsAvailable {// TODO: test and benchmark
 
-        AtomicBoolean exceptionFlag = new AtomicBoolean(false); // becomes true if an exception is thrown in lambda function
+        AtomicReference<NoMoreDocIdsAvailable> eventuallyThrownException = new AtomicReference<>();
 
-        this.corpus = documents
+        this.corpus = Objects.requireNonNull(documents)
                 .stream().unordered().parallel()
                 .map(aDocument -> {
                     try {
                         return new Pair<>(new DocumentIdentifier(), aDocument);
                     } catch (NoMoreDocIdsAvailable noMoreDocIdsAvailable) {
-                        System.err.println(Utility.stackTraceToString(noMoreDocIdsAvailable));
-                        exceptionFlag.set(true);
+                        eventuallyThrownException.set(noMoreDocIdsAvailable);
                         return null;
                     }
                 })
@@ -54,28 +52,24 @@ public class Corpus implements Serializable {
                         Map.Entry::getValue
                 ));
 
-        if (exceptionFlag.get()) {
-            throw new NoMoreDocIdsAvailable("Exception thrown.");
+        if (eventuallyThrownException.get() != null) {
+            throw eventuallyThrownException.get();
         }
     }
 
-
     /**
-     * @param postings The {@link List} of {@link Posting}s for which the
-     *                 corresponding {@link List} of {@link Document}s is
-     *                 wanted.
+     * @param docIds The {@link List} of {@link DocumentIdentifier}s for which the
+     *               corresponding {@link List} of {@link Document}s is desired.
      * @return the {@link List} of {@link Document}s in this {@link Corpus}
-     * for which the {@link DocumentIdentifier} is present
-     * in any of the {@link Posting} in the parameter.
+     * corresponding matching the parameter.
      */
     @NotNull
-    public List<Document> getDocuments(@NotNull List<Posting> postings) {
-        return Objects.requireNonNull(postings, "List of postings cannot be null")
+    public List<Document> getDocuments(@NotNull List<DocumentIdentifier> docIds) {  // TODO: test and benchmark
+        return Objects.requireNonNull(docIds)
                 .stream().unordered().parallel()
-                .map(aPosting -> corpus.get(aPosting.getDocId()))
+                .map(corpus::get)
                 .filter(Objects::nonNull)
-                .distinct() // more postings may refer to the same document
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -88,7 +82,7 @@ public class Corpus implements Serializable {
      * @return A string corresponding to the head of this corpus.
      */
     @NotNull
-    public String head(int howMany) {
+    public String head(int howMany) {   // TODO: test and benchmark
         int howManyDocsToReturn = Math.min(Math.max(howMany, 0), corpus.size());
         final Comparator<? super Map.Entry<DocumentIdentifier, Document>> keyComparator = Map.Entry.comparingByKey();
         return corpus.entrySet()
@@ -96,7 +90,7 @@ public class Corpus implements Serializable {
                 .sorted(keyComparator)
                 .limit(howManyDocsToReturn)
                 .map(entry -> entry.getKey() + " = " + entry.getValue())
-                .collect(Collectors.joining("\n"));
+                .collect(Collectors.joining(System.lineSeparator()));
     }
 
     /**

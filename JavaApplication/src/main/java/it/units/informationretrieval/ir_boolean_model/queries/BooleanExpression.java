@@ -1,6 +1,7 @@
 package it.units.informationretrieval.ir_boolean_model.queries;
 
 import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex;
+import it.units.informationretrieval.ir_boolean_model.entities.Posting;
 import it.units.informationretrieval.ir_boolean_model.entities.PostingList;
 import it.units.informationretrieval.ir_boolean_model.entities.document.Document;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
@@ -231,16 +232,13 @@ public class BooleanExpression {
             return booleanExpressions
                     .stream().unordered().parallel()
                     .map(expr -> expr.evaluate_(invertedIndex))
-                    .reduce((postingList1, postingList2) -> {
-                        switch (Objects.requireNonNull(binaryOperator, "The operator is null, but should not.")) {
-                            case AND:
-                                return intersection(postingList1, postingList2);
-                            case OR:
-                                return union(postingList1, postingList2);
-                            default:
-                                throw new UnsupportedOperationException("Unknown operator");
-                        }
-                    })
+                    .reduce((postingList1, postingList2) ->
+                            switch (Objects.requireNonNull(binaryOperator, "The operator is null, but should not.")) {
+                                case AND -> intersection(postingList1, postingList2);
+                                case OR -> union(postingList1, postingList2);
+                                //noinspection UnnecessaryDefault
+                                default -> throw new UnsupportedOperationException("Unknown operator");
+                            })
                     .orElse(new PostingList());
 
         } else {
@@ -276,7 +274,14 @@ public class BooleanExpression {
     @NotNull
     public List<Document> evaluate(@NotNull final InvertedIndex invertedIndex)
             throws UnsupportedOperationException {
-        return invertedIndex.getCorpus().getDocuments(evaluate_(invertedIndex).toList());
+        return invertedIndex.getCorpus()
+                .getDocuments(
+                        evaluate_(invertedIndex)
+                                .toList()
+                                .stream()
+                                .map(Posting::getDocId)
+                                .distinct()
+                                .toList());// TODO: message chain code smell
         // TODO : implement ranking and sort results accordingly
     }
 
