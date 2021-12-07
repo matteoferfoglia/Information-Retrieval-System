@@ -14,21 +14,21 @@ import java.util.stream.Collectors;
 public class DocumentContent implements Serializable {
 
     /**
-     * {@link List} of {@link RankedSubcontent}.
+     * {@link List} of {@link DocumentRankedSubcontent}.
      * The list is sorted according to the order in which the subcontent appears
      * in the document.
      */
-    private final List<RankedSubcontent> content;
+    private final List<DocumentRankedSubcontent> content;
 
     /**
      * Constructor.
      *
-     * @param rankedSubcontentList The list of {@link RankedSubcontent}s present in
-     *                             this instance of {@link Document}. The list should be sorted according to the
-     *                             order in which it appears in the document.
+     * @param documentRankedSubcontentList The list of {@link DocumentRankedSubcontent}s present in
+     *                                     this instance of {@link Document}. The list should be sorted according to the
+     *                                     order in which it appears in the document.
      */
-    public DocumentContent(@NotNull List<@NotNull RankedSubcontent> rankedSubcontentList) {
-        this.content = Objects.requireNonNull(rankedSubcontentList);
+    public DocumentContent(@NotNull List<@NotNull DocumentRankedSubcontent> documentRankedSubcontentList) {
+        this.content = Objects.requireNonNull(documentRankedSubcontentList);
     }
 
     /**
@@ -37,7 +37,7 @@ public class DocumentContent implements Serializable {
     @NotNull
     public String getEntireTextContent() {// TODO: test
         return content.stream().sequential()
-                .map(RankedSubcontent::getContent)
+                .map(DocumentRankedSubcontent::getContent)
                 .collect(Collectors.joining(System.lineSeparator()));
     }
 

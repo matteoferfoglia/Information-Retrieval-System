@@ -10,8 +10,8 @@ import java.util.Objects;
 /**
  * Class representing a ranked subcontent.
  */
-public abstract class RankedSubcontent
-        implements Comparable<RankedSubcontent>, Summable<RankedSubcontent>/* TODO: rethink about this */, Serializable {
+public abstract class DocumentRankedSubcontent
+        implements Comparable<DocumentRankedSubcontent>, Summable<DocumentRankedSubcontent>/* TODO: rethink about this */, Serializable {
     /**
      * The ranked subcontent.
      */
@@ -23,7 +23,7 @@ public abstract class RankedSubcontent
      * @param rank       The rank for this subcontent.
      * @param subcontent The subcontent.
      */
-    public RankedSubcontent(@NotNull ContentRank rank, @NotNull String subcontent) {
+    public DocumentRankedSubcontent(@NotNull ContentRank rank, @NotNull String subcontent) {
         this.rankedSubcontent = new Pair<>(Objects.requireNonNull(rank), Objects.requireNonNull(subcontent));
     }
 
@@ -47,7 +47,7 @@ public abstract class RankedSubcontent
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RankedSubcontent that = (RankedSubcontent) o;
+        DocumentRankedSubcontent that = (DocumentRankedSubcontent) o;
         return rankedSubcontent.equals(that.rankedSubcontent);
     }
 
@@ -64,11 +64,11 @@ public abstract class RankedSubcontent
     /**
      * Compare this instance with the given one.
      *
-     * @param rankedSubcontent The other instance used for the comparison.
+     * @param documentRankedSubcontent The other instance used for the comparison.
      */
     @Override
-    public int compareTo(@NotNull RankedSubcontent rankedSubcontent) {
-        return this.getRank().compareTo(rankedSubcontent.getRank());
+    public int compareTo(@NotNull DocumentRankedSubcontent documentRankedSubcontent) {
+        return this.getRank().compareTo(documentRankedSubcontent.getRank());
     }
 
     /**
