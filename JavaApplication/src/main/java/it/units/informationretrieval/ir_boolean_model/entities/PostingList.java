@@ -1,6 +1,7 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class PostingList implements Serializable {
      *                Immediately after the creation, this will be the only-one
      *                element in the list.
      */
-    public PostingList(@NotNull Posting posting) {
+    public PostingList(@NotNull final Posting posting) {
         Objects.requireNonNull(posting, "The posting cannot be null");
         this.postings = new ArrayList<>();
         this.postings.add(posting);
@@ -50,7 +51,7 @@ public class PostingList implements Serializable {
      *
      * @param postings The list of {@link Posting}s.
      */
-    private PostingList(@NotNull List<Posting> postings) {
+    private PostingList(@NotNull final List<Posting> postings) {  // TODO: test
         Objects.requireNonNull(postings, "The input argument cannot be null.");
         this.postings = postings.stream().unordered().distinct().collect(Collectors.toList());
         setSkipPointers();
@@ -66,12 +67,12 @@ public class PostingList implements Serializable {
      * two given {@link PostingList}s as parameters.
      */
     @NotNull
-    public static PostingList union(@NotNull PostingList a, @NotNull PostingList b) {
-        Objects.requireNonNull(a, "Input Parameter cannot be null.");
-        Objects.requireNonNull(b, "Input Parameter cannot be null.");
+    public static PostingList union(@NotNull final PostingList a, @NotNull final PostingList b) {   // TODO: test
+        Objects.requireNonNull(a);
+        Objects.requireNonNull(b);
 
-        List<Posting> a_ = a.postings,
-                b_ = b.postings;
+        List<Posting> a_ = a.postings;
+        List<Posting> b_ = b.postings;
         ArrayList<Posting> union = new ArrayList<>(a_.size() + b_.size());
         int i = 0, j = 0, comparison;
         while (i < a_.size() && j < b_.size()) {
@@ -104,9 +105,9 @@ public class PostingList implements Serializable {
      * two given {@link PostingList}s as parameters.
      */
     @NotNull
-    public static PostingList intersection(@NotNull PostingList a, @NotNull PostingList b) {
-        Objects.requireNonNull(a, "Input Parameter cannot be null.");
-        Objects.requireNonNull(b, "Input Parameter cannot be null.");
+    public static PostingList intersection(@NotNull final PostingList a, @NotNull final PostingList b) {    //  TODO: test
+        Objects.requireNonNull(a);
+        Objects.requireNonNull(b);
 
         List<Posting> a_ = a.postings,
                 b_ = b.postings;
@@ -138,15 +139,12 @@ public class PostingList implements Serializable {
      *
      * @param other The other {@link PostingList} to be merged into this one.
      */
-    public void merge(PostingList other) {
+    public void merge(@Nullable final PostingList other) {  // TODO: test
         if (other == null) {
             return;
         }
         this.postings.addAll(other.postings);
-        this.postings = this.postings.stream().sequential()
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList());
+        sort();
     }
 
     /**
@@ -154,7 +152,7 @@ public class PostingList implements Serializable {
      * &radic;p evenly spaced skip pointers will be created, with p = the
      * number of elements in this {@link PostingList}.
      */
-    private void setSkipPointers() {
+    private void setSkipPointers() {    // TODO: test positions of skip pointers
 
         sort();   // the postingList MUST be sorted
 
@@ -194,7 +192,7 @@ public class PostingList implements Serializable {
      * Sort this instance.
      */
     private void sort() {
-        postings = postings.stream().sequential().sorted().collect(Collectors.toList());
+        postings = postings.stream().sequential().sorted().toList();
     }
 
     /**
