@@ -114,7 +114,7 @@ public class PostingList implements Serializable {
      * Sort this instance.
      */
     private void sort() {   // TODO: benchmark
-        postings = postings.stream().sequential().sorted().toList();
+        postings = postings.stream().sequential().sorted().collect(Collectors.toList());
     }
 
     /**
