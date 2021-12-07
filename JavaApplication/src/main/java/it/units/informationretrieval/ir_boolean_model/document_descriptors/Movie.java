@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  */
 public class Movie extends Document implements Externalizable {
 
-    // TODO : implement this class. Currently it is just a draft.
+    // TODO : re-see this very very long class
 
     /**
      * Map having as key an index value for the language and as
