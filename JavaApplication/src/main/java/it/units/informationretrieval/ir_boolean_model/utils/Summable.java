@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public interface Summable<T> {
+public interface Summable<T> {  // TODO: needed?
     /**
      * @param t The other instance
      * @return the sum of this instance with the other.

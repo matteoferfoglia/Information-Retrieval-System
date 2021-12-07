@@ -37,6 +37,7 @@ public class Utility {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         // TODO : not implemented yet (only split documents into strings which are the token - DO NOT CUT)
+        // TODO : test
     }
 
     /**
@@ -49,6 +50,7 @@ public class Utility {
     @Nullable
     public static String normalize(@NotNull String token) {
         // TODO : not implemented yet, just a draft
+        // TODO: test
         String toReturn = token
                 .replaceAll(REGEX__NOT__VALID_CHARACTERS, " ")
                 .replaceAll(REGEX_MULTIPLE_SPACES, " ") // TODO : refactoring : same code in the previous method
@@ -64,7 +66,7 @@ public class Utility {
      * @return The stacktrace obtained from {@link Exception#printStackTrace()} as a {@link String}.
      */
     @NotNull
-    public static String stackTraceToString(Exception e) {
+    public static String stackTraceToString(Exception e) {  // TODO: test
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
@@ -75,7 +77,7 @@ public class Utility {
      * Convert a string in JSON format to a {@link Map}.
      */
     @NotNull
-    public static Map<String, ?> convertFromJsonToMap(@NotNull final String stringInJsonFormat) throws JsonProcessingException {
+    public static Map<String, ?> convertFromJsonToMap(@NotNull final String stringInJsonFormat) throws JsonProcessingException {    // TODO: test
         return ((HashMap<?, ?>) new ObjectMapper().readValue(Objects.requireNonNull(stringInJsonFormat), HashMap.class))
                 .entrySet().stream().unordered().parallel() // order does not matter in JSON entries
                 .map(entry -> new AbstractMap.SimpleEntry<String, Object>((String) entry.getKey(), entry.getValue()))
@@ -92,7 +94,7 @@ public class Utility {
     @NotNull
     public static String convertToJson(@NotNull Object object)
             throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(Objects.requireNonNull(object));
+        return new ObjectMapper().writeValueAsString(Objects.requireNonNull(object));   // TODO: test
     }
 
     /**
@@ -106,7 +108,7 @@ public class Utility {
      * @param <R> Output type.
      */
     @FunctionalInterface
-    public interface TriFunction<A, B, C, R> {
+    public interface TriFunction<A, B, C, R> {  // TODO: needed?
 
         R apply(A a, B b, C c);
 
@@ -116,7 +118,7 @@ public class Utility {
             return (A a, B b, C c) -> after.apply(apply(a, b, c));
         }
 
-        default <D,V> TriFunction<A, B, C, V> andThen(
+        default <D, V> TriFunction<A, B, C, V> andThen(
                 BiFunction<? super R, D, ? extends V> after, D parameter) {
             Objects.requireNonNull(after);
             return (A a, B b, C c) -> after.apply(apply(a, b, c), parameter);
@@ -131,9 +133,9 @@ public class Utility {
      * @param <R> Output type.
      */
     @FunctionalInterface
-    public interface MyBiFunction<A, B, R> extends BiFunction<A,B,R> {
+    public interface MyBiFunction<A, B, R> extends BiFunction<A, B, R> {  // TODO: needed?
 
-        default <D,V> BiFunction<A,B,V> andThen(
+        default <D, V> BiFunction<A, B, V> andThen(
                 BiFunction<? super R, D, V> after, D parameter) {
             Objects.requireNonNull(after);
             return (A a, B b) -> after.apply(apply(a, b), parameter);

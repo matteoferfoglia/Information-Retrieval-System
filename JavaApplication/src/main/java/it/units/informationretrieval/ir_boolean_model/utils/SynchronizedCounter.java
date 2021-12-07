@@ -8,7 +8,7 @@ package it.units.informationretrieval.ir_boolean_model.utils;
  *
  * @author Matteo Ferfoglia
  */
-public class SynchronizedCounter {
+public class SynchronizedCounter {  // TODO: to be tested
     /**
      * The counter. Initialized with {@link Integer#MIN_VALUE}.
      */
