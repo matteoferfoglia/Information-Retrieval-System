@@ -2,7 +2,7 @@ package it.units.informationretrieval.ir_boolean_model.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.units.informationretrieval.ir_boolean_model.entities.document.Document;
+import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

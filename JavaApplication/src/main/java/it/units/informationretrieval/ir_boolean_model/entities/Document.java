@@ -1,4 +1,4 @@
-package it.units.informationretrieval.ir_boolean_model.entities.document;
+package it.units.informationretrieval.ir_boolean_model.entities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;

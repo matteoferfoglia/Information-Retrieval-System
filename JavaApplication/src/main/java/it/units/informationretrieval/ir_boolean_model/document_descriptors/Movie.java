@@ -1,11 +1,7 @@
 package it.units.informationretrieval.ir_boolean_model.document_descriptors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
-import it.units.informationretrieval.ir_boolean_model.entities.DocumentIdentifier;
-import it.units.informationretrieval.ir_boolean_model.entities.document.Document;
-import it.units.informationretrieval.ir_boolean_model.entities.document.DocumentContent;
-import it.units.informationretrieval.ir_boolean_model.entities.document.DocumentRankedSubcontent;
+import it.units.informationretrieval.ir_boolean_model.entities.*;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.utils.FunctionThrowingException;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
@@ -431,9 +427,9 @@ public class Movie extends Document implements Externalizable {
     }
 
     /**
-     * Class implementing {@link DocumentRankedSubcontent.ContentRank} for {@link Movie}s.
+     * Class implementing {@link DocumentContentRank} for {@link Movie}s.
      */
-    private static class MovieContentRank implements DocumentRankedSubcontent.ContentRank {
+    private static class MovieContentRank implements DocumentContentRank {
         /**
          * The rank.
          */
@@ -444,7 +440,7 @@ public class Movie extends Document implements Externalizable {
         }
 
         @Override
-        public int compareTo(@NotNull DocumentRankedSubcontent.ContentRank otherContentRank) {
+        public int compareTo(@NotNull DocumentContentRank otherContentRank) {
             if (Objects.requireNonNull(otherContentRank) instanceof MovieContentRank) {
                 return ((MovieContentRank) otherContentRank).rank.getRankValue() - this.rank.getRankValue();
             } else {
@@ -497,7 +493,7 @@ public class Movie extends Document implements Externalizable {
              * @param rank       The rank for this subcontent.
              * @param subcontent The subcontent.
              */
-            public MovieRankedSubcontent(@NotNull ContentRank rank, @NotNull String subcontent) {
+            public MovieRankedSubcontent(@NotNull DocumentContentRank rank, @NotNull String subcontent) {
                 super(Objects.requireNonNull(rank), Objects.requireNonNull(subcontent));
             }
 

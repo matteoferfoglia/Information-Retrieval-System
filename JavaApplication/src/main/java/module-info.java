@@ -9,10 +9,8 @@ module it.units.informationretrieval.ir_boolean_model {
     exports it.units.informationretrieval.ir_boolean_model.entities;
     exports it.units.informationretrieval.ir_boolean_model.queries;
     exports it.units.informationretrieval.ir_boolean_model.utils;
-    exports it.units.informationretrieval.ir_boolean_model.entities.document;
     exports it.units.informationretrieval.ir_boolean_model.exceptions;
 
     opens it.units.informationretrieval.ir_boolean_model.entities to java.logging;
-    opens it.units.informationretrieval.ir_boolean_model.entities.document to java.logging;
     opens it.units.informationretrieval.ir_boolean_model.exceptions to java.logging;
 }

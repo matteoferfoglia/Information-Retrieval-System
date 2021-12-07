@@ -1,4 +1,4 @@
-package it.units.informationretrieval.ir_boolean_model.entities.document;
+package it.units.informationretrieval.ir_boolean_model.entities;
 
 import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.Summable;
@@ -15,7 +15,7 @@ public abstract class DocumentRankedSubcontent
     /**
      * The ranked subcontent.
      */
-    private final Pair<@NotNull ContentRank, @NotNull String> rankedSubcontent;
+    private final Pair<@NotNull DocumentContentRank, @NotNull String> rankedSubcontent;
 
     /**
      * Constructor.
@@ -23,7 +23,7 @@ public abstract class DocumentRankedSubcontent
      * @param rank       The rank for this subcontent.
      * @param subcontent The subcontent.
      */
-    public DocumentRankedSubcontent(@NotNull ContentRank rank, @NotNull String subcontent) {
+    public DocumentRankedSubcontent(@NotNull DocumentContentRank rank, @NotNull String subcontent) {
         this.rankedSubcontent = new Pair<>(Objects.requireNonNull(rank), Objects.requireNonNull(subcontent));
     }
 
@@ -31,7 +31,7 @@ public abstract class DocumentRankedSubcontent
      * @return the rank of this instance.
      */
     @NotNull
-    public ContentRank getRank() {
+    public DocumentContentRank getRank() {
         return rankedSubcontent.getKey();
     }
 
@@ -69,12 +69,6 @@ public abstract class DocumentRankedSubcontent
     @Override
     public int compareTo(@NotNull DocumentRankedSubcontent documentRankedSubcontent) {
         return this.getRank().compareTo(documentRankedSubcontent.getRank());
-    }
-
-    /**
-     * Interface representing the rank for a content.
-     */
-    public interface ContentRank extends Comparable<ContentRank>, Serializable {
     }
 
 }

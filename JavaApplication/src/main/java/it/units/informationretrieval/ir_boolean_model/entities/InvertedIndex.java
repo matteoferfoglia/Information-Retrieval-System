@@ -1,6 +1,5 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
-import it.units.informationretrieval.ir_boolean_model.entities.document.Document;
 import it.units.informationretrieval.ir_boolean_model.utils.Properties;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.apache.commons.collections4.trie.PatriciaTrie;
