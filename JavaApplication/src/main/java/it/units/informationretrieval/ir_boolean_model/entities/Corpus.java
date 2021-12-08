@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -33,6 +34,13 @@ public class Corpus implements Serializable {
      */
     public Corpus(@NotNull Collection<Document> documents) throws NoMoreDocIdsAvailable {
         this.corpus = createCorpusFromDocumentCollectionAndGet(documents);
+    }
+
+    /**
+     * Creates an empty corpus.
+     */
+    protected Corpus() {
+        corpus = new ConcurrentHashMap<>();
     }
 
     @NotNull
