@@ -330,4 +330,6 @@ public class BooleanExpression {
          */
         OR
     }
+
+    // TODO: query optimization
 }
