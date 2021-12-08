@@ -11,50 +11,123 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CorpusTest {
 
-    private FakeCorpus corpus;
+    private static final int DEFAULT_CORPUS_SIZE_FOR_TESTS = 1000;
+    private static final List<Document> documents = LineOfAFile.produceDocuments(DEFAULT_CORPUS_SIZE_FOR_TESTS);
+    private static final List<DocumentIdentifier> docIdsOfFirst100DocumentsInCorpus =
+            IntStream.range(SynchronizedCounter.MIN_VALUE, SynchronizedCounter.MIN_VALUE + 100)
+                    .mapToObj(docIdValue -> new DocumentIdentifier(new FakeDocumentIdentifier(docIdValue)))
+                    .toList();
+    private static FakeCorpus corpus;
 
-    @BeforeEach
-    void setUp() {
-        corpus = new FakeCorpus();
+    static {
+        try {
+            corpus = new FakeCorpus(documents); // initialized here for benchmark tests.
+        } catch (NoMoreDocIdsAvailable e) {
+            fail(e);
+        }
+    }
+
+    @Benchmark
+    static void createCorpusFromDocumentCollectionOfLength1000() throws NoMoreDocIdsAvailable {
+        final int COLLECTION_LENGTH = 1000;
+        Corpus.createCorpusFromDocumentCollectionAndGet(LineOfAFile.produceDocuments(COLLECTION_LENGTH));
     }
 
     @AfterEach
     void tearDown() {
     }
 
+    @Benchmark
+    static void getFirst100DocumentsFromDocId() {
+        corpus.getDocuments(docIdsOfFirst100DocumentsInCorpus);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(corpus.getDocuments(docIdsOfFirst100DocumentsInCorpus));
+    }
+
+    @BeforeEach
+    void setUp() throws NoMoreDocIdsAvailable {
+        corpus = new FakeCorpus(documents);
+    }
+
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 5, 10, 100})
     void createCorpusFromDocumentCollectionAndGet(int expectedNumberOfDocuments) throws NoMoreDocIdsAvailable {
-        Map<?, ?> createdCorpus = corpus.createCorpusFromDocumentCollectionAndGet(LineOfAFile.produceDocuments(expectedNumberOfDocuments));
+        Map<?, ?> createdCorpus = Corpus.createCorpusFromDocumentCollectionAndGet(LineOfAFile.produceDocuments(expectedNumberOfDocuments));
         assertEquals(expectedNumberOfDocuments, createdCorpus.size());
     }
 
-    @Benchmark
-    static void createCorpusFromDocumentCollectionOfLength1000() throws NoMoreDocIdsAvailable {
-        final int COLLECTION_LENGTH = 1000;
-        new FakeCorpus().createCorpusFromDocumentCollectionAndGet(LineOfAFile.produceDocuments(COLLECTION_LENGTH));
-    }
-
     @Test
-    void throwExceptionWhenCreatingTheCorpusIfNoMoreDocIDasAreAvailable()
-            throws NoSuchFieldException, IllegalAccessException {
-        Field docIdGeneratorField = DocumentIdentifier.class.getDeclaredField("counter");
-        docIdGeneratorField.setAccessible(true);
-        ((SynchronizedCounter) docIdGeneratorField.get(null)).setValue(SynchronizedCounter.MAX_VALUE);
+    void throwExceptionWhenCreatingTheCorpusIfNoMoreDocIDasAreAvailable() {
+
+        Function<Integer, Integer> setDocIdGeneratorValueAndGeOldValue = valueToSet -> {
+            try {
+                Field docIdGeneratorField = DocumentIdentifier.class.getDeclaredField("counter");
+                docIdGeneratorField.setAccessible(true);
+                SynchronizedCounter docIdGenerator = (SynchronizedCounter) docIdGeneratorField.get(null);
+                int oldValue = docIdGenerator.getValue();
+                docIdGenerator.setValue(valueToSet);
+                return oldValue;
+            } catch (IllegalAccessException | NoSuchFieldException e) {
+                fail(e);
+                return 0;
+            }
+        };
+        int realDocIdGeneratorValue = setDocIdGeneratorValueAndGeOldValue.apply(SynchronizedCounter.MAX_VALUE);
         try {
             createCorpusFromDocumentCollectionAndGet(1);    // at least one document to produce the overflow in the docId generator
+            setDocIdGeneratorValueAndGeOldValue.apply(realDocIdGeneratorValue);
             fail("An exception should have been thrown.");
         } catch (NoMoreDocIdsAvailable e) {
             assertTrue(true);// correct to be here
+            setDocIdGeneratorValueAndGeOldValue.apply(realDocIdGeneratorValue);
         }
     }
 
+    @Test
+    void getDocuments() {
+        var docIdsInCorpus = corpus.getCorpus().keySet().stream().toList();
+        assertEquals(new HashSet<>(documents), new HashSet<>(corpus.getDocuments(docIdsInCorpus)));
+    }
+
     private static class FakeCorpus extends Corpus {
+        /**
+         * Constructor. Creates a corpus from a {@link Map}.
+         *
+         * @param corpusAsMap The corpus as input parameter.
+         */
+        public FakeCorpus(Map<DocumentIdentifier, Document> corpusAsMap) {
+            super();
+            var corpus = super.getCorpus();
+            corpus.putAll(corpusAsMap);
+        }
+
+        public FakeCorpus(Collection<Document> documents) throws NoMoreDocIdsAvailable {
+            super(documents);
+        }
+
+        public FakeCorpus() {
+        }
+    }
+
+    private static class FakeDocumentIdentifier extends DocumentIdentifier {
+        /**
+         * Creates a docId with the specified value.
+         */
+        public FakeDocumentIdentifier(int docIdValue) {
+            super(docIdValue);
+        }
     }
 }
