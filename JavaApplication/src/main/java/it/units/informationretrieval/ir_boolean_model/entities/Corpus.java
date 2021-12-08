@@ -45,7 +45,7 @@ public class Corpus implements Serializable {
 
     @NotNull
     protected ConcurrentMap<DocumentIdentifier, Document> createCorpusFromDocumentCollectionAndGet(
-            @NotNull final Collection<? extends Document> documents) throws NoMoreDocIdsAvailable {// TODO: test and benchmark
+            @NotNull final Collection<? extends Document> documents) throws NoMoreDocIdsAvailable {
 
         AtomicReference<NoMoreDocIdsAvailable> eventuallyThrownException = new AtomicReference<>();
 

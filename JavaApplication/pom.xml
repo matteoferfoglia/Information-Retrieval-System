@@ -37,6 +37,12 @@
 
     <url/><!-- Avoid warning "No project URL defined - decoration links will not be relativized!" -->
 
+    <repositories>
+        <repository><!--To load dependencies from GitHub-->
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
@@ -216,6 +222,12 @@
             <artifactId>junit-jupiter</artifactId>
             <version>5.8.1</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency><!-- Benchmark -->
+            <groupId>com.github.matteoferfoglia</groupId>
+            <artifactId>java-benchmark</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 

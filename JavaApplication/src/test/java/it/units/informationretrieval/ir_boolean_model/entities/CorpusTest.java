@@ -1,5 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
+import benchmark.Benchmark;
 import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.LineOfAFile;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.utils.SynchronizedCounter;
@@ -32,6 +33,12 @@ class CorpusTest {
     void createCorpusFromDocumentCollectionAndGet(int expectedNumberOfDocuments) throws NoMoreDocIdsAvailable {
         Map<?, ?> createdCorpus = corpus.createCorpusFromDocumentCollectionAndGet(LineOfAFile.produceDocuments(expectedNumberOfDocuments));
         assertEquals(expectedNumberOfDocuments, createdCorpus.size());
+    }
+
+    @Benchmark
+    static void createCorpusFromDocumentCollectionOfLength1000() throws NoMoreDocIdsAvailable {
+        final int COLLECTION_LENGTH = 1000;
+        new FakeCorpus().createCorpusFromDocumentCollectionAndGet(LineOfAFile.produceDocuments(COLLECTION_LENGTH));
     }
 
     @Test

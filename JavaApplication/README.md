@@ -30,6 +30,13 @@ use `mvn exec:java`.
 This project is configured to create, in addition to the JAR file obtained from the package phase, a further larger
 file, inside which all the dependencies required by the project have been assembled. This JAR file can be directly
 distributed to the users, who can execute it from the terminal (assuming they have installed the correct version of Java
+
 8) with the command
 
-    java -jar *jarFileName.jar* *inputParameters*
+   java -jar *jarFileName.jar* *inputParameters*
+
+## Benchmark
+
+This project use the Java-Benchmark framework (see dependencies in *pom.xml*)
+for benchmarking methods. The Benchmark tests can be run by the main method of class test/Benchmarking and everything
+works according to the documentation of the used framework.
