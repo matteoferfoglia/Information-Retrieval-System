@@ -15,6 +15,15 @@ public class SynchronizedCounter {  // TODO: to be tested
     private int counter = Integer.MIN_VALUE;
 
     /**
+     * The minimum value for the counter.
+     */
+    public static final int MIN_VALUE = Integer.MIN_VALUE;
+    /**
+     * The maximum value for the counter.
+     */
+    public static final int MAX_VALUE = Integer.MAX_VALUE;
+
+    /**
      * Increment the value of the counter.
      *
      * @throws CounterOverflowException If the counter reached the max value.
@@ -57,8 +66,17 @@ public class SynchronizedCounter {  // TODO: to be tested
     /**
      * @return the value of the counter.
      */
-    public synchronized int value() {
+    public synchronized int getValue() {
         return counter;
+    }
+
+    /**
+     * Sets the counter value to the specified value.
+     *
+     * @param value The new value for the counter.
+     */
+    public synchronized void setValue(int value) {
+        counter = value;
     }
 
     /**
