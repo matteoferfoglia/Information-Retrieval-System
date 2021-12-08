@@ -29,8 +29,20 @@ public class LineOfAFile extends Document {
      * Simplified constructor.
      */
     public LineOfAFile(@NotNull final String title, @NotNull final String content) {
+        this(title, new ArrayList<>() {{
+            add(content);
+        }});
+    }
+
+    /**
+     * Simplified constructor.
+     *
+     * @param title    The title of this instance.
+     * @param contents The contents of this instance.
+     */
+    public LineOfAFile(@NotNull final String title, @NotNull final List<String> contents) {
         this(title, new DocumentContent(new ArrayList<>() {{
-            add(new LineRankedSubcontent(new LineRank(), content));
+            contents.forEach(aContent -> add(new LineRankedSubcontent(new LineRank(), aContent)));
         }}));
     }
 

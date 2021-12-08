@@ -35,7 +35,7 @@ public class DocumentContent implements Serializable {
      * @return The entire content of this instance.
      */
     @NotNull
-    public String getEntireTextContent() {// TODO: test
+    public String getEntireTextContent() {
         return content.stream().sequential()
                 .map(DocumentRankedSubcontent::getContent)
                 .collect(Collectors.joining(System.lineSeparator()));
