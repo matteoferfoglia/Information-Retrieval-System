@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -30,11 +31,17 @@ public class Corpus implements Serializable {
      * @throws NoMoreDocIdsAvailable If no more {@link DocumentIdentifier}s
      *                               are available, hence the {@link Corpus} cannot be created.
      */
-    public Corpus(@NotNull Collection<? extends Document> documents) throws NoMoreDocIdsAvailable {// TODO: test and benchmark
+    public Corpus(@NotNull Collection<Document> documents) throws NoMoreDocIdsAvailable {
+        this.corpus = createCorpusFromDocumentCollectionAndGet(documents);
+    }
+
+    @NotNull
+    protected ConcurrentMap<DocumentIdentifier, Document> createCorpusFromDocumentCollectionAndGet(
+            @NotNull final Collection<? extends Document> documents) throws NoMoreDocIdsAvailable {// TODO: test and benchmark
 
         AtomicReference<NoMoreDocIdsAvailable> eventuallyThrownException = new AtomicReference<>();
 
-        this.corpus = Objects.requireNonNull(documents)
+        ConcurrentMap<DocumentIdentifier, Document> corpus = Objects.requireNonNull(documents)
                 .stream().unordered().parallel()
                 .map(aDocument -> {
                     try {
@@ -52,6 +59,8 @@ public class Corpus implements Serializable {
 
         if (eventuallyThrownException.get() != null) {
             throw eventuallyThrownException.get();
+        } else {
+            return corpus;
         }
     }
 
