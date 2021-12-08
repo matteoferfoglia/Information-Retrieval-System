@@ -44,7 +44,7 @@ public class Corpus implements Serializable {
     }
 
     @NotNull
-    protected ConcurrentMap<DocumentIdentifier, Document> createCorpusFromDocumentCollectionAndGet(
+    protected static ConcurrentMap<DocumentIdentifier, Document> createCorpusFromDocumentCollectionAndGet(
             @NotNull final Collection<? extends Document> documents) throws NoMoreDocIdsAvailable {
 
         AtomicReference<NoMoreDocIdsAvailable> eventuallyThrownException = new AtomicReference<>();
@@ -79,7 +79,7 @@ public class Corpus implements Serializable {
      * corresponding matching the parameter.
      */
     @NotNull
-    public List<Document> getDocuments(@NotNull List<DocumentIdentifier> docIds) {  // TODO: test and benchmark
+    public List<Document> getDocuments(@NotNull List<DocumentIdentifier> docIds) {
         return Objects.requireNonNull(docIds)
                 .stream().unordered().parallel()
                 .map(corpus::get)
