@@ -42,6 +42,24 @@ public class DocumentIdentifier implements Comparable<DocumentIdentifier>, Seria
         }
     }
 
+    /**
+     * Constructor to create an instance of this class with a specified {@link #docId} value.
+     *
+     * @param docIdValue The desired value for {@link #docId}.
+     */
+    protected DocumentIdentifier(int docIdValue) {
+        this.docId = docIdValue;
+    }
+
+    /**
+     * Copy constructor.
+     *
+     * @param documentIdentifierToBeCopied The {@link DocumentIdentifier} instance to be copied.
+     */
+    public DocumentIdentifier(DocumentIdentifier documentIdentifierToBeCopied) {
+        this(documentIdentifierToBeCopied.docId);
+    }
+
     @Override
     public int compareTo(DocumentIdentifier documentIdentifier) {
         return this.docId - documentIdentifier.docId;
