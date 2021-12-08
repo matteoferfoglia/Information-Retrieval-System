@@ -32,7 +32,7 @@
         <maven.compiler.target>16</maven.compiler.target>
         <maven.required.version>3.5</maven.required.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.main.class>ir_system.Main</project.main.class>
+        <project.main.class>it.units.informationretrieval.ir_boolean_model.Main</project.main.class>
     </properties>
 
     <url/><!-- Avoid warning "No project URL defined - decoration links will not be relativized!" -->
@@ -43,6 +43,13 @@
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </pluginRepository>
+    </pluginRepositories>
+
 
     <build>
         <plugins>
