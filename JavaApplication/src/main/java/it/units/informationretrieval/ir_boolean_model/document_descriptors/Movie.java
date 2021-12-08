@@ -236,7 +236,7 @@ public class Movie extends Document implements Serializable {
      * @throws URISyntaxException    If an exception is thrown while getting the URI of the files containing the information.
      */
     @NotNull
-    public static Corpus createCorpus()
+    public static Corpus createCorpus() // TODO: try to generalize (e.g., an interface?)
             throws NoMoreDocIdsAvailable, URISyntaxException {
         // TODO : this method is just a draft
 

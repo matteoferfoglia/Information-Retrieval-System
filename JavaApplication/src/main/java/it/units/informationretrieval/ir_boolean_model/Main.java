@@ -44,9 +44,7 @@ public class Main {
                     System.out.println("Loading the IRSystem from file system");
                     ObjectInputStream ois = new ObjectInputStream(
                             new BufferedInputStream(
-                                    new FileInputStream(file_irSystem)
-                            )
-                    );
+                                    new FileInputStream(file_irSystem)));
                     try {
                         Object irSystem_object = ois.readObject();
                         if (irSystem_object instanceof InformationRetrievalSystem) {
