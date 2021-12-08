@@ -10,7 +10,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 public class LineOfAFile extends Document {
@@ -18,8 +21,17 @@ public class LineOfAFile extends Document {
     private static final String PATH_TO_CORPUS = "/SampleCorpus.txt";
     private static final String SAMPLE_DOCUMENT_CONTENT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-    public LineOfAFile(@NotNull String title, @NotNull DocumentContent content) {
+    public LineOfAFile(@NotNull final String title, @NotNull final DocumentContent content) {
         super(title, content);
+    }
+
+    /**
+     * Simplified constructor.
+     */
+    public LineOfAFile(@NotNull final String title, @NotNull final String content) {
+        this(title, new DocumentContent(new ArrayList<>() {{
+            add(new LineRankedSubcontent(new LineRank(), content));
+        }}));
     }
 
     /**
@@ -32,9 +44,7 @@ public class LineOfAFile extends Document {
                 .stream().sequential()
                 .map(aLine -> {
                     String title = aLine.length() > 0 ? aLine.substring(0, aLine.indexOf(' ')) : "";
-                    List<DocumentRankedSubcontent> content = new ArrayList<>();
-                    content.add(new LineRankedSubcontent(new LineRank(), aLine));
-                    return (Document) new LineOfAFile(title, new DocumentContent(content));
+                    return (Document) new LineOfAFile(title, aLine);
                 })
                 .toList();
     }
@@ -58,14 +68,6 @@ public class LineOfAFile extends Document {
                     return (Document) new LineOfAFile(title, new DocumentContent(content));
                 })
                 .toList();
-    }
-
-    @Override
-    public @NotNull LinkedHashMap<String, ?> toSortedMapOfProperties() {
-        return new LinkedHashMap<>() {{
-            assert getContent() != null;
-            put("Content", getContent().getEntireTextContent());
-        }};
     }
 
     @Override

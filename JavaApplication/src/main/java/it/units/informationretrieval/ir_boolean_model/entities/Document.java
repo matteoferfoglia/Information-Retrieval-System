@@ -75,7 +75,7 @@ public abstract class Document implements Serializable, Comparable<Document> {  
     }
 
     @NotNull
-    public String toString() {// TODO : test
+    public String toString() {
         return title + "\t" + toJson();
     }
 
@@ -83,7 +83,7 @@ public abstract class Document implements Serializable, Comparable<Document> {  
      * @return The JSON representation of this instance
      */
     @NotNull
-    public String toJson() {    // TODO : test
+    public String toJson() {
         LinkedHashMap<?, ?> mapOfProperties = toSortedMapOfProperties();
         try {
             return Utility.convertToJson(mapOfProperties);
@@ -99,6 +99,10 @@ public abstract class Document implements Serializable, Comparable<Document> {  
      * the properties of this instance that you want to expose and as values
      * the correspondent value of that attributes.
      */
-    public abstract @NotNull LinkedHashMap<String, ?> toSortedMapOfProperties();    // TODO: test
+    public @NotNull LinkedHashMap<String, ?> toSortedMapOfProperties() {
+        return new LinkedHashMap<>() {{
+            put("Content", Objects.requireNonNull(getContent()).getEntireTextContent());
+        }};
+    }
 
 }
