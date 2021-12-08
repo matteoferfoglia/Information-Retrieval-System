@@ -1,4 +1,5 @@
-module it.units.informationretrieval.ir_boolean_model {
+open module it.units.informationretrieval.ir_boolean_model {
+
     requires com.fasterxml.jackson.core;
     requires org.jetbrains.annotations;
     requires java.logging;
@@ -12,6 +13,4 @@ module it.units.informationretrieval.ir_boolean_model {
     exports it.units.informationretrieval.ir_boolean_model.exceptions;
     exports it.units.informationretrieval.ir_boolean_model;
 
-    opens it.units.informationretrieval.ir_boolean_model.entities to java.logging;
-    opens it.units.informationretrieval.ir_boolean_model.exceptions to java.logging;
 }
