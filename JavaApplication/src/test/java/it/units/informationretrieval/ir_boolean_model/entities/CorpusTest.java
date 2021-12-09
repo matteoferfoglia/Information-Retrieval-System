@@ -1,7 +1,9 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
 import benchmark.Benchmark;
-import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.LineOfAFile;
+import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeCorpus;
+import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocumentIdentifier;
+import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocument_LineOfAFile;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.utils.SynchronizedCounter;
 import org.junit.jupiter.api.AfterEach;
@@ -11,7 +13,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CorpusTest {
 
     private static final int DEFAULT_CORPUS_SIZE_FOR_TESTS = 1000;
-    private static final List<Document> documents = LineOfAFile.produceDocuments(DEFAULT_CORPUS_SIZE_FOR_TESTS);
+    private static final List<Document> documents = FakeDocument_LineOfAFile.produceDocuments(DEFAULT_CORPUS_SIZE_FOR_TESTS);
     private static final int HOW_MANY_DOCS_TO_RETRIEVE = DEFAULT_CORPUS_SIZE_FOR_TESTS / 10;
     private static final List<DocumentIdentifier> docIdsOfFirstDocumentsInCorpus =
             IntStream.range(SynchronizedCounter.MIN_VALUE, SynchronizedCounter.MIN_VALUE + HOW_MANY_DOCS_TO_RETRIEVE)
@@ -42,7 +43,7 @@ class CorpusTest {
     @Benchmark
     static void createCorpusFromDocumentCollectionOfLength1000() throws NoMoreDocIdsAvailable {
         final int COLLECTION_LENGTH = 1000;
-        Corpus.createCorpusFromDocumentCollectionAndGet(LineOfAFile.produceDocuments(COLLECTION_LENGTH));
+        Corpus.createCorpusFromDocumentCollectionAndGet(FakeDocument_LineOfAFile.produceDocuments(COLLECTION_LENGTH));
     }
 
     @AfterEach
@@ -71,7 +72,7 @@ class CorpusTest {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 5, 10, 100})
     void createCorpusFromDocumentCollectionAndGet(int expectedNumberOfDocuments) throws NoMoreDocIdsAvailable {
-        Map<?, ?> createdCorpus = Corpus.createCorpusFromDocumentCollectionAndGet(LineOfAFile.produceDocuments(expectedNumberOfDocuments));
+        Map<?, ?> createdCorpus = Corpus.createCorpusFromDocumentCollectionAndGet(FakeDocument_LineOfAFile.produceDocuments(expectedNumberOfDocuments));
         assertEquals(expectedNumberOfDocuments, createdCorpus.size());
     }
 
@@ -114,32 +115,4 @@ class CorpusTest {
         assertEquals(HOW_MANY_DOCS_TO_RETRIEVE, head.split(System.lineSeparator()).length);
     }
 
-    private static class FakeCorpus extends Corpus {
-        /**
-         * Constructor. Creates a corpus from a {@link Map}.
-         *
-         * @param corpusAsMap The corpus as input parameter.
-         */
-        public FakeCorpus(Map<DocumentIdentifier, Document> corpusAsMap) {
-            super();
-            var corpus = super.getCorpus();
-            corpus.putAll(corpusAsMap);
-        }
-
-        public FakeCorpus(Collection<Document> documents) throws NoMoreDocIdsAvailable {
-            super(documents);
-        }
-
-        public FakeCorpus() {
-        }
-    }
-
-    private static class FakeDocumentIdentifier extends DocumentIdentifier {
-        /**
-         * Creates a docId with the specified value.
-         */
-        public FakeDocumentIdentifier(int docIdValue) {
-            super(docIdValue);
-        }
-    }
 }

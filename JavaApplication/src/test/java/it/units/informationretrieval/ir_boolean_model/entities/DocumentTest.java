@@ -1,6 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
-import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.LineOfAFile;
+import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocument_LineOfAFile;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,7 +9,7 @@ class DocumentTest {
 
     static final String SAMPLE_TITLE = "title";
     static final String SAMPLE_CONTENT = "content";
-    static final Document SAMPLE_DOCUMENT = new LineOfAFile(SAMPLE_TITLE, SAMPLE_CONTENT);
+    static final Document SAMPLE_DOCUMENT = new FakeDocument_LineOfAFile(SAMPLE_TITLE, SAMPLE_CONTENT);
 
     @Test
     void testToString() {

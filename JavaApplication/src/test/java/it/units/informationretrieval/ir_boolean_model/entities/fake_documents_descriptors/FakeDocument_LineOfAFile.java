@@ -16,19 +16,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
-public class LineOfAFile extends Document {
+public class FakeDocument_LineOfAFile extends Document {
 
-    private static final String PATH_TO_CORPUS = "/SampleCorpus.txt";
+    private static final String PATH_TO_CORPUS = "/SampleCorpusWithDuplicates.txt";
     private static final String SAMPLE_DOCUMENT_CONTENT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-    public LineOfAFile(@NotNull final String title, @NotNull final DocumentContent content) {
+    public FakeDocument_LineOfAFile(@NotNull final String title, @NotNull final DocumentContent content) {
         super(title, content);
     }
 
     /**
      * Simplified constructor.
      */
-    public LineOfAFile(@NotNull final String title, @NotNull final String content) {
+    public FakeDocument_LineOfAFile(@NotNull final String title, @NotNull final String content) {
         this(title, new ArrayList<>() {{
             add(content);
         }});
@@ -40,7 +40,7 @@ public class LineOfAFile extends Document {
      * @param title    The title of this instance.
      * @param contents The contents of this instance.
      */
-    public LineOfAFile(@NotNull final String title, @NotNull final List<String> contents) {
+    public FakeDocument_LineOfAFile(@NotNull final String title, @NotNull final List<String> contents) {
         this(title, new DocumentContent(new ArrayList<>() {{
             contents.forEach(aContent -> add(new LineRankedSubcontent(new LineRank(), aContent)));
         }}));
@@ -51,12 +51,12 @@ public class LineOfAFile extends Document {
      */
     public static List<Document> loadDocumentsFromFile() throws IOException, URISyntaxException {
         List<String> linesFromFile = Files.readAllLines(
-                Path.of(Objects.requireNonNull(LineOfAFile.class.getResource(PATH_TO_CORPUS)).toURI()));
+                Path.of(Objects.requireNonNull(FakeDocument_LineOfAFile.class.getResource(PATH_TO_CORPUS)).toURI()));
         return linesFromFile
                 .stream().sequential()
                 .map(aLine -> {
                     String title = aLine.length() > 0 ? aLine.substring(0, aLine.indexOf(' ')) : "";
-                    return (Document) new LineOfAFile(title, aLine);
+                    return (Document) new FakeDocument_LineOfAFile(title, aLine);
                 })
                 .toList();
     }
@@ -77,7 +77,7 @@ public class LineOfAFile extends Document {
                     String title = String.valueOf(i + 1);
                     List<DocumentRankedSubcontent> content = new ArrayList<>();
                     content.add(new LineRankedSubcontent(new LineRank(), SAMPLE_DOCUMENT_CONTENT));
-                    return (Document) new LineOfAFile(title, new DocumentContent(content));
+                    return (Document) new FakeDocument_LineOfAFile(title, new DocumentContent(content));
                 })
                 .toList();
     }
