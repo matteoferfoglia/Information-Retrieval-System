@@ -44,8 +44,8 @@ public class Term implements Comparable<Term>, Serializable {
      * @throws NoDocumentsAssociatedWithTermException If no documents associated with
      *                                                this {@link Term} are found.
      */
-    public double idf(int numberOfDocsInCorpus) throws NoDocumentsAssociatedWithTermException {// TODO: test and benchmark
-        int df = postingList.size();    // document frequency   // TODO : df ma be an attribute of the class (faster, but occupies memory spacer and must be eventually updated)
+    public double idf(int numberOfDocsInCorpus) throws NoDocumentsAssociatedWithTermException {
+        int df = postingList.size();    // document frequency   // TODO : df may be an attribute of the class (faster, but occupies memory space and must be eventually updated)
         if (df == 0) {
             throw new NoDocumentsAssociatedWithTermException(this);
         }
@@ -58,7 +58,7 @@ public class Term implements Comparable<Term>, Serializable {
      * @param other The other {@link Term} to be merged into this one.
      * @return this instance after merging.
      */
-    public Term merge(@NotNull final Term other) {    // TODO : needed? // TODO: test and benchmark
+    public Term merge(@NotNull final Term other) {
         if (this.term.equals(other.term)) {
             this.postingList.merge(other.postingList);
         } else {
