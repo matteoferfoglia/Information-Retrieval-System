@@ -47,7 +47,7 @@ public class InvertedIndex implements Serializable {
      *
      * @param corpus The {@link Corpus} to be indexed.
      */
-    public InvertedIndex(@NotNull final Corpus corpus) {    // TODO: test and benchmark
+    public InvertedIndex(@NotNull final Corpus corpus) {
 
         this.corpus = Objects.requireNonNull(corpus);
 
@@ -65,7 +65,7 @@ public class InvertedIndex implements Serializable {
     }
 
     protected static Map<String, Term> indexCorpusAndGet(
-            @NotNull Corpus corpus, @NotNull AtomicLong numberOfAlreadyProcessedDocuments) {    // TODO: test and benchmark
+            @NotNull Corpus corpus, @NotNull AtomicLong numberOfAlreadyProcessedDocuments) {
 
         Predicate<Map.Entry<DocumentIdentifier, Document>> documentContentNotNullPredicate =
                 entry -> entry != null
@@ -91,8 +91,16 @@ public class InvertedIndex implements Serializable {
         return targetDataStructureForInvertedIndex;
     }
 
+    /**
+     * Maps token (obtained from tokenization preprocessing) to correspondent {@link Term}s.
+     *
+     * @param entryFromCorpusRepresentingOneDocument A document from the {@link Corpus} represented as
+     *                                               entry of {@link DocumentIdentifier} (as key) and
+     *                                               the actual {@link Document} (as value).
+     * @return the entry set having as key a token and as value its correspondent {@link Term}.
+     */
     @NotNull
-    protected static Set<Map.Entry<String, Term>> getEntrySetOfTokensAndCorrespondingTermsFromADocument(
+    private static Set<Map.Entry<String, Term>> getEntrySetOfTokensAndCorrespondingTermsFromADocument(
             @NotNull Map.Entry<@NotNull DocumentIdentifier, @NotNull Document> entryFromCorpusRepresentingOneDocument) {    // TODO: test and benchmark
 
         DocumentIdentifier docIdThisDocument = entryFromCorpusRepresentingOneDocument.getKey();
@@ -113,6 +121,11 @@ public class InvertedIndex implements Serializable {
                 .entrySet();
     }
 
+    /**
+     * Creates the data structure hosting an empty inverted index.
+     *
+     * @return an empty data structure which can host an inverted index.
+     */
     @NotNull
     private static Map<String, Term> createEmptyInvertedIndex() {
         final Map<String, Term> invertedIndex;
@@ -126,8 +139,13 @@ public class InvertedIndex implements Serializable {
         return invertedIndex;
     }
 
+    /**
+     * @return the {@link Runnable} handling the print of the progress bar for the indexing process.
+     */
     @NotNull
-    private Runnable printIndexingProgressAndGetTheRunnableToInterruptPrinting(@NotNull Corpus corpus, AtomicLong numberOfAlreadyProcessedDocuments) {
+    private Runnable printIndexingProgressAndGetTheRunnableToInterruptPrinting(
+            @NotNull Corpus corpus, AtomicLong numberOfAlreadyProcessedDocuments) {
+
         AtomicReference<Double> progressValue = new AtomicReference<>(0d);   // used only to show the indexing progress
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         Thread progressControllerThread = new Thread(() -> {

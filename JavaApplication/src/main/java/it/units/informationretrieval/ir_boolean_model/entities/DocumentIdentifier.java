@@ -60,6 +60,13 @@ public class DocumentIdentifier implements Comparable<DocumentIdentifier>, Seria
         this(documentIdentifierToBeCopied.docId);
     }
 
+    /**
+     * @return The value of the current {@link #docId}.
+     */
+    public int getDocId() {
+        return docId;
+    }
+
     @Override
     public int compareTo(DocumentIdentifier documentIdentifier) {
         return this.docId - documentIdentifier.docId;
