@@ -190,4 +190,22 @@ public class Posting implements Comparable<Posting>, Serializable {
                 ", forwardPointer=" + forwardPointer +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Posting posting = (Posting) o;
+
+        if (!docId.equals(posting.docId)) return false;
+        return creationInstant.equals(posting.creationInstant);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = docId.hashCode();
+        result = 31 * result + creationInstant.hashCode();
+        return result;
+    }
 }

@@ -37,9 +37,9 @@ public class PostingList implements Serializable {
      *                element in the list.
      */
     public PostingList(@NotNull final Posting posting) {
-        Objects.requireNonNull(posting, "The posting cannot be null");
-        this.postings = new ArrayList<>();
-        this.postings.add(posting);
+        this(new ArrayList<>() {{
+            add(Objects.requireNonNull(posting));
+        }});
     }
 
     /**
@@ -48,7 +48,7 @@ public class PostingList implements Serializable {
      *
      * @param postings The list of {@link Posting}s.
      */
-    private PostingList(@NotNull final List<Posting> postings) {  // TODO: test
+    public PostingList(@NotNull final List<Posting> postings) {  // TODO: test
         Objects.requireNonNull(postings, "The input argument cannot be null.");
         this.postings = postings.stream().unordered().distinct().collect(Collectors.toList());
         setSkipPointers();
@@ -65,7 +65,7 @@ public class PostingList implements Serializable {
         if (other == null) {
             return;
         }
-        this.postings.addAll(other.postings);
+        this.postings.addAll(new HashSet<>(other.postings));    // use set to avoid duplicates
         sort();
     }
 
@@ -127,5 +127,20 @@ public class PostingList implements Serializable {
     @Override
     public String toString() {
         return Arrays.toString(postings.toArray());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PostingList that = (PostingList) o;
+
+        return postings.equals(that.postings);
+    }
+
+    @Override
+    public int hashCode() {
+        return postings.hashCode();
     }
 }
