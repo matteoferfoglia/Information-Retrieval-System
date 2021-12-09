@@ -97,7 +97,7 @@ public class Corpus implements Serializable {
      * @return A string corresponding to the head of this corpus.
      */
     @NotNull
-    public String head(int howMany) {   // TODO: test and benchmark
+    public String head(int howMany) {
         int howManyDocsToReturn = Math.min(Math.max(howMany, 0), corpus.size());
         final Comparator<? super Map.Entry<DocumentIdentifier, Document>> keyComparator = Map.Entry.comparingByKey();
         return corpus.entrySet()

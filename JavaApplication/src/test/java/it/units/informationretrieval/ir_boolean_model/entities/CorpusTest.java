@@ -24,8 +24,9 @@ class CorpusTest {
 
     private static final int DEFAULT_CORPUS_SIZE_FOR_TESTS = 1000;
     private static final List<Document> documents = LineOfAFile.produceDocuments(DEFAULT_CORPUS_SIZE_FOR_TESTS);
-    private static final List<DocumentIdentifier> docIdsOfFirst100DocumentsInCorpus =
-            IntStream.range(SynchronizedCounter.MIN_VALUE, SynchronizedCounter.MIN_VALUE + 100)
+    private static final int HOW_MANY_DOCS_TO_RETRIEVE = DEFAULT_CORPUS_SIZE_FOR_TESTS / 10;
+    private static final List<DocumentIdentifier> docIdsOfFirstDocumentsInCorpus =
+            IntStream.range(SynchronizedCounter.MIN_VALUE, SynchronizedCounter.MIN_VALUE + HOW_MANY_DOCS_TO_RETRIEVE)
                     .mapToObj(docIdValue -> new DocumentIdentifier(new FakeDocumentIdentifier(docIdValue)))
                     .toList();
     private static FakeCorpus corpus;
@@ -48,13 +49,18 @@ class CorpusTest {
     void tearDown() {
     }
 
-    @Benchmark
-    static void getFirst100DocumentsFromDocId() {
-        corpus.getDocuments(docIdsOfFirst100DocumentsInCorpus);
+    @Benchmark(commentToReport = "First " + HOW_MANY_DOCS_TO_RETRIEVE + " documents are retrieved")
+    static void getFirstDocumentsFromDocId() {
+        corpus.getDocuments(docIdsOfFirstDocumentsInCorpus);
+    }
+
+    @Benchmark(commentToReport = "First " + HOW_MANY_DOCS_TO_RETRIEVE + " documents are retrieved")
+    static void getHeadOfCorpus() {
+        corpus.head(HOW_MANY_DOCS_TO_RETRIEVE);
     }
 
     public static void main(String[] args) {
-        System.out.println(corpus.getDocuments(docIdsOfFirst100DocumentsInCorpus));
+        System.out.println(corpus.getDocuments(docIdsOfFirstDocumentsInCorpus));
     }
 
     @BeforeEach
@@ -100,6 +106,12 @@ class CorpusTest {
     void getDocuments() {
         var docIdsInCorpus = corpus.getCorpus().keySet().stream().toList();
         assertEquals(new HashSet<>(documents), new HashSet<>(corpus.getDocuments(docIdsInCorpus)));
+    }
+
+    @Test
+    void head() {
+        var head = corpus.head(HOW_MANY_DOCS_TO_RETRIEVE);
+        assertEquals(HOW_MANY_DOCS_TO_RETRIEVE, head.split(System.lineSeparator()).length);
     }
 
     private static class FakeCorpus extends Corpus {
