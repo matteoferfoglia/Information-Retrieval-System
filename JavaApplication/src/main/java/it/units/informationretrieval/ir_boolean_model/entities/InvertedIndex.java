@@ -101,7 +101,7 @@ public class InvertedIndex implements Serializable {
      */
     @NotNull
     private static Set<Map.Entry<String, Term>> getEntrySetOfTokensAndCorrespondingTermsFromADocument(
-            @NotNull Map.Entry<@NotNull DocumentIdentifier, @NotNull Document> entryFromCorpusRepresentingOneDocument) {    // TODO: test and benchmark
+            @NotNull Map.Entry<@NotNull DocumentIdentifier, @NotNull Document> entryFromCorpusRepresentingOneDocument) {
 
         DocumentIdentifier docIdThisDocument = entryFromCorpusRepresentingOneDocument.getKey();
         Document document = entryFromCorpusRepresentingOneDocument.getValue();
@@ -183,7 +183,7 @@ public class InvertedIndex implements Serializable {
     /**
      * @return the dictionary as sorted {@link java.util.List} of {@link String}s (the terms).
      */
-    public List<String> getDictionary() {   // TODO: test and benchmark
+    public List<String> getDictionary() {
         return invertedIndex.keySet()
                 .stream().sequential()
                 .sorted()
@@ -208,7 +208,7 @@ public class InvertedIndex implements Serializable {
      * if it is not found in this {@link InvertedIndex}.
      */
     @NotNull
-    public final PostingList getPostingListForToken(String normalizedToken) {   // TODO: test and benchmark
+    public final PostingList getPostingListForToken(String normalizedToken) {
         Term t = invertedIndex.get(normalizedToken);
         return t == null ? new PostingList() : t.getPostingList();
     }
