@@ -49,8 +49,7 @@ public class PostingList implements Serializable {
      * @param postings The list of {@link Posting}s.
      */
     public PostingList(@NotNull final List<Posting> postings) {  // TODO: test
-        Objects.requireNonNull(postings, "The input argument cannot be null.");
-        this.postings = postings.stream().unordered().distinct().collect(Collectors.toList());
+        this.postings = Objects.requireNonNull(postings).stream().unordered().distinct().collect(Collectors.toList());
         setSkipPointers();
     }
 
@@ -65,8 +64,8 @@ public class PostingList implements Serializable {
         if (other == null) {
             return;
         }
-        this.postings.addAll(new HashSet<>(other.postings));    // use set to avoid duplicates
-        sort();
+        this.postings.addAll(other.postings);
+        sortAndRemoveDuplicates();
     }
 
     /**
@@ -76,7 +75,7 @@ public class PostingList implements Serializable {
      */
     private void setSkipPointers() {    // TODO: test positions of skip pointers
 
-        sort();   // the postingList MUST be sorted
+        sortAndRemoveDuplicates();   // the postingList MUST be sorted
 
         final int numberOfPostings = postings.size();
         final int numberOfSkipPointers = (int) Math.round(Math.sqrt(numberOfPostings));
@@ -113,8 +112,8 @@ public class PostingList implements Serializable {
     /**
      * Sort this instance.
      */
-    private void sort() {   // TODO: benchmark
-        postings = postings.stream().sequential().sorted().collect(Collectors.toList());
+    private void sortAndRemoveDuplicates() {   // TODO: benchmark
+        postings = postings.stream().sorted().distinct().collect(Collectors.toList());
     }
 
     /**
