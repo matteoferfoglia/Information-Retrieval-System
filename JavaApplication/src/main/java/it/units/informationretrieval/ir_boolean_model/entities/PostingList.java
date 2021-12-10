@@ -50,7 +50,7 @@ public class PostingList implements Serializable {
      */
     public PostingList(@NotNull final List<Posting> postings) {  // TODO: test
         this.postings = Objects.requireNonNull(postings).stream().unordered().distinct().collect(Collectors.toList());
-        setSkipPointers();
+        setForwardPointers();
     }
 
     /**
@@ -69,34 +69,34 @@ public class PostingList implements Serializable {
     }
 
     /**
-     * Sets the skip pointers for this instance of {@link PostingList}.
-     * &radic;p evenly spaced skip pointers will be created, with p = the
+     * Sets the forward pointers for this instance of {@link PostingList}.
+     * &radic;p evenly spaced forward pointers will be created, with p = the
      * number of elements in this {@link PostingList}.
      */
-    private void setSkipPointers() {    // TODO: test positions of skip pointers
+    private void setForwardPointers() {    // TODO: test positions of forward pointers
 
         sortAndRemoveDuplicates();   // the postingList MUST be sorted
 
         final int numberOfPostings = postings.size();
-        final int numberOfSkipPointers = (int) Math.round(Math.sqrt(numberOfPostings));
-        int skipPointerPositionPrevious = 0;
-        if (numberOfSkipPointers > 0) {
-            final int skipPointerStep = numberOfPostings / numberOfSkipPointers; // The distance between two successive skipPointers
-            int[] skipPointerPositions = IntStream.range(1, numberOfPostings)
-                    .filter(x -> x % skipPointerStep == 0)
+        final int numberOfForwardPointers = (int) Math.round(Math.sqrt(numberOfPostings));
+        int forwardPointerPositionPrevious = 0;
+        if (numberOfForwardPointers > 0) {
+            final int forwardPointerStep = numberOfPostings / numberOfForwardPointers; // The distance between two successive forwardPointers
+            int[] forwardPointerPositions = IntStream.range(1, numberOfPostings)
+                    .filter(x -> x % forwardPointerStep == 0)
                     .toArray();
 
-            // Set the skipPointers
-            for (int skipPointerPosition : skipPointerPositions) {    // TODO : can be parallelized
-                for (int j = skipPointerPositionPrevious; j < skipPointerPosition; j++) {
-                    postings.get(j).setForwardPointer(postings.get(skipPointerPosition));
+            // Set the forwardPointers
+            for (int forwardPointerPosition : forwardPointerPositions) {    // TODO : can be parallelized
+                for (int j = forwardPointerPositionPrevious; j < forwardPointerPosition; j++) {
+                    postings.get(j).setForwardPointer(postings.get(forwardPointerPosition));
                 }
-                skipPointerPositionPrevious = skipPointerPosition;
+                forwardPointerPositionPrevious = forwardPointerPosition;
             }
         }
-        // Set null the skipPointers for the posting over the last skipPointer
-        for (; skipPointerPositionPrevious < numberOfPostings; skipPointerPositionPrevious++) {
-            postings.get(skipPointerPositionPrevious).setForwardPointer(null);
+        // Set null the forwardPointers for the posting over the last forwardPointer
+        for (; forwardPointerPositionPrevious < numberOfPostings; forwardPointerPositionPrevious++) {
+            postings.get(forwardPointerPositionPrevious).setForwardPointer(null);
         }
 
     }

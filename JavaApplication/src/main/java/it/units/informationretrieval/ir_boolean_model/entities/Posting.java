@@ -56,7 +56,7 @@ public class Posting implements Comparable<Posting>, Serializable {
         this.docId = Objects.requireNonNull(docId, "The docId cannot be null");
         creationInstant = Instant.now();
 //        this. positions = Objects.requireNonNull(positions);  // TODO : positions not handled yet
-        // TODO : skipPointer not handled yet.
+        // TODO : forwardPointer not handled yet.
     }
 
     /**
@@ -145,16 +145,16 @@ public class Posting implements Comparable<Posting>, Serializable {
     }
 
     /**
-     * @return true if this instance has a skip pointer, false otherwise.
+     * @return true if this instance has a forward pointer, false otherwise.
      */
-    public boolean hasSkipPointer() {
+    public boolean hasForwardPointer() {
         return forwardPointer == null;
     }
 
     /**
      * Sets the {@link #forwardPointer} of this instance to the given one.
      *
-     * @param forwardPointer The skipPointer (i.e., the next {@link Posting} where
+     * @param forwardPointer The forwardPointer (i.e., the next {@link Posting} where
      *                       to point).
      */
     public void setForwardPointer(@Nullable Posting forwardPointer) {
