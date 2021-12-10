@@ -39,6 +39,21 @@ public class InvertedIndexTest {
 
     private static InvertedIndex invertedIndexForTests;
     private static InvertedIndex invertedIndexForMovieCorpus;
+    private static Map<String, List<Integer>> expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfDocsContainingIt;
+
+    static {
+        PrintStream realStdOut = System.out;
+        System.setOut(new PrintStream(new ByteArrayOutputStream()));      // ignore std out for this block
+        try {
+            Properties.loadProperties();// TODO: is needed to use properties? Maybe better to have a class with public parameters
+            movieCorpus = Movie.createCorpus();                           // used for benchmarks
+            invertedIndexForMovieCorpus = new InvertedIndex(movieCorpus); // used for benchmarks
+        } catch (IOException | NoMoreDocIdsAvailable | URISyntaxException e) {
+            fail(e);
+        }
+        System.setOut(realStdOut);
+    }
+
     public static final Supplier<String> randomTokenFromDictionaryOfMovieInvertedIndex = new Supplier<>() {
 
         private static final List<String> dictionary = new ArrayList<>(invertedIndexForMovieCorpus.getDictionary());
@@ -55,20 +70,6 @@ public class InvertedIndexTest {
             return randomPermutationOfTokensFromDictionary[numberOfGeneratedToken++ % dictionaryLength];
         }
     };
-    private static Map<String, List<Integer>> expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfDocsContainingIt;
-
-    static {
-        PrintStream realStdOut = System.out;
-        System.setOut(new PrintStream(new ByteArrayOutputStream()));      // ignore std out for this block
-        try {
-            Properties.loadProperties();// TODO: is needed to use properties? Maybe better to have a class with public parameters
-            movieCorpus = Movie.createCorpus();                           // used for benchmarks
-            invertedIndexForMovieCorpus = new InvertedIndex(movieCorpus); // used for benchmarks
-        } catch (IOException | NoMoreDocIdsAvailable | URISyntaxException e) {
-            fail(e);
-        }
-        System.setOut(realStdOut);
-    }
 
     @Benchmark(warmUpIterations = 1, iterations = 3, tearDownIterations = 1, commentToReport = "Inverted index for the Movie corpus.")
     static void createInvertedIndexForMovieCorpus() {
