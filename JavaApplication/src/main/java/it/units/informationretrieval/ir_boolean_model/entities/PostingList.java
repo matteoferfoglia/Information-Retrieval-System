@@ -1,11 +1,11 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Class representing a {@link PostingList}.
@@ -108,8 +108,8 @@ public class PostingList implements Serializable/* TODO: implements Iterable wit
     /**
      * Sort this instance.
      */
-    private void sortAndRemoveDuplicates() {   // TODO: benchmark
-        postings = postings.stream().sorted().distinct().collect(Collectors.toList());
+    private void sortAndRemoveDuplicates() {
+        postings = Utility.sortAndRemoveDuplicates(postings);
     }
 
     /**

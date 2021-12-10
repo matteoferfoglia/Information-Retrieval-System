@@ -1,11 +1,14 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
+import benchmark.Benchmark;
 import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocumentIdentifier;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,11 +44,39 @@ class PostingListTest {
             mapOfSampleDocIdsAndCorrespondingPosting.get(3),
             mapOfSampleDocIdsAndCorrespondingPosting.get(1),
             mapOfSampleDocIdsAndCorrespondingPosting.get(2));
+    private static final List<Posting> anotherListOfPostingUnordered = List.of(
+            mapOfSampleDocIdsAndCorrespondingPosting.get(5),
+            mapOfSampleDocIdsAndCorrespondingPosting.get(1),
+            mapOfSampleDocIdsAndCorrespondingPosting.get(4));
+
+    private static final PostingList onePostingList = new PostingList(sampleListOfPostingWithDuplicatesUnordered);
+    private static final PostingList anotherPostingList = new PostingList(anotherListOfPostingUnordered);
 
     @Test
     void createEmptyPostingList() {
         final int EXPECTED_NUMBER_OF_POSTINGS = 0;
         assertEquals(EXPECTED_NUMBER_OF_POSTINGS, new PostingList().size());
+    }
+
+    private static final Supplier<List<Posting>> listOf1000PostingsSupplier = new Supplier<>() {
+        private static final int NUMBER_OF_POSTINGS = 1000;
+        private static final AtomicInteger docIdCounter = new AtomicInteger(0);
+        private static final List<Posting> cachedList =
+                IntStream.range(0, NUMBER_OF_POSTINGS)
+                        .mapToObj(i -> new Posting(new FakeDocumentIdentifier(
+                                // duplicates are possible
+                                Math.random() < 0.5 ? docIdCounter.getAndIncrement() : docIdCounter.get())))
+                        .toList();
+
+        @Override
+        public List<Posting> get() {
+            return cachedList;
+        }
+    };
+
+    @Benchmark(warmUpIterations = 100, iterations = 100, tearDownIterations = 100)
+    static void createPostingListFromListOf1000UnorderedAndDuplicatedPostings() {
+        new PostingList(listOf1000PostingsSupplier.get());
     }
 
     private void testConstructorWith3DistinctPostings(List<Posting> sampleListOfPosting) {
@@ -142,6 +173,16 @@ class PostingListTest {
 
         assertEquals(EXPECTED_SIZE_OF_MERGED_POSTING_LIST, postingList1.size());
         assertThatPostingsAreSortedAndDistinct(postingList1);
+    }
+
+    @Benchmark(commentToReport = "Merges two unordered posting lists with one posting in common")
+    static void mergePostingListsOfSize3() {
+        onePostingList.merge(anotherPostingList);
+    }
+
+    @Benchmark(warmUpIterations = 100, iterations = 100, tearDownIterations = 100)
+    static void mergeEqualPostingListsOfSize1000() {
+        onePostingList.merge(anotherPostingList);
     }
 
     @Test

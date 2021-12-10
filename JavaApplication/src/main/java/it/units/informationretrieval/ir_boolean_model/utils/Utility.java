@@ -3,6 +3,7 @@ package it.units.informationretrieval.ir_boolean_model.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
+import it.units.informationretrieval.ir_boolean_model.entities.Posting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -95,6 +96,11 @@ public class Utility {
     public static String convertToJson(@NotNull Object object)
             throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(Objects.requireNonNull(object));   // TODO: test
+    }
+
+    @NotNull
+    public static List<Posting> sortAndRemoveDuplicates(@NotNull final List<Posting> postings) {   // TODO: test and benchmark
+        return postings.stream().sorted().distinct().collect(Collectors.toList());
     }
 
     /**
