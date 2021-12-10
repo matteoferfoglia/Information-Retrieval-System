@@ -135,7 +135,10 @@ public class InvertedIndexTest {
 
     @BeforeEach
     void setUp() {
+        PrintStream realStdOut = System.out;
+        System.setOut(new PrintStream(new ByteArrayOutputStream()));      // ignore std out for this block
         invertedIndexForTests = new InvertedIndex(sampleCorpus);
+        System.setOut(realStdOut);
     }
 
     @AfterEach
@@ -164,7 +167,10 @@ public class InvertedIndexTest {
 
     @Test
     void indexCorpusAndGet() {
+        PrintStream realStdOut = System.out;
+        System.setOut(new PrintStream(new ByteArrayOutputStream()));      // ignore std out for this block
         invertedIndexForTests = new InvertedIndex(sampleCorpus);
+        System.setOut(realStdOut);
         assertEquals(
                 expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfDocsContainingIt,
                 getMapOfTermAndCorrespondingListOfDocIdsFromInvertedIndex(invertedIndexForTests));
