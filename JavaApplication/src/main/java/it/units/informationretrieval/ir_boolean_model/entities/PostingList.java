@@ -6,14 +6,13 @@ import org.jetbrains.annotations.Nullable;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Class representing a {@link PostingList}.
  *
  * @author Matteo Ferfoglia
  */
-public class PostingList implements Serializable {
+public class PostingList implements Serializable/* TODO: implements Iterable with spliterator */ {
 
     /**
      * The actual posting list.
@@ -48,8 +47,9 @@ public class PostingList implements Serializable {
      *
      * @param postings The list of {@link Posting}s.
      */
-    public PostingList(@NotNull final List<Posting> postings) {  // TODO: test
-        this.postings = Objects.requireNonNull(postings).stream().unordered().distinct().collect(Collectors.toList());
+    public PostingList(@NotNull final List<Posting> postings) {
+        this.postings = Objects.requireNonNull(postings);
+        sortAndRemoveDuplicates();
         setForwardPointers();
     }
 
@@ -60,7 +60,7 @@ public class PostingList implements Serializable {
      *
      * @param other The other {@link PostingList} to be merged into this one.
      */
-    public void merge(@Nullable final PostingList other) {  // TODO: test
+    public void merge(@Nullable final PostingList other) {
         if (other == null) {
             return;
         }
@@ -73,30 +73,26 @@ public class PostingList implements Serializable {
      * &radic;p evenly spaced forward pointers will be created, with p = the
      * number of elements in this {@link PostingList}.
      */
-    private void setForwardPointers() {    // TODO: test positions of forward pointers
+    private void setForwardPointers() {
 
         sortAndRemoveDuplicates();   // the postingList MUST be sorted
 
         final int numberOfPostings = postings.size();
-        final int numberOfForwardPointers = (int) Math.round(Math.sqrt(numberOfPostings));
-        int forwardPointerPositionPrevious = 0;
+        final int numberOfForwardPointers = (int) Math.ceil(Math.sqrt(numberOfPostings));
+
         if (numberOfForwardPointers > 0) {
-            final int forwardPointerStep = numberOfPostings / numberOfForwardPointers; // The distance between two successive forwardPointers
-            int[] forwardPointerPositions = IntStream.range(1, numberOfPostings)
-                    .filter(x -> x % forwardPointerStep == 0)
-                    .toArray();
+
+            Posting previousForwardPointer = postings.get(postings.size() - 1/*last posting*/);
 
             // Set the forwardPointers
-            for (int forwardPointerPosition : forwardPointerPositions) {    // TODO : can be parallelized
-                for (int j = forwardPointerPositionPrevious; j < forwardPointerPosition; j++) {
-                    postings.get(j).setForwardPointer(postings.get(forwardPointerPosition));
+            for (int i = postings.size() - 2/*last posting is never a forward pointer*/; i >= 0; i--) {
+                var posting = postings.get(i);
+                if (i % numberOfForwardPointers == 0) {
+                    previousForwardPointer = posting.setForwardPointer(previousForwardPointer);
+                } else {
+                    posting.setForwardPointer(null);
                 }
-                forwardPointerPositionPrevious = forwardPointerPosition;
             }
-        }
-        // Set null the forwardPointers for the posting over the last forwardPointer
-        for (; forwardPointerPositionPrevious < numberOfPostings; forwardPointerPositionPrevious++) {
-            postings.get(forwardPointerPositionPrevious).setForwardPointer(null);
         }
 
     }

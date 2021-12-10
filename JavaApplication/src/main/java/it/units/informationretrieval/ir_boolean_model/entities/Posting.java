@@ -148,7 +148,7 @@ public class Posting implements Comparable<Posting>, Serializable {
      * @return true if this instance has a forward pointer, false otherwise.
      */
     public boolean hasForwardPointer() {
-        return forwardPointer == null;
+        return forwardPointer != null;
     }
 
     /**
@@ -156,9 +156,11 @@ public class Posting implements Comparable<Posting>, Serializable {
      *
      * @param forwardPointer The forwardPointer (i.e., the next {@link Posting} where
      *                       to point).
+     * @return the current instance.
      */
-    public void setForwardPointer(@Nullable Posting forwardPointer) {
+    public Posting setForwardPointer(@Nullable Posting forwardPointer) {
         this.forwardPointer = forwardPointer;
+        return this;
     }
 
     @Override
