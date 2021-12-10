@@ -43,7 +43,7 @@ public class InformationRetrievalSystem implements Serializable {
      */
     @NotNull
     public final InvertedIndex getInvertedIndex() {
-        return invertedIndex;
+        return invertedIndex;   // TODO : public access, better to use a proxy?
     }
 
     /**
@@ -51,7 +51,7 @@ public class InformationRetrievalSystem implements Serializable {
      * @return the {@link List} of {@link Posting} for the given token.
      */
     @NotNull
-    public List<Posting> getListOfPostingForToken(@NotNull final String normalizedToken) {  // TODO: test and benchmark
+    public List<Posting> getListOfPostingForToken(@NotNull final String normalizedToken) {
         return invertedIndex.getPostingListForToken(normalizedToken).toListOfPostings();
     }
 }

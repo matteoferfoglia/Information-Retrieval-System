@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-class InvertedIndexTest {
+public class InvertedIndexTest {
 
     private static final String PATH_TO_CORPUS = "/SampleCorpus.csv";
     private static final String PATH_TO_INVERTED_INDEX = "/InvertedIndexForSampleCorpus.csv";
@@ -39,7 +39,7 @@ class InvertedIndexTest {
 
     private static InvertedIndex invertedIndexForTests;
     private static InvertedIndex invertedIndexForMovieCorpus;
-    private static final Supplier<String> randomTokenFromDictionaryOfMovieInvertedIndex = new Supplier<>() {
+    public static final Supplier<String> randomTokenFromDictionaryOfMovieInvertedIndex = new Supplier<>() {
 
         private static final List<String> dictionary = new ArrayList<>(invertedIndexForMovieCorpus.getDictionary());
         private static final int dictionaryLength = dictionary.size();
