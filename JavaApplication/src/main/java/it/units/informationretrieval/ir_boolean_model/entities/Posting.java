@@ -1,12 +1,10 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
-import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -59,38 +57,33 @@ public class Posting implements Comparable<Posting>, Serializable {
         // TODO : forwardPointer not handled yet.
     }
 
-    /**
-     * Returns the {@link List} of {@link Posting} which is the union of the
-     * two {@link PostingList}s given as parameters.
-     *
-     * @param a A {@link PostingList}.
-     * @param b The other {@link PostingList}.
-     * @return the {@link List} of {@link Posting} which is the union of the
-     * two given {@link PostingList}s as parameters.
-     */
-    @NotNull
-    public static List<Posting> union(@NotNull final List<Posting> a, @NotNull final List<Posting> b) {   // TODO: test and benchmark
+//    /**
+//     * Returns the {@link List} of {@link Posting} which is the union of the
+//     * two {@link PostingList}s given as parameters.
+//     *
+//     * @param a A {@link PostingList}.
+//     * @param b The other {@link PostingList}.
+//     * @return the {@link List} of {@link Posting} which is the union of the
+//     * two given {@link PostingList}s as parameters.
+//     */
+//    @NotNull
+//    public static List<Posting> union(@NotNull final List<Posting> a, @NotNull final List<Posting> b) {
+//        // TODO : positional union not implemented yet
+//    }
 
-        return Utility.unionOfSortedLists(a, b);
-
-        // TODO : positional union not implemented yet
-    }
-
-    /**
-     * Returns Returns the {@link List} of {@link Posting} which is the intersection of the
-     * two {@link PostingList}s given as parameters.
-     *
-     * @param a A {@link PostingList}.
-     * @param b The other {@link PostingList}.
-     * @return the {@link List} of {@link Posting} which is the union of the
-     * two given {@link PostingList}s as parameters.
-     */
-    @NotNull
-    public static List<Posting> intersection(@NotNull final List<Posting> a, @NotNull final List<Posting> b) {    //  TODO: test and benchmark
-        return Utility.intersectionOfSortedLists(a, b);
-
-        // TODO : positional intersect not implemented yet
-    }
+//    /**
+//     * Returns Returns the {@link List} of {@link Posting} which is the intersection of the
+//     * two {@link PostingList}s given as parameters.
+//     *
+//     * @param a A {@link PostingList}.
+//     * @param b The other {@link PostingList}.
+//     * @return the {@link List} of {@link Posting} which is the union of the
+//     * two given {@link PostingList}s as parameters.
+//     */
+//    @NotNull
+//    public static List<Posting> intersection(@NotNull final List<Posting> a, @NotNull final List<Posting> b) {
+//        // TODO : positional intersect not implemented yet
+//    }
 
     //    /** @return the number of occurrences of the {@link Term} associated with this
 //     * {@link Posting} (i.e., the term-frequency value). */
@@ -126,8 +119,15 @@ public class Posting implements Comparable<Posting>, Serializable {
         return this;
     }
 
+    /**
+     * Compares {@link Posting}s according to their {@link DocumentIdentifier}
+     * (see {@link DocumentIdentifier#compareTo(DocumentIdentifier)}).
+     *
+     * @param posting The posting to be compared with this one.
+     * @return the result of the comparison of their {@link DocumentIdentifier}s.
+     */
     @Override
-    public int compareTo(Posting posting) { // TODO: test
+    public int compareTo(Posting posting) {
         return this.docId.compareTo(posting.docId);
     }
 
@@ -143,7 +143,7 @@ public class Posting implements Comparable<Posting>, Serializable {
      *     <li> &gt; 0 otherwise.</li>
      * </ul>
      */
-    public int compareCreationTimeTo(Posting posting) { // TODO: test
+    public int compareCreationTimeTo(Posting posting) {
         return this.creationInstant.compareTo(posting.creationInstant);
     }
 
