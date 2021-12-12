@@ -43,14 +43,14 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
      * The value to match.
      */
     @Nullable   // if there is matching phrase
-    private final String matchingValue;
+    private String matchingValue;
 
     /**
      * The phrase to match (for a phrasal query), as a {@link List} of
      * {@link String}s.
      */
     @Nullable   // if there is matching value
-    private final List<String> matchingPhrase;
+    private List<String> matchingPhrase;
 
     /**
      * If this instance has to match a phrase, this attribute (which has the size
@@ -59,7 +59,7 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
      * (k+1)-th term specified in {@link #matchingValue}.
      */
     @Nullable   // if the matchingPhrase is null
-    private final List<Integer> matchingPhraseMaxDistance;
+    private List<Integer> matchingPhraseMaxDistance;
 
     /**
      * The left-child (first) expression to evaluateBothSimpleAndAggregatedExpressionRecursively (for aggregated expressions).
@@ -77,7 +77,7 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
      * The {@link UNARY_OPERATOR} to apply to this instance.
      */
     @Nullable   //  if this expression is aggregated
-    private final UNARY_OPERATOR unaryOperator;
+    private UNARY_OPERATOR unaryOperator;
 
     /**
      * The {@link BINARY_OPERATOR} to apply to this instance.
@@ -93,72 +93,34 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
     private final InformationRetrievalSystem informationRetrievalSystem;
 
     /**
-     * Constructor. Creates a non-aggregated {@link BooleanExpression}.
+     * Constructor. Creates a non-aggregated expression.
      *
-     * @param unaryOperator              The {@link UNARY_OPERATOR} to use.
-     * @param matchingValue              The {@link #matchingValue}. Must be null if matchingPhrase is non-null and cannot be null if matchingPhrase is null.
-     * @param matchingPhrase             The {@link #matchingPhrase}. Must be null if matchingValue is non-null and cannot be null if matchingValue is null.
-     * @param matchingPhraseMaxDistance  The {@link #matchingPhraseMaxDistance}.
-     *                                   If the matchingPhrase is specified but this parameter is null,
-     *                                   then '1' will be considered as the maximum distance.
-     * @param informationRetrievalSystem The {@link InformationRetrievalSystem} on which to perform the query.
-     * @throws IllegalArgumentException If both the parameters are null or non-null, or if the size of
-     *                                  matchingPhraseMaxDistance parameter list is not equal to the size
-     *                                  of the matchingPhrase minus one (if specified), or if the
-     *                                  matchingPhraseMaxDistance contains non-positive (0 included)
-     *                                  values.
-     */ // TODO : a lot of params: valuate if using builder pattern
-    private BooleanExpression(@Nullable UNARY_OPERATOR unaryOperator,
-                              @Nullable String matchingValue,
-                              @Nullable List<String> matchingPhrase,
-                              @Nullable List<Integer> matchingPhraseMaxDistance,
-                              @NotNull final InformationRetrievalSystem informationRetrievalSystem)
-            throws IllegalArgumentException {
-
-        this.informationRetrievalSystem = informationRetrievalSystem;
-
-        // Check parameters
-
-        if (matchingValue == null && matchingPhrase == null) {
-            throw new IllegalArgumentException("Either the matching value or the matching phrase must be non-null");
-        }
-        if (matchingValue != null && matchingPhrase != null) {
-            throw new IllegalArgumentException("Either the matching value or the matching phrase must be null");
-        }
-
-        if (matchingPhrase == null) {
-            this.matchingPhraseMaxDistance = null;
-        } else {
-            if (matchingPhraseMaxDistance == null) {
-                this.matchingPhraseMaxDistance = Collections.nCopies(
-                        Math.max(0, matchingPhrase.size() - 1),
-                        1
-                );
-            } else {
-                if (matchingPhraseMaxDistance.size() != matchingPhrase.size() - 1) {
-                    throw new IllegalArgumentException("The size for the max distance list must be equal to the size of the phrase minus one");
-                } else {
-                    if (matchingPhraseMaxDistance.stream().unordered().parallel().anyMatch(x -> x <= 0)) {
-                        throw new IllegalArgumentException("The distances must be positive.");
-                    } else {    // Valida parameter
-                        this.matchingPhraseMaxDistance = matchingPhraseMaxDistance;
-                    }
-                }
-            }
-        }
-
-
-        // Initializations
-
-        String tmp = matchingValue == null ? null : Utility.normalize(matchingValue);
+     * @param informationRetrievalSystem The {@link InformationRetrievalSystem} on which the query must be performed.
+     */
+    protected BooleanExpression(@NotNull final InformationRetrievalSystem informationRetrievalSystem) {
         this.isAggregated = false;
         this.leftChildOperand = null;
         this.rightChildOperand = null;
-        this.matchingValue = tmp == null ? "" : tmp;  // TODO : if empty string, the expression should match any document (TEST this behaviour!)
-        this.matchingPhrase = matchingPhrase;
-        this.unaryOperator = unaryOperator == null ? UNARY_OPERATOR.IDENTITY : unaryOperator;
+        this.unaryOperator = UNARY_OPERATOR.IDENTITY;
         this.binaryOperator = null;
+        this.informationRetrievalSystem = Objects.requireNonNull(informationRetrievalSystem);
+    }
 
+    /**
+     * Copy Constructor.
+     *
+     * @param booleanExpression The instance to be copied.
+     */
+    private BooleanExpression(@NotNull BooleanExpression booleanExpression) throws IllegalArgumentException {
+        this.isAggregated = booleanExpression.isAggregated;
+        this.matchingValue = booleanExpression.matchingValue;
+        this.matchingPhrase = booleanExpression.matchingPhrase;
+        this.unaryOperator = booleanExpression.unaryOperator;
+        this.binaryOperator = booleanExpression.binaryOperator;
+        this.informationRetrievalSystem = booleanExpression.informationRetrievalSystem;
+        this.matchingPhraseMaxDistance = booleanExpression.matchingPhraseMaxDistance;
+        this.leftChildOperand = booleanExpression.leftChildOperand;
+        this.rightChildOperand = booleanExpression.rightChildOperand;
     }
 
     /**
@@ -171,50 +133,116 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
     private BooleanExpression(@NotNull BINARY_OPERATOR operator,
                               @NotNull BooleanExpression expr1,
                               @NotNull BooleanExpression expr2) {
-        this.informationRetrievalSystem = Objects.requireNonNull(
-                Objects.equals(expr1.informationRetrievalSystem, expr2.informationRetrievalSystem)
-                        ? expr1.informationRetrievalSystem : null,
-                "Given input parameters must refere to the same non-null IR System.");
-        this.isAggregated = true;
-        this.leftChildOperand = Objects.requireNonNull(expr1);
-        this.rightChildOperand = Objects.requireNonNull(expr2);
-        this.matchingValue = null;
-        this.matchingPhrase = null;
-        this.unaryOperator = null;
-        this.binaryOperator = Objects.requireNonNull(operator);
-        this.matchingPhraseMaxDistance = null;
+        if (Objects.requireNonNull(expr1.informationRetrievalSystem).equals(expr2.informationRetrievalSystem)) {
+            this.informationRetrievalSystem = expr1.informationRetrievalSystem;
+            this.isAggregated = true;
+            this.leftChildOperand = Objects.requireNonNull(expr1);
+            this.rightChildOperand = Objects.requireNonNull(expr2);
+            this.binaryOperator = Objects.requireNonNull(operator);
+        } else {
+            throw new IllegalStateException("Impossible to create an aggregate expression with children" +
+                    " expressions referring to different IR Systems.");
+        }
     }
 
     /**
-     * Constructor for {@link BooleanExpression}s with a {@link #matchingValue}.
+     * @return the result of {@link Utility#normalize(String)} or an empty
+     * string if {@link Utility#normalize(String)} returns null.
+     */
+    @NotNull
+    private static String normalizeToken(String inputWord) {
+        String normalized = Utility.normalize(inputWord);
+        return normalized == null ? "" : normalized;
+    }
+
+    /**
+     * Sets the {@link #matchingValue}.
      *
      * @param matchingValue The value to match.
+     * @return This instance after the execution of this method.
      */
-    public BooleanExpression(@NotNull String matchingValue,
-                             @NotNull final InformationRetrievalSystem informationRetrievalSystem) {    // todo: needed to separate matching value and matching phrase
-        this(UNARY_OPERATOR.IDENTITY, Objects.requireNonNull(matchingValue), null, null, informationRetrievalSystem);
+    public BooleanExpression setMatchingValue(@NotNull String matchingValue) {    // todo: needed to separate matching value and matching phrase
+        // TODO: test
+        throwIfIsAggregated();
+        if (isMatchingPhraseSet()) {
+            throw new IllegalStateException("Matching phrase already set, cannot set matching value too.");
+        }
+
+        this.matchingValue = normalizeToken(Objects.requireNonNull(matchingValue));
+        return this;
     }
 
     /**
-     * Constructor for {@link BooleanExpression}s with a {@link #matchingPhrase},
-     * supposing that each term in the given list can be at most one term spaced
-     * each other.
+     * @throws IllegalStateException if {@link #isAggregated} is true.
+     */
+    private void throwIfIsAggregated() {
+        if (isAggregated) {
+            throw new IllegalStateException("Impossible to set in aggregated expressions.");
+        }
+    }
+
+    /**
+     * Sets the {@link #matchingPhrase} and the {@link #matchingPhraseMaxDistance}.
      *
      * @param matchingPhrase            The phrase to match.
-     * @param matchingPhraseMaxDistance The maximum possible distance between terms of
-     *                                  the given phrase. The list must have the size
-     *                                  equals to the size of the phrase minus one and can
-     *                                  contain only positive (0 excluded) values.
+     * @param matchingPhraseMaxDistance The value for {@link #matchingPhraseMaxDistance}.
+     * @return This instance after the execution of this method.
      */
-    public BooleanExpression(@NotNull List<String> matchingPhrase,
-                             @NotNull List<Integer> matchingPhraseMaxDistance,
-                             @NotNull final InformationRetrievalSystem informationRetrievalSystem) {
-        this(
-                UNARY_OPERATOR.IDENTITY,
-                null,
-                Objects.requireNonNull(matchingPhrase),
-                Objects.requireNonNull(matchingPhraseMaxDistance),
-                informationRetrievalSystem);
+    public BooleanExpression setMatchingPhrase(@NotNull List<String> matchingPhrase,
+                                               @NotNull List<Integer> matchingPhraseMaxDistance) {    // todo: needed to separate matching value and matching phrase?
+        // TODO: test
+        // TODO: similar to previous method
+        throwIfIsAggregated();
+        if (isMatchingValueSet()) {
+            throw new IllegalStateException("Matching value already set, cannot set matching value too.");
+        }
+
+        if (matchingPhraseMaxDistance.size() != matchingPhrase.size() - 1) {
+            throw new IllegalArgumentException("The size for the max distance list must be equal to the size of the phrase minus one");
+        } else if (matchingPhraseMaxDistance.stream().unordered().parallel().anyMatch(x -> x <= 0)) {
+            throw new IllegalArgumentException("The distances must be positive.");
+        }
+        this.matchingPhraseMaxDistance = Objects.requireNonNull(matchingPhraseMaxDistance);
+
+        this.matchingPhrase = Objects.requireNonNull(matchingPhrase).stream().map(BooleanExpression::normalizeToken).toList();
+        return this;
+    }
+
+    /**
+     * Sets the {@link #matchingPhrase} and the {@link #matchingPhraseMaxDistance} considering
+     * that values in the phrase are adjacent.
+     *
+     * @param matchingPhrase The phrase to match.
+     * @return This instance after the execution of this method.
+     */
+    public BooleanExpression setMatchingPhrase(@NotNull List<String> matchingPhrase) {    // todo: needed to separate matching value and matching phrase?
+        // TODO: test
+        return setMatchingPhrase(matchingPhrase, Collections.nCopies(Math.max(0, matchingPhrase.size() - 1), 1));
+    }
+
+    /**
+     * Sets the {@link #unaryOperator}.
+     *
+     * @param unaryOperator The value for the {@link #unaryOperator}.
+     * @return the instance after having set the value.
+     */
+    public BooleanExpression setUnaryOperator(@NotNull final UNARY_OPERATOR unaryOperator) {
+        this.unaryOperator = Objects.requireNonNull(unaryOperator);
+        return this;
+    }
+
+    /**
+     * @return true if the {@link #matchingValue} is set, false otherwise.
+     */
+    private boolean isMatchingValueSet() {
+        return matchingValue != null;
+    }
+
+    /**
+     * @return true if the {@link #matchingPhrase} is set, false otherwise.
+     */
+    private boolean isMatchingPhraseSet() {
+        return matchingPhrase != null;
     }
 
     /**
@@ -245,12 +273,7 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
      * @return the instance corresponding to the negation.
      */
     public BooleanExpression not() {
-        return new BooleanExpression(
-                UNARY_OPERATOR.NOT,
-                matchingValue,
-                matchingPhrase,
-                matchingPhraseMaxDistance,
-                informationRetrievalSystem);
+        return setUnaryOperator(UNARY_OPERATOR.NOT);
     }
 
     /**
@@ -357,5 +380,5 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
         OR
     }
 
-    // TODO: query optimization
+// TODO: query optimization
 }
