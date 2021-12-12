@@ -298,6 +298,7 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
                             switch (Objects.requireNonNull(binaryOperator)) {
                                 case AND -> Utility.intersectionOfSortedLists(listOfPostings1, listOfPostings2);
                                 case OR -> Utility.unionOfSortedLists(listOfPostings1, listOfPostings2);
+                                // TODO : implement query evaluation for NOT operator
                                 //noinspection UnnecessaryDefault
                                 default -> throw new UnsupportedOperationException("Unknown operator");
                             })
@@ -319,7 +320,6 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
             } else {
                 throw new NullPointerException("The matching value either the matching phrase were null but they sould not.");
             }
-            // TODO : implement query with NOT
 
         }
 
@@ -343,7 +343,7 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
                                 .map(Posting::getDocId)
                                 .distinct()
                                 .toList());// TODO: message chain code smell
-        // TODO : implement ranking and sort results accordingly
+        // TODO : implement ranking and sort results accordingly and test the correct sorting of results
     }
 
     /**
