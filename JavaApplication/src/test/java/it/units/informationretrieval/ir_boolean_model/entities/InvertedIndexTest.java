@@ -118,6 +118,13 @@ public class InvertedIndexTest {
                                         oneLineAsEntry -> new FakeDocument_LineOfAFile("", oneLineAsEntry.getValue()))));
     }
 
+    public static Corpus getLoadedSampleCorpus() throws URISyntaxException, IOException {
+        if (sampleCorpus == null) {
+            loadSampleCorpusFromFile();
+        }
+        return sampleCorpus;
+    }
+
     @NotNull
     private static Stream<Object[]> readCsvAndGetStreamWithAnArrayForEachLine(String pathToCSVFile)
             throws IOException, URISyntaxException {

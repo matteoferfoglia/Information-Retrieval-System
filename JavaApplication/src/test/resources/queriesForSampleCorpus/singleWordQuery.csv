@@ -1,0 +1,15 @@
+# CSV file with a term as first value and the number of documents containing that term as second value
+the, 4
+cat, 1
+is, 4
+on, 2
+table, 2
+dog, 1
+car, 1
+red, 1
+blue, 1
+sky, 1
+e, 0
+a, 0
+123, 0
+card, 0

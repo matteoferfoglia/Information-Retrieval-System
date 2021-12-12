@@ -111,7 +111,7 @@ public class Main {
                 .reduce(BooleanExpression::and)
                 .orElse(new BooleanExpression("", irs));
 
-        List<?> results = be.evaluate(Objects.requireNonNull(irs).getInvertedIndex());
+        List<?> results = be.evaluate();
         endTime = System.currentTimeMillis();
         sb.append(results.size()).append(" result").append(results.size() > 1 ? "s" : "").append(" for (\"")
                 .append(String.join("\" AND \"", stringsToBePresent))

@@ -23,15 +23,15 @@ import java.util.Objects;
  * and right-child and so on, to form a hierarchical structure to be
  * respected when the overall resulting boolean expression will be
  * evaluated. If an expression is not aggregated, it will optionally
- * have a unary operator (e.g, negation, i.e., 'NOT') and to "evaluate
- * it" means to "apply it to sentence and evaluate if the matching value
+ * have a unary operator (e.g, negation, i.e., 'NOT') and to "evaluateBothSimpleAndAggregatedExpressionRecursively
+ * it" means to "apply it to sentence and evaluateBothSimpleAndAggregatedExpressionRecursively if the matching value
  * represented by the instance is contained in the sentence to which it
  * is applied". If the instance is not aggregated, it cannot have a
  * binary operator.
  *
  * @author Matteo Ferfoglia
  */
-public class BooleanExpression {
+public class BooleanExpression {    // TODO: implement factory pattern which takes as input the IR System to use (only once) and allows to create boolean expression without asking for the inverted index. Each boolean expression must know its factory and two boolean expression of different factories cannot be aggregated
 
     /**
      * Flag which is true if this instance is an aggregated expression.
@@ -62,13 +62,13 @@ public class BooleanExpression {
     private final List<Integer> matchingPhraseMaxDistance;
 
     /**
-     * The left-child (first) expression to evaluate (for aggregated expressions).
+     * The left-child (first) expression to evaluateBothSimpleAndAggregatedExpressionRecursively (for aggregated expressions).
      */
     @Nullable   // if this expression is not aggregated
     private final BooleanExpression leftChildOperand;
 
     /**
-     * The right-child (second) expression to evaluate (for aggregated expressions).
+     * The right-child (second) expression to evaluateBothSimpleAndAggregatedExpressionRecursively (for aggregated expressions).
      */
     @Nullable   // if this expression is not aggregated
     private final BooleanExpression rightChildOperand;
@@ -191,7 +191,7 @@ public class BooleanExpression {
      * @param matchingValue The value to match.
      */
     public BooleanExpression(@NotNull String matchingValue,
-                             @NotNull final InformationRetrievalSystem informationRetrievalSystem) {
+                             @NotNull final InformationRetrievalSystem informationRetrievalSystem) {    // todo: needed to separate matching value and matching phrase
         this(UNARY_OPERATOR.IDENTITY, Objects.requireNonNull(matchingValue), null, null, informationRetrievalSystem);
     }
 
@@ -260,7 +260,7 @@ public class BooleanExpression {
      * @throws UnsupportedOperationException If the operator for the expression is unknown.
      */
     @NotNull
-    private List<Posting> evaluate()
+    private List<Posting> evaluateBothSimpleAndAggregatedExpressionRecursively()
             throws UnsupportedOperationException {
 
         if (isAggregated) {
@@ -270,7 +270,7 @@ public class BooleanExpression {
             booleanExpressions.add(rightChildOperand);
             return booleanExpressions
                     .stream().unordered().parallel()
-                    .map(BooleanExpression::evaluate)
+                    .map(BooleanExpression::evaluateBothSimpleAndAggregatedExpressionRecursively)
                     .reduce((listOfPostings1, listOfPostings2) ->
                             switch (Objects.requireNonNull(binaryOperator)) {
                                 case AND -> Utility.intersectionOfSortedLists(listOfPostings1, listOfPostings2);
@@ -305,16 +305,17 @@ public class BooleanExpression {
     /**
      * Evaluate this expression on the given {@link InvertedIndex}.
      *
-     * @param invertedIndex The {@link InvertedIndex}.
      * @return the {@link Document}s matching this {@link BooleanExpression}.
      * @throws UnsupportedOperationException If the operator for the expression is unknown.
      */
     @NotNull
-    public List<Document> evaluate(@NotNull final InvertedIndex invertedIndex)
+    public List<Document> evaluate()
             throws UnsupportedOperationException {
-        return invertedIndex.getCorpus()
+        return informationRetrievalSystem
+                .getInvertedIndex()
+                .getCorpus()
                 .getDocuments(
-                        evaluate()
+                        evaluateBothSimpleAndAggregatedExpressionRecursively()
                                 .stream()
                                 .map(Posting::getDocId)
                                 .distinct()
