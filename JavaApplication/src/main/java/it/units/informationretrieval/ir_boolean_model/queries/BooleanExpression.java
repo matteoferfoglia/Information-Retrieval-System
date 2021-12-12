@@ -247,9 +247,9 @@ public class BooleanExpression {
                     .stream().unordered().parallel()
                     .map(BooleanExpression::evaluate)
                     .reduce((listOfPostings1, listOfPostings2) ->
-                            switch (Objects.requireNonNull(binaryOperator, "The operator is null, but should not.")) {
-                                case AND -> Posting.intersection(listOfPostings1, listOfPostings2);
-                                case OR -> Posting.union(listOfPostings1, listOfPostings2);
+                            switch (Objects.requireNonNull(binaryOperator)) {
+                                case AND -> Utility.intersectionOfSortedLists(listOfPostings1, listOfPostings2);
+                                case OR -> Utility.unionOfSortedLists(listOfPostings1, listOfPostings2);
                                 //noinspection UnnecessaryDefault
                                 default -> throw new UnsupportedOperationException("Unknown operator");
                             })

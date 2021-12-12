@@ -104,6 +104,63 @@ public class Utility {
     }
 
     /**
+     * @param <T> Type of each element of the {@link  List}s.
+     * @param a   Sorted input list.
+     * @param b   Sorted input list.
+     * @return the {@link List} corresponding to the union of the given input lists.
+     */
+    @NotNull
+    public static <T extends Comparable<T>> List<T> unionOfSortedLists(@NotNull List<T> a, @NotNull List<T> b) {    // TODO: test and benchmark
+        ArrayList<T> union = new ArrayList<>(Objects.requireNonNull(a).size() + Objects.requireNonNull(b).size());
+        int i = 0, j = 0, comparison;
+        while (i < a.size() && j < b.size()) {
+            comparison = a.get(i).compareTo(b.get(j));
+            if (comparison == 0) {
+                union.add(a.get(i++));
+                j++;
+            } else if (comparison < 0) {
+                union.add(a.get(i++));
+            } else {
+                union.add(b.get(j++));
+            }
+        }
+        union.addAll(a.subList(i, a.size()));
+        union.addAll(b.subList(j, b.size()));
+        union.trimToSize();
+        return union;
+    }
+
+    /**
+     * @param <T> Type of each element of the {@link  List}s.
+     * @param a   Sorted input list.
+     * @param b   Sorted input list.
+     * @return the {@link List} corresponding to the intersection of the given input lists.
+     */
+    @NotNull
+    public static <T extends Comparable<T>> List<T> intersectionOfSortedLists(
+            @NotNull List<T> a, @NotNull List<T> b) {   // TODO: test and benchmark
+        Objects.requireNonNull(a);
+        Objects.requireNonNull(b);
+
+        ArrayList<T> intersection = new ArrayList<>(a.size());
+        int i = 0, j = 0, comparison;
+        while (i < a.size() && j < b.size()) {
+            comparison = a.get(i).compareTo(b.get(j));
+            if (comparison == 0) {
+                intersection.add(a.get(i++));
+                j++;
+            } else if (comparison < 0) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+        intersection.trimToSize();
+
+        return intersection;
+    }
+
+    /**
      * Generalization of {@link java.util.function.BiFunction} to take
      * three input arguments and produce one output argument.
      * From <a href="https://stackoverflow.com/a/19649473">Stackoverflow</a>.
