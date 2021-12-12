@@ -107,9 +107,9 @@ public class Main {
 
         BooleanExpression be = Objects.requireNonNull(stringsToBePresent)
                 .stream()
-                .map(aValueToBePresent -> new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, aValueToBePresent, irs))
-                .reduce((b1, b2) -> new BooleanExpression(BooleanExpression.BINARY_OPERATOR.AND, b1, b2))
-                .orElse(new BooleanExpression(BooleanExpression.UNARY_OPERATOR.IDENTITY, "", irs));
+                .map(aValueToBePresent -> new BooleanExpression(aValueToBePresent, irs))
+                .reduce(BooleanExpression::and)
+                .orElse(new BooleanExpression("", irs));
 
         List<?> results = be.evaluate(Objects.requireNonNull(irs).getInvertedIndex());
         endTime = System.currentTimeMillis();

@@ -162,58 +162,15 @@ public class BooleanExpression {
     }
 
     /**
-     * Constructor for {@link BooleanExpression}s with a {@link #matchingValue}.
-     *
-     * @param unaryOperator The {@link UNARY_OPERATOR} to use. If it is null, {@link UNARY_OPERATOR#IDENTITY} will be use.
-     * @param matchingValue The value to match.
-     */
-    public BooleanExpression(@Nullable UNARY_OPERATOR unaryOperator, @NotNull String matchingValue,
-                             @NotNull final InformationRetrievalSystem informationRetrievalSystem) {
-        this(unaryOperator, Objects.requireNonNull(matchingValue, "The given value cannot be null"), null, null, informationRetrievalSystem);
-    }
-
-    /**
-     * Constructor for {@link BooleanExpression}s with a {@link #matchingPhrase},
-     * supposing that each term in the given list can be at most one term spaced
-     * each other.
-     *
-     * @param unaryOperator  The {@link UNARY_OPERATOR} to use. If it is null, {@link UNARY_OPERATOR#IDENTITY} will be use.
-     * @param matchingPhrase The phrase to match.
-     */
-    public BooleanExpression(@Nullable UNARY_OPERATOR unaryOperator, @NotNull List<String> matchingPhrase,
-                             @NotNull final InformationRetrievalSystem informationRetrievalSystem) {
-        this(unaryOperator, null, Objects.requireNonNull(matchingPhrase, "The given value cannot be null"), null, informationRetrievalSystem);
-    }
-
-    /**
-     * Constructor for {@link BooleanExpression}s with a {@link #matchingPhrase},
-     * supposing that each term in the given list can be at most one term spaced
-     * each other.
-     *
-     * @param unaryOperator             The {@link UNARY_OPERATOR} to use. If it is null, {@link UNARY_OPERATOR#IDENTITY} will be use.
-     * @param matchingPhrase            The phrase to match.
-     * @param matchingPhraseMaxDistance The maximum possible distance between terms of
-     *                                  the given phrase. The list must have the size
-     *                                  equals to the size of the phrase minus one and can
-     *                                  contain only positive (0 excluded) values.
-     */
-    public BooleanExpression(@Nullable UNARY_OPERATOR unaryOperator,
-                             @NotNull List<String> matchingPhrase,
-                             @NotNull List<Integer> matchingPhraseMaxDistance,
-                             @NotNull final InformationRetrievalSystem informationRetrievalSystem) {
-        this(unaryOperator, null, Objects.requireNonNull(matchingPhrase, "The given value cannot be null"), Objects.requireNonNull(matchingPhraseMaxDistance), informationRetrievalSystem);
-    }
-
-    /**
      * Constructor. Create an aggregated {@link BooleanExpression} starting from two {@link BooleanExpression}s.
      *
      * @param operator The {@link BINARY_OPERATOR} to use.
      * @param expr1    The first operand.
      * @param expr2    The second operand.
      */
-    public BooleanExpression(@NotNull BINARY_OPERATOR operator,
-                             @NotNull BooleanExpression expr1,
-                             @NotNull BooleanExpression expr2) {
+    private BooleanExpression(@NotNull BINARY_OPERATOR operator,
+                              @NotNull BooleanExpression expr1,
+                              @NotNull BooleanExpression expr2) {
         this.informationRetrievalSystem = Objects.requireNonNull(
                 Objects.equals(expr1.informationRetrievalSystem, expr2.informationRetrievalSystem)
                         ? expr1.informationRetrievalSystem : null,
@@ -225,7 +182,75 @@ public class BooleanExpression {
         this.matchingPhrase = null;
         this.unaryOperator = null;
         this.binaryOperator = Objects.requireNonNull(operator);
-        this.matchingPhraseMaxDistance = null;  // TODO: valuate if using builder pattern
+        this.matchingPhraseMaxDistance = null;
+    }
+
+    /**
+     * Constructor for {@link BooleanExpression}s with a {@link #matchingValue}.
+     *
+     * @param matchingValue The value to match.
+     */
+    public BooleanExpression(@NotNull String matchingValue,
+                             @NotNull final InformationRetrievalSystem informationRetrievalSystem) {
+        this(UNARY_OPERATOR.IDENTITY, Objects.requireNonNull(matchingValue), null, null, informationRetrievalSystem);
+    }
+
+    /**
+     * Constructor for {@link BooleanExpression}s with a {@link #matchingPhrase},
+     * supposing that each term in the given list can be at most one term spaced
+     * each other.
+     *
+     * @param matchingPhrase            The phrase to match.
+     * @param matchingPhraseMaxDistance The maximum possible distance between terms of
+     *                                  the given phrase. The list must have the size
+     *                                  equals to the size of the phrase minus one and can
+     *                                  contain only positive (0 excluded) values.
+     */
+    public BooleanExpression(@NotNull List<String> matchingPhrase,
+                             @NotNull List<Integer> matchingPhraseMaxDistance,
+                             @NotNull final InformationRetrievalSystem informationRetrievalSystem) {
+        this(
+                UNARY_OPERATOR.IDENTITY,
+                null,
+                Objects.requireNonNull(matchingPhrase),
+                Objects.requireNonNull(matchingPhraseMaxDistance),
+                informationRetrievalSystem);
+    }
+
+    /**
+     * Updates this instance such that the AND boolean operator is computed
+     * between this instance and the one passed as parameter.
+     *
+     * @param other The other instance (operand) for the AND operation.
+     * @return This instance after setting the AND operand.
+     */
+    public BooleanExpression and(@NotNull BooleanExpression other) {
+        return new BooleanExpression(BINARY_OPERATOR.AND, this, other);
+    }
+
+    /**
+     * Updates this instance such that the OR boolean operator is computed
+     * between this instance and the one passed as parameter.
+     *
+     * @param other The other instance (operand) for the OR operation.
+     * @return This instance after setting the OR operand.
+     */
+    public BooleanExpression or(@NotNull BooleanExpression other) {
+        return new BooleanExpression(BINARY_OPERATOR.OR, this, other);
+    }
+
+    /**
+     * Negates the current instance.
+     *
+     * @return the instance corresponding to the negation.
+     */
+    public BooleanExpression not() {
+        return new BooleanExpression(
+                UNARY_OPERATOR.NOT,
+                matchingValue,
+                matchingPhrase,
+                matchingPhraseMaxDistance,
+                informationRetrievalSystem);
     }
 
     /**
