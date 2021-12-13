@@ -73,8 +73,8 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
     /**
      * The {@link UNARY_OPERATOR} to apply to this instance.
      */
-    @Nullable   //  if this expression is aggregated
-    private UNARY_OPERATOR unaryOperator;
+    @NotNull
+    private UNARY_OPERATOR unaryOperator = UNARY_OPERATOR.IDENTITY;// default is the unary operator
 
     /**
      * The {@link BINARY_OPERATOR} to apply to this instance.
@@ -98,7 +98,6 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
         this.isAggregated = false;
         this.leftChildOperand = null;
         this.rightChildOperand = null;
-        this.unaryOperator = UNARY_OPERATOR.IDENTITY;
         this.binaryOperator = null;
         this.informationRetrievalSystem = Objects.requireNonNull(informationRetrievalSystem);
     }
@@ -162,7 +161,9 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
         // TODO: test
         throwIfIsAggregated();
         if (isMatchingPhraseSet()) {
-            throw new IllegalStateException("Matching phrase already set, cannot set matching value too.");
+            throw new IllegalStateException("Matching phrase already set, cannot set matching value too.");   // todo: test exception
+        } else if (isMatchingValueSet()) {
+            throw new IllegalStateException("Matching value already set, cannot re-set");   // todo: test exception
         }
 
         this.matchingValue = normalizeToken(Objects.requireNonNull(matchingValue));
@@ -191,7 +192,9 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
         // TODO: similar to previous method
         throwIfIsAggregated();
         if (isMatchingValueSet()) {
-            throw new IllegalStateException("Matching value already set, cannot set matching value too.");
+            throw new IllegalStateException("Matching value already set, cannot set matching value too.");   // todo: test exception
+        } else if (isMatchingPhraseSet()) {
+            throw new IllegalStateException("Matching phrase already set, cannot re-set");   // todo: test exception
         }
 
         if (matchingPhraseMaxDistance.size() != matchingPhrase.size() - 1) {
@@ -243,6 +246,17 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
     }
 
     /**
+     * @throws if neither the {@link #matchingValue} nor the {@link #matchingPhrase} is set.
+     */
+    private void throwIfNeitherValueNorPhraseToMatchIsSet() {   // TODO: test
+        if (!(isMatchingValueSet() || isMatchingPhraseSet())) {
+            throw new IllegalStateException("Neither matching value or phrase is set.");
+        }
+    }
+
+    //region query AND
+
+    /**
      * Updates this instance such that the AND boolean operator is computed
      * between this instance and the one passed as parameter.
      *
@@ -250,8 +264,36 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
      * @return This instance after setting the AND operand.
      */
     public BooleanExpression and(@NotNull BooleanExpression other) {
+        throwIfNeitherValueNorPhraseToMatchIsSet();
         return new BooleanExpression(BINARY_OPERATOR.AND, this, other);
     }
+
+    /**
+     * Like {@link #and(BooleanExpression)}, but accepts a word directly.
+     */
+    public BooleanExpression and(@NotNull String matchingValue) { // TODO: benchmark
+        return and(new BooleanExpression(informationRetrievalSystem).setMatchingValue(Objects.requireNonNull(matchingValue)));
+    }
+
+    /**
+     * Like {@link #and(BooleanExpression)}, but accepts a phrase directly.
+     */
+    public BooleanExpression and(@NotNull List<String> matchingPhrase) {    // TODO: test and benchmark
+        return and(new BooleanExpression(informationRetrievalSystem).setMatchingPhrase(Objects.requireNonNull(matchingPhrase)));
+    }
+
+    /**
+     * Like {@link #and(BooleanExpression)}, but accepts a phrase directly.
+     */
+    public BooleanExpression and(@NotNull List<String> matchingPhrase, @NotNull List<Integer> matchingPhraseMaxDistance) {// TODO: test and benchmark
+        return and(
+                new BooleanExpression(informationRetrievalSystem)
+                        .setMatchingPhrase(
+                                Objects.requireNonNull(matchingPhrase), Objects.requireNonNull(matchingPhraseMaxDistance)));
+    }
+    //endregion
+
+    //region query OR
 
     /**
      * Updates this instance such that the OR boolean operator is computed
@@ -260,16 +302,41 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
      * @param other The other instance (operand) for the OR operation.
      * @return This instance after setting the OR operand.
      */
-    public BooleanExpression or(@NotNull BooleanExpression other) {
+    public BooleanExpression or(@NotNull BooleanExpression other) { // TODO: benchmark
+        throwIfNeitherValueNorPhraseToMatchIsSet();
         return new BooleanExpression(BINARY_OPERATOR.OR, this, other);
     }
+
+    /**
+     * Like {@link #or(BooleanExpression)}, but accepts a word directly.
+     */
+    public BooleanExpression or(@NotNull String matchingValue) {// TODO: test and benchmark
+        return or(new BooleanExpression(informationRetrievalSystem).setMatchingValue(Objects.requireNonNull(matchingValue)));
+    }
+
+    /**
+     * Like {@link #or(BooleanExpression)}, but accepts a phrase directly.
+     */
+    public BooleanExpression or(@NotNull List<String> matchingPhrase) {// TODO: test and benchmark
+        return or(new BooleanExpression(informationRetrievalSystem).setMatchingPhrase(Objects.requireNonNull(matchingPhrase)));
+    }
+
+    /**
+     * Like {@link #or(BooleanExpression)}, but accepts a phrase directly.
+     */
+    public BooleanExpression or(@NotNull List<String> matchingPhrase, @NotNull List<Integer> matchingPhraseMaxDistance) {// TODO: test and benchmark
+        return or(
+                new BooleanExpression(informationRetrievalSystem)
+                        .setMatchingPhrase(Objects.requireNonNull(matchingPhrase), Objects.requireNonNull(matchingPhraseMaxDistance)));
+    }
+    //endregion
 
     /**
      * Negates the current instance.
      *
      * @return the instance corresponding to the negation.
      */
-    public BooleanExpression not() {
+    public BooleanExpression not() {// TODO: test and benchmark
         return setUnaryOperator(UNARY_OPERATOR.NOT);
     }
 
@@ -283,57 +350,60 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
     private List<Posting> evaluateBothSimpleAndAggregatedExpressionRecursively()
             throws UnsupportedOperationException {
 
-        if (isAggregated) {
 
-            List<BooleanExpression> booleanExpressions = new ArrayList<>(2);
-            booleanExpressions.add(leftChildOperand);
-            booleanExpressions.add(rightChildOperand);
-            return booleanExpressions
-                    .stream().unordered().parallel()
-                    .map(BooleanExpression::evaluateBothSimpleAndAggregatedExpressionRecursively)
-                    .reduce((listOfPostings1, listOfPostings2) ->
-                            switch (Objects.requireNonNull(binaryOperator)) {
-                                case AND -> Utility.intersectionOfSortedLists(listOfPostings1, listOfPostings2);
-                                case OR -> Utility.unionOfSortedLists(listOfPostings1, listOfPostings2);
-                                //noinspection UnnecessaryDefault
-                                default -> throw new UnsupportedOperationException("Unknown operator");
-                            })
-                    .orElse(new ArrayList<>());
-
-        } else {
-
-            if (isMatchingValueSet()) {
-                String normalizedToken = Utility.normalize(matchingValue);  // TODO : should be in the constructor?
-                if (normalizedToken == null) {
-                    // The normalization return null, then no matches
-                    return new ArrayList<>();
-                } else {
-                    List<Posting> listOfPostingsForNormalizedInputToken =
-                            informationRetrievalSystem.getListOfPostingForToken(normalizedToken);
-
-                    assert unaryOperator != null;
-                    return switch (unaryOperator) {
-                        case NOT -> {   // TODO: try to improve query not
-                            List<DocumentIdentifier> listOfDocIdToBeExcluded =
-                                    listOfPostingsForNormalizedInputToken.stream().map(Posting::getDocId).toList();
-                            yield informationRetrievalSystem.getAllDocIds()
-                                    .stream().unordered().parallel()
-                                    .filter(docId -> !listOfDocIdToBeExcluded.contains(docId))
-                                    .map(Posting::new)
-                                    .sorted()
-                                    .toList();
-                        }
-                        case IDENTITY -> informationRetrievalSystem.getListOfPostingForToken(normalizedToken);
-                    };
-                }
-            } else if (isMatchingPhraseSet()) {
-                throw new UnsupportedOperationException("Not implemented yet");
-                // TODO : implement for phrasal ir_system.queries (not implemented yet)
-            } else {
-                throw new NullPointerException("The matching value either the matching phrase were null but they sould not.");
+        assert unaryOperator != null;
+        return switch (unaryOperator) {
+            case NOT -> {   // TODO: try to improve query not
+                // First: solve the direct query (create a new query without the NOT operator),
+                // then take the difference to get the results for the NOT query.
+                List<DocumentIdentifier> listOfDocIdToBeExcluded =
+                        new BooleanExpression(this)
+                                .setUnaryOperator(UNARY_OPERATOR.IDENTITY)
+                                .evaluateBothSimpleAndAggregatedExpressionRecursively()
+                                .stream().map(Posting::getDocId).toList();
+                yield informationRetrievalSystem.getAllDocIds()
+                        .stream().unordered().parallel()
+                        .filter(docId -> !listOfDocIdToBeExcluded.contains(docId))
+                        .map(Posting::new)
+                        .sorted()
+                        .toList();
             }
+            case IDENTITY -> {
+                if (isAggregated) {
+                    List<BooleanExpression> booleanExpressions = new ArrayList<>(2);
+                    booleanExpressions.add(leftChildOperand);
+                    booleanExpressions.add(rightChildOperand);
+                    yield booleanExpressions
+                            .stream().unordered().parallel()
+                            .map(BooleanExpression::evaluateBothSimpleAndAggregatedExpressionRecursively)
+                            .reduce((listOfPostings1, listOfPostings2) ->
+                                    switch (Objects.requireNonNull(binaryOperator)) {
+                                        case AND -> Utility.intersectionOfSortedLists(listOfPostings1, listOfPostings2);
+                                        case OR -> Utility.unionOfSortedLists(listOfPostings1, listOfPostings2);
+                                        //noinspection UnnecessaryDefault
+                                        default -> throw new UnsupportedOperationException("Unknown operator");
+                                    })
+                            .orElse(new ArrayList<>());
 
-        }
+                } else {
+                    if (isMatchingValueSet()) {
+                        String normalizedToken = Utility.normalize(matchingValue);  // TODO : should be in the constructor?
+                        if (normalizedToken == null) {
+                            // The normalization return null, then no matches
+                            yield new ArrayList<>();
+                        } else {
+                            yield informationRetrievalSystem.getListOfPostingForToken(normalizedToken);
+                        }
+                    } else if (isMatchingPhraseSet()) {
+                        throw new UnsupportedOperationException("Not implemented yet");
+                        // TODO : implement for phrasal ir_system.queries (not implemented yet)
+
+                    } else {
+                        throw new NullPointerException("The matching value either the matching phrase were null but they should not.");
+                    }
+                }
+            }
+        };
 
     }
 
