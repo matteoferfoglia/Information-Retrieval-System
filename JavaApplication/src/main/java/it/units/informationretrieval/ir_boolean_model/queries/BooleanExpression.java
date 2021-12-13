@@ -248,8 +248,8 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
     /**
      * @throws if neither the {@link #matchingValue} nor the {@link #matchingPhrase} is set.
      */
-    private void throwIfNeitherValueNorPhraseToMatchIsSet() {   // TODO: test
-        if (!(isMatchingValueSet() || isMatchingPhraseSet())) {
+    private void throwIfNotAggregatedButNeitherValueNorPhraseToMatchIsSet() {   // TODO: test
+        if (!(isAggregated || isMatchingValueSet() || isMatchingPhraseSet())) {
             throw new IllegalStateException("Neither matching value or phrase is set.");
         }
     }
@@ -264,7 +264,7 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
      * @return This instance after setting the AND operand.
      */
     public BooleanExpression and(@NotNull BooleanExpression other) {
-        throwIfNeitherValueNorPhraseToMatchIsSet();
+        throwIfNotAggregatedButNeitherValueNorPhraseToMatchIsSet();
         return new BooleanExpression(BINARY_OPERATOR.AND, this, other);
     }
 
@@ -303,7 +303,7 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
      * @return This instance after setting the OR operand.
      */
     public BooleanExpression or(@NotNull BooleanExpression other) { // TODO: benchmark
-        throwIfNeitherValueNorPhraseToMatchIsSet();
+        throwIfNotAggregatedButNeitherValueNorPhraseToMatchIsSet();
         return new BooleanExpression(BINARY_OPERATOR.OR, this, other);
     }
 
