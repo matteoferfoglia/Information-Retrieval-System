@@ -34,12 +34,12 @@ class BooleanExpressionTest {   // TODO: add missing tests
         assertEquals(expectedNumberOfDocsContainingTheWord, booleanExpression.evaluate().size());
     }
 
-//    @ParameterizedTest    // TODO: de-comment this after having implemented NOT evaluation
-//    @CsvFileSource(resources = PATH_TO_FILE_WITH_QUERY_NOT_SAMPLES, numLinesToSkip = 1)
-//    void evaluateQueryNot(String word, int expectedNumberOfDocsNotContainingTheWord) {
-//        booleanExpression = irs.createNewBooleanExpression().setMatchingValue(word).not();
-//        assertEquals(expectedNumberOfDocsNotContainingTheWord, booleanExpression.evaluate().size());
-//    }
+    @ParameterizedTest
+    @CsvFileSource(resources = PATH_TO_FILE_WITH_QUERY_NOT_SAMPLES, numLinesToSkip = 1)
+    void evaluateQueryNot(String word, int expectedNumberOfDocsNotContainingTheWord) {
+        booleanExpression = irs.createNewBooleanExpression().setMatchingValue(word).not();
+        assertEquals(expectedNumberOfDocsNotContainingTheWord, booleanExpression.evaluate().size());
+    }
 //
 //    @ParameterizedTest
 //    @CsvFileSource(resources = PATH_TO_FILE_WITH_QUERY_AND_SAMPLES, numLinesToSkip = 1)

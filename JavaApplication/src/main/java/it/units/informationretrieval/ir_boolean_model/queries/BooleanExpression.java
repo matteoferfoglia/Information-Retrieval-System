@@ -1,10 +1,7 @@
 package it.units.informationretrieval.ir_boolean_model.queries;
 
 import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem;
-import it.units.informationretrieval.ir_boolean_model.entities.Document;
-import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex;
-import it.units.informationretrieval.ir_boolean_model.entities.Posting;
-import it.units.informationretrieval.ir_boolean_model.entities.PostingList;
+import it.units.informationretrieval.ir_boolean_model.entities.*;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -298,7 +295,6 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
                             switch (Objects.requireNonNull(binaryOperator)) {
                                 case AND -> Utility.intersectionOfSortedLists(listOfPostings1, listOfPostings2);
                                 case OR -> Utility.unionOfSortedLists(listOfPostings1, listOfPostings2);
-                                // TODO : implement query evaluation for NOT operator
                                 //noinspection UnnecessaryDefault
                                 default -> throw new UnsupportedOperationException("Unknown operator");
                             })
@@ -306,15 +302,31 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
 
         } else {
 
-            if (matchingValue != null) {
+            if (isMatchingValueSet()) {
                 String normalizedToken = Utility.normalize(matchingValue);  // TODO : should be in the constructor?
                 if (normalizedToken == null) {
                     // The normalization return null, then no matches
                     return new ArrayList<>();
                 } else {
-                    return informationRetrievalSystem.getListOfPostingForToken(normalizedToken);
+                    List<Posting> listOfPostingsForNormalizedInputToken =
+                            informationRetrievalSystem.getListOfPostingForToken(normalizedToken);
+
+                    assert unaryOperator != null;
+                    return switch (unaryOperator) {
+                        case NOT -> {   // TODO: try to improve query not
+                            List<DocumentIdentifier> listOfDocIdToBeExcluded =
+                                    listOfPostingsForNormalizedInputToken.stream().map(Posting::getDocId).toList();
+                            yield informationRetrievalSystem.getAllDocIds()
+                                    .stream().unordered().parallel()
+                                    .filter(docId -> !listOfDocIdToBeExcluded.contains(docId))
+                                    .map(Posting::new)
+                                    .sorted()
+                                    .toList();
+                        }
+                        case IDENTITY -> informationRetrievalSystem.getListOfPostingForToken(normalizedToken);
+                    };
                 }
-            } else if (matchingPhrase != null) {
+            } else if (isMatchingPhraseSet()) {
                 throw new UnsupportedOperationException("Not implemented yet");
                 // TODO : implement for phrasal ir_system.queries (not implemented yet)
             } else {
@@ -381,4 +393,5 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
     }
 
 // TODO: query optimization
+// TODO: query expansion and reformulation
 }

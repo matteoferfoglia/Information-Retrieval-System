@@ -1,14 +1,17 @@
 package it.units.informationretrieval.ir_boolean_model;
 
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
+import it.units.informationretrieval.ir_boolean_model.entities.DocumentIdentifier;
 import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex;
 import it.units.informationretrieval.ir_boolean_model.entities.Posting;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * This class represents an Information Retrieval System.
@@ -62,4 +65,11 @@ public class InformationRetrievalSystem implements Serializable {
         };
     }
 
+    /**
+     * @return The {@link Set} of all (distinct) {@link DocumentIdentifier}s in the System.
+     * <strong>Important</strong>: the returned collection is <em>not</em> suitable for concurrent actions.
+     */
+    public Set<DocumentIdentifier> getAllDocIds() { // TODO: test
+        return new HashSet<>(corpus.getCorpus().keySet());
+    }
 }
