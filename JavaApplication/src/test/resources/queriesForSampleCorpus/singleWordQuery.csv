@@ -1,16 +1,16 @@
-# CSV file with a term as first value, a second term as second value (to test and/or) queries, and the list of docIds (separated by '#') matching the queries "single word", NOT, AND, OR (in this order). Note: "single word" and NOT results refer to the first term. Last two columns are the results for NOT(term1 AND term) and NOT(term1 or term2) respectively
-term1, term2, Single Word query, NOT term1, term1 AND term2, term1 OR term2, NOT(term1 AND term2), NOT(term1 OR term2)
-the,   cat,   1#2#3#4,           ,          1,               1#2#3#4,        2#3#4,
-cat,   the,   1,                 2#3#4,     1,               1#2#3#4,        2#3#4,
-is,    table, 1#2#3#4,           ,          1#2,             1#2#3#4,        3#4,
-on,    table, 1#2,               3#4,       1#2,             1#2,            3#4,                  3#4
-table, table, 1#2,               3#4,       1#2,             1#2,            3#4,                  3#4
-dog,   table, 2,                 1#3#4,     2,               1#2,            1#3#4,                3#4
-car,   cat,   3,                 1#2#4,     ,                1#3,            1#2#3#4,              2#4
-red,   car,   3,                 1#2#4,     3,               3,              1#2#4,                1#2#4
-blue,  car,   4,                 1#2#3,     ,                3#4,            1#2#3#4,              1#2
-sky,   the,   4,                 1#2#3,     4,               1#2#3#4,        1#2#3,
-e,     cat,   ,                  1#2#3#4,   ,                1,              1#2#3#4,              2#3#4
-a,     car,   ,                  1#2#3#4,   ,                3,              1#2#3#4,              1#2#4
-123,   sky,   ,                  1#2#3#4,   ,                4,              1#2#3#4,              1#2#3
-card,  the,   ,                  1#2#3#4,   ,                1#2#3#4,        1#2#3#4,
+# CSV file with a term as first value, a second term as second value (to test aggregated queries), and the list of docIds (separated by '#') matching the queries "single word", NOT, AND, OR (in this order). Note: "single word" and NOT results refer to the first term. The following columns are the results for the boolean query given in the hading
+term1, term2, Single Word query, NOT term1, term1 AND term2, term1 OR term2, NOT(term1 AND term2), NOT(term1 OR term2), NOT(NOT(term1)), NOT(term1 AND term2 AND (NOT term1)), NOT(term1) OR term1, NOT(term1) OR term1 OR term2, term1 OR (term1 AND term2)
+the,   cat,   1#2#3#4,           ,          1,               1#2#3#4,        2#3#4,                ,                    1#2#3#4,         1#2#3#4,                              1#2#3#4,             1#2#3#4,                      1#2#3#4
+cat,   the,   1,                 2#3#4,     1,               1#2#3#4,        2#3#4,                ,                    1,               1#2#3#4,                              1#2#3#4,             1#2#3#4,                      1
+is,    table, 1#2#3#4,           ,          1#2,             1#2#3#4,        3#4,                  ,                    1#2#3#4,         1#2#3#4,                              1#2#3#4,             1#2#3#4,                      1#2#3#4
+on,    table, 1#2,               3#4,       1#2,             1#2,            3#4,                  3#4,                 1#2,             1#2#3#4,                              1#2#3#4,             1#2#3#4,                      1#2
+table, table, 1#2,               3#4,       1#2,             1#2,            3#4,                  3#4,                 1#2,             1#2#3#4,                              1#2#3#4,             1#2#3#4,                      1#2
+dog,   table, 2,                 1#3#4,     2,               1#2,            1#3#4,                3#4,                 2,               1#2#3#4,                              1#2#3#4,             1#2#3#4,                      2
+car,   cat,   3,                 1#2#4,     ,                1#3,            1#2#3#4,              2#4,                 3,               1#2#3#4,                              1#2#3#4,             1#2#3#4,                      3
+red,   car,   3,                 1#2#4,     3,               3,              1#2#4,                1#2#4,               3,               1#2#3#4,                              1#2#3#4,             1#2#3#4,                      3
+blue,  car,   4,                 1#2#3,     ,                3#4,            1#2#3#4,              1#2,                 4,               1#2#3#4,                              1#2#3#4,             1#2#3#4,                      4
+sky,   the,   4,                 1#2#3,     4,               1#2#3#4,        1#2#3,                ,                    4,               1#2#3#4,                              1#2#3#4,             1#2#3#4,                      4
+e,     cat,   ,                  1#2#3#4,   ,                1,              1#2#3#4,              2#3#4,               ,                1#2#3#4,                              1#2#3#4,             1#2#3#4,
+a,     car,   ,                  1#2#3#4,   ,                3,              1#2#3#4,              1#2#4,               ,                1#2#3#4,                              1#2#3#4,             1#2#3#4,
+123,   sky,   ,                  1#2#3#4,   ,                4,              1#2#3#4,              1#2#3,               ,                1#2#3#4,                              1#2#3#4,             1#2#3#4,
+card,  the,   ,                  1#2#3#4,   ,                1#2#3#4,        1#2#3#4,              ,                    ,                1#2#3#4,                              1#2#3#4,             1#2#3#4,

@@ -28,7 +28,7 @@ import java.util.Objects;
  *
  * @author Matteo Ferfoglia
  */
-public class BooleanExpression {    // TODO: implement factory pattern which takes as input the IR System to use (only once) and allows to create boolean expression without asking for the inverted index. Each boolean expression must know its factory and two boolean expression of different factories cannot be aggregated
+public class BooleanExpression {
 
     /**
      * Flag which is true if this instance is an aggregated expression.
@@ -158,12 +158,11 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
      * @return This instance after the execution of this method.
      */
     public BooleanExpression setMatchingValue(@NotNull String matchingValue) {    // todo: needed to separate matching value and matching phrase
-        // TODO: test
         throwIfIsAggregated();
         if (isMatchingPhraseSet()) {
-            throw new IllegalStateException("Matching phrase already set, cannot set matching value too.");   // todo: test exception
+            throw new IllegalStateException("Matching phrase already set, cannot set matching value too.");
         } else if (isMatchingValueSet()) {
-            throw new IllegalStateException("Matching value already set, cannot re-set");   // todo: test exception
+            throw new IllegalStateException("Matching value already set, cannot re-set");
         }
 
         this.matchingValue = normalizeToken(Objects.requireNonNull(matchingValue));
@@ -188,13 +187,11 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
      */
     public BooleanExpression setMatchingPhrase(@NotNull List<String> matchingPhrase,
                                                @NotNull List<Integer> matchingPhraseMaxDistance) {    // todo: needed to separate matching value and matching phrase?
-        // TODO: test
-        // TODO: similar to previous method
         throwIfIsAggregated();
         if (isMatchingValueSet()) {
-            throw new IllegalStateException("Matching value already set, cannot set matching value too.");   // todo: test exception
+            throw new IllegalStateException("Matching value already set, cannot set matching value too.");
         } else if (isMatchingPhraseSet()) {
-            throw new IllegalStateException("Matching phrase already set, cannot re-set");   // todo: test exception
+            throw new IllegalStateException("Matching phrase already set, cannot re-set");
         }
 
         if (matchingPhraseMaxDistance.size() != matchingPhrase.size() - 1) {
@@ -216,7 +213,6 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
      * @return This instance after the execution of this method.
      */
     public BooleanExpression setMatchingPhrase(@NotNull List<String> matchingPhrase) {    // todo: needed to separate matching value and matching phrase?
-        // TODO: test
         return setMatchingPhrase(matchingPhrase, Collections.nCopies(Math.max(0, matchingPhrase.size() - 1), 1));
     }
 
@@ -246,9 +242,9 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
     }
 
     /**
-     * @throws if neither the {@link #matchingValue} nor the {@link #matchingPhrase} is set.
+     * @throws IllegalStateException if neither the {@link #matchingValue} nor the {@link #matchingPhrase} is set.
      */
-    private void throwIfNotAggregatedButNeitherValueNorPhraseToMatchIsSet() {   // TODO: test
+    private void throwIfNotAggregatedButNeitherValueNorPhraseToMatchIsSet() {
         if (!(isAggregated || isMatchingValueSet() || isMatchingPhraseSet())) {
             throw new IllegalStateException("Neither matching value or phrase is set.");
         }
@@ -337,7 +333,16 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
      * @return the instance corresponding to the negation.
      */
     public BooleanExpression not() {// TODO: test and benchmark
-        return setUnaryOperator(UNARY_OPERATOR.NOT);
+        return isNotQuery() ?
+                setUnaryOperator(UNARY_OPERATOR.IDENTITY/*negation of NOT is the identity*/) :
+                setUnaryOperator(UNARY_OPERATOR.NOT);
+    }
+
+    /**
+     * @return true if {@link #unaryOperator} is NOT, false otherwise.
+     */
+    private boolean isNotQuery() {
+        return unaryOperator.equals(UNARY_OPERATOR.NOT);
     }
 
     /**
@@ -387,7 +392,7 @@ public class BooleanExpression {    // TODO: implement factory pattern which tak
 
                 } else {
                     if (isMatchingValueSet()) {
-                        String normalizedToken = Utility.normalize(matchingValue);  // TODO : should be in the constructor?
+                        String normalizedToken = Utility.normalize(matchingValue);
                         if (normalizedToken == null) {
                             // The normalization return null, then no matches
                             yield new ArrayList<>();
