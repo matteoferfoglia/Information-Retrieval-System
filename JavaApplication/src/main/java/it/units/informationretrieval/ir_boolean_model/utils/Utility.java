@@ -3,7 +3,6 @@ package it.units.informationretrieval.ir_boolean_model.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
-import it.units.informationretrieval.ir_boolean_model.entities.Posting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,15 +35,16 @@ public class Utility {
      */
     @NotNull
     public static List<String> tokenize(@NotNull Document document) {
-        return Arrays.stream(Objects.requireNonNull(Objects.requireNonNull(document).getContent())
-                        .getEntireTextContent()
-                        .replaceAll(REGEX__NOT__VALID_CHARACTERS, " ")
-                        .replaceAll(REGEX_MULTIPLE_SPACES, " ").split(" "))
+        return Arrays.stream(
+                        (Objects.requireNonNull(document).getTitle() + " " + Objects.requireNonNull(document.getContent()).getEntireTextContent())
+                                .replaceAll(REGEX__NOT__VALID_CHARACTERS, " ")
+                                .replaceAll(REGEX_MULTIPLE_SPACES, " ")
+                                .split(" "))
                 .map(Utility::normalize)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         // TODO : not implemented yet (only split documents into strings which are the token - DO NOT CUT)
-        // TODO : test
+        // TODO : benchmark
     }
 
     /**
@@ -84,7 +84,7 @@ public class Utility {
      * Convert a string in JSON format to a {@link Map}.
      */
     @NotNull
-    public static Map<String, ?> convertFromJsonToMap(@NotNull final String stringInJsonFormat) throws JsonProcessingException {    // TODO: test
+    public static Map<String, ?> convertFromJsonToMap(@NotNull final String stringInJsonFormat) throws JsonProcessingException {    // TODO: benchmark
         return ((HashMap<?, ?>) new ObjectMapper().readValue(Objects.requireNonNull(stringInJsonFormat), HashMap.class))
                 .entrySet().stream().unordered().parallel() // order does not matter in JSON entries
                 .map(entry -> new AbstractMap.SimpleEntry<String, Object>((String) entry.getKey(), entry.getValue()))
@@ -101,11 +101,11 @@ public class Utility {
     @NotNull
     public static String convertToJson(@NotNull Object object)
             throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(Objects.requireNonNull(object));   // TODO: test
+        return new ObjectMapper().writeValueAsString(Objects.requireNonNull(object));   // TODO: benchmark
     }
 
     @NotNull
-    public static List<Posting> sortAndRemoveDuplicates(@NotNull final List<Posting> postings) {   // TODO: test and benchmark
+    public static <T> List<T> sortAndRemoveDuplicates(@NotNull final List<T> postings) {   // TODO: benchmark
         return postings.stream().sorted().distinct().collect(Collectors.toList());
     }
 
@@ -116,7 +116,7 @@ public class Utility {
      * @return the {@link List} corresponding to the union of the given input lists.
      */
     @NotNull
-    public static <T extends Comparable<T>> List<T> unionOfSortedLists(@NotNull List<T> a, @NotNull List<T> b) {    // TODO: test and benchmark
+    public static <T extends Comparable<T>> List<T> unionOfSortedLists(@NotNull List<T> a, @NotNull List<T> b) {    // TODO: benchmark
         ArrayList<T> union = new ArrayList<>(Objects.requireNonNull(a).size() + Objects.requireNonNull(b).size());
         int i = 0, j = 0, comparison;
         while (i < a.size() && j < b.size()) {
@@ -144,7 +144,7 @@ public class Utility {
      */
     @NotNull
     public static <T extends Comparable<T>> List<T> intersectionOfSortedLists(
-            @NotNull List<T> a, @NotNull List<T> b) {   // TODO: test and benchmark
+            @NotNull List<T> a, @NotNull List<T> b) {   // TODO: benchmark
         Objects.requireNonNull(a);
         Objects.requireNonNull(b);
 
