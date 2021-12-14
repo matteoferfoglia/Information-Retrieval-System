@@ -182,7 +182,7 @@ public class Utility {
             @NotNull final String whatToWrite, @NotNull final File outputFile, boolean appendIfFileAlreadyExists)
             throws IOException {
         if (!outputFile.exists()
-                && Files.createDirectories(outputFile.getParentFile().toPath()) != null // create parent directories if not existing
+                && (outputFile.getParentFile() == null || Files.createDirectories(outputFile.getParentFile().toPath()) != null) // create parent directories if not existing
                 && !outputFile.createNewFile()) {
             throw new IOException("Error when creating new file");
         }
