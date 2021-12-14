@@ -4,6 +4,8 @@ import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 public class Benchmarking {
 
@@ -16,7 +18,10 @@ public class Benchmarking {
         System.out.println(benchmarkRunner);
         Utility.writeToFile(
                 benchmarkRunner.toString(),
-                new File(FOLDER_NAME_TO_SAVE_RESULTS + File.separator + Instant.now()),
+                new File(FOLDER_NAME_TO_SAVE_RESULTS + File.separator +
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
+                                .withZone(ZoneId.systemDefault())
+                                .format(Instant.now()) + ".txt"),
                 false);
     }
 
