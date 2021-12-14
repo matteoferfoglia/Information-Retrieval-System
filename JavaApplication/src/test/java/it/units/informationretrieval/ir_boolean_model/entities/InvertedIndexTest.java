@@ -37,7 +37,7 @@ public class InvertedIndexTest {
     private static Corpus sampleCorpus;
 
     private static InvertedIndex invertedIndexForTests;
-    private static InvertedIndex invertedIndexForMovieCorpus;
+    public static InvertedIndex invertedIndexForMovieCorpus;
     private static Map<String, List<Integer>> expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfDocsContainingIt;
 
     static {

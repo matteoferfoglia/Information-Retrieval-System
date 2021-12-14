@@ -157,7 +157,7 @@ public class BooleanExpression {
      * @param matchingValue The value to match.
      * @return This instance after the execution of this method.
      */
-    public BooleanExpression setMatchingValue(@NotNull String matchingValue) {    // todo: needed to separate matching value and matching phrase
+    public BooleanExpression setMatchingValue(@NotNull String matchingValue) {    // todo: needed to separate matching value and matching phrase?
         throwIfIsAggregated();
         if (isMatchingPhraseSet()) {
             throw new IllegalStateException("Matching phrase already set, cannot set matching value too.");
@@ -267,7 +267,7 @@ public class BooleanExpression {
     /**
      * Like {@link #and(BooleanExpression)}, but accepts a word directly.
      */
-    public BooleanExpression and(@NotNull String matchingValue) { // TODO: benchmark
+    public BooleanExpression and(@NotNull String matchingValue) {
         return and(new BooleanExpression(informationRetrievalSystem).setMatchingValue(Objects.requireNonNull(matchingValue)));
     }
 
@@ -298,7 +298,7 @@ public class BooleanExpression {
      * @param other The other instance (operand) for the OR operation.
      * @return This instance after setting the OR operand.
      */
-    public BooleanExpression or(@NotNull BooleanExpression other) { // TODO: benchmark
+    public BooleanExpression or(@NotNull BooleanExpression other) {
         throwIfNotAggregatedButNeitherValueNorPhraseToMatchIsSet();
         return new BooleanExpression(BINARY_OPERATOR.OR, this, other);
     }
@@ -306,7 +306,7 @@ public class BooleanExpression {
     /**
      * Like {@link #or(BooleanExpression)}, but accepts a word directly.
      */
-    public BooleanExpression or(@NotNull String matchingValue) {// TODO: test and benchmark
+    public BooleanExpression or(@NotNull String matchingValue) {
         return or(new BooleanExpression(informationRetrievalSystem).setMatchingValue(Objects.requireNonNull(matchingValue)));
     }
 
@@ -332,7 +332,7 @@ public class BooleanExpression {
      *
      * @return the instance corresponding to the negation.
      */
-    public BooleanExpression not() {// TODO: test and benchmark
+    public BooleanExpression not() {
         return isNotQuery() ?
                 setUnaryOperator(UNARY_OPERATOR.IDENTITY/*negation of NOT is the identity*/) :
                 setUnaryOperator(UNARY_OPERATOR.NOT);
@@ -429,7 +429,7 @@ public class BooleanExpression {
                                 .stream()
                                 .map(Posting::getDocId)
                                 .distinct()
-                                .toList());// TODO: message chain code smell
+                                .toList());
         // TODO : implement ranking and sort results accordingly and test the correct sorting of results
     }
 
