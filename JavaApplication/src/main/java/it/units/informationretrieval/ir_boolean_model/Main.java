@@ -4,7 +4,7 @@ import it.units.informationretrieval.ir_boolean_model.document_descriptors.Movie
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
-import it.units.informationretrieval.ir_boolean_model.utils.Properties;
+import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -22,18 +22,10 @@ public class Main {
         try {
 
             // Load application properties and create working directory
-            Properties.loadProperties();
-            /* // Examples with Properties
-            Properties.appProperties.list(System.out);
-            Properties.appProperties.setProperty("testProp", "0");
-            Properties.appProperties.list(System.out);
-            Properties.appProperties.setProperty("testProp", "1");
-            Properties.appProperties.list(System.out);
-            Properties.saveCurrentProperties("Changed testProp");
-            */
+            AppProperties appProperties = AppProperties.getInstance();
 
             // For saving/loading the IRSystem as file
-            String fileName_irSystem = Properties.appProperties.getProperty("workingDirectory_name") + "/irSystem";
+            String fileName_irSystem = appProperties.get("workingDirectory_name") + "/irSystem";
             File file_irSystem = new File(fileName_irSystem);
 
             // Load the IR System if already exists

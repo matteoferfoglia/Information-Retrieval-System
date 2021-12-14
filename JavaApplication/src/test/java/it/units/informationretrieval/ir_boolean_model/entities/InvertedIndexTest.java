@@ -6,7 +6,6 @@ import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_de
 import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocumentIdentifier;
 import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocument_LineOfAFile;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
-import it.units.informationretrieval.ir_boolean_model.utils.Properties;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -45,10 +44,9 @@ public class InvertedIndexTest {
         PrintStream realStdOut = System.out;
         System.setOut(new PrintStream(new ByteArrayOutputStream()));      // ignore std out for this block
         try {
-            Properties.loadProperties();// TODO: is needed to use properties? Maybe better to have a class with public parameters
             movieCorpus = Movie.createCorpus();                           // used for benchmarks
             invertedIndexForMovieCorpus = new InvertedIndex(movieCorpus); // used for benchmarks
-        } catch (IOException | NoMoreDocIdsAvailable | URISyntaxException e) {
+        } catch (NoMoreDocIdsAvailable | URISyntaxException e) {
             fail(e);
         }
         System.setOut(realStdOut);

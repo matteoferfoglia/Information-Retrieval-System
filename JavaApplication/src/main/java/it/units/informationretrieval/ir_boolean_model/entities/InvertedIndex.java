@@ -1,10 +1,11 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
-import it.units.informationretrieval.ir_boolean_model.utils.Properties;
+import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,6 +15,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -129,7 +132,13 @@ public class InvertedIndex implements Serializable {
     @NotNull
     private static Map<String, Term> createEmptyInvertedIndex() {
         final Map<String, Term> invertedIndex;
-        short invertedIndexType = Short.parseShort(Properties.appProperties.getProperty("index.dataStructure.type"));
+        short invertedIndexType = 0;
+        try {
+            invertedIndexType = Short.parseShort(AppProperties.getInstance().get("index.dataStructure.type"));
+        } catch (IOException e) {
+            Logger.getLogger(InvertedIndex.class.getCanonicalName())
+                    .log(Level.SEVERE, "Error reading data-structure type.", e);
+        }
         switch (invertedIndexType) {
             case 1 -> invertedIndex = new ConcurrentHashMap<>();
             case 2 -> invertedIndex = new PatriciaTrie<>();
