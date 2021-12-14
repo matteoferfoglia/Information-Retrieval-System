@@ -4,7 +4,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -232,9 +234,9 @@ public class AppProperties {
      * Gets a property by its name.
      *
      * @param propertyName the name of the property to get.
-     * @return the property value.
+     * @return the property value or null if the property is not found.
      */
-    @NotNull
+    @Nullable
     public synchronized String get(@NotNull final String propertyName) {
         return appProperties.getProperty(Objects.requireNonNull(propertyName));
     }
@@ -250,8 +252,30 @@ public class AppProperties {
      */
     @Nullable
     public synchronized String set(@NotNull final String propertyName, @NotNull final String newPropertyValue) {
-        return (String) appProperties.setProperty(  // TODO: test casting
+        return (String) appProperties.setProperty(
                 Objects.requireNonNull(propertyName), Objects.requireNonNull(newPropertyValue));
+    }
+
+    /**
+     * @return the number of properties.
+     */
+    public int size() {
+        return appProperties.size();
+    }
+
+    /**
+     * @param propertyName The property name for which the user wants to know if is present.
+     * @return true if the given property (by name) is present, false otherwise.
+     */
+    public boolean contains(@NotNull final String propertyName) {
+        return appProperties.containsKey(propertyName);
+    }
+
+    /**
+     * @return the entry set with all the properties.
+     */
+    public Set<Map.Entry<Object, Object>> entrySet() {
+        return appProperties.entrySet();
     }
 
     @Override
