@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class BooleanExpressionTest {
 
-    private static final String PATH_TO_FILE_WITH_QUERY_SAMPLES = "/queriesForSampleCorpus/singleWordQuery.csv";
+    private static final String PATH_TO_FILE_WITH_QUERY_SAMPLES = "/singleWordQuery.csv";
     private static final String LIST_ELEMENTS_SEPARATOR_IN_CSV = "#";
     private static final int NUM_LINES_TO_SKIP_IN_CSV = 2;
     private static BooleanExpression booleanExpression;
