@@ -181,7 +181,9 @@ public class Utility {
     public static void writeToFile(
             @NotNull final String whatToWrite, @NotNull final File outputFile, boolean appendIfFileAlreadyExists)
             throws IOException {
-        if (!outputFile.exists() && !outputFile.createNewFile()) {
+        if (!outputFile.exists()
+                && Files.createDirectories(outputFile.getParentFile().toPath()) != null // create parent directories if not existing
+                && !outputFile.createNewFile()) {
             throw new IOException("Error when creating new file");
         }
         Files.write(
