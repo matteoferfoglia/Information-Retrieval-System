@@ -47,6 +47,16 @@ public abstract class Document implements Serializable, Comparable<Document> {  
     }
 
     /**
+     * Getter for {@link #title}.
+     *
+     * @return The title of this instance.
+     */
+    @Nullable
+    public String getTitle() {
+        return title;
+    }
+
+    /**
      * Getter for {@link #content}.
      *
      * @return The content of this instance.
