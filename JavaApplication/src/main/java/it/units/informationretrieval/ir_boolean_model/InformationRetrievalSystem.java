@@ -43,6 +43,16 @@ public class InformationRetrievalSystem implements Serializable {
     }
 
     /**
+     * Constructor.
+     *
+     * @param invertedIndex The {@link InvertedIndex} to use in this {@link InformationRetrievalSystem}.
+     */
+    public InformationRetrievalSystem(@NotNull InvertedIndex invertedIndex) {
+        this.invertedIndex = Objects.requireNonNull(invertedIndex);
+        this.corpus = invertedIndex.getCorpus();
+    }
+
+    /**
      * Getter for the {@link InvertedIndex}.
      */
     @NotNull
