@@ -4,11 +4,11 @@ package it.units.informationretrieval.ir_boolean_model.utils;
  * An instance of this class is a synchronized integer counter,
  * initialized with {@link Integer#MIN_VALUE}.
  * This class is Thread-safe.
- * Adapted from <a href="https://docs.oracle.com/javase/tutorial/essential/concurrency/syncmeth.html">Synchronized Methods</a>.
  *
  * @author Matteo Ferfoglia
  */
-public class SynchronizedCounter {  // TODO: to be tested
+public class SynchronizedCounter {
+
     /**
      * The counter. Initialized with {@link Integer#MIN_VALUE}.
      */
@@ -18,6 +18,7 @@ public class SynchronizedCounter {  // TODO: to be tested
      * The minimum value for the counter.
      */
     public static final int MIN_VALUE = Integer.MIN_VALUE;
+
     /**
      * The maximum value for the counter.
      */
