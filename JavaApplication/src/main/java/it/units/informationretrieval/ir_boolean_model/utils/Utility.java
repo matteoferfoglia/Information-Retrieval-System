@@ -7,8 +7,14 @@ import it.units.informationretrieval.ir_boolean_model.entities.Posting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -158,6 +164,31 @@ public class Utility {
         intersection.trimToSize();
 
         return intersection;
+    }
+
+    /**
+     * Writes given content to the given file.
+     * A new file is created if it does not exist.
+     *
+     * @param whatToWrite               The content to write on file.
+     * @param outputFile                Output file where to write the content.
+     * @param appendIfFileAlreadyExists if the given file already exists, this flag
+     *                                  determines if overwriting its content (if the flag
+     *                                  is true) or appending the new content to the
+     *                                  already present one (if the flag is false).
+     * @throws IOException See {@link Files#write(Path, byte[], OpenOption...)} for exceptions thrown.
+     */
+    public static void writeToFile(
+            @NotNull final String whatToWrite, @NotNull final File outputFile, boolean appendIfFileAlreadyExists)
+            throws IOException {
+        if (!outputFile.exists() && !outputFile.createNewFile()) {
+            throw new IOException("Error when creating new file");
+        }
+        Files.write(
+                outputFile.toPath(),
+                whatToWrite.getBytes(),
+                StandardOpenOption.WRITE,
+                appendIfFileAlreadyExists ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING);
     }
 
     /**
