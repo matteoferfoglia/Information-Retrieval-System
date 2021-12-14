@@ -105,15 +105,19 @@ public class InvertedIndexTest {
 
     @BeforeAll
     static void loadSampleCorpusFromFile() throws URISyntaxException, IOException {
-        sampleCorpus =
-                new FakeCorpus(
-                        readCsvAndGetStreamWithAnArrayForEachLine(PATH_TO_CORPUS)
-                                .map(invertedIndexEntry -> new AbstractMap.SimpleEntry<>(
-                                        Integer.parseInt((String) invertedIndexEntry[0]),
-                                        (String) invertedIndexEntry[1]))
-                                .collect(Collectors.toMap(
-                                        oneLineAsEntry -> new FakeDocumentIdentifier(oneLineAsEntry.getKey()),
-                                        oneLineAsEntry -> new FakeDocument_LineOfAFile("", oneLineAsEntry.getValue()))));
+        sampleCorpus = getSampleCorpus();
+    }
+
+    @NotNull
+    public static FakeCorpus getSampleCorpus() throws IOException, URISyntaxException {
+        return new FakeCorpus(
+                readCsvAndGetStreamWithAnArrayForEachLine(PATH_TO_CORPUS)
+                        .map(invertedIndexEntry -> new AbstractMap.SimpleEntry<>(
+                                Integer.parseInt((String) invertedIndexEntry[0]),
+                                (String) invertedIndexEntry[1]))
+                        .collect(Collectors.toMap(
+                                oneLineAsEntry -> new FakeDocumentIdentifier(oneLineAsEntry.getKey()),
+                                oneLineAsEntry -> new FakeDocument_LineOfAFile("", oneLineAsEntry.getValue()))));
     }
 
     public static Corpus getLoadedSampleCorpus() throws URISyntaxException, IOException {
