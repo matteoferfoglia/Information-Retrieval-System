@@ -53,14 +53,6 @@ public class InformationRetrievalSystem implements Serializable {
     }
 
     /**
-     * Getter for the {@link InvertedIndex}.
-     */
-    @NotNull
-    public final InvertedIndex getInvertedIndex() {
-        return invertedIndex;   // TODO : public access, better to use a proxy?
-    }
-
-    /**
      * @param normalizedToken The token to search in the {@link #invertedIndex}.
      * @return the {@link List} of {@link Posting} for the given token.
      */
@@ -79,7 +71,16 @@ public class InformationRetrievalSystem implements Serializable {
      * @return The {@link Set} of all (distinct) {@link DocumentIdentifier}s in the System.
      * <strong>Important</strong>: the returned collection is <em>not</em> suitable for concurrent actions.
      */
+    @NotNull
     public Set<DocumentIdentifier> getAllDocIds() {
         return new HashSet<>(corpus.getCorpus().keySet());
+    }
+
+    /**
+     * @return the corpus associated with this instance.
+     */
+    @NotNull
+    public Corpus getCorpus() {
+        return corpus;
     }
 }

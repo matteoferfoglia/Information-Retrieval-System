@@ -43,7 +43,7 @@ class BooleanExpressionTest {
         } catch (URISyntaxException | IOException e) {
             fail(e);
         }
-        corpus = irsForTests.getInvertedIndex().getCorpus();
+        corpus = irsForTests.getCorpus();
         System.setOut(realStdOut);
     }
 

@@ -422,7 +422,6 @@ public class BooleanExpression {
     public List<Document> evaluate()
             throws UnsupportedOperationException {
         return informationRetrievalSystem
-                .getInvertedIndex()
                 .getCorpus()
                 .getDocuments(
                         evaluateBothSimpleAndAggregatedExpressionRecursively()

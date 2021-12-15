@@ -69,7 +69,6 @@ public class InvertedIndex implements Serializable {
 
     protected static Map<String, Term> indexCorpusAndGet(
             @NotNull Corpus corpus, @NotNull AtomicLong numberOfAlreadyProcessedDocuments) {
-// TODO: if possible, split responsibilities (only Corpus should talk with Document)
         Predicate<Map.Entry<DocumentIdentifier, Document>> documentContentNotNullPredicate =
                 entry -> entry != null
                         && entry.getKey() != null
@@ -105,7 +104,6 @@ public class InvertedIndex implements Serializable {
     @NotNull
     private static Set<Map.Entry<String, Term>> getEntrySetOfTokensAndCorrespondingTermsFromADocument(
             @NotNull Map.Entry<@NotNull DocumentIdentifier, @NotNull Document> entryFromCorpusRepresentingOneDocument) {
-// TODO: if possible, split responsibilities (only Corpus should talk with Document)
         DocumentIdentifier docIdThisDocument = entryFromCorpusRepresentingOneDocument.getKey();
         Document document = entryFromCorpusRepresentingOneDocument.getValue();
         List<String> tokensFromCurrentDocument = Utility.tokenize(document);   // TODO : tokenization should return as a map also the position where the token is found in the document (for phrase query)
@@ -115,7 +113,7 @@ public class InvertedIndex implements Serializable {
                 .map(aToken ->
                         new AbstractMap.SimpleEntry<>(
                                 aToken,
-                                new Term(new PostingList(new Posting(docIdThisDocument))/*TODO: resee this*/, aToken)))
+                                new Term(new PostingList(new Posting(docIdThisDocument)), aToken)))
                 .collect(
                         Collectors.toConcurrentMap(
                                 Map.Entry::getKey,
@@ -134,7 +132,8 @@ public class InvertedIndex implements Serializable {
         final Map<String, Term> invertedIndex;
         short invertedIndexType = 0;
         try {
-            invertedIndexType = Short.parseShort(AppProperties.getInstance().get("index.dataStructure.type"));
+            invertedIndexType = Short.parseShort(Objects.requireNonNull(
+                    AppProperties.getInstance().get("index.dataStructure.type")));
         } catch (IOException e) {
             Logger.getLogger(InvertedIndex.class.getCanonicalName())
                     .log(Level.SEVERE, "Error reading data-structure type.", e);
@@ -218,7 +217,7 @@ public class InvertedIndex implements Serializable {
      */
     @NotNull
     public final PostingList getPostingListForToken(String normalizedToken) {
-        Term t = invertedIndex.get(normalizedToken);    //  TODO: if possible, separate responsibilities: this method should return the term, so InvertedIndex does not talk with PostingList directly
+        Term t = invertedIndex.get(normalizedToken);
         return t == null ? new PostingList() : t.getPostingList();
     }
 }
