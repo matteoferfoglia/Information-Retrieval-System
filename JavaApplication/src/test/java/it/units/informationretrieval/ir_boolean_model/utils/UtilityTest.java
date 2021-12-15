@@ -128,10 +128,8 @@ class UtilityTest {
     void tokenize() {
         Document document = new FakeDocument_LineOfAFile("a line  ", "  Content of A  line");
         assertEquals(
-                new ArrayList<>() {{
-                    addAll(Arrays.asList("a", "line", "content", "of", "a", "line"));
-                }},
-                Utility.tokenize(document));
+                Arrays.asList("a", "line", "content", "of", "a", "line"),   // conversion to lists because the test framework cannot compare arrays
+                Arrays.asList(Utility.tokenize(document)));
     }
 
     @Benchmark(

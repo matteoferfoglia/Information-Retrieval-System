@@ -24,6 +24,8 @@ class TermTest {
 
     private static final int NUMBER_OF_GENERATED_POSTINGS_FOR_MERGING = 10000;
 
+    private static final int[] positionsArray = new int[]{0};
+
     private static final String[] SAMPLE_CORPUS = {
             "The cat is on the table",
             "The dog is eating",
@@ -49,7 +51,7 @@ class TermTest {
                                 }
                                 return currentDocId.get();
                             })
-                            .map(Posting::new)
+                            .map(docId -> new Posting(docId, positionsArray))
                             .map(PostingList::new)
                             .map(postingList -> new Term(postingList, "sampleTerm"))
                             .toArray(Term[]::new);
@@ -68,10 +70,10 @@ class TermTest {
 
         Map<String, List<Posting>> postingsOfSomeTerms = new HashMap<>() {{
             put("the", new ArrayList<>() {{
-                addAll(List.of(new Posting(docId1), new Posting(docId2), new Posting(docId3)));
+                addAll(List.of(new Posting(docId1, positionsArray), new Posting(docId2, positionsArray), new Posting(docId3, positionsArray)));
             }});
             put("is", new ArrayList<>() {{
-                addAll(List.of(new Posting(docId1), new Posting(docId2), new Posting(docId3)));
+                addAll(List.of(new Posting(docId1, positionsArray), new Posting(docId2, positionsArray), new Posting(docId3, positionsArray)));
             }});
         }};
 
@@ -96,30 +98,30 @@ class TermTest {
         }};
 
         allTerms = new HashMap<>() {{
-            put("the", new Term(new PostingList(List.of(new Posting(docId1), new Posting(docId2), new Posting(docId3))), "the"));
-            put("cat", new Term(new PostingList(new Posting(docId1)), "cat"));
-            put("is", new Term(new PostingList(List.of(new Posting(docId1), new Posting(docId2), new Posting(docId3))), "is"));
-            put("on", new Term(new PostingList(new Posting(docId1)), "on"));
-            put("table", new Term(new PostingList(new Posting(docId1)), "table"));
-            put("dog", new Term(new PostingList(new Posting(docId2)), "dog"));
-            put("eating", new Term(new PostingList(new Posting(docId2)), "eating"));
-            put("car", new Term(new PostingList(new Posting(docId3)), "car"));
-            put("running", new Term(new PostingList(new Posting(docId3)), "running"));
+            put("the", new Term(new PostingList(List.of(new Posting(docId1, positionsArray), new Posting(docId2, positionsArray), new Posting(docId3, positionsArray))), "the"));
+            put("cat", new Term(new PostingList(new Posting(docId1, positionsArray)), "cat"));
+            put("is", new Term(new PostingList(List.of(new Posting(docId1, positionsArray), new Posting(docId2, positionsArray), new Posting(docId3, positionsArray))), "is"));
+            put("on", new Term(new PostingList(new Posting(docId1, positionsArray)), "on"));
+            put("table", new Term(new PostingList(new Posting(docId1, positionsArray)), "table"));
+            put("dog", new Term(new PostingList(new Posting(docId2, positionsArray)), "dog"));
+            put("eating", new Term(new PostingList(new Posting(docId2, positionsArray)), "eating"));
+            put("car", new Term(new PostingList(new Posting(docId3, positionsArray)), "car"));
+            put("running", new Term(new PostingList(new Posting(docId3, positionsArray)), "running"));
         }};
 
         allTermStatistics = new HashMap<>() {{
-            put(new Posting(docId1), new TermStatistics(allTerms.get("the"), 2, 3));
-            put(new Posting(docId1), new TermStatistics(allTerms.get("cat"), 1, 1));
-            put(new Posting(docId1), new TermStatistics(allTerms.get("is"), 1, 3));
-            put(new Posting(docId1), new TermStatistics(allTerms.get("on"), 1, 1));
-            put(new Posting(docId1), new TermStatistics(allTerms.get("table"), 1, 1));
-            put(new Posting(docId2), new TermStatistics(allTerms.get("the"), 1, 3));
-            put(new Posting(docId2), new TermStatistics(allTerms.get("dog"), 1, 1));
-            put(new Posting(docId2), new TermStatistics(allTerms.get("is"), 1, 3));
-            put(new Posting(docId2), new TermStatistics(allTerms.get("eating"), 1, 1));
-            put(new Posting(docId3), new TermStatistics(allTerms.get("the"), 1, 3));
-            put(new Posting(docId3), new TermStatistics(allTerms.get("car"), 1, 1));
-            put(new Posting(docId3), new TermStatistics(allTerms.get("running"), 1, 1));
+            put(new Posting(docId1, positionsArray), new TermStatistics(allTerms.get("the"), 2, 3));
+            put(new Posting(docId1, positionsArray), new TermStatistics(allTerms.get("cat"), 1, 1));
+            put(new Posting(docId1, positionsArray), new TermStatistics(allTerms.get("is"), 1, 3));
+            put(new Posting(docId1, positionsArray), new TermStatistics(allTerms.get("on"), 1, 1));
+            put(new Posting(docId1, positionsArray), new TermStatistics(allTerms.get("table"), 1, 1));
+            put(new Posting(docId2, positionsArray), new TermStatistics(allTerms.get("the"), 1, 3));
+            put(new Posting(docId2, positionsArray), new TermStatistics(allTerms.get("dog"), 1, 1));
+            put(new Posting(docId2, positionsArray), new TermStatistics(allTerms.get("is"), 1, 3));
+            put(new Posting(docId2, positionsArray), new TermStatistics(allTerms.get("eating"), 1, 1));
+            put(new Posting(docId3, positionsArray), new TermStatistics(allTerms.get("the"), 1, 3));
+            put(new Posting(docId3, positionsArray), new TermStatistics(allTerms.get("car"), 1, 1));
+            put(new Posting(docId3, positionsArray), new TermStatistics(allTerms.get("running"), 1, 1));
         }};
     }
 

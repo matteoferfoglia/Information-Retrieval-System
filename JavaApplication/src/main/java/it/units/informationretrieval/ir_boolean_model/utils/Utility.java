@@ -18,6 +18,10 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Utility class.
@@ -34,15 +38,39 @@ public class Utility {
      * {@link String} (eventually with duplicates) obtained from the {@link Document}.
      */
     @NotNull
-    public static List<String> tokenize(@NotNull Document document) {
+    public static String[] tokenize(@NotNull Document document) {
         return Arrays.stream(
                         (Objects.requireNonNull(document).getTitle() + " " + Objects.requireNonNull(document.getContent()).getEntireTextContent())
                                 .split(" "))
                 .filter(text -> !text.isBlank())
                 .map(Utility::normalize)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toArray(String[]::new);
         // TODO : not implemented yet, just a draft (only split documents into strings which are the token - DO NOT CUT)
+    }
+
+    /**
+     * Tokenize a {@link Document} and return the {@link java.util.Map} having as key
+     * a token and as corresponding value the sorted array of positions in the
+     * {@link Document} at which the token in the key appears.
+     * {@link String} (eventually with duplicates) obtained from the {@link Document}.
+     */
+    @NotNull
+    public static Map<String, int[]> tokenizeAndGetMapWithPositionsInDocument(@NotNull final Document document) {   // TODO: test and benchmark
+        String[] tokensEventuallyDuplicatesSortedByPositionInDocument = tokenize(document);
+        return IntStream
+                .range(0, tokensEventuallyDuplicatesSortedByPositionInDocument.length)
+                .unordered().parallel()
+                .mapToObj(i -> new AbstractMap.SimpleEntry<>(
+                        tokensEventuallyDuplicatesSortedByPositionInDocument[i], i))
+                .collect(Collectors.groupingBy(
+                        Map.Entry::getKey,
+                        Collectors.mapping(Map.Entry::getValue, toSet())))
+                .entrySet()
+                .stream().unordered().parallel()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream().sorted().mapToInt(i -> i).toArray()));
     }
 
     /**
@@ -103,7 +131,7 @@ public class Utility {
 
     @NotNull
     public static <T> List<T> sortAndRemoveDuplicates(@NotNull final List<T> postings) {
-        return postings.stream().sorted().distinct().collect(Collectors.toList());
+        return postings.stream().sorted().distinct().collect(toList());
     }
 
     /**

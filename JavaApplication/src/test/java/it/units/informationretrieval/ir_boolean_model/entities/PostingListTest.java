@@ -15,12 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PostingListTest {
 
+    private static final int[] positionsArray = new int[]{0};
     private static final Map<Integer, Posting> mapOfSampleDocIdsAndCorrespondingPosting = new HashMap<>() {{
-        put(1, new Posting(new FakeDocumentIdentifier(1)));
-        put(2, new Posting(new FakeDocumentIdentifier(2)));
-        put(3, new Posting(new FakeDocumentIdentifier(3)));
-        put(4, new Posting(new FakeDocumentIdentifier(4)));
-        put(5, new Posting(new FakeDocumentIdentifier(5)));
+        put(1, new Posting(new FakeDocumentIdentifier(1), positionsArray));
+        put(2, new Posting(new FakeDocumentIdentifier(2), positionsArray));
+        put(3, new Posting(new FakeDocumentIdentifier(3), positionsArray));
+        put(4, new Posting(new FakeDocumentIdentifier(4), positionsArray));
+        put(5, new Posting(new FakeDocumentIdentifier(5), positionsArray));
     }};
 
     private static final List<Posting> sampleListOfPosting = List.of(
@@ -65,7 +66,8 @@ class PostingListTest {
                 IntStream.range(0, NUMBER_OF_POSTINGS)
                         .mapToObj(i -> new Posting(new FakeDocumentIdentifier(
                                 // duplicates are possible
-                                Math.random() < 0.5 ? docIdCounter.getAndIncrement() : docIdCounter.get())))
+                                Math.random() < 0.5 ? docIdCounter.getAndIncrement() : docIdCounter.get()),
+                                positionsArray))
                         .toList();
 
         @Override

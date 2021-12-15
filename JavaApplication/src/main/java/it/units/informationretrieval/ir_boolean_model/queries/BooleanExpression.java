@@ -355,8 +355,6 @@ public class BooleanExpression {
     private List<Posting> evaluateBothSimpleAndAggregatedExpressionRecursively()
             throws UnsupportedOperationException {
 
-
-        assert unaryOperator != null;
         return switch (unaryOperator) {
             case NOT -> {   // TODO: try to improve query not
                 // First: solve the direct query (create a new query without the NOT operator),
@@ -369,7 +367,7 @@ public class BooleanExpression {
                 yield informationRetrievalSystem.getAllDocIds()
                         .stream().unordered().parallel()
                         .filter(docId -> !listOfDocIdToBeExcluded.contains(docId))
-                        .map(Posting::new)
+                        .map(docId -> new Posting(docId, new int[0]/*TODO: positions NOT handled!!!!!*/))
                         .sorted()
                         .toList();
             }

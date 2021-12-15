@@ -26,17 +26,10 @@ public class Posting implements Comparable<Posting>, Serializable {
     @NotNull
     private final Instant creationInstant;
 
-//    /**
-//     * Array of positions in the document where the term appears.
-//     */
-//    private final int[] termPositionsInTheDocument;// TODO : positions not handled yet
-
-//    /** The object that saves the position at which the term (referred to this
-//     * {@link Posting}) compares in the document to which this {@link Posting}
-//     * refers.*/
-//    @NotNull
-//    private final TermPositionsInADocument positions;  // TODO : positions not handled yet
-//
+    /**
+     * Array of positions in the document where the term appears.
+     */
+    private final int[] termPositionsInTheDocument;
 
     /**
      * The forward pointer needed to implement a skip list.
@@ -50,11 +43,10 @@ public class Posting implements Comparable<Posting>, Serializable {
      * @param docId The {@link DocumentIdentifier}.
      */
     //* @param positions The {@link TermPositionsInADocument} object (see the description of the class). */
-    public Posting(@NotNull DocumentIdentifier docId/*, @NotNull final int[] positions*/) {
+    public Posting(@NotNull DocumentIdentifier docId, final int[] positions) {  // TODO: test positions
         this.docId = Objects.requireNonNull(docId, "The docId cannot be null");
         creationInstant = Instant.now();
-//        this. positions = Objects.requireNonNull(positions);  // TODO : positions not handled yet
-        // TODO : forwardPointer not handled yet.
+        termPositionsInTheDocument = Objects.requireNonNull(positions);
     }
 
 //    /**

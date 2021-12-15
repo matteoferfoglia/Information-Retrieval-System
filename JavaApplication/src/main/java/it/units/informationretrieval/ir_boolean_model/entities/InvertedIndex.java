@@ -106,14 +106,16 @@ public class InvertedIndex implements Serializable {
             @NotNull Map.Entry<@NotNull DocumentIdentifier, @NotNull Document> entryFromCorpusRepresentingOneDocument) {
         DocumentIdentifier docIdThisDocument = entryFromCorpusRepresentingOneDocument.getKey();
         Document document = entryFromCorpusRepresentingOneDocument.getValue();
-        List<String> tokensFromCurrentDocument = Utility.tokenize(document);   // TODO : tokenization should return as a map also the position where the token is found in the document (for phrase query)
+        Map<String, int[]> tokensFromCurrentDocument = Utility.tokenizeAndGetMapWithPositionsInDocument(document);
 
         return tokensFromCurrentDocument
+                .entrySet()
                 .stream().unordered().parallel()
-                .map(aToken ->
-                        new AbstractMap.SimpleEntry<>(
-                                aToken,
-                                new Term(new PostingList(new Posting(docIdThisDocument)), aToken)))
+                .map(tokenAndPositions -> new AbstractMap.SimpleEntry<>(
+                        tokenAndPositions.getKey(),
+                        new Term(
+                                new PostingList(new Posting(docIdThisDocument, tokenAndPositions.getValue())),
+                                tokenAndPositions.getKey())))
                 .collect(
                         Collectors.toConcurrentMap(
                                 Map.Entry::getKey,
