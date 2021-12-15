@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -43,7 +44,7 @@ public class Posting implements Comparable<Posting>, Serializable {
      * @param docId The {@link DocumentIdentifier}.
      */
     //* @param positions The {@link TermPositionsInADocument} object (see the description of the class). */
-    public Posting(@NotNull DocumentIdentifier docId, final int[] positions) {  // TODO: test positions
+    public Posting(@NotNull DocumentIdentifier docId, final int[] positions) {
         this.docId = Objects.requireNonNull(docId, "The docId cannot be null");
         creationInstant = Instant.now();
         termPositionsInTheDocument = Objects.requireNonNull(positions);
@@ -90,6 +91,13 @@ public class Posting implements Comparable<Posting>, Serializable {
      */
     public @NotNull DocumentIdentifier getDocId() {
         return docId;
+    }
+
+    /**
+     * @return {@link #termPositionsInTheDocument}.
+     */
+    public int[] getTermPositionsInTheDocument() {
+        return termPositionsInTheDocument;
     }
 
     /**
@@ -145,24 +153,23 @@ public class Posting implements Comparable<Posting>, Serializable {
                 "docId=" + docId +
                 ", creationInstant=" + creationInstant +
                 ", forwardPointer=" + forwardPointer +
+                ", termPositionsInTheDocument=" + Arrays.toString(termPositionsInTheDocument) +
                 '}';
     }
 
+    /**
+     * @return true if the instances have the same {@link #docId}.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Posting posting = (Posting) o;
-
-        if (!docId.equals(posting.docId)) return false;
-        return creationInstant.equals(posting.creationInstant);
+        return docId.equals(posting.docId);
     }
 
     @Override
     public int hashCode() {
-        int result = docId.hashCode();
-        result = 31 * result + creationInstant.hashCode();
-        return result;
+        return docId.hashCode();
     }
 }
