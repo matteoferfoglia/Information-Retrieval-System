@@ -31,14 +31,15 @@ public class InvertedIndexTest {
     private static final String PATH_TO_CORPUS = "/SampleCorpus.csv";
     private static final String PATH_TO_INVERTED_INDEX = "/InvertedIndexForSampleCorpus.csv";
     private static final String CSV_SEPARATOR = ",";
-    private static final String DOC_ID_SEPARATOR_IN_CSV_FILE = "#";
+    private static final String POSTINGS_SEPARATOR_IN_CSV_FILE = "\\|";
+    private static final String LIST_ELEMENTS_SEPARATOR_IN_CSV_FILE = "#";
 
     private static Corpus movieCorpus;
     private static Corpus sampleCorpus;
 
     private static InvertedIndex invertedIndexForTests;
     public static InvertedIndex invertedIndexForMovieCorpus;
-    private static Map<String, List<Integer>> expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfDocsContainingIt;
+    private static Map<String, List<Posting>> expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings;
 
     static {
         PrintStream realStdOut = System.out;
@@ -92,13 +93,25 @@ public class InvertedIndexTest {
 
     @BeforeAll
     static void loadExpectedInvertedIndexFromFile() throws URISyntaxException, IOException {
-        expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfDocsContainingIt =
+        // parsing of file from resources for tests
+        expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings =
                 readCsvAndGetStreamWithAnArrayForEachLine(PATH_TO_INVERTED_INDEX)
                         .map(invertedIndexEntry -> new AbstractMap.SimpleEntry<>(
                                 (String) invertedIndexEntry[0],
                                 Arrays.stream(((String) invertedIndexEntry[1])
-                                                .split(DOC_ID_SEPARATOR_IN_CSV_FILE))
-                                        .map(Integer::parseInt)
+                                                .split(POSTINGS_SEPARATOR_IN_CSV_FILE))
+                                        .map(postingAsString -> {
+                                            int docIdValue =
+                                                    Integer.parseInt(postingAsString.substring(0, postingAsString.indexOf("[")));
+                                            int[] positionsOfTokenInThisDoc =
+                                                    Arrays.stream(postingAsString
+                                                                    .substring(postingAsString.indexOf("[") + 1, postingAsString.indexOf("]"))
+                                                                    .split(LIST_ELEMENTS_SEPARATOR_IN_CSV_FILE))
+                                                            .mapToInt(Integer::parseInt)
+                                                            .toArray();
+                                            return new Posting(
+                                                    new FakeDocumentIdentifier(docIdValue), positionsOfTokenInThisDoc);
+                                        })
                                         .toList()))
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
@@ -120,6 +133,7 @@ public class InvertedIndexTest {
                                 oneLineAsEntry -> new FakeDocument_LineOfAFile("", oneLineAsEntry.getValue()))));
     }
 
+    @NotNull
     public static Corpus getLoadedSampleCorpus() throws URISyntaxException, IOException {
         if (sampleCorpus == null) {
             loadSampleCorpusFromFile();
@@ -132,8 +146,7 @@ public class InvertedIndexTest {
             throws IOException, URISyntaxException {
         final int NUMBER_OF_HEADING_LINES = 1;
         return Files
-                .lines(
-                        Path.of(Objects.requireNonNull(FakeDocument_LineOfAFile.class.getResource(pathToCSVFile)).toURI()))
+                .lines(Path.of(Objects.requireNonNull(FakeDocument_LineOfAFile.class.getResource(pathToCSVFile)).toURI()))
                 .sequential()
                 .skip(NUMBER_OF_HEADING_LINES)
                 .map(aLine -> Arrays.stream(aLine.split(CSV_SEPARATOR))
@@ -154,7 +167,7 @@ public class InvertedIndexTest {
     void tearDown() {
     }
 
-    private Map<String, List<Integer>> getMapOfTermAndCorrespondingListOfDocIdsFromInvertedIndex(
+    private Map<String, List<Posting>> getMapOfTermAndCorrespondingListOfPostingsFromInvertedIndex(
             InvertedIndex invertedIndex) {
 
         return invertedIndex
@@ -162,16 +175,8 @@ public class InvertedIndexTest {
                 .stream()
                 .map(tokenFromIndex -> new AbstractMap.SimpleEntry<>(
                         tokenFromIndex,
-                        getListOfDocIdsForToken(invertedIndex, tokenFromIndex)))
+                        invertedIndex.getPostingListForToken(tokenFromIndex).toListOfPostings()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    private List<Integer> getListOfDocIdsForToken(InvertedIndex invertedIndex, String tokenFromIndex) {
-        return invertedIndex.getPostingListForToken(tokenFromIndex)
-                .toListOfPostings()
-                .stream()
-                .map(posting -> posting.getDocId().getDocId())
-                .toList();
     }
 
     @Test
@@ -181,14 +186,38 @@ public class InvertedIndexTest {
         invertedIndexForTests = new InvertedIndex(sampleCorpus);
         System.setOut(realStdOut);
         assertEquals(
-                expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfDocsContainingIt,
-                getMapOfTermAndCorrespondingListOfDocIdsFromInvertedIndex(invertedIndexForTests));
+                expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings,
+                getMapOfTermAndCorrespondingListOfPostingsFromInvertedIndex(invertedIndexForTests));
+    }
+
+    @Test
+    void testPositionalIndex() {
+        indexCorpusAndGet();
+        invertedIndexForTests.getDictionary()
+                .forEach(tokenFromDictionaryOfCreatedInvertedIndex -> {
+                    var createdListOfPostings = invertedIndexForTests
+                            .getPostingListForToken(tokenFromDictionaryOfCreatedInvertedIndex)
+                            .toListOfPostings();
+                    var expectedListOfPostings =
+                            expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings
+                                    .get(tokenFromDictionaryOfCreatedInvertedIndex);
+                    assertEquals(expectedListOfPostings, createdListOfPostings);
+                    createdListOfPostings.forEach(posting -> {
+                        var actualPositionsOfTokenInDocument = posting.getTermPositionsInTheDocument();
+                        var expectedPositionsOfTokenInDocument = expectedListOfPostings
+                                .get(expectedListOfPostings.indexOf(posting))
+                                .getTermPositionsInTheDocument();
+                        assertEquals(
+                                Arrays.toString(expectedPositionsOfTokenInDocument),    // use toString because test framework cannot compare arrays
+                                Arrays.toString(actualPositionsOfTokenInDocument));
+                    });
+                });
     }
 
     @Test
     void getDictionary() {
         assertEquals(
-                expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfDocsContainingIt.keySet(),
+                expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings.keySet(),
                 new HashSet<>(invertedIndexForTests.getDictionary()));
     }
 
@@ -199,8 +228,10 @@ public class InvertedIndexTest {
 
     @Test
     void getPostingListForToken() {
-        expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfDocsContainingIt
-                .forEach((token, listOfDocIds) ->
-                        assertEquals(listOfDocIds, getListOfDocIdsForToken(invertedIndexForTests, token)));
+        expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings
+                .forEach((token, listOfPostings) ->
+                        assertEquals(
+                                listOfPostings,
+                                invertedIndexForTests.getPostingListForToken(token).toListOfPostings()));
     }
 }
