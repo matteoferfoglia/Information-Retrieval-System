@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PostingTest {
 
-    private static final int[] positionsArray = new int[]{0};
+    private static final int[] positionsArray = new int[]{0, 1, 2, 5, 9};
     private static final DocumentIdentifier docId = new FakeDocumentIdentifier(0);
     private static Posting posting;
 
@@ -53,5 +53,10 @@ class PostingTest {
         Posting newer = new Posting(docId, positionsArray);
         assertTrue(older.compareCreationTimeTo(newer) < 0);
         assertTrue(newer.compareCreationTimeTo(older) > 0);
+    }
+
+    @Test
+    void tf() {
+        assertEquals(positionsArray.length, posting.tf());
     }
 }

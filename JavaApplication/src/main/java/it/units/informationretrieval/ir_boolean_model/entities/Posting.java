@@ -78,11 +78,13 @@ public class Posting implements Comparable<Posting>, Serializable {
 //        // TODO : positional intersect not implemented yet
 //    }
 
-    //    /** @return the number of occurrences of the {@link Term} associated with this
-//     * {@link Posting} (i.e., the term-frequency value). */
-//    public int tf() {
-//        return positions.length;    // TODO : positions not handled yet
-//    }
+    /**
+     * @return the number of occurrences of the {@link Term} associated with this
+     * {@link Posting} (i.e., the term-frequency value).
+     */
+    public int tf() {
+        return termPositionsInTheDocument.length;
+    }
 
     /**
      * Getter for {@link #docId}.
