@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  *
  * @author Matteo Ferfoglia
  */
-public abstract class Document implements Serializable, Comparable<Document> {  // TODO: simplify creation of documents
+public abstract class Document implements Serializable, Comparable<Document> {
 
     /**
      * The title of the document.
