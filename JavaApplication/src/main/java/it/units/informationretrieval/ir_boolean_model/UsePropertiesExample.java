@@ -21,7 +21,7 @@ public class UsePropertiesExample { // TODO: delete this class
             System.out.println(appProperties);
             appProperties.save("Changed testProp");
         } catch (Exception e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
     }
 }
