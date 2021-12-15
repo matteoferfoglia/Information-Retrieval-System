@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,15 +23,6 @@ class PostingTest {
     @Test
     void getDocId() {
         assertEquals(docId, posting.getDocId());
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = {true, false})
-    void hasForwardPointer(boolean hasForwardPointer) {
-        if (hasForwardPointer) {
-            posting.setForwardPointer(new Posting(docId, positionsArray));
-        }
-        assertEquals(hasForwardPointer, posting.hasForwardPointer());
     }
 
     @ParameterizedTest

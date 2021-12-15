@@ -1,7 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -31,12 +30,6 @@ public class Posting implements Comparable<Posting>, Serializable {
      * Array of positions in the document where the term appears.
      */
     private final int[] termPositionsInTheDocument;
-
-    /**
-     * The forward pointer needed to implement a skip list.
-     */
-    @Nullable
-    private Posting forwardPointer = null;
 
     /**
      * Constructor. Given a {@link DocumentIdentifier}, creates a new instance of this class.
@@ -103,25 +96,6 @@ public class Posting implements Comparable<Posting>, Serializable {
     }
 
     /**
-     * @return true if this instance has a forward pointer, false otherwise.
-     */
-    public boolean hasForwardPointer() {
-        return forwardPointer != null;
-    }
-
-    /**
-     * Sets the {@link #forwardPointer} of this instance to the given one.
-     *
-     * @param forwardPointer The forwardPointer (i.e., the next {@link Posting} where
-     *                       to point).
-     * @return the current instance.
-     */
-    public Posting setForwardPointer(@Nullable Posting forwardPointer) {
-        this.forwardPointer = forwardPointer;
-        return this;
-    }
-
-    /**
      * Compares {@link Posting}s according to their {@link DocumentIdentifier}
      * (see {@link DocumentIdentifier#compareTo(DocumentIdentifier)}).
      *
@@ -154,7 +128,6 @@ public class Posting implements Comparable<Posting>, Serializable {
         return "Posting{" +
                 "docId=" + docId +
                 ", creationInstant=" + creationInstant +
-                ", forwardPointer=" + forwardPointer +
                 ", termPositionsInTheDocument=" + Arrays.toString(termPositionsInTheDocument) +
                 '}';
     }

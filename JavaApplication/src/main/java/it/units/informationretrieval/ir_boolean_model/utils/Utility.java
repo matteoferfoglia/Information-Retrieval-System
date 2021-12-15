@@ -129,9 +129,73 @@ public class Utility {
         return new ObjectMapper().writeValueAsString(Objects.requireNonNull(object));
     }
 
+    /**
+     * Sort and remove duplicates from the given {@link List} (a new instance
+     * is created and returned).
+     *
+     * @param <T>  the type of each element of the {@link List}.
+     * @param list the input {@link List}
+     * @return the {@link List} resulting from the execution of this method.
+     */
     @NotNull
-    public static <T> List<T> sortAndRemoveDuplicates(@NotNull final List<T> postings) {
-        return postings.stream().sorted().distinct().collect(toList());
+    public static <T> List<T> sortAndRemoveDuplicates(@NotNull final List<T> list) {
+        return list.stream().sorted().distinct().collect(toList());
+    }
+
+    /**
+     * Sort and remove duplicates from the given {@link List} in place.
+     * The sorting and the deletion of duplicates are made according to the
+     * first {@link List} (e.g., if the first list is like [1,1,3,5,2] and the second
+     * is ['a','b','c','d','e'], then, after the execution of this method they
+     * will be [1,2,3,5] and ['a','e','c','d'] respectively).
+     *
+     * @param lists the input {@link List}s. They <strong>must</strong> have the same size.
+     */
+    public static void sortAndRemoveDuplicates(@NotNull List<?>... lists) {  // TODO: test (with example from the Javadoc of this method) and benchmark
+        if (Objects.requireNonNull(lists).length == 0 || lists[0].isEmpty()) {
+            return;
+        }
+
+        List<List<?>> transposedLists = Utility.transpose(Arrays.asList(lists));
+
+        // sort according to the first list (respect the input)
+        transposedLists.sort(Comparator.comparing(transposedList -> transposedList.get(0).toString()));
+
+        // remove duplicates according to the first list (respect the input)
+        Object previousElement = transposedLists.get(0).get(0);
+        for (int i = 1; i < transposedLists.size(); ) {
+            if (transposedLists.get(i).get(0).equals(previousElement)) {
+                transposedLists.remove(i);
+            } else {
+                i++;
+            }
+        }
+
+        // re-transpose (to be as in input)
+        var sortedLists = Utility.transpose(transposedLists);
+
+        // set resulting lists to the input
+        assert lists.length == sortedLists.size();
+        IntStream.range(0, lists.length)
+                .unordered().parallel()
+                .forEach(i -> lists[i] = sortedLists.get(i));
+    }
+
+    /**
+     * Transpose the input {@link List} of {@link List}s (thought as a matrix).
+     * All input {@link List}s must have the same size, otherwise the result is not defined
+     * (the method will probably throw an {@link IndexOutOfBoundsException} // TODO: test behaviour).
+     *
+     * @param inputMatrix The input matrix.
+     * @return the transposed matrix.
+     */
+    @NotNull
+    public static List<List<?>> transpose(@NotNull final List<List<?>> inputMatrix) { // TODO: test
+        return IntStream.range(0, Objects.requireNonNull(Objects.requireNonNull(inputMatrix).get(0)).size())
+                .mapToObj(colIndexInInputMtx ->
+                        inputMatrix.stream().map(rowInInputMtx -> rowInInputMtx.get(colIndexInInputMtx))
+                                .collect(toList()))
+                .collect(Collectors.toList());
     }
 
     /**

@@ -121,43 +121,6 @@ class PostingListTest {
     }
 
     @Test
-    void createPostingListFromCollectionAndAssertThatCorrectNumberOfForwardPointersAreSet() {
-        // Rule: for a postingList of P postings, use F = floor(sqrt(P)) evenly spaced
-        //  (with space S = floor(P/F) ) forward pointers
-
-        var postingList = new PostingList(sampleListOfPostingWithDuplicatesUnordered);
-        int P = postingList.size();
-        assert P > 0;
-        int expectedNumberOfForwardPointers = (int) Math.floor(Math.sqrt(P));
-        int actualNumberOfForwardPointers = (int) postingList.toListOfPostings()
-                .stream()
-                .filter(Posting::hasForwardPointer)
-                .count();
-        assertEquals(expectedNumberOfForwardPointers, actualNumberOfForwardPointers);
-    }
-
-    @Test
-    void createPostingListFromCollectionAndAssertThatForwardPointersAreSetAtCorrectPosition() {
-        // Rule: for a postingList of P postings, use F = ceil(sqrt(P)) evenly spaced
-        //  (with space S = floor(P/F) ) forward pointers; last posting is never a forward pointer.
-
-        var postingList = new PostingList(sampleListOfPostingWithDuplicatesUnordered);
-        int P = postingList.size();
-        assert P > 0;
-        int expectedNumberOfForwardPointers = (int) Math.ceil(Math.sqrt(P));
-        List<Integer> expectedPositionOfForwardPointers = IntStream.range(0, P)
-                .filter(i -> i % expectedNumberOfForwardPointers == 0)
-                .filter(i -> i < P - 1) // last posting is never a forward pointer
-                .boxed()
-                .toList();
-        List<Integer> actualPositionOfForwardPointers = IntStream.range(0, P)
-                .filter(i -> postingList.toListOfPostings().get(i).hasForwardPointer())
-                .boxed()
-                .toList();
-        assertEquals(expectedPositionOfForwardPointers, actualPositionOfForwardPointers);
-    }
-
-    @Test
     void merge() {
         var postingList1 = new PostingList(List.of(
                 mapOfSampleDocIdsAndCorrespondingPosting.get(1),

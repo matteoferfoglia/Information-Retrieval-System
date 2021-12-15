@@ -1,11 +1,13 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
-import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import it.units.informationretrieval.ir_boolean_model.utils.SkipList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Class representing a {@link PostingList}.
@@ -18,7 +20,7 @@ public class PostingList implements Serializable/* TODO: implements Iterable wit
      * The actual posting list.
      */
     @NotNull
-    private List<Posting> postings;   // TODO: a built-in array may be faster but must be kept ordered
+    private final SkipList<Posting> postings;   // TODO: a built-in array may be faster but must be kept ordered
 
     /**
      * Constructor. Creates an empty {@link PostingList}.
@@ -48,9 +50,7 @@ public class PostingList implements Serializable/* TODO: implements Iterable wit
      * @param postings The list of {@link Posting}s.
      */
     public PostingList(@NotNull final List<Posting> postings) {
-        this.postings = Objects.requireNonNull(postings);
-        sortAndRemoveDuplicates();
-        setForwardPointers();
+        this.postings = new SkipList<>(Objects.requireNonNull(postings));
     }
 
     /**
@@ -65,36 +65,6 @@ public class PostingList implements Serializable/* TODO: implements Iterable wit
             return;
         }
         this.postings.addAll(other.postings);
-        sortAndRemoveDuplicates();
-    }
-
-    /**
-     * Sets the forward pointers for this instance of {@link PostingList}.
-     * &radic;p evenly spaced forward pointers will be created, with p = the
-     * number of elements in this {@link PostingList}.
-     */
-    private void setForwardPointers() {
-
-        sortAndRemoveDuplicates();   // the postingList MUST be sorted
-
-        final int numberOfPostings = postings.size();
-        final int numberOfForwardPointers = (int) Math.ceil(Math.sqrt(numberOfPostings));
-
-        if (numberOfForwardPointers > 0) {
-
-            Posting previousForwardPointer = postings.get(postings.size() - 1/*last posting*/);
-
-            // Set the forwardPointers
-            for (int i = postings.size() - 2/*last posting is never a forward pointer*/; i >= 0; i--) {
-                var posting = postings.get(i);
-                if (i % numberOfForwardPointers == 0) {
-                    previousForwardPointer = posting.setForwardPointer(previousForwardPointer);
-                } else {
-                    posting.setForwardPointer(null);
-                }
-            }
-        }
-
     }
 
     /**
@@ -102,14 +72,7 @@ public class PostingList implements Serializable/* TODO: implements Iterable wit
      */
     @NotNull
     public List<Posting> toListOfPostings() {
-        return Collections.unmodifiableList(postings);
-    }
-
-    /**
-     * Sort this instance.
-     */
-    private void sortAndRemoveDuplicates() {
-        postings = Utility.sortAndRemoveDuplicates(postings);
+        return postings.toUnmodifiableList();
     }
 
     /**
@@ -121,7 +84,7 @@ public class PostingList implements Serializable/* TODO: implements Iterable wit
 
     @Override
     public String toString() {
-        return Arrays.toString(postings.toArray());
+        return postings.toString();
     }
 
     @Override
