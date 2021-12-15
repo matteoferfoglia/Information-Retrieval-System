@@ -37,14 +37,12 @@ public class Utility {
     public static List<String> tokenize(@NotNull Document document) {
         return Arrays.stream(
                         (Objects.requireNonNull(document).getTitle() + " " + Objects.requireNonNull(document.getContent()).getEntireTextContent())
-                                .replaceAll(REGEX__NOT__VALID_CHARACTERS, " ")
-                                .replaceAll(REGEX_MULTIPLE_SPACES, " ")
                                 .split(" "))
+                .filter(text -> !text.isBlank())
                 .map(Utility::normalize)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        // TODO : not implemented yet (only split documents into strings which are the token - DO NOT CUT)
-        // TODO : benchmark
+        // TODO : not implemented yet, just a draft (only split documents into strings which are the token - DO NOT CUT)
     }
 
     /**
@@ -57,10 +55,9 @@ public class Utility {
     @Nullable
     public static String normalize(@NotNull String token) {
         // TODO : not implemented yet, just a draft
-        // TODO: test
         String toReturn = token
                 .replaceAll(REGEX__NOT__VALID_CHARACTERS, " ")
-                .replaceAll(REGEX_MULTIPLE_SPACES, " ") // TODO : refactoring : same code in the previous method
+                .replaceAll(REGEX_MULTIPLE_SPACES, " ")
                 .toLowerCase(Locale.ROOT)
                 .trim();
         return toReturn.isEmpty() ? null : toReturn;
@@ -73,7 +70,7 @@ public class Utility {
      * @return The stacktrace obtained from {@link Exception#printStackTrace()} as a {@link String}.
      */
     @NotNull
-    public static String stackTraceToString(Exception e) {  // TODO: test
+    public static String stackTraceToString(Exception e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
@@ -84,7 +81,7 @@ public class Utility {
      * Convert a string in JSON format to a {@link Map}.
      */
     @NotNull
-    public static Map<String, ?> convertFromJsonToMap(@NotNull final String stringInJsonFormat) throws JsonProcessingException {    // TODO: benchmark
+    public static Map<String, ?> convertFromJsonToMap(@NotNull final String stringInJsonFormat) throws JsonProcessingException {
         return ((HashMap<?, ?>) new ObjectMapper().readValue(Objects.requireNonNull(stringInJsonFormat), HashMap.class))
                 .entrySet().stream().unordered().parallel() // order does not matter in JSON entries
                 .map(entry -> new AbstractMap.SimpleEntry<String, Object>((String) entry.getKey(), entry.getValue()))
@@ -101,11 +98,11 @@ public class Utility {
     @NotNull
     public static String convertToJson(@NotNull Object object)
             throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(Objects.requireNonNull(object));   // TODO: benchmark
+        return new ObjectMapper().writeValueAsString(Objects.requireNonNull(object));
     }
 
     @NotNull
-    public static <T> List<T> sortAndRemoveDuplicates(@NotNull final List<T> postings) {   // TODO: benchmark
+    public static <T> List<T> sortAndRemoveDuplicates(@NotNull final List<T> postings) {
         return postings.stream().sorted().distinct().collect(Collectors.toList());
     }
 
@@ -116,7 +113,7 @@ public class Utility {
      * @return the {@link List} corresponding to the union of the given input lists.
      */
     @NotNull
-    public static <T extends Comparable<T>> List<T> unionOfSortedLists(@NotNull List<T> a, @NotNull List<T> b) {    // TODO: benchmark
+    public static <T extends Comparable<T>> List<T> unionOfSortedLists(@NotNull List<T> a, @NotNull List<T> b) {
         ArrayList<T> union = new ArrayList<>(Objects.requireNonNull(a).size() + Objects.requireNonNull(b).size());
         int i = 0, j = 0, comparison;
         while (i < a.size() && j < b.size()) {
@@ -144,7 +141,7 @@ public class Utility {
      */
     @NotNull
     public static <T extends Comparable<T>> List<T> intersectionOfSortedLists(
-            @NotNull List<T> a, @NotNull List<T> b) {   // TODO: benchmark
+            @NotNull List<T> a, @NotNull List<T> b) {
         Objects.requireNonNull(a);
         Objects.requireNonNull(b);
 

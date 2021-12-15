@@ -1,5 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.utils;
 
+import benchmark.Benchmark;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocument_LineOfAFile;
@@ -12,13 +13,72 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class UtilityTest {
+
+    private static final String LONG_DOCUMENT_PATH = "/LongDocument.txt";
+    private static final String COMMENT_FOR_BENCHMARKS = "Text document of about 140 KB";
+    private static final int DEFAULT_NUM_OF_ITERATIONS_BENCHMARK = 10;
+    private static final Supplier<List<Integer>> LIST_OF_1000_RANDOM_INTS_SUPPLIER = new Supplier<>() {
+        private static final int NUMBER_OF_ELEMENTS_OF_EACH_LISTS = 1000;
+        private static final int NUMBER_OF_PRECOMPUTED_CACHED_LISTS = 1000;
+        private static final Supplier<List<Integer>> listsSupplier = () ->
+                IntStream.range(0, NUMBER_OF_PRECOMPUTED_CACHED_LISTS)
+                        .mapToObj(i -> (int) ((1 - 2 * Math.random()) * NUMBER_OF_ELEMENTS_OF_EACH_LISTS))
+                        .collect(Collectors.toList());
+        private static final List<List<Integer>> CACHED_LISTS =
+                IntStream.range(0, NUMBER_OF_PRECOMPUTED_CACHED_LISTS)
+                        .mapToObj(i -> listsSupplier.get())
+                        .collect(Collectors.toList());
+        private static int counter = 0;
+
+        @Override
+        public List<Integer> get() {
+            return CACHED_LISTS.get(counter++ % NUMBER_OF_PRECOMPUTED_CACHED_LISTS);
+        }
+    };
+    private static final Supplier<List<Integer>> LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER = new Supplier<>() {
+        private static final int NUMBER_OF_ELEMENTS_OF_EACH_LISTS = 1000;
+        private static final int NUMBER_OF_PRECOMPUTED_CACHED_LISTS = 1000;
+        private static final Supplier<List<Integer>> listsSupplier = () ->
+                IntStream.iterate(0, i -> i + 1)
+                        .filter(ignored -> Math.random() < 0.5)
+                        .limit(NUMBER_OF_ELEMENTS_OF_EACH_LISTS)
+                        .boxed()
+                        .collect(Collectors.toList());
+        private static final List<List<Integer>> CACHED_LISTS =
+                IntStream.range(0, NUMBER_OF_PRECOMPUTED_CACHED_LISTS)
+                        .mapToObj(i -> listsSupplier.get())
+                        .collect(Collectors.toList());
+        private static int counter = 0;
+
+        @Override
+        public List<Integer> get() {
+            return CACHED_LISTS.get(counter++ % NUMBER_OF_PRECOMPUTED_CACHED_LISTS);
+        }
+    };
+    private static Document LONG_DOCUMENT;
+    private static String LONG_DOCUMENT_CONTENT;
+
+    static {
+        try {
+            LONG_DOCUMENT_CONTENT = Files.readString(Path.of(
+                    Objects.requireNonNull(FakeDocument_LineOfAFile.class.getResource(LONG_DOCUMENT_PATH)).toURI()));
+            LONG_DOCUMENT = new FakeDocument_LineOfAFile("title", LONG_DOCUMENT_CONTENT);
+        } catch (IOException | URISyntaxException e) {
+            fail(e);
+        }
+    }
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
@@ -74,14 +134,33 @@ class UtilityTest {
                 Utility.tokenize(document));
     }
 
+    @Benchmark(
+            warmUpIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
+            iterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
+            tearDownIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
+            commentToReport = COMMENT_FOR_BENCHMARKS)
+    static void tokenizeLongDocument() {
+        Utility.tokenize(LONG_DOCUMENT);
+    }
+
+
     @ParameterizedTest
     @CsvSource({"Foo  bar, foo bar"})
     void normalize(String input, String expectedOutput) {
         assertEquals(expectedOutput, Utility.normalize(input));
     }
 
-    @Test
-    void convertFromJsonToMap() throws JsonProcessingException {
+    @Benchmark(
+            warmUpIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
+            iterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
+            tearDownIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
+            commentToReport = COMMENT_FOR_BENCHMARKS)
+    static void normalizeLongDocument() {
+        Utility.normalize(LONG_DOCUMENT_CONTENT);
+    }
+
+    @Benchmark
+    static void convertObjectWith3AttributesFromJsonToMap() throws JsonProcessingException {
         final String JSON_SAMPLE = "{\"a\": 1, \"b\":\"5\", \"c\": \"foo  bar \"}";
         final Map<String, ?> EXPECTED_MAP = new HashMap<>() {{
             put("a", 1);
@@ -91,8 +170,8 @@ class UtilityTest {
         assertEquals(EXPECTED_MAP, Utility.convertFromJsonToMap(JSON_SAMPLE));
     }
 
-    @Test
-    void convertToJson() throws JsonProcessingException {
+    @Benchmark
+    static void convertMapOf3EntriesToJson() throws JsonProcessingException {
         final Map<String, ?> SAMPLE_MAP = new HashMap<>() {{
             put("a", 1);
             put("b", "5");
@@ -100,6 +179,16 @@ class UtilityTest {
         }};
         final String EXPECTED_JSON = "{\"a\":1,\"b\":\"5\",\"c\":\"foo  bar \"}";
         assertEquals(EXPECTED_JSON, Utility.convertToJson(SAMPLE_MAP));
+    }
+
+    @Benchmark
+    static void sortAndRemoveDuplicatesOnListOf1000RandomInts() {
+        Utility.sortAndRemoveDuplicates(LIST_OF_1000_RANDOM_INTS_SUPPLIER.get());
+    }
+
+    @Benchmark
+    static void unionOfTwoSortedListsOf1000RandomIntsEachOne() {
+        Utility.unionOfSortedLists(LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get());
     }
 
     @ParameterizedTest
@@ -115,6 +204,11 @@ class UtilityTest {
         return Arrays.asList(inputListAsString.split("#"));
     }
 
+    @Benchmark
+    static void intersectionOfTwoSortedListsOf1000RandomIntsEachOne() {
+        Utility.intersectionOfSortedLists(LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get());
+    }
+
     @ParameterizedTest
     @CsvSource({"a#f#g#h, c#d#e#f#h#j, a#c#d#e#f#g#h#j"})
     void unionOfSortedLists(String inputList1AsString, String inputList2AsString, String expectedUnionListAsString) {
@@ -123,11 +217,21 @@ class UtilityTest {
                 Utility.unionOfSortedLists(getListFromString(inputList1AsString), getListFromString(inputList2AsString)));
     }
 
+    @Test
+    void convertFromJsonToMap() throws JsonProcessingException {
+        convertObjectWith3AttributesFromJsonToMap();
+    }
+
     @ParameterizedTest
     @CsvSource({"a#f#g#h, c#d#e#f#h#j, f#h"})
     void intersectionOfSortedLists(String inputList1AsString, String inputList2AsString, String expectedIntersectionListAsString) {
         assertEquals(
                 getListFromString(expectedIntersectionListAsString),
                 Utility.intersectionOfSortedLists(getListFromString(inputList1AsString), getListFromString(inputList2AsString)));
+    }
+
+    @Test
+    void convertToJson() throws JsonProcessingException {
+        convertMapOf3EntriesToJson();
     }
 }
