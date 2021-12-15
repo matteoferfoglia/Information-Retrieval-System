@@ -377,6 +377,11 @@ public class Movie extends Document implements Serializable {
         return movieTitle.compareTo(otherMovie.movieTitle);
     }
 
+    @Override
+    public @Nullable DocumentContent getContent() {
+        return super.getContent();// TODO: The content of the document does not need to be stored in RAM, but the system must know hot to retrieve it quickly. This may be the task of "getContent()
+    }
+
     /**
      * Class implementing {@link DocumentContentRank} for {@link Movie}s.
      */

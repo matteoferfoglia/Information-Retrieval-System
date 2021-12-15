@@ -28,7 +28,7 @@ public abstract class Document implements Serializable, Comparable<Document> {  
      * The content of this instance.
      */
     @Nullable
-    private DocumentContent content;   // TODO: The content of the document does not need to be stored in RAM, but the system must know hot to retrieve it quickly. This may be the task of "getContent()
+    private DocumentContent content;
 
     /**
      * Constructor.
@@ -58,6 +58,9 @@ public abstract class Document implements Serializable, Comparable<Document> {  
 
     /**
      * Getter for {@link #content}.
+     * This method can be overridden, in fact the content does not need
+     * to be stored in RAM for all the time, but it can be stored anywhere
+     * and this method should know how to retrieve it.
      *
      * @return The content of this instance.
      */
