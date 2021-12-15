@@ -23,7 +23,7 @@ public class Corpus implements Serializable {
      * between a {@link DocumentIdentifier} and the corresponding {@link Document}.
      */
     @NotNull
-    private final Map<DocumentIdentifier, Document> corpus;// TODO: should be  Map<DocumentIdentifier, ? extends Document>
+    private final Map<DocumentIdentifier, Document> corpus;
 
     /**
      * Constructor. Creates a corpus from a {@link Collection}.
