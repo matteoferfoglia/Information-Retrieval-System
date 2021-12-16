@@ -150,8 +150,12 @@ public class Utility {
      * will be [1,2,3,5] and ['a','e','c','d'] respectively).
      *
      * @param lists the input {@link List}s. They <strong>must</strong> have the same size.
+     * @throws UnsupportedOperationException If one of the given input {@link List} is
+     *                                       a fixed size {@link List} (e.g., the inner class Arrays$ArrayList returned by
+     *                                       {@link Arrays#asList(Object[])}. To solve this issue, it is suggested to create
+     *                                       a new {@link List}, e.g.: <code>new ArrayList<>(Array.asList(1,2,3))</code>).
      */
-    public static void sortAndRemoveDuplicates(@NotNull List<?>... lists) {  // TODO: test (with example from the Javadoc of this method) and benchmark
+    public static void sortAndRemoveDuplicates(@NotNull List<?>... lists) throws UnsupportedOperationException {  // TODO: test (with example from the Javadoc of this method) and benchmark
         if (Objects.requireNonNull(lists).length == 0 || lists[0].isEmpty()) {
             return;
         }
@@ -167,7 +171,7 @@ public class Utility {
             if (transposedLists.get(i).get(0).equals(previousElement)) {
                 transposedLists.remove(i);
             } else {
-                i++;
+                previousElement = transposedLists.get(i++).get(0);
             }
         }
 
@@ -178,7 +182,10 @@ public class Utility {
         assert lists.length == sortedLists.size();
         IntStream.range(0, lists.length)
                 .unordered().parallel()
-                .forEach(i -> lists[i] = sortedLists.get(i));
+                .forEach(i -> {
+                    lists[i].clear();
+                    lists[i].addAll((List) sortedLists.get(i));
+                });
     }
 
     /**

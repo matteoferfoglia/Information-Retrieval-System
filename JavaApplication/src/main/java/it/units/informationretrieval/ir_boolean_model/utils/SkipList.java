@@ -3,10 +3,7 @@ package it.units.informationretrieval.ir_boolean_model.utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Implementation of a skip list.
@@ -31,19 +28,13 @@ public class SkipList<T extends Comparable<T>> {
     /**
      * Creates an instance of this class starting from a {@link List}.
      *
-     * @param list The {@link List} from which this instance is created.
+     * @param elements The elements from which this instance is created.
      */
-    public SkipList(@NotNull final List<T> list) {
-        this.list = Objects.requireNonNull(list);
+    @SafeVarargs
+    public SkipList(@NotNull T... elements) {
+        this.list = new ArrayList<>(Arrays.asList(elements));
         this.forwardPointers = new ArrayList<>(Collections.nCopies(list.size(), null));    // list of forward pointers must have the same size as the list, but they are un-set as default
         setForwardPointers();
-    }
-
-    /**
-     * Default constructor.
-     */
-    public SkipList() {
-        this(new ArrayList<>());
     }
 
     /**

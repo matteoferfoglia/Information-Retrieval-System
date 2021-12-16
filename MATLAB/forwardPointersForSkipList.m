@@ -4,11 +4,17 @@ fprintf("Determination of forward pointers position in a skip list");
 %       is never a forward pointer.
 
 for P = 0:21
-    F = ceil(sqrt(P));
-    S = floor(P/F);
+    F = ceil(sqrt(P));  % number of forward pointers to be present
+    S = floor(P/F);     % space between forward pointers
     positions = 0 : P-1;
     isFwdPointer = mod(positions, F)==0;
-    if(~isempty(isFwdPointer)),  isFwdPointer(length(isFwdPointer)) = 0; end   % last posting does not need to be a forward pointer
+    if(~isempty(isFwdPointer))
+        if(isFwdPointer(length(isFwdPointer))==1) % if last element is set as forward pointer is set
+            % last posting does not need to be a forward pointer
+            isFwdPointer(length(isFwdPointer)) = 0;
+            F = max(0, F-1);    % decrement the number of forward pointers consequentely
+        end
+    end
     forwardPositions =positions(isFwdPointer);
     fprintf("\n\nP=%d   F=%d   S=%d", P,F,S);
     fprintf("\nPositions= \t\t") ; for i=1:length(positions), fprintf("\t%d", positions(i)), end

@@ -16,10 +16,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class SkipListTest {
 
-    private static final List<Integer> sampleListWithDuplicatesUnordered =
-            Arrays.asList(1, 1, 2, 9, 8, 5, 2, 1, 6, 2, 99, -1, 0, 5);
-    private static final List<Integer> correspondingOrderedListWithoutDuplicates =
-            Arrays.asList(-1, 0, 1, 2, 5, 6, 8, 9, 99);
+    private static final Integer[] sampleArrayWithDuplicatesUnordered = {1, 1, 2, 9, 8, 5, 2, 1, 6, 2, 99, -1, 0, 5};
+    private static final Integer[] correspondingOrderedArrayWithoutDuplicates = {-1, 0, 1, 2, 5, 6, 8, 9, 99};
     private static SkipList<Integer> skipList;
 
     @BeforeEach
@@ -27,26 +25,30 @@ class SkipListTest {
         skipList = new SkipList<>();
     }
 
+    private static List<Integer> getExpectedPositionOfForwardPointers(int listSize) {
+        int expectedNumberOfForwardPointers = (int) Math.ceil(Math.sqrt(listSize));
+        return IntStream.range(0, listSize)
+                .filter(i -> i % expectedNumberOfForwardPointers == 0)
+                .filter(i -> i < listSize - 1) // last posting is never a forward pointer
+                .boxed()
+                .toList();
+    }
+
     @Test
     void createSkipListAndAssertThatCorrectNumberOfForwardPointersAreSet() {
-        skipList = new SkipList<>(sampleListWithDuplicatesUnordered);
+        skipList = new SkipList<>(sampleArrayWithDuplicatesUnordered);
         assertThatCorrectNumberOfForwardPointersIsPresent();
     }
 
     @Test
     void createSkipListAndAssertThatForwardPointersAreSetAtCorrectPosition() {
-        skipList = new SkipList<>(sampleListWithDuplicatesUnordered);
+        skipList = new SkipList<>(sampleArrayWithDuplicatesUnordered);
         assertThatForwardPointersAreSetAtCorrectPositions();
     }
 
     private void assertThatForwardPointersAreSetAtCorrectPositions() {
         int P = skipList.size();
-        int expectedNumberOfForwardPointers = (int) Math.ceil(Math.sqrt(P));
-        List<Integer> expectedPositionOfForwardPointers = IntStream.range(0, P)
-                .filter(i -> i % expectedNumberOfForwardPointers == 0)
-                .filter(i -> i < P - 1) // last posting is never a forward pointer
-                .boxed()
-                .toList();
+        List<Integer> expectedPositionOfForwardPointers = getExpectedPositionOfForwardPointers(P);
         List<Integer> actualPositionOfForwardPointers = IntStream.range(0, P)
                 .filter(skipList::hasForwardPointer)
                 .boxed()
@@ -55,8 +57,7 @@ class SkipListTest {
     }
 
     private void assertThatCorrectNumberOfForwardPointersIsPresent() {
-        final int P = skipList.size();
-        int expectedNumberOfForwardPointers = (int) Math.floor(Math.sqrt(P));
+        int expectedNumberOfForwardPointers = getExpectedPositionOfForwardPointers(skipList.size()).size();
         int actualNumberOfForwardPointers =
                 (int) IntStream.range(0, skipList.size())
                         .filter(skipList::hasForwardPointer)
@@ -67,6 +68,12 @@ class SkipListTest {
     private void assertThatForwardPointersAreCorrectlySet() {
         assertThatCorrectNumberOfForwardPointersIsPresent();
         assertThatForwardPointersAreSetAtCorrectPositions();
+    }
+
+    @Test
+    void createSkipListAndAssertThatIsSortedAndWithoutDuplicates() {
+        skipList = new SkipList<>(sampleArrayWithDuplicatesUnordered);
+        assertEquals(Arrays.asList(correspondingOrderedArrayWithoutDuplicates), skipList.toUnmodifiableList());
     }
 
     @ParameterizedTest
@@ -104,15 +111,15 @@ class SkipListTest {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2, 3, 10, 1000})
     void addSkipList(int numberOfElementsToAdd) {
-        skipList.addAll(new SkipList<>(IntStream.range(0, numberOfElementsToAdd).boxed().toList()));
+        skipList.addAll(new SkipList<>(IntStream.range(0, numberOfElementsToAdd).boxed().toArray(Integer[]::new)));
         assertEquals(numberOfElementsToAdd, skipList.size());
         assertThatForwardPointersAreCorrectlySet();
     }
 
     @Test
     void toUnmodifiableList() {
-        var unmodifiableList = new SkipList<>(sampleListWithDuplicatesUnordered).toUnmodifiableList();
-        assertEquals(sampleListWithDuplicatesUnordered, unmodifiableList);
+        var unmodifiableList = new SkipList<>(sampleArrayWithDuplicatesUnordered).toUnmodifiableList();
+        assertEquals(Arrays.asList(correspondingOrderedArrayWithoutDuplicates), unmodifiableList);
         try {
             //noinspection ConstantConditions   // the test asserts that the list is unmodifiable
             unmodifiableList.add(1);
@@ -124,6 +131,8 @@ class SkipListTest {
 
     @Test
     void testToString() {
-        assertEquals(sampleListWithDuplicatesUnordered.toString(), new SkipList<>(sampleListWithDuplicatesUnordered).toUnmodifiableList().toString());
+        assertEquals(
+                Arrays.asList(correspondingOrderedArrayWithoutDuplicates).toString(),
+                new SkipList<>(sampleArrayWithDuplicatesUnordered).toUnmodifiableList().toString());
     }
 }

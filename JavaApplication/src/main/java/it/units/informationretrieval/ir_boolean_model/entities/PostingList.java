@@ -50,7 +50,7 @@ public class PostingList implements Serializable/* TODO: implements Iterable wit
      * @param postings The list of {@link Posting}s.
      */
     public PostingList(@NotNull final List<Posting> postings) {
-        this.postings = new SkipList<>(Objects.requireNonNull(postings));
+        this.postings = new SkipList<>(Objects.requireNonNull(postings).toArray(Posting[]::new));
     }
 
     /**
