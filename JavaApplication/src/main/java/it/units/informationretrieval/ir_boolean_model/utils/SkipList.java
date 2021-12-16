@@ -3,6 +3,7 @@ package it.units.informationretrieval.ir_boolean_model.utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -10,7 +11,7 @@ import java.util.*;
  *
  * @author Matteo Ferfoglia
  */
-public class SkipList<T extends Comparable<T>> {
+public class SkipList<T extends Comparable<T>> implements Serializable {    // TODO: benchmark  // TODO: inverted index creation is very very slow with this instance // TODO: some query do not work
 
     /**
      * The list.
