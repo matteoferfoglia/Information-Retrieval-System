@@ -24,31 +24,31 @@ class PostingListTest {
         put(5, new Posting(new FakeDocumentIdentifier(5), positionsArray));
     }};
 
-    private static final List<Posting> sampleListOfPosting = List.of(
+    private static final Posting[] sampleArrayOfPosting = new Posting[]{
             mapOfSampleDocIdsAndCorrespondingPosting.get(1),
             mapOfSampleDocIdsAndCorrespondingPosting.get(2),
-            mapOfSampleDocIdsAndCorrespondingPosting.get(3));
-    private static final List<Posting> sampleListOfPostingWithDuplicates = List.of(
+            mapOfSampleDocIdsAndCorrespondingPosting.get(3)};
+    private static final Posting[] sampleArrayOfPostingWithDuplicates = new Posting[]{
             mapOfSampleDocIdsAndCorrespondingPosting.get(1),
             mapOfSampleDocIdsAndCorrespondingPosting.get(2),
             mapOfSampleDocIdsAndCorrespondingPosting.get(2),
-            mapOfSampleDocIdsAndCorrespondingPosting.get(3));
-    private static final List<Posting> sampleListOfPostingUnordered = List.of(
+            mapOfSampleDocIdsAndCorrespondingPosting.get(3)};
+    private static final Posting[] sampleListOfPostingUnordered = new Posting[]{
             mapOfSampleDocIdsAndCorrespondingPosting.get(2),
             mapOfSampleDocIdsAndCorrespondingPosting.get(1),
-            mapOfSampleDocIdsAndCorrespondingPosting.get(3));
-    private static final List<Posting> sampleListOfPostingWithDuplicatesUnordered = List.of(
+            mapOfSampleDocIdsAndCorrespondingPosting.get(3)};
+    private static final Posting[] sampleListOfPostingWithDuplicatesUnordered = new Posting[]{
             mapOfSampleDocIdsAndCorrespondingPosting.get(2),
             mapOfSampleDocIdsAndCorrespondingPosting.get(1),
             mapOfSampleDocIdsAndCorrespondingPosting.get(2),
             mapOfSampleDocIdsAndCorrespondingPosting.get(3),
             mapOfSampleDocIdsAndCorrespondingPosting.get(3),
             mapOfSampleDocIdsAndCorrespondingPosting.get(1),
-            mapOfSampleDocIdsAndCorrespondingPosting.get(2));
-    private static final List<Posting> anotherListOfPostingUnordered = List.of(
+            mapOfSampleDocIdsAndCorrespondingPosting.get(2)};
+    private static final Posting[] anotherListOfPostingUnordered = new Posting[]{
             mapOfSampleDocIdsAndCorrespondingPosting.get(5),
             mapOfSampleDocIdsAndCorrespondingPosting.get(1),
-            mapOfSampleDocIdsAndCorrespondingPosting.get(4));
+            mapOfSampleDocIdsAndCorrespondingPosting.get(4)};
 
     private static final PostingList onePostingList = new PostingList(sampleListOfPostingWithDuplicatesUnordered);
     private static final PostingList anotherPostingList = new PostingList(anotherListOfPostingUnordered);
@@ -59,20 +59,20 @@ class PostingListTest {
         assertEquals(EXPECTED_NUMBER_OF_POSTINGS, new PostingList().size());
     }
 
-    private static final Supplier<List<Posting>> listOf1000PostingsSupplier = new Supplier<>() {
+    private static final Supplier<Posting[]> listOf1000PostingsSupplier = new Supplier<>() {
         private static final int NUMBER_OF_POSTINGS = 1000;
         private static final AtomicInteger docIdCounter = new AtomicInteger(0);
-        private static final List<Posting> cachedList =
+        private static final Posting[] cachedArray =
                 IntStream.range(0, NUMBER_OF_POSTINGS)
                         .mapToObj(i -> new Posting(new FakeDocumentIdentifier(
                                 // duplicates are possible
                                 Math.random() < 0.5 ? docIdCounter.getAndIncrement() : docIdCounter.get()),
                                 positionsArray))
-                        .toList();
+                        .toArray(Posting[]::new);
 
         @Override
-        public List<Posting> get() {
-            return cachedList;
+        public Posting[] get() {
+            return cachedArray;
         }
     };
 
@@ -81,9 +81,9 @@ class PostingListTest {
         new PostingList(listOf1000PostingsSupplier.get());
     }
 
-    private void testConstructorWith3DistinctPostings(List<Posting> sampleListOfPosting) {
+    private void testConstructorWith3DistinctPostings(Posting[] sampleArrayOfPosting) {
         final int EXPECTED_NUMBER_OF_POSTINGS = 3;
-        var actualPostingList = new PostingList(sampleListOfPosting);
+        var actualPostingList = new PostingList(sampleArrayOfPosting);
         assertEquals(EXPECTED_NUMBER_OF_POSTINGS, actualPostingList.size());
         assertThatPostingsAreSortedAndDistinct(actualPostingList);
     }
@@ -102,7 +102,7 @@ class PostingListTest {
 
     @Test
     void createPostingListFromCollection() {
-        testConstructorWith3DistinctPostings(sampleListOfPosting);
+        testConstructorWith3DistinctPostings(sampleArrayOfPosting);
     }
 
     @Test
@@ -112,7 +112,7 @@ class PostingListTest {
 
     @Test
     void createPostingListFromCollectionAndAssertThatPostingsAreDistinct() {
-        testConstructorWith3DistinctPostings(sampleListOfPostingWithDuplicates);
+        testConstructorWith3DistinctPostings(sampleArrayOfPostingWithDuplicates);
     }
 
     @Test
@@ -122,15 +122,15 @@ class PostingListTest {
 
     @Test
     void merge() {
-        var postingList1 = new PostingList(List.of(
+        var postingList1 = new PostingList(
                 mapOfSampleDocIdsAndCorrespondingPosting.get(1),
                 mapOfSampleDocIdsAndCorrespondingPosting.get(2),
-                mapOfSampleDocIdsAndCorrespondingPosting.get(5)));
-        var postingList2 = new PostingList(List.of(
+                mapOfSampleDocIdsAndCorrespondingPosting.get(5));
+        var postingList2 = new PostingList(
                 mapOfSampleDocIdsAndCorrespondingPosting.get(1),
                 mapOfSampleDocIdsAndCorrespondingPosting.get(3),
                 mapOfSampleDocIdsAndCorrespondingPosting.get(4),
-                mapOfSampleDocIdsAndCorrespondingPosting.get(5)));
+                mapOfSampleDocIdsAndCorrespondingPosting.get(5));
 
         postingList1.merge(postingList2);
 
@@ -152,11 +152,11 @@ class PostingListTest {
 
     @Test
     void toListOfPostings() {
-        var samplePostingList = new PostingList(List.of(
+        var samplePostingList = new PostingList(
                 mapOfSampleDocIdsAndCorrespondingPosting.get(2),
                 mapOfSampleDocIdsAndCorrespondingPosting.get(2),
                 mapOfSampleDocIdsAndCorrespondingPosting.get(1),
-                mapOfSampleDocIdsAndCorrespondingPosting.get(5)));
+                mapOfSampleDocIdsAndCorrespondingPosting.get(5));
         final List<Posting> EXPECTED_LIST_OF_POSTING = List.of(
                 mapOfSampleDocIdsAndCorrespondingPosting.get(1),
                 mapOfSampleDocIdsAndCorrespondingPosting.get(2),

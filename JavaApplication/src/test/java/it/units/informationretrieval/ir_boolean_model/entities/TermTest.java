@@ -68,13 +68,9 @@ class TermTest {
         DocumentIdentifier docId2 = new FakeDocumentIdentifier(2);
         DocumentIdentifier docId3 = new FakeDocumentIdentifier(3);
 
-        Map<String, List<Posting>> postingsOfSomeTerms = new HashMap<>() {{
-            put("the", new ArrayList<>() {{
-                addAll(List.of(new Posting(docId1, positionsArray), new Posting(docId2, positionsArray), new Posting(docId3, positionsArray)));
-            }});
-            put("is", new ArrayList<>() {{
-                addAll(List.of(new Posting(docId1, positionsArray), new Posting(docId2, positionsArray), new Posting(docId3, positionsArray)));
-            }});
+        Map<String, Posting[]> postingsOfSomeTerms = new HashMap<>() {{
+            put("the", new Posting[]{new Posting(docId1, positionsArray), new Posting(docId2, positionsArray), new Posting(docId3, positionsArray)});
+            put("is", new Posting[]{new Posting(docId1, positionsArray), new Posting(docId2, positionsArray), new Posting(docId3, positionsArray)});
         }};
 
         termsAndPostingList = new HashMap<>() {{
@@ -84,23 +80,19 @@ class TermTest {
 
         examplesOfTermsToBeMergedAndExpectedMerged = new HashMap<>() {{
             put(new ArrayList<>() {{
-                add(new Term(new PostingList(
-                        List.of(postingsOfSomeTerms.get("the").get(0), postingsOfSomeTerms.get("the").get(2))),
-                        "the"));
-                add(new Term(new PostingList(postingsOfSomeTerms.get("the").get(1)), "the"));
+                add(new Term(new PostingList(postingsOfSomeTerms.get("the")[0], postingsOfSomeTerms.get("the")[2]), "the"));
+                add(new Term(new PostingList(postingsOfSomeTerms.get("the")[1]), "the"));
             }}, new Term(new PostingList(postingsOfSomeTerms.get("the")), "the"));
             put(new ArrayList<>() {{
-                add(new Term(new PostingList(
-                        List.of(postingsOfSomeTerms.get("is").get(0), postingsOfSomeTerms.get("is").get(2))),
-                        "is"));
-                add(new Term(new PostingList(postingsOfSomeTerms.get("is").get(1)), "is"));
+                add(new Term(new PostingList(postingsOfSomeTerms.get("is")[0], postingsOfSomeTerms.get("is")[2]), "is"));
+                add(new Term(new PostingList(postingsOfSomeTerms.get("is")[1]), "is"));
             }}, new Term(new PostingList(postingsOfSomeTerms.get("is")), "is"));
         }};
 
         allTerms = new HashMap<>() {{
-            put("the", new Term(new PostingList(List.of(new Posting(docId1, positionsArray), new Posting(docId2, positionsArray), new Posting(docId3, positionsArray))), "the"));
+            put("the", new Term(new PostingList(new Posting(docId1, positionsArray), new Posting(docId2, positionsArray), new Posting(docId3, positionsArray)), "the"));
             put("cat", new Term(new PostingList(new Posting(docId1, positionsArray)), "cat"));
-            put("is", new Term(new PostingList(List.of(new Posting(docId1, positionsArray), new Posting(docId2, positionsArray), new Posting(docId3, positionsArray))), "is"));
+            put("is", new Term(new PostingList(new Posting(docId1, positionsArray), new Posting(docId2, positionsArray), new Posting(docId3, positionsArray)), "is"));
             put("on", new Term(new PostingList(new Posting(docId1, positionsArray)), "on"));
             put("table", new Term(new PostingList(new Posting(docId1, positionsArray)), "table"));
             put("dog", new Term(new PostingList(new Posting(docId2, positionsArray)), "dog"));

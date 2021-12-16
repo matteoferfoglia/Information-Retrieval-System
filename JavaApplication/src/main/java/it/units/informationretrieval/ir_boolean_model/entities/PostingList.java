@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,35 +21,15 @@ public class PostingList implements Serializable/* TODO: implements Iterable wit
     @NotNull
     private final SkipList<Posting> postings;   // TODO: a built-in array may be faster but must be kept ordered
 
-    /**
-     * Constructor. Creates an empty {@link PostingList}.
-     */
-    public PostingList() {
-        this(new ArrayList<>(0));
-    }
 
     /**
      * Constructor.
-     * Creates a new instance of this class starting from a {@link Posting}.
-     *
-     * @param posting The {@link Posting} used to create the new {@link PostingList}.
-     *                Immediately after the creation, this will be the only-one
-     *                element in the list.
-     */
-    public PostingList(@NotNull final Posting posting) {
-        this(new ArrayList<>() {{
-            add(Objects.requireNonNull(posting));
-        }});
-    }
-
-    /**
-     * Constructor.
-     * Creates a new instance of this class starting from a {@link List} of {@link Posting}s.
+     * Creates a new instance of this class starting from the given of {@link Posting}s.
      *
      * @param postings The list of {@link Posting}s.
      */
-    public PostingList(@NotNull final List<Posting> postings) {
-        this.postings = new SkipList<>(Objects.requireNonNull(postings).toArray(Posting[]::new));
+    public PostingList(@NotNull final Posting... postings) {
+        this.postings = new SkipList<>(Objects.requireNonNull(postings));
     }
 
     /**
