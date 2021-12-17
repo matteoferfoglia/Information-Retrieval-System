@@ -141,7 +141,6 @@ class UtilityTest {
         Utility.tokenize(LONG_DOCUMENT);
     }
 
-
     @ParameterizedTest
     @CsvSource({"Foo  bar, foo bar"})
     void normalize(String input, String expectedOutput) {

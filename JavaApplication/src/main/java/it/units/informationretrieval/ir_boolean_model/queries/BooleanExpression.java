@@ -379,13 +379,18 @@ public class BooleanExpression {
                     yield booleanExpressions
                             .stream().unordered().parallel()
                             .map(BooleanExpression::evaluateBothSimpleAndAggregatedExpressionRecursively)
-                            .reduce((listOfPostings1, listOfPostings2) ->
-                                    switch (Objects.requireNonNull(binaryOperator)) {
-                                        case AND -> Utility.intersectionOfSortedLists(listOfPostings1, listOfPostings2);
-                                        case OR -> Utility.unionOfSortedLists(listOfPostings1, listOfPostings2);
-                                        //noinspection UnnecessaryDefault
-                                        default -> throw new UnsupportedOperationException("Unknown operator");
-                                    })
+                            .reduce((listOfPostings1, listOfPostings2) -> {
+
+                                listOfPostings1 = listOfPostings1.stream().sorted().toList();
+                                listOfPostings2 = listOfPostings2.stream().sorted().toList();
+
+                                return switch (Objects.requireNonNull(binaryOperator)) {
+                                    case AND -> Utility.intersectionOfSortedLists(listOfPostings1, listOfPostings2);
+                                    case OR -> Utility.unionOfSortedLists(listOfPostings1, listOfPostings2);
+                                    //noinspection UnnecessaryDefault
+                                    default -> throw new UnsupportedOperationException("Unknown operator");
+                                };
+                            })
                             .orElse(new ArrayList<>());
 
                 } else {
