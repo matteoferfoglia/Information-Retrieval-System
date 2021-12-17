@@ -1,8 +1,9 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
+import it.units.informationretrieval.ir_boolean_model.utils.SkipListElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Objects;
@@ -12,7 +13,7 @@ import java.util.Objects;
  *
  * @author Matteo Ferfoglia.
  */
-public class Posting implements Comparable<Posting>, Serializable {
+public class Posting implements SkipListElement<Posting> {
 
     /**
      * The {@link DocumentIdentifier} of the document associated with this posting.
@@ -32,9 +33,24 @@ public class Posting implements Comparable<Posting>, Serializable {
     private final int[] termPositionsInTheDocument;
 
     /**
+     * The forward pointer.
+     */
+    @Nullable
+    private SkipListElement<Posting> forwardPointer;
+
+    /**
+     * The index in the {@link PostingList} of the element
+     * forwarded by this instance.
+     */
+    private int forwardedElementIndex;
+
+
+    /**
      * Constructor. Given a {@link DocumentIdentifier}, creates a new instance of this class.
      *
-     * @param docId The {@link DocumentIdentifier}.
+     * @param docId     The {@link DocumentIdentifier}.
+     * @param positions The positions where the {@link Term} to which this instance refers
+     *                  in the document to which this instance refers.
      */
     //* @param positions The {@link TermPositionsInADocument} object (see the description of the class). */
     public Posting(@NotNull DocumentIdentifier docId, final int[] positions) {
@@ -103,7 +119,7 @@ public class Posting implements Comparable<Posting>, Serializable {
      * @return the result of the comparison of their {@link DocumentIdentifier}s.
      */
     @Override
-    public int compareTo(Posting posting) {
+    public int compareTo(@NotNull Posting posting) {
         return this.docId.compareTo(posting.docId);
     }
 
@@ -146,5 +162,35 @@ public class Posting implements Comparable<Posting>, Serializable {
     @Override
     public int hashCode() {
         return docId.hashCode();
+    }
+
+    @Override
+    @NotNull
+    public SkipListElement<Posting> setForwardPointer(
+            int forwardedElementIndex, @NotNull final SkipListElement<Posting> e) {
+        this.forwardPointer = Objects.requireNonNull(e);
+        this.forwardedElementIndex = forwardedElementIndex;
+        return this;
+    }
+
+    @Override
+    @Nullable
+    public SkipListElement<Posting> getForwardedElement() {
+        return this.forwardPointer;
+    }
+
+    @Override
+    public boolean hasForwardPointer() {
+        return this.forwardPointer != null;
+    }
+
+    @Override
+    public Posting getElement() {
+        return this;
+    }
+
+    @Override
+    public int getForwardedIndex() {
+        return hasForwardPointer() ? forwardedElementIndex : -1;
     }
 }

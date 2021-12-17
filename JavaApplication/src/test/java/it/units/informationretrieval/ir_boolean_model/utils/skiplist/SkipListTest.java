@@ -1,12 +1,15 @@
 package it.units.informationretrieval.ir_boolean_model.utils.skiplist;
 
 import it.units.informationretrieval.ir_boolean_model.utils.SkipList;
+import it.units.informationretrieval.ir_boolean_model.utils.SkipListElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -16,13 +19,15 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class SkipListTest {
 
-    private static final Integer[] sampleArrayWithDuplicatesUnordered = {1, 1, 2, 9, 8, 5, 2, 1, 6, 2, 99, -1, 0, 5};
-    private static final Integer[] correspondingOrderedArrayWithoutDuplicates = {-1, 0, 1, 2, 5, 6, 8, 9, 99};
+    private static final List<SkipListElement<Integer>> sampleListWithDuplicatesUnordered =
+            FakeSkipListElement.fromElements(new Integer[]{1, 1, 2, 9, 8, 5, 2, 1, 6, 2, 99, -1, 0, 5});
+    private static final List<SkipListElement<Integer>> correspondingOrderedListWithoutDuplicates =
+            FakeSkipListElement.fromElements(new Integer[]{-1, 0, 1, 2, 5, 6, 8, 9, 99});
     private static SkipList<Integer> skipList;
 
     @BeforeEach
     void createEmptySkipList() {
-        skipList = new SkipList<>();
+        skipList = new SkipList<>(new ArrayList<>());
     }
 
     private static List<Integer> getExpectedPositionOfForwardPointers(int listSize) {
@@ -36,13 +41,13 @@ class SkipListTest {
 
     @Test
     void createSkipListAndAssertThatCorrectNumberOfForwardPointersAreSet() {
-        skipList = new SkipList<>(sampleArrayWithDuplicatesUnordered);
+        skipList = new SkipList<>(sampleListWithDuplicatesUnordered);
         assertThatCorrectNumberOfForwardPointersIsPresent();
     }
 
     @Test
     void createSkipListAndAssertThatForwardPointersAreSetAtCorrectPosition() {
-        skipList = new SkipList<>(sampleArrayWithDuplicatesUnordered);
+        skipList = new SkipList<>(sampleListWithDuplicatesUnordered);
         assertThatForwardPointersAreSetAtCorrectPositions();
     }
 
@@ -50,7 +55,7 @@ class SkipListTest {
         int P = skipList.size();
         List<Integer> expectedPositionOfForwardPointers = getExpectedPositionOfForwardPointers(P);
         List<Integer> actualPositionOfForwardPointers = IntStream.range(0, P)
-                .filter(skipList::hasForwardPointer)
+                .filter(i -> skipList.get(i).hasForwardPointer())
                 .boxed()
                 .toList();
         assertEquals(expectedPositionOfForwardPointers, actualPositionOfForwardPointers);
@@ -60,7 +65,7 @@ class SkipListTest {
         int expectedNumberOfForwardPointers = getExpectedPositionOfForwardPointers(skipList.size()).size();
         int actualNumberOfForwardPointers =
                 (int) IntStream.range(0, skipList.size())
-                        .filter(skipList::hasForwardPointer)
+                        .filter(i -> skipList.get(i).hasForwardPointer())
                         .count();
         assertEquals(expectedNumberOfForwardPointers, actualNumberOfForwardPointers);
     }
@@ -72,54 +77,46 @@ class SkipListTest {
 
     @Test
     void createSkipListAndAssertThatIsSortedAndWithoutDuplicates() {
-        skipList = new SkipList<>(sampleArrayWithDuplicatesUnordered);
-        assertEquals(Arrays.asList(correspondingOrderedArrayWithoutDuplicates), skipList.toUnmodifiableList());
+        skipList = new SkipList<>(sampleListWithDuplicatesUnordered);
+        assertEquals(correspondingOrderedListWithoutDuplicates, skipList.getList());
     }
 
-    @ParameterizedTest
-    @ValueSource(booleans = {true, false})
-    void hasFirstElementForwardPointer(boolean hasForwardPointer) throws NoSuchFieldException, IllegalAccessException {
-        skipList.add(0);
-        assert skipList.size() > 0;   // pre-condition for this test
-        if (hasForwardPointer) {
-            Field forwardPointerField = skipList.getClass().getDeclaredField("forwardPointers");
-            forwardPointerField.setAccessible(true);
-            @SuppressWarnings("unchecked")// forwardPointers are of the same type as elements in the skipList
-            var forwardPointerList = (List<Integer>) forwardPointerField.get(skipList);
-            assert forwardPointerList.size() > 0;
-            forwardPointerList.set(0, skipList.get(0)/*any non-null value is ok*/);
-        }
-        assertEquals(hasForwardPointer, skipList.hasForwardPointer(0));
-    }
+//    @ParameterizedTest    // TODO: re-do this test
+//    @ValueSource(booleans = {true, false})
+//    void hasFirstElementForwardPointer(boolean hasForwardPointer) throws NoSuchFieldException, IllegalAccessException {
+//        skipList.add(0);
+//        assert skipList.size() > 0;   // pre-condition for this test
+//        if (hasForwardPointer) {
+//            Field forwardPointerField = skipList.getClass().getDeclaredField("forwardPointers");
+//            forwardPointerField.setAccessible(true);
+//            @SuppressWarnings("unchecked")// forwardPointers are of the same type as elements in the skipList
+//            var forwardPointerList = (List<Integer>) forwardPointerField.get(skipList);
+//            assert forwardPointerList.size() > 0;
+//            forwardPointerList.set(0, skipList.get(0)/*any non-null value is ok*/);
+//        }
+//        assertEquals(hasForwardPointer, skipList.get(0).hasForwardPointer());
+//    }
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2, 3, 10, 1000})
     void size(int numberOfElementsToAdd) {
         IntStream.range(0, numberOfElementsToAdd)
-                .forEach(skipList::add);
+                .forEach(i -> skipList.add(new FakeSkipListElement<>(i)));
         assertEquals(numberOfElementsToAdd, skipList.size());
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {0, 1, 2, 3, 10, 1000})
-    void addList(int numberOfElementsToAdd) {
-        skipList.addAll(IntStream.range(0, numberOfElementsToAdd).boxed().toList());
-        assertEquals(numberOfElementsToAdd, skipList.size());
-        assertThatForwardPointersAreCorrectlySet();
     }
 
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2, 3, 10, 1000})
     void addSkipList(int numberOfElementsToAdd) {
-        skipList.addAll(new SkipList<>(IntStream.range(0, numberOfElementsToAdd).boxed().toArray(Integer[]::new)));
+        skipList.addAll(IntStream.range(0, numberOfElementsToAdd).mapToObj(FakeSkipListElement::new).map(el -> (SkipListElement<Integer>) el).toList());
         assertEquals(numberOfElementsToAdd, skipList.size());
         assertThatForwardPointersAreCorrectlySet();
     }
 
     @Test
     void toUnmodifiableList() {
-        var unmodifiableList = new SkipList<>(sampleArrayWithDuplicatesUnordered).toUnmodifiableList();
-        assertEquals(Arrays.asList(correspondingOrderedArrayWithoutDuplicates), unmodifiableList);
+        var unmodifiableList = new SkipList<>(sampleListWithDuplicatesUnordered).toUnmodifiableList();
+        assertEquals(correspondingOrderedListWithoutDuplicates.stream().map(SkipListElement::getElement).toList(), unmodifiableList);
         try {
             //noinspection ConstantConditions   // the test asserts that the list is unmodifiable
             unmodifiableList.add(1);
@@ -132,7 +129,63 @@ class SkipListTest {
     @Test
     void testToString() {
         assertEquals(
-                Arrays.asList(correspondingOrderedArrayWithoutDuplicates).toString(),
-                new SkipList<>(sampleArrayWithDuplicatesUnordered).toUnmodifiableList().toString());
+                correspondingOrderedListWithoutDuplicates.toString(),
+                new SkipList<>(sampleListWithDuplicatesUnordered).getList().toString());
+    }
+}
+
+class FakeSkipListElement<T extends Comparable<T>> implements SkipListElement<T> {
+
+    T element;
+    SkipListElement<T> forwardPointer;
+    int forwardedElementIndex;
+
+    FakeSkipListElement(T element, int forwardedElementIndex, SkipListElement<T> forwardPointer) {
+        this.element = element;
+        this.forwardedElementIndex = forwardedElementIndex;
+        this.forwardPointer = forwardPointer;
+    }
+
+    FakeSkipListElement(T element) {
+        this(element, -1, null);
+    }
+
+    static <T extends Comparable<T>> List<SkipListElement<T>> fromElements(T[] elements) {
+        return Arrays.stream(elements)
+                .map(FakeSkipListElement::new)
+                .map(el -> (SkipListElement<T>) el)
+                .toList();
+    }
+
+    @Override
+    public @NotNull SkipListElement<T> setForwardPointer(int i, @Nullable SkipListElement<T> e) {
+        this.forwardPointer = e;
+        this.forwardedElementIndex = i;
+        return this;
+    }
+
+    @Override
+    public @Nullable SkipListElement<T> getForwardedElement() {
+        return forwardPointer;
+    }
+
+    @Override
+    public boolean hasForwardPointer() {
+        return forwardPointer != null;
+    }
+
+    @Override
+    public T getElement() {
+        return element;
+    }
+
+    @Override
+    public int getForwardedIndex() {
+        return forwardedElementIndex;
+    }
+
+    @Override
+    public int compareTo(@NotNull T o) {
+        return element.compareTo(o);
     }
 }

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,12 +30,12 @@ public class PostingList implements Serializable/* TODO: implements Iterable wit
      * @param postings The list of {@link Posting}s.
      */
     public PostingList(@NotNull final Posting... postings) {
-        this.postings = new SkipList<>(Objects.requireNonNull(postings));
+        this.postings = new SkipList<>(Arrays.asList(Objects.requireNonNull(postings)));
     }
 
     /**
      * Merges the {@link PostingList} given as parameter into this one (destructive merging).
-     * Only distinct {@link Posting}s are kept (see {@link Posting#equals(Object)} and the
+     * Only distinct {@link Posting}s are kept (see {@link Posting#equals(Object)}) and the
      * resulting {@link PostingList} (this one) is sorted.
      *
      * @param other The other {@link PostingList} to be merged into this one.

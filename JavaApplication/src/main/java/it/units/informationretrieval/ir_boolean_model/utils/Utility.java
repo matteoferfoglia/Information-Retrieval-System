@@ -263,6 +263,49 @@ public class Utility {
     }
 
     /**
+     * Like {@link #intersectionOfSortedLists(List, List)}, but this method is
+     * specific for {@link SkipList}s.
+     *
+     * @param <T> Type of each element of the {@link  SkipList}s.
+     * @param a   Sorted input list.
+     * @param b   Sorted input list.
+     * @return the {@link SkipList} corresponding to the intersection of the given input lists.
+     */
+    @NotNull
+    public static <T extends Comparable<T>> List<SkipListElement<T>> intersectionOfSortedSkipLists(
+            @NotNull List<SkipListElement<T>> a, @NotNull List<SkipListElement<T>> b) {  // TODO: test and benchmark
+        Objects.requireNonNull(a);
+        Objects.requireNonNull(b);
+
+        ArrayList<SkipListElement<T>> intersection = new ArrayList<>(a.size());
+        int i = 0, j = 0, comparison;
+        while (i < a.size() && j < b.size()) {
+            comparison = a.get(i).compareTo(b.get(j).getElement());
+            if (comparison == 0) {
+                intersection.add(a.get(i++));
+                j++;
+            } else if (comparison < 0) {
+                SkipListElement<T> forwardedElement = a.get(i).getForwardedElement();
+                if (forwardedElement != null && forwardedElement.compareTo(b.get(j).getElement()) < 0) {
+                    i = a.get(i).getForwardedIndex();
+                } else {
+                    i++;
+                }
+            } else {
+                SkipListElement<T> forwardedElement = b.get(j).getForwardedElement();
+                if (forwardedElement != null && forwardedElement.compareTo(a.get(i).getElement()) < 0) {
+                    j = b.get(j).getForwardedIndex();
+                } else {
+                    j++;
+                }
+            }
+        }
+        intersection.trimToSize();
+
+        return intersection;
+    }
+
+    /**
      * Writes given content to the given file.
      * A new file is created if it does not exist.
      *
