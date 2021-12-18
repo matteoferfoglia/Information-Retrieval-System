@@ -139,6 +139,20 @@ public class SkipList<T extends Comparable<T>> implements Serializable {
     }
 
     /**
+     * Compute and return the intersection between this instance and the one given
+     * as parameter, <strong>without</strong> modifying neither this nor the other
+     * input instance.
+     *
+     * @param other The instance of {@link SkipList} to be intersected with this one.
+     * @return a new instance of this class corresponding to the intersection between
+     * this and the other instances.
+     */
+    public SkipList<T> intersect(@NotNull final SkipList<T> other) {
+        return new SkipList<>(
+                Utility.intersectionOfSortedSkipLists(this, Objects.requireNonNull(other)));
+    }
+
+    /**
      * @return an unmodifiable {@link List} containing the element of this instance.
      */
     @Unmodifiable

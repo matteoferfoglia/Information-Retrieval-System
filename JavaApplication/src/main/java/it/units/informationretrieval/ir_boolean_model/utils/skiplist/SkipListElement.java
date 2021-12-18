@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @param <T> The type of the element.
  * @author Matteo Ferfoglia
  */
-public interface SkipListElement<T> extends Serializable, Comparable<T> {
+public interface SkipListElement<T> extends Serializable {
 
     /**
      * @param i The index of the forwarded element in the {@link SkipList}

@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @author Matteo Ferfoglia.
  */
-public class Posting implements SkipListElement<Posting> {
+public class Posting implements SkipListElement<Posting>, Comparable<Posting> {
 
     /**
      * The {@link DocumentIdentifier} of the document associated with this posting.
@@ -115,12 +115,12 @@ public class Posting implements SkipListElement<Posting> {
      * Compares {@link Posting}s according to their {@link DocumentIdentifier}
      * (see {@link DocumentIdentifier#compareTo(DocumentIdentifier)}).
      *
-     * @param posting The posting to be compared with this one.
+     * @param o The posting to be compared with this one.
      * @return the result of the comparison of their {@link DocumentIdentifier}s.
      */
     @Override
-    public int compareTo(@NotNull Posting posting) {
-        return this.docId.compareTo(posting.docId);
+    public int compareTo(@NotNull Posting o) {
+        return this.docId.compareTo(o.docId);
     }
 
     /**

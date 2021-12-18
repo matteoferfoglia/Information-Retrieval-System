@@ -277,27 +277,27 @@ public class Utility {
      */
     @NotNull
     public static <T extends Comparable<T>> List<SkipListElement<T>> intersectionOfSortedSkipLists(
-            @NotNull List<SkipListElement<T>> a, @NotNull List<SkipListElement<T>> b) {  // TODO: test and benchmark
+            @NotNull SkipList<T> a, @NotNull SkipList<T> b) {
         Objects.requireNonNull(a);
         Objects.requireNonNull(b);
 
         ArrayList<SkipListElement<T>> intersection = new ArrayList<>(a.size());
         int i = 0, j = 0, comparison;
         while (i < a.size() && j < b.size()) {
-            comparison = a.get(i).compareTo(b.get(j).getElement());
+            comparison = a.get(i).getElement().compareTo(b.get(j).getElement());
             if (comparison == 0) {
                 intersection.add(a.get(i++));
                 j++;
             } else if (comparison < 0) {
                 SkipListElement<T> forwardedElement = a.get(i).getForwardedElement();
-                if (forwardedElement != null && forwardedElement.compareTo(b.get(j).getElement()) < 0) {
+                if (forwardedElement != null && forwardedElement.getElement().compareTo(b.get(j).getElement()) < 0) {
                     i = a.get(i).getForwardedIndex();
                 } else {
                     i++;
                 }
             } else {
                 SkipListElement<T> forwardedElement = b.get(j).getForwardedElement();
-                if (forwardedElement != null && forwardedElement.compareTo(a.get(i).getElement()) < 0) {
+                if (forwardedElement != null && forwardedElement.getElement().compareTo(a.get(i).getElement()) < 0) {
                     j = b.get(j).getForwardedIndex();
                 } else {
                     j++;

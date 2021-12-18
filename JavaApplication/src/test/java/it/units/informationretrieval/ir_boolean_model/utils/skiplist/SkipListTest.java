@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
@@ -61,6 +62,26 @@ class SkipListTest {
         @Override
         public SkipListElement<Integer> get() {
             return permutationOfElements.get(counter++ % LIST_SIZE_FOR_BENCHMARK);
+        }
+    };
+    private static final Supplier<SkipList<Integer>> skipListOf1000ElementsSupplier = new Supplier<>() {
+        private static final int N_ELEMENTS_EACH_LIST = 1000;
+        private static final int N_CACHED_LISTS = 10;
+        private static final List<SkipList<Integer>> CACHED_LISTS =
+                IntStream.range(0, N_CACHED_LISTS)
+                        .mapToObj(j -> new SkipList<>(
+                                IntStream.iterate(0, i -> i + 1)
+                                        .filter(ignored -> Math.random() < 0.5)
+                                        .limit(N_ELEMENTS_EACH_LIST)
+                                        .mapToObj(FakeSkipListElement::new)
+                                        .map(el -> (SkipListElement<Integer>) el)
+                                        .collect(Collectors.toList())))
+                        .toList();
+        private static int counter = 0;
+
+        @Override
+        public SkipList<Integer> get() {
+            return CACHED_LISTS.get(counter++ % N_CACHED_LISTS);
         }
     };
     private static final String CANONICAL_NAME_OF_SKIP_LIST_INITIALIZER_FOR_BENCHMARK = // pay attention if the path change!
@@ -201,9 +222,50 @@ class SkipListTest {
     void createEmptySkipListAndAssertItsSizeIsZero() {
         assertEquals(0, new SkipList<>().size());
     }
+
+    @Benchmark
+    static void intersectSkipListOf1000Elements() {
+        skipListOf1000ElementsSupplier.get()
+                .intersect(skipListOf1000ElementsSupplier.get());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "1#2#3#4#5#6, 2#5#9, 2#5",
+            ",,",
+            "1#2#3,,",
+            ",1#2#3,"
+    })
+    void intersect(String list1AsString, String list2AsString, String expectedIntersectionAsString) {
+        SkipList<Integer> skipList1 = createSkipListFromStringRepresentingAListOfIntegers(list1AsString);
+        SkipList<Integer> skipList2 = createSkipListFromStringRepresentingAListOfIntegers(list2AsString);
+
+        // test correctness
+        assertEquals(
+                createSkipListFromStringRepresentingAListOfIntegers(expectedIntersectionAsString),
+                skipList1.intersect(skipList2));
+
+        // test commutativity
+        assertEquals(
+                createSkipListFromStringRepresentingAListOfIntegers(expectedIntersectionAsString),
+                skipList2.intersect(skipList1));
+    }
+
+    @NotNull
+    private SkipList<Integer> createSkipListFromStringRepresentingAListOfIntegers(@Nullable String listAsString) {
+        return listAsString == null ?
+                new SkipList<>() :
+                new SkipList<>(
+                        Arrays.stream(listAsString.split("#"))
+                                .map(Integer::parseInt)
+                                .map(FakeSkipListElement::new)
+                                .map(el -> (SkipListElement<Integer>) el)
+                                .toList());
+    }
+
 }
 
-class FakeSkipListElement<T extends Comparable<T>> implements SkipListElement<T> {
+class FakeSkipListElement<T extends Comparable<T>> implements SkipListElement<T>, Comparable<FakeSkipListElement<T>> {
 
     T element;
     SkipListElement<T> forwardPointer;
@@ -269,12 +331,12 @@ class FakeSkipListElement<T extends Comparable<T>> implements SkipListElement<T>
     }
 
     @Override
-    public int compareTo(@NotNull T o) {
-        return element.compareTo(((FakeSkipListElement<T>) o).getElement());
+    public String toString() {
+        return "FakeSkipListElement{" + "element=" + element + '}';
     }
 
     @Override
-    public String toString() {
-        return "FakeSkipListElement{" + "element=" + element + '}';
+    public int compareTo(@NotNull FakeSkipListElement<T> o) {
+        return element.compareTo(o.element);
     }
 }
