@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -185,7 +186,27 @@ class FakeSkipListElement<T extends Comparable<T>> implements SkipListElement<T>
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FakeSkipListElement<?> that = (FakeSkipListElement<?>) o;
+
+        return Objects.equals(element, that.element);
+    }
+
+    @Override
+    public int hashCode() {
+        return element != null ? element.hashCode() : 0;
+    }
+
+    @Override
     public int compareTo(@NotNull T o) {
-        return element.compareTo(o);
+        return element.compareTo(((FakeSkipListElement<T>) o).getElement());
+    }
+
+    @Override
+    public String toString() {
+        return "FakeSkipListElement{" + "element=" + element + '}';
     }
 }

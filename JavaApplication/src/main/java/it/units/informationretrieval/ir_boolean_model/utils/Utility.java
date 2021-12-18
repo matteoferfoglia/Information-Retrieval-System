@@ -132,6 +132,8 @@ public class Utility {
     /**
      * Sort and remove duplicates from the given {@link List} (a new instance
      * is created and returned).
+     * <strong>Important: </strong> in order to correctly remove duplicates,
+     * the equals() method must be defined opportunely.
      *
      * @param <T>  the type of each element of the {@link List}.
      * @param list the input {@link List}

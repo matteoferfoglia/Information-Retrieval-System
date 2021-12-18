@@ -28,7 +28,7 @@ public class SkipList<T extends Comparable<T>> implements Serializable {    // T
      * The list.
      */
     @NotNull
-    private final List<SkipListElement<T>> list;
+    private List<SkipListElement<T>> list;
 
     /**
      * Creates an instance of this class starting from a {@link List}.
@@ -44,7 +44,7 @@ public class SkipList<T extends Comparable<T>> implements Serializable {    // T
      * Sort and remove duplicates from this instance.
      */
     private void sortAndRemoveDuplicates() {
-        Utility.sortAndRemoveDuplicates(list);
+        list = Utility.sortAndRemoveDuplicates(list);
     }
 
     /**
