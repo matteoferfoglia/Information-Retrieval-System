@@ -22,7 +22,7 @@ import java.util.Objects;
  *
  * @author Matteo Ferfoglia
  */
-public class SkipList<T extends Comparable<T>> implements Serializable {    // TODO: benchmark  // TODO: inverted index creation is very very slow with this instance // TODO: some query do not work
+public class SkipList<T extends Comparable<T>> implements Serializable {    // TODO: benchmark
 
     /**
      * The list.
