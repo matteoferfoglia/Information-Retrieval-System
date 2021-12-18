@@ -1,7 +1,5 @@
 package it.units.informationretrieval.ir_boolean_model.utils.skiplist;
 
-import it.units.informationretrieval.ir_boolean_model.utils.SkipList;
-import it.units.informationretrieval.ir_boolean_model.utils.SkipListElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;

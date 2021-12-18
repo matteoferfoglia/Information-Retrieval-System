@@ -1,5 +1,6 @@
-package it.units.informationretrieval.ir_boolean_model.utils;
+package it.units.informationretrieval.ir_boolean_model.utils.skiplist;
 
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 

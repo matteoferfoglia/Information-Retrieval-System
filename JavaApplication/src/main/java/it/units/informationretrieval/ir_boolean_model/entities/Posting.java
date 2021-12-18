@@ -1,6 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
-import it.units.informationretrieval.ir_boolean_model.utils.SkipListElement;
+import it.units.informationretrieval.ir_boolean_model.utils.skiplist.SkipListElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
