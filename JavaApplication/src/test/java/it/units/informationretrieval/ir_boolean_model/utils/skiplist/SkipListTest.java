@@ -1,5 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.utils.skiplist;
 
+import benchmark.Benchmark;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,10 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,9 +27,57 @@ class SkipListTest {
             FakeSkipListElement.fromElements(new Integer[]{-1, 0, 1, 2, 5, 6, 8, 9, 99});
     private static SkipList<Integer> skipList;
 
-    @BeforeEach
-    void createEmptySkipList() {
-        skipList = new SkipList<>(new ArrayList<>());
+    private static final int LIST_SIZE_FOR_BENCHMARK = 10000;
+    private static final List<SkipListElement<Integer>> LIST_FOR_BENCHMARK =
+            IntStream.range(0, LIST_SIZE_FOR_BENCHMARK)
+                    .mapToObj(FakeSkipListElement::new)
+                    .map(el -> (SkipListElement<Integer>) el)
+                    .toList();
+    private static final Supplier<Integer> randomIndexFromLargeSkipListSupplier = new Supplier<>() {
+        private static final List<Integer> permutationOfIndexes =
+                IntStream.range(0, LIST_SIZE_FOR_BENCHMARK).boxed().collect(Collectors.toList());
+        private static int counter = 0;
+
+        static {
+            Collections.shuffle(permutationOfIndexes);
+        }
+
+        @Override
+        public Integer get() {
+            return permutationOfIndexes.get(counter++ % LIST_SIZE_FOR_BENCHMARK);
+        }
+    };
+    private static final Supplier<SkipListElement<Integer>> randomSkipListElementSupplier = new Supplier<>() {
+        private static final List<SkipListElement<Integer>> permutationOfElements =
+                IntStream.range(0, LIST_SIZE_FOR_BENCHMARK)
+                        .mapToObj(FakeSkipListElement::new)
+                        .collect(Collectors.toList());
+        private static int counter = 0;
+
+        static {
+            Collections.shuffle(permutationOfElements);
+        }
+
+        @Override
+        public SkipListElement<Integer> get() {
+            return permutationOfElements.get(counter++ % LIST_SIZE_FOR_BENCHMARK);
+        }
+    };
+    private static final String CANONICAL_NAME_OF_SKIP_LIST_INITIALIZER_FOR_BENCHMARK = // pay attention if the path change!
+            "it.units.informationretrieval.ir_boolean_model.utils.skiplist.SkipListTest.initializeLargeSkipListForBenchmark";
+    private static SkipList<Integer> largeSkipListForBenchmark;
+
+    static {
+        initializeLargeSkipListForBenchmark();
+    }
+
+    private static void initializeLargeSkipListForBenchmark() {
+        largeSkipListForBenchmark = new SkipList<>(LIST_FOR_BENCHMARK);
+    }
+
+    @Benchmark
+    static void testSize() {
+        largeSkipListForBenchmark.size();
     }
 
     private static List<Integer> getExpectedPositionOfForwardPointers(int listSize) {
@@ -36,6 +87,16 @@ class SkipListTest {
                 .filter(i -> i < listSize - 1) // last posting is never a forward pointer
                 .boxed()
                 .toList();
+    }
+
+    @Benchmark(commentToReport = "Take one random element from the list")
+    static void get() {
+        largeSkipListForBenchmark.get(randomIndexFromLargeSkipListSupplier.get());
+    }
+
+    @Benchmark(afterEach = CANONICAL_NAME_OF_SKIP_LIST_INITIALIZER_FOR_BENCHMARK/* re-set setup conditions */)
+    static void addListOfSkipListElements() {
+        largeSkipListForBenchmark.addAll(LIST_FOR_BENCHMARK);
     }
 
     @Test
@@ -80,22 +141,6 @@ class SkipListTest {
         assertEquals(correspondingOrderedListWithoutDuplicates, skipList.getList());
     }
 
-//    @ParameterizedTest    // TODO: re-do this test
-//    @ValueSource(booleans = {true, false})
-//    void hasFirstElementForwardPointer(boolean hasForwardPointer) throws NoSuchFieldException, IllegalAccessException {
-//        skipList.add(0);
-//        assert skipList.size() > 0;   // pre-condition for this test
-//        if (hasForwardPointer) {
-//            Field forwardPointerField = skipList.getClass().getDeclaredField("forwardPointers");
-//            forwardPointerField.setAccessible(true);
-//            @SuppressWarnings("unchecked")// forwardPointers are of the same type as elements in the skipList
-//            var forwardPointerList = (List<Integer>) forwardPointerField.get(skipList);
-//            assert forwardPointerList.size() > 0;
-//            forwardPointerList.set(0, skipList.get(0)/*any non-null value is ok*/);
-//        }
-//        assertEquals(hasForwardPointer, skipList.get(0).hasForwardPointer());
-//    }
-
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2, 3, 10, 1000})
     void size(int numberOfElementsToAdd) {
@@ -130,6 +175,31 @@ class SkipListTest {
         assertEquals(
                 correspondingOrderedListWithoutDuplicates.toString(),
                 new SkipList<>(sampleListWithDuplicatesUnordered).getList().toString());
+    }
+
+    @Benchmark(afterEach = CANONICAL_NAME_OF_SKIP_LIST_INITIALIZER_FOR_BENCHMARK/* re-set setup conditions */)
+    static void addSkipList() {
+        largeSkipListForBenchmark.addAll(largeSkipListForBenchmark);
+    }
+
+    @BeforeEach
+    void createEmptySkipList() {
+        skipList = new SkipList<>();
+    }
+
+    @Benchmark(afterEach = CANONICAL_NAME_OF_SKIP_LIST_INITIALIZER_FOR_BENCHMARK/* re-set setup conditions */)
+    static void add() {
+        largeSkipListForBenchmark.add(randomSkipListElementSupplier.get());
+    }
+
+    @Benchmark
+    static void toUnmodifiableListBenchmark() {
+        largeSkipListForBenchmark.toUnmodifiableList();
+    }
+
+    @Test
+    void createEmptySkipListAndAssertItsSizeIsZero() {
+        assertEquals(0, new SkipList<>().size());
     }
 }
 

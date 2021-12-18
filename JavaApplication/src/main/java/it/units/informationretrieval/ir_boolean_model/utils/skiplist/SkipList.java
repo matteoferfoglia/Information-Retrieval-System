@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,7 +24,7 @@ import java.util.Objects;
  *
  * @author Matteo Ferfoglia
  */
-public class SkipList<T extends Comparable<T>> implements Serializable {    // TODO: benchmark
+public class SkipList<T extends Comparable<T>> implements Serializable {
 
     /**
      * The list.
@@ -39,6 +40,13 @@ public class SkipList<T extends Comparable<T>> implements Serializable {    // T
     public SkipList(@NotNull List<SkipListElement<T>> elements) {
         this.list = elements;
         setForwardPointers();
+    }
+
+    /**
+     * Constructor. Creates an empty instance of this class.
+     */
+    public SkipList() {
+        this(new ArrayList<>());
     }
 
     /**
