@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @param <T> The type of the element.
  * @author Matteo Ferfoglia
  */
-public interface SkipListElement<T> extends Serializable {
+public interface SkipListElement<T> extends Serializable { // TODO: fusion of skiplistelement with posting and skiplist with postinglist to see if performances improve
 
     /**
      * @param i The index of the forwarded element in the {@link SkipList}
