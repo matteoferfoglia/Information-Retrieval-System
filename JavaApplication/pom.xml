@@ -234,7 +234,7 @@
         <dependency><!-- Benchmark -->
             <groupId>com.github.matteoferfoglia</groupId>
             <artifactId>java-benchmark</artifactId>
-            <version>1.3.2</version>
+            <version>2.0.1</version>
         </dependency>
     </dependencies>
 
