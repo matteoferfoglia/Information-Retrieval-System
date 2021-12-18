@@ -167,9 +167,9 @@ public class Posting implements SkipListElement<Posting> {
     @Override
     @NotNull
     public SkipListElement<Posting> setForwardPointer(
-            int forwardedElementIndex, @NotNull final SkipListElement<Posting> e) {
-        this.forwardPointer = Objects.requireNonNull(e);
+            int forwardedElementIndex, @Nullable final SkipListElement<Posting> e) {
         this.forwardedElementIndex = forwardedElementIndex;
+        this.forwardPointer = e;
         return this;
     }
 
