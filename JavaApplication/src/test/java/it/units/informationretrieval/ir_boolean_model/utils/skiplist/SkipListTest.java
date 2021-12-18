@@ -75,11 +75,6 @@ class SkipListTest {
         largeSkipListForBenchmark = new SkipList<>(LIST_FOR_BENCHMARK);
     }
 
-    @Benchmark
-    static void testSize() {
-        largeSkipListForBenchmark.size();
-    }
-
     private static List<Integer> getExpectedPositionOfForwardPointers(int listSize) {
         int expectedNumberOfForwardPointers = (int) Math.ceil(Math.sqrt(listSize));
         return IntStream.range(0, listSize)
@@ -89,26 +84,19 @@ class SkipListTest {
                 .toList();
     }
 
-    @Benchmark(commentToReport = "Take one random element from the list")
-    static void get() {
-        largeSkipListForBenchmark.get(randomIndexFromLargeSkipListSupplier.get());
-    }
-
     @Benchmark(afterEach = CANONICAL_NAME_OF_SKIP_LIST_INITIALIZER_FOR_BENCHMARK/* re-set setup conditions */)
     static void addListOfSkipListElements() {
         largeSkipListForBenchmark.addAll(LIST_FOR_BENCHMARK);
     }
 
-    @Test
-    void createSkipListAndAssertThatCorrectNumberOfForwardPointersAreSet() {
-        skipList = new SkipList<>(sampleListWithDuplicatesUnordered);
-        assertThatCorrectNumberOfForwardPointersIsPresent();
+    @Benchmark
+    static void testSize() {
+        largeSkipListForBenchmark.size();
     }
 
-    @Test
-    void createSkipListAndAssertThatForwardPointersAreSetAtCorrectPosition() {
-        skipList = new SkipList<>(sampleListWithDuplicatesUnordered);
-        assertThatForwardPointersAreSetAtCorrectPositions();
+    @Benchmark(commentToReport = "Take one random element from the list")
+    static void get() {
+        largeSkipListForBenchmark.get(randomIndexFromLargeSkipListSupplier.get());
     }
 
     private void assertThatForwardPointersAreSetAtCorrectPositions() {
@@ -130,8 +118,15 @@ class SkipListTest {
         assertEquals(expectedNumberOfForwardPointers, actualNumberOfForwardPointers);
     }
 
-    private void assertThatForwardPointersAreCorrectlySet() {
+    @Test
+    void createSkipListAndAssertThatCorrectNumberOfForwardPointersAreSet() {
+        skipList = new SkipList<>(sampleListWithDuplicatesUnordered);
         assertThatCorrectNumberOfForwardPointersIsPresent();
+    }
+
+    @Test
+    void createSkipListAndAssertThatForwardPointersAreSetAtCorrectPosition() {
+        skipList = new SkipList<>(sampleListWithDuplicatesUnordered);
         assertThatForwardPointersAreSetAtCorrectPositions();
     }
 
@@ -182,9 +177,9 @@ class SkipListTest {
         largeSkipListForBenchmark.addAll(largeSkipListForBenchmark);
     }
 
-    @BeforeEach
-    void createEmptySkipList() {
-        skipList = new SkipList<>();
+    private void assertThatForwardPointersAreCorrectlySet() {
+        assertThatCorrectNumberOfForwardPointersIsPresent();
+        assertThatForwardPointersAreSetAtCorrectPositions();
     }
 
     @Benchmark(afterEach = CANONICAL_NAME_OF_SKIP_LIST_INITIALIZER_FOR_BENCHMARK/* re-set setup conditions */)
@@ -195,6 +190,11 @@ class SkipListTest {
     @Benchmark
     static void toUnmodifiableListBenchmark() {
         largeSkipListForBenchmark.toUnmodifiableList();
+    }
+
+    @BeforeEach
+    void createEmptySkipList() {
+        skipList = new SkipList<>();
     }
 
     @Test
