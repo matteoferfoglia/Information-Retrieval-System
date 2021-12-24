@@ -1,6 +1,7 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
 import it.units.informationretrieval.ir_boolean_model.utils.skiplist.SkipList;
+import it.units.informationretrieval.ir_boolean_model.utils.skiplist.SkipListElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,8 +52,8 @@ public class PostingList implements Serializable/* TODO: implements Iterable wit
      * @return This instance as unmodifiable {@link List} of {@link Posting}s.
      */
     @NotNull
-    public List<Posting> toListOfPostings() {
-        return postings.toUnmodifiableList();
+    public List<Posting> toUnmodifiableListOfPostings() {
+        return postings.getList().stream().map(SkipListElement::getElement).toList();
     }
 
     /**

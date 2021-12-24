@@ -231,6 +231,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency><!-- SkipList -->
+            <groupId>com.github.matteoferfoglia</groupId>
+            <artifactId>skiplist</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
         <dependency><!-- Benchmark -->
             <groupId>com.github.matteoferfoglia</groupId>
             <artifactId>java-benchmark</artifactId>

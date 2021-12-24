@@ -58,7 +58,7 @@ public class InformationRetrievalSystem implements Serializable {
      */
     @NotNull
     public List<Posting> getListOfPostingForToken(@NotNull final String normalizedToken) {
-        return invertedIndex.getPostingListForToken(normalizedToken).toListOfPostings();
+        return invertedIndex.getPostingListForToken(normalizedToken).toUnmodifiableListOfPostings();
     }
 
     @NotNull

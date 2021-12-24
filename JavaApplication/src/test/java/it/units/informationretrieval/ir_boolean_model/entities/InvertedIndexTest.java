@@ -175,7 +175,7 @@ public class InvertedIndexTest {
                 .stream()
                 .map(tokenFromIndex -> new AbstractMap.SimpleEntry<>(
                         tokenFromIndex,
-                        invertedIndex.getPostingListForToken(tokenFromIndex).toListOfPostings()))
+                        invertedIndex.getPostingListForToken(tokenFromIndex).toUnmodifiableListOfPostings()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -197,7 +197,7 @@ public class InvertedIndexTest {
                 .forEach(tokenFromDictionaryOfCreatedInvertedIndex -> {
                     var createdListOfPostings = invertedIndexForTests
                             .getPostingListForToken(tokenFromDictionaryOfCreatedInvertedIndex)
-                            .toListOfPostings();
+                            .toUnmodifiableListOfPostings();
                     var expectedListOfPostings =
                             expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings
                                     .get(tokenFromDictionaryOfCreatedInvertedIndex);
@@ -232,6 +232,6 @@ public class InvertedIndexTest {
                 .forEach((token, listOfPostings) ->
                         assertEquals(
                                 listOfPostings,
-                                invertedIndexForTests.getPostingListForToken(token).toListOfPostings()));
+                                invertedIndexForTests.getPostingListForToken(token).toUnmodifiableListOfPostings()));
     }
 }
