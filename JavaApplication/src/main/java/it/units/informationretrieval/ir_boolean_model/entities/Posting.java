@@ -1,9 +1,8 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
-import it.units.informationretrieval.ir_boolean_model.utils.skiplist.SkipListElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Objects;
@@ -13,7 +12,7 @@ import java.util.Objects;
  *
  * @author Matteo Ferfoglia.
  */
-public class Posting implements SkipListElement<Posting>, Comparable<Posting> {
+public class Posting implements Comparable<Posting>, Serializable {
 
     /**
      * The {@link DocumentIdentifier} of the document associated with this posting.
@@ -31,19 +30,6 @@ public class Posting implements SkipListElement<Posting>, Comparable<Posting> {
      * Array of positions in the document where the term appears.
      */
     private final int[] termPositionsInTheDocument;
-
-    /**
-     * The forward pointer.
-     */
-    @Nullable
-    private SkipListElement<Posting> forwardPointer;
-
-    /**
-     * The index in the {@link PostingList} of the element
-     * forwarded by this instance.
-     */
-    private int forwardedElementIndex;
-
 
     /**
      * Constructor. Given a {@link DocumentIdentifier}, creates a new instance of this class.
@@ -164,33 +150,4 @@ public class Posting implements SkipListElement<Posting>, Comparable<Posting> {
         return docId.hashCode();
     }
 
-    @Override
-    @NotNull
-    public SkipListElement<Posting> setForwardPointer(
-            int forwardedElementIndex, @Nullable final SkipListElement<Posting> e) {
-        this.forwardedElementIndex = forwardedElementIndex;
-        this.forwardPointer = e;
-        return this;
-    }
-
-    @Override
-    @Nullable
-    public SkipListElement<Posting> getForwardedElement() {
-        return this.forwardPointer;
-    }
-
-    @Override
-    public boolean hasForwardPointer() {
-        return this.forwardPointer != null;
-    }
-
-    @Override
-    public Posting getElement() {
-        return this;
-    }
-
-    @Override
-    public int getForwardedIndex() {
-        return hasForwardPointer() ? forwardedElementIndex : -1;
-    }
 }

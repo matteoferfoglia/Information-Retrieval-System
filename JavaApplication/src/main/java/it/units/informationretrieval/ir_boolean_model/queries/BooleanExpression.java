@@ -385,7 +385,7 @@ public class BooleanExpression {
                                 listOfPostings2 = listOfPostings2.stream().sorted().toList();
 
                                 return switch (Objects.requireNonNull(binaryOperator)) {
-                                    case AND -> Utility.intersectionOfSortedLists(listOfPostings1, listOfPostings2);
+                                    case AND -> Utility.intersectionOfSkipLists(listOfPostings1, listOfPostings2);
                                     case OR -> Utility.unionOfSortedLists(listOfPostings1, listOfPostings2);
                                     //noinspection UnnecessaryDefault
                                     default -> throw new UnsupportedOperationException("Unknown operator");

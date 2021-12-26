@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import skiplist.SkipList;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -67,6 +68,30 @@ class UtilityTest {
             return CACHED_LISTS.get(counter++ % NUMBER_OF_PRECOMPUTED_CACHED_LISTS);
         }
     };
+    private static final Supplier<SkipList<Integer>> LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER = new Supplier<>() {
+        private static final int NUMBER_OF_ELEMENTS_OF_EACH_LISTS = 1000;
+        private static final int NUMBER_OF_PRECOMPUTED_CACHED_LISTS = 1000;
+        private static final Supplier<SkipList<Integer>> listsSupplier = () -> {
+            SkipList<Integer> skipList = new SkipList<>();
+            skipList.addAll(
+                    IntStream.iterate(0, i -> i + 1)
+                            .filter(ignored -> Math.random() < 0.5)
+                            .limit(NUMBER_OF_ELEMENTS_OF_EACH_LISTS)
+                            .boxed()
+                            .collect(Collectors.toList()));
+            return skipList;
+        };
+        private static final List<SkipList<Integer>> CACHED_LISTS =
+                IntStream.range(0, NUMBER_OF_PRECOMPUTED_CACHED_LISTS)
+                        .mapToObj(i -> listsSupplier.get())
+                        .collect(Collectors.toList());
+        private static int counter = 0;
+
+        @Override
+        public SkipList<Integer> get() {
+            return CACHED_LISTS.get(counter++ % NUMBER_OF_PRECOMPUTED_CACHED_LISTS);
+        }
+    };
     private static Document LONG_DOCUMENT;
     private static String LONG_DOCUMENT_CONTENT;
 
@@ -78,6 +103,71 @@ class UtilityTest {
         } catch (IOException | URISyntaxException e) {
             fail(e);
         }
+    }
+
+    @Benchmark(
+            warmUpIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
+            iterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
+            tearDownIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
+            commentToReport = COMMENT_FOR_BENCHMARKS)
+    static void tokenizeLongDocument() {
+        Utility.tokenize(LONG_DOCUMENT);
+    }
+
+    @Benchmark(
+            warmUpIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
+            iterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
+            tearDownIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
+            commentToReport = COMMENT_FOR_BENCHMARKS)
+    static void normalizeLongDocument() {
+        Utility.normalize(LONG_DOCUMENT_CONTENT);
+    }
+
+    @Benchmark
+    static void convertObjectWith3AttributesFromJsonToMap() throws JsonProcessingException {
+        final String JSON_SAMPLE = "{\"a\": 1, \"b\":\"5\", \"c\": \"foo  bar \"}";
+        final Map<String, ?> EXPECTED_MAP = new HashMap<>() {{
+            put("a", 1);
+            put("b", "5");
+            put("c", "foo  bar ");
+        }};
+        assertEquals(EXPECTED_MAP, Utility.convertFromJsonToMap(JSON_SAMPLE));
+    }
+
+    @Benchmark
+    static void convertMapOf3EntriesToJson() throws JsonProcessingException {
+        final Map<String, ?> SAMPLE_MAP = new HashMap<>() {{
+            put("a", 1);
+            put("b", "5");
+            put("c", "foo  bar ");
+        }};
+        final String EXPECTED_JSON = "{\"a\":1,\"b\":\"5\",\"c\":\"foo  bar \"}";
+        assertEquals(EXPECTED_JSON, Utility.convertToJson(SAMPLE_MAP));
+    }
+
+    @Benchmark
+    static void sortAndRemoveDuplicatesOnListOf1000RandomInts() {
+        Utility.sortAndRemoveDuplicates(LIST_OF_1000_RANDOM_INTS_SUPPLIER.get());
+    }
+
+    @Benchmark
+    static void unionOfTwoSortedListsOf1000RandomIntsEachOne() {
+        Utility.unionOfSortedLists(LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get());
+    }
+
+    @Benchmark
+    static void intersectionOfTwoSortedListsOf1000RandomIntsEachOne() {
+        Utility.intersectionOfSkipLists(LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get());
+    }
+
+    @Benchmark
+    static void unionOfTwoSkipListsOf1000RandomIntsEachOne() {
+        Utility.unionOfSkipLists(LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get());
+    }
+
+    @Benchmark
+    static void intersectionOfTwoSkipListsOf1000RandomIntsEachOne() {
+        Utility.intersectionOfSkipLists(LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get());
     }
 
     @ParameterizedTest
@@ -132,60 +222,10 @@ class UtilityTest {
                 Arrays.asList(Utility.tokenize(document)));
     }
 
-    @Benchmark(
-            warmUpIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
-            iterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
-            tearDownIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
-            commentToReport = COMMENT_FOR_BENCHMARKS)
-    static void tokenizeLongDocument() {
-        Utility.tokenize(LONG_DOCUMENT);
-    }
-
     @ParameterizedTest
     @CsvSource({"Foo  bar, foo bar"})
     void normalize(String input, String expectedOutput) {
         assertEquals(expectedOutput, Utility.normalize(input));
-    }
-
-    @Benchmark(
-            warmUpIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
-            iterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
-            tearDownIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
-            commentToReport = COMMENT_FOR_BENCHMARKS)
-    static void normalizeLongDocument() {
-        Utility.normalize(LONG_DOCUMENT_CONTENT);
-    }
-
-    @Benchmark
-    static void convertObjectWith3AttributesFromJsonToMap() throws JsonProcessingException {
-        final String JSON_SAMPLE = "{\"a\": 1, \"b\":\"5\", \"c\": \"foo  bar \"}";
-        final Map<String, ?> EXPECTED_MAP = new HashMap<>() {{
-            put("a", 1);
-            put("b", "5");
-            put("c", "foo  bar ");
-        }};
-        assertEquals(EXPECTED_MAP, Utility.convertFromJsonToMap(JSON_SAMPLE));
-    }
-
-    @Benchmark
-    static void convertMapOf3EntriesToJson() throws JsonProcessingException {
-        final Map<String, ?> SAMPLE_MAP = new HashMap<>() {{
-            put("a", 1);
-            put("b", "5");
-            put("c", "foo  bar ");
-        }};
-        final String EXPECTED_JSON = "{\"a\":1,\"b\":\"5\",\"c\":\"foo  bar \"}";
-        assertEquals(EXPECTED_JSON, Utility.convertToJson(SAMPLE_MAP));
-    }
-
-    @Benchmark
-    static void sortAndRemoveDuplicatesOnListOf1000RandomInts() {
-        Utility.sortAndRemoveDuplicates(LIST_OF_1000_RANDOM_INTS_SUPPLIER.get());
-    }
-
-    @Benchmark
-    static void unionOfTwoSortedListsOf1000RandomIntsEachOne() {
-        Utility.unionOfSortedLists(LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get());
     }
 
     @ParameterizedTest
@@ -199,11 +239,6 @@ class UtilityTest {
     @NotNull
     private List<String> getListFromString(String inputListAsString) {
         return Arrays.asList(inputListAsString.split("#"));
-    }
-
-    @Benchmark
-    static void intersectionOfTwoSortedListsOf1000RandomIntsEachOne() {
-        Utility.intersectionOfSortedLists(LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get());
     }
 
     @ParameterizedTest
@@ -224,7 +259,7 @@ class UtilityTest {
     void intersectionOfSortedLists(String inputList1AsString, String inputList2AsString, String expectedIntersectionListAsString) {
         assertEquals(
                 getListFromString(expectedIntersectionListAsString),
-                Utility.intersectionOfSortedLists(getListFromString(inputList1AsString), getListFromString(inputList2AsString)));
+                Utility.intersectionOfSkipLists(getListFromString(inputList1AsString), getListFromString(inputList2AsString)));
     }
 
     @Test

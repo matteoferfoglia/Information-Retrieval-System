@@ -1,14 +1,12 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
-import it.units.informationretrieval.ir_boolean_model.utils.skiplist.SkipList;
-import it.units.informationretrieval.ir_boolean_model.utils.skiplist.SkipListElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import skiplist.SkipList;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Class representing a {@link PostingList}.
@@ -26,12 +24,13 @@ public class PostingList implements Serializable/* TODO: implements Iterable wit
 
     /**
      * Constructor.
-     * Creates a new instance of this class starting from the given of {@link Posting}s.
+     * Creates a new instance of this class starting from the given {@link Posting}s.
      *
      * @param postings The list of {@link Posting}s.
      */
     public PostingList(@NotNull final Posting... postings) {
-        this.postings = new SkipList<>(Arrays.asList(Objects.requireNonNull(postings)));
+        this.postings = new SkipList<>();
+        this.postings.addAll(Arrays.asList(postings));
     }
 
     /**
@@ -45,7 +44,7 @@ public class PostingList implements Serializable/* TODO: implements Iterable wit
         if (other == null) {
             return;
         }
-        this.postings.addAll(other.postings);
+        this.postings.merge(other.postings);
     }
 
     /**
@@ -53,7 +52,7 @@ public class PostingList implements Serializable/* TODO: implements Iterable wit
      */
     @NotNull
     public List<Posting> toUnmodifiableListOfPostings() {
-        return postings.getList().stream().map(SkipListElement::getElement).toList();
+        return postings.stream().toList();
     }
 
     /**

@@ -3,10 +3,9 @@ package it.units.informationretrieval.ir_boolean_model.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
-import it.units.informationretrieval.ir_boolean_model.utils.skiplist.SkipList;
-import it.units.informationretrieval.ir_boolean_model.utils.skiplist.SkipListElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import skiplist.SkipList;
 
 import java.io.File;
 import java.io.IOException;
@@ -217,7 +216,8 @@ public class Utility {
      */
     @NotNull
     public static <T extends Comparable<T>> List<T> unionOfSortedLists(@NotNull List<T> a, @NotNull List<T> b) {
-        ArrayList<T> union = new ArrayList<>(Objects.requireNonNull(a).size() + Objects.requireNonNull(b).size());
+        ArrayList<T> union = new ArrayList<>(
+                Objects.requireNonNull(a).size() + Objects.requireNonNull(b).size());
         int i = 0, j = 0, comparison;
         while (i < a.size() && j < b.size()) {
             comparison = a.get(i).compareTo(b.get(j));
@@ -243,7 +243,7 @@ public class Utility {
      * @return the {@link List} corresponding to the intersection of the given input lists.
      */
     @NotNull
-    public static <T extends Comparable<T>> List<T> intersectionOfSortedLists(
+    public static <T extends Comparable<T>> List<T> intersectionOfSkipLists(
             @NotNull List<T> a, @NotNull List<T> b) {
         Objects.requireNonNull(a);
         Objects.requireNonNull(b);
@@ -267,7 +267,7 @@ public class Utility {
     }
 
     /**
-     * Like {@link #intersectionOfSortedLists(List, List)}, but this method is
+     * Like {@link #intersectionOfSkipLists(List, List)}, but this method is
      * specific for {@link SkipList}s.
      *
      * @param <T> Type of each element of the {@link  SkipList}s.
@@ -276,37 +276,24 @@ public class Utility {
      * @return the {@link SkipList} corresponding to the intersection of the given input lists.
      */
     @NotNull
-    public static <T extends Comparable<T>> List<SkipListElement<T>> intersectionOfSortedSkipLists(
+    public static <T extends Comparable<T>> SkipList<T> intersectionOfSortedSkipLists(
             @NotNull SkipList<T> a, @NotNull SkipList<T> b) {
-        Objects.requireNonNull(a);
-        Objects.requireNonNull(b);
+        return SkipList.intersection(a, b);
+    }
 
-        ArrayList<SkipListElement<T>> intersection = new ArrayList<>(a.size());
-        int i = 0, j = 0, comparison;
-        while (i < a.size() && j < b.size()) {
-            comparison = a.get(i).getElement().compareTo(b.get(j).getElement());
-            if (comparison == 0) {
-                intersection.add(a.get(i++));
-                j++;
-            } else if (comparison < 0) {
-                SkipListElement<T> forwardedElement = a.get(i).getForwardedElement();
-                if (forwardedElement != null && forwardedElement.getElement().compareTo(b.get(j).getElement()) < 0) {
-                    i = a.get(i).getForwardedIndex();
-                } else {
-                    i++;
-                }
-            } else {
-                SkipListElement<T> forwardedElement = b.get(j).getForwardedElement();
-                if (forwardedElement != null && forwardedElement.getElement().compareTo(a.get(i).getElement()) < 0) {
-                    j = b.get(j).getForwardedIndex();
-                } else {
-                    j++;
-                }
-            }
-        }
-        intersection.trimToSize();
-
-        return intersection;
+    /**
+     * Like {@link #unionOfSortedLists(List, List)}, but this method is
+     * specific for {@link SkipList}s.
+     *
+     * @param <T> Type of each element of the {@link  SkipList}s.
+     * @param a   Sorted input list.
+     * @param b   Sorted input list.
+     * @return the {@link SkipList} corresponding to the union of the given input lists.
+     */
+    @NotNull
+    public static <T extends Comparable<T>> SkipList<T> unionOfSkipLists(
+            @NotNull SkipList<T> a, @NotNull SkipList<T> b) {
+        return SkipList.union(a, b);
     }
 
     /**
