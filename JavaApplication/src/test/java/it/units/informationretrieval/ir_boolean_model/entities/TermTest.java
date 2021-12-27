@@ -143,8 +143,10 @@ class TermTest {
     @Test
     void merge() {
         examplesOfTermsToBeMergedAndExpectedMerged
-                .forEach((termsToBeMerged, expectedMergedTerm) ->
-                        assertEquals(expectedMergedTerm, termsToBeMerged.stream().reduce(Term::merge).orElseThrow()));
+                .forEach((termsToBeMerged, expectedMergedTerm) -> {
+                    var actualMergedTerm = termsToBeMerged.stream().reduce(Term::merge).orElseThrow();
+                    assertEquals(expectedMergedTerm, actualMergedTerm);
+                });
     }
 
     @Test
