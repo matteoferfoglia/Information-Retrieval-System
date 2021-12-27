@@ -243,7 +243,7 @@ public class Utility {
      * @return the {@link List} corresponding to the intersection of the given input lists.
      */
     @NotNull
-    public static <T extends Comparable<T>> List<T> intersectionOfSkipLists(
+    public static <T extends Comparable<T>> List<T> intersectionOfSortedLists(
             @NotNull List<T> a, @NotNull List<T> b) {
         Objects.requireNonNull(a);
         Objects.requireNonNull(b);
@@ -267,33 +267,33 @@ public class Utility {
     }
 
     /**
-     * Like {@link #intersectionOfSkipLists(List, List)}, but this method is
+     * Like {@link #intersectionOfSortedLists(List, List)}, but this method is
      * specific for {@link SkipList}s.
      *
-     * @param <T> Type of each element of the {@link  SkipList}s.
-     * @param a   Sorted input list.
-     * @param b   Sorted input list.
+     * @param <T>              Type of each element of the {@link  SkipList}s.
+     * @param listsToIntersect The lists to intersect.
      * @return the {@link SkipList} corresponding to the intersection of the given input lists.
      */
+    @SafeVarargs
     @NotNull
-    public static <T extends Comparable<T>> SkipList<T> intersectionOfSortedSkipLists(
-            @NotNull SkipList<T> a, @NotNull SkipList<T> b) {
-        return SkipList.intersection(a, b);
+    public static <T extends Comparable<T>> SkipList<T> intersection(
+            @NotNull SkipList<T>... listsToIntersect) {
+        return SkipList.intersection(listsToIntersect);
     }
 
     /**
      * Like {@link #unionOfSortedLists(List, List)}, but this method is
      * specific for {@link SkipList}s.
      *
-     * @param <T> Type of each element of the {@link  SkipList}s.
-     * @param a   Sorted input list.
-     * @param b   Sorted input list.
+     * @param <T>          Type of each element of the {@link  SkipList}s.
+     * @param listsToUnion The lists for which the union will be computed.
      * @return the {@link SkipList} corresponding to the union of the given input lists.
      */
+    @SafeVarargs
     @NotNull
-    public static <T extends Comparable<T>> SkipList<T> unionOfSkipLists(
-            @NotNull SkipList<T> a, @NotNull SkipList<T> b) {
-        return SkipList.union(a, b);
+    public static <T extends Comparable<T>> SkipList<T> union(
+            @NotNull SkipList<T>... listsToUnion) {
+        return SkipList.union(listsToUnion);
     }
 
     /**

@@ -5,6 +5,7 @@ import it.units.informationretrieval.ir_boolean_model.entities.*;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import skiplist.SkipList;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,20 +36,38 @@ public class BooleanExpression {
      * See the description of {@link BooleanExpression this class}.
      */
     private final boolean isAggregated;
-
+    /**
+     * The left-child (first) expression to evaluateBothSimpleAndAggregatedExpressionRecursively (for aggregated expressions).
+     */
+    @Nullable   // if this expression is not aggregated
+    private final BooleanExpression leftChildOperand;
+    /**
+     * The right-child (second) expression to evaluateBothSimpleAndAggregatedExpressionRecursively (for aggregated expressions).
+     */
+    @Nullable   // if this expression is not aggregated
+    private final BooleanExpression rightChildOperand;
+    /**
+     * The {@link BINARY_OPERATOR} to apply to this instance.
+     * It must be null if this is a non-aggregated instance.
+     */
+    @Nullable   // if this expression is not aggregated
+    private final BINARY_OPERATOR binaryOperator;
+    /**
+     * The {@link InformationRetrievalSystem} to use for evaluating this instance.
+     */
+    @NotNull
+    private final InformationRetrievalSystem informationRetrievalSystem;
     /**
      * The value to match.
      */
     @Nullable   // if there is matching phrase
     private String matchingValue;
-
     /**
      * The phrase to match (for a phrasal query), as a {@link List} of
      * {@link String}s.
      */
     @Nullable   // if there is matching value
     private List<String> matchingPhrase;
-
     /**
      * If this instance has to match a phrase, this attribute (which has the size
      * of {@link #matchingPhrase} -1) specifies at the k-th position the maximum
@@ -57,37 +76,11 @@ public class BooleanExpression {
      */
     @Nullable   // if the matchingPhrase is null
     private List<Integer> matchingPhraseMaxDistance;
-
-    /**
-     * The left-child (first) expression to evaluateBothSimpleAndAggregatedExpressionRecursively (for aggregated expressions).
-     */
-    @Nullable   // if this expression is not aggregated
-    private final BooleanExpression leftChildOperand;
-
-    /**
-     * The right-child (second) expression to evaluateBothSimpleAndAggregatedExpressionRecursively (for aggregated expressions).
-     */
-    @Nullable   // if this expression is not aggregated
-    private final BooleanExpression rightChildOperand;
-
     /**
      * The {@link UNARY_OPERATOR} to apply to this instance.
      */
     @NotNull
     private UNARY_OPERATOR unaryOperator = UNARY_OPERATOR.IDENTITY;// default is the unary operator
-
-    /**
-     * The {@link BINARY_OPERATOR} to apply to this instance.
-     * It must be null if this is a non-aggregated instance.
-     */
-    @Nullable   // if this expression is not aggregated
-    private final BINARY_OPERATOR binaryOperator;
-
-    /**
-     * The {@link InformationRetrievalSystem} to use for evaluating this instance.
-     */
-    @NotNull
-    private final InformationRetrievalSystem informationRetrievalSystem;
 
     /**
      * Constructor. Creates a non-aggregated expression.
@@ -352,7 +345,7 @@ public class BooleanExpression {
      * @throws UnsupportedOperationException If the operator for the expression is unknown.
      */
     @NotNull
-    private List<Posting> evaluateBothSimpleAndAggregatedExpressionRecursively()
+    private SkipList<Posting> evaluateBothSimpleAndAggregatedExpressionRecursively()
             throws UnsupportedOperationException {
 
         return switch (unaryOperator) {
@@ -364,12 +357,15 @@ public class BooleanExpression {
                                 .setUnaryOperator(UNARY_OPERATOR.IDENTITY)
                                 .evaluateBothSimpleAndAggregatedExpressionRecursively()
                                 .stream().map(Posting::getDocId).toList();
-                yield informationRetrievalSystem.getAllDocIds()
+                SkipList<Posting> postings = new SkipList<>();
+                var postings_ = informationRetrievalSystem.getAllDocIds()
                         .stream().unordered().parallel()
                         .filter(docId -> !listOfDocIdToBeExcluded.contains(docId))
                         .map(docId -> new Posting(docId, new int[0]/*TODO: positions NOT handled!!!!!*/))
-                        .sorted()
                         .toList();
+                postings.setMaxListLevel(Math.max(1, (int) Math.round(Math.log(postings_.size()) / Math.log(0.5))));
+                postings.addAll(postings_);  // TODO: create constructor in SkipList which takes a collection and sets the best SkipList level according to the collection size
+                yield postings;
             }
             case IDENTITY -> {
                 if (isAggregated) {
@@ -381,26 +377,32 @@ public class BooleanExpression {
                             .map(BooleanExpression::evaluateBothSimpleAndAggregatedExpressionRecursively)
                             .reduce((listOfPostings1, listOfPostings2) -> {
 
-                                listOfPostings1 = listOfPostings1.stream().sorted().toList();
-                                listOfPostings2 = listOfPostings2.stream().sorted().toList();
+                                SkipList<Posting> postings1 = new SkipList<>();
+                                postings1.setMaxListLevel(Math.max(1, (int) Math.round(Math.log(listOfPostings1.size()) / Math.log(0.5))));
+                                SkipList<Posting> postings2 = new SkipList<>();
+                                postings2.setMaxListLevel(Math.max(1, (int) Math.round(Math.log(listOfPostings2.size()) / Math.log(0.5))));
+                                postings1.addAll(listOfPostings1);  // TODO: create constructor in SkipList which takes a collection and sets the best SkipList level according to the collection size
+                                postings2.addAll(listOfPostings2);
 
                                 return switch (Objects.requireNonNull(binaryOperator)) {
-                                    case AND -> Utility.intersectionOfSkipLists(listOfPostings1, listOfPostings2);
-                                    case OR -> Utility.unionOfSortedLists(listOfPostings1, listOfPostings2);
+                                    case AND -> Utility.intersection(postings1, postings2);
+                                    case OR -> Utility.union(postings1, postings2);
                                     //noinspection UnnecessaryDefault
                                     default -> throw new UnsupportedOperationException("Unknown operator");
                                 };
                             })
-                            .orElse(new ArrayList<>());
+                            .orElse(new SkipList<>());
 
                 } else {
                     if (isMatchingValueSet()) {
                         String normalizedToken = Utility.normalize(matchingValue);
                         if (normalizedToken == null) {
                             // The normalization return null, then no matches
-                            yield new ArrayList<>();
+                            yield new SkipList<>();
                         } else {
-                            yield informationRetrievalSystem.getListOfPostingForToken(normalizedToken);
+                            SkipList<Posting> postings = new SkipList<>();  // TODO: create constructor in SkipList which takes a collection and sets the best SkipList level according to the collection size
+                            postings.addAll(informationRetrievalSystem.getListOfPostingForToken(normalizedToken));
+                            yield postings;
                         }
                     } else if (isMatchingPhraseSet()) {
                         throw new UnsupportedOperationException("Not implemented yet");

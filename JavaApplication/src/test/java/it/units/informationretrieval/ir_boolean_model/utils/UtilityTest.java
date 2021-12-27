@@ -157,17 +157,45 @@ class UtilityTest {
 
     @Benchmark
     static void intersectionOfTwoSortedListsOf1000RandomIntsEachOne() {
-        Utility.intersectionOfSkipLists(LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get());
+        Utility.intersectionOfSortedLists(LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get());
+    }
+
+    @Benchmark
+    static void unionOfFourSortedListsOf1000RandomIntsEachOne() {
+        Utility.unionOfSortedLists(
+                Utility.unionOfSortedLists(LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get()),
+                Utility.unionOfSortedLists(LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get()));
+    }
+
+    @Benchmark
+    static void intersectionOfFourSortedListsOf1000RandomIntsEachOne() {
+        Utility.intersectionOfSortedLists(
+                Utility.intersectionOfSortedLists(LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get()),
+                Utility.intersectionOfSortedLists(LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get()));
     }
 
     @Benchmark
     static void unionOfTwoSkipListsOf1000RandomIntsEachOne() {
-        Utility.unionOfSkipLists(LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get());
+        Utility.union(LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get());
     }
 
     @Benchmark
     static void intersectionOfTwoSkipListsOf1000RandomIntsEachOne() {
-        Utility.intersectionOfSkipLists(LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SORTED_INTS_SUPPLIER.get());
+        Utility.intersection(LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get());
+    }
+
+    @Benchmark
+    static void unionOfFourSkipListsOf1000RandomIntsEachOne() {
+        Utility.union(
+                LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get(),
+                LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get());
+    }
+
+    @Benchmark
+    static void intersectionOfFourSkipListsOf1000RandomIntsEachOne() {
+        Utility.intersection(
+                LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get(),
+                LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get(), LIST_OF_1000_RANDOM_SKIP_LISTS_SUPPLIER.get());
     }
 
     @ParameterizedTest
@@ -259,7 +287,7 @@ class UtilityTest {
     void intersectionOfSortedLists(String inputList1AsString, String inputList2AsString, String expectedIntersectionListAsString) {
         assertEquals(
                 getListFromString(expectedIntersectionListAsString),
-                Utility.intersectionOfSkipLists(getListFromString(inputList1AsString), getListFromString(inputList2AsString)));
+                Utility.intersectionOfSortedLists(getListFromString(inputList1AsString), getListFromString(inputList2AsString)));
     }
 
     @Test
