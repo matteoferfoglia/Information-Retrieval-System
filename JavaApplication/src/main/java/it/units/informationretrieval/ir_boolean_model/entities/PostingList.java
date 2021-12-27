@@ -44,7 +44,8 @@ public class PostingList implements Serializable/* TODO: implements Iterable wit
         if (other == null) {
             return;
         }
-        this.postings.merge(other.postings);
+        this.postings.addAll(other.postings);
+        this.postings.setMaxListLevel();
     }
 
     /**

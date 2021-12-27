@@ -1,6 +1,8 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
 import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
+import it.units.informationretrieval.ir_boolean_model.utils.Pair;
+import it.units.informationretrieval.ir_boolean_model.utils.Soundex;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.jetbrains.annotations.NotNull;
@@ -41,9 +43,11 @@ public class InvertedIndex implements Serializable {
     @NotNull
     private final Corpus corpus;
 
-//    /** The phonetic hash. */  // TODO : implement phoneticHash
-//    @NotNull
-//    private final ConcurrentHashMap<String, List<Term>> phoneticHash;
+    /**
+     * The phonetic hash.
+     */
+    @NotNull
+    private final ConcurrentHashMap<String, List<Term>> phoneticHash;   // TODO: test and use phonetic hash for queries
 
     /**
      * Constructor. Creates the instance and indexes the given {@link Corpus}.
@@ -60,6 +64,21 @@ public class InvertedIndex implements Serializable {
 
         try {
             invertedIndex = indexCorpusAndGet(corpus, numberOfAlreadyProcessedDocuments);
+            phoneticHash = invertedIndex.entrySet()
+                    .stream().unordered().parallel()
+                    .map(stringTermEntry -> {
+                        var termList = new ArrayList<Term>();
+                        termList.add(stringTermEntry.getValue());
+                        return new Pair<>(Soundex.getPhoneticHash(stringTermEntry.getKey()), termList);
+                    })
+                    .collect(Collectors.toConcurrentMap(
+                            Map.Entry::getKey,
+                            AbstractMap.SimpleEntry::getValue,
+                            (a, b) -> {
+                                a.addAll(b);
+                                return a;
+                            },
+                            ConcurrentHashMap::new));
         } finally {
             // Join the thread used to print the indexing progress
             indexingProgressPrinterInterrupter.run();
