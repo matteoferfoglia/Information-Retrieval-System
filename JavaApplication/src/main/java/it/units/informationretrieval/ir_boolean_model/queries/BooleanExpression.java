@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import skiplist.SkipList;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * An instance of this class is a boolean expression to be evaluated
@@ -189,7 +189,7 @@ public class BooleanExpression {
 
         if (matchingPhraseMaxDistance.size() != matchingPhrase.size() - 1) {
             throw new IllegalArgumentException("The size for the max distance list must be equal to the size of the phrase minus one");
-        } else if (matchingPhraseMaxDistance.stream().unordered().parallel().anyMatch(x -> x <= 0)) {
+        } else if (matchingPhraseMaxDistance.stream().unordered().anyMatch(x -> x <= 0)) {
             throw new IllegalArgumentException("The distances must be positive.");
         }
         this.matchingPhraseMaxDistance = Objects.requireNonNull(matchingPhraseMaxDistance);
@@ -357,27 +357,21 @@ public class BooleanExpression {
                                 .setUnaryOperator(UNARY_OPERATOR.IDENTITY)
                                 .evaluateBothSimpleAndAggregatedExpressionRecursively()
                                 .stream().map(Posting::getDocId).toList();
-                SkipList<Posting> postings = new SkipList<>();
                 yield new SkipList<>(
                         informationRetrievalSystem.getAllDocIds()
-                                .stream().unordered().parallel()
+                                .stream().unordered()
                                 .filter(docId -> !listOfDocIdToBeExcluded.contains(docId))
                                 .map(docId -> new Posting(docId, new int[0]/*TODO: positions NOT handled!!!!!*/))
                                 .toList());
             }
             case IDENTITY -> {
                 if (isAggregated) {
-                    List<BooleanExpression> booleanExpressions = new ArrayList<>(2);
-                    booleanExpressions.add(leftChildOperand);
-                    booleanExpressions.add(rightChildOperand);
-                    yield booleanExpressions
-                            .stream().unordered().parallel()
+                    yield Stream.of(leftChildOperand, rightChildOperand)
+                            .unordered()
                             .map(BooleanExpression::evaluateBothSimpleAndAggregatedExpressionRecursively)
                             .reduce((listOfPostings1, listOfPostings2) -> {
-
                                 SkipList<Posting> postings1 = new SkipList<>(listOfPostings1);
                                 SkipList<Posting> postings2 = new SkipList<>(listOfPostings2);
-
                                 return switch (Objects.requireNonNull(binaryOperator)) {
                                     case AND -> Utility.intersection(postings1, postings2);
                                     case OR -> Utility.union(postings1, postings2);
@@ -394,9 +388,7 @@ public class BooleanExpression {
                             // The normalization return null, then no matches
                             yield new SkipList<>();
                         } else {
-                            SkipList<Posting> postings = new SkipList<>();  // TODO: create constructor in SkipList which takes a collection and sets the best SkipList level according to the collection size
-                            postings.addAll(informationRetrievalSystem.getListOfPostingForToken(normalizedToken));
-                            yield postings;
+                            yield new SkipList<>(informationRetrievalSystem.getListOfPostingForToken(normalizedToken));
                         }
                     } else if (isMatchingPhraseSet()) {
                         throw new UnsupportedOperationException("Not implemented yet");
@@ -420,14 +412,10 @@ public class BooleanExpression {
     @NotNull
     public List<Document> evaluate()
             throws UnsupportedOperationException {
-        return informationRetrievalSystem
-                .getCorpus()
-                .getDocuments(
-                        evaluateBothSimpleAndAggregatedExpressionRecursively()
-                                .stream()
-                                .map(Posting::getDocId)
-                                .distinct()
-                                .toList());
+        var results = evaluateBothSimpleAndAggregatedExpressionRecursively();
+        assert results.stream().sorted().distinct().toList().equals(results.stream().toList());
+        return informationRetrievalSystem.getCorpus()
+                .getDocuments(results.stream().map(Posting::getDocId).toList());
         // TODO : implement ranking and sort results accordingly and test the correct sorting of results
     }
 
