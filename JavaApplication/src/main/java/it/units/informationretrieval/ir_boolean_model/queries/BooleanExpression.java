@@ -358,14 +358,12 @@ public class BooleanExpression {
                                 .evaluateBothSimpleAndAggregatedExpressionRecursively()
                                 .stream().map(Posting::getDocId).toList();
                 SkipList<Posting> postings = new SkipList<>();
-                var postings_ = informationRetrievalSystem.getAllDocIds()
-                        .stream().unordered().parallel()
-                        .filter(docId -> !listOfDocIdToBeExcluded.contains(docId))
-                        .map(docId -> new Posting(docId, new int[0]/*TODO: positions NOT handled!!!!!*/))
-                        .toList();
-                postings.setMaxListLevel(Math.max(1, (int) Math.round(Math.log(postings_.size()) / Math.log(0.5))));
-                postings.addAll(postings_);  // TODO: create constructor in SkipList which takes a collection and sets the best SkipList level according to the collection size
-                yield postings;
+                yield new SkipList<>(
+                        informationRetrievalSystem.getAllDocIds()
+                                .stream().unordered().parallel()
+                                .filter(docId -> !listOfDocIdToBeExcluded.contains(docId))
+                                .map(docId -> new Posting(docId, new int[0]/*TODO: positions NOT handled!!!!!*/))
+                                .toList());
             }
             case IDENTITY -> {
                 if (isAggregated) {
@@ -377,12 +375,8 @@ public class BooleanExpression {
                             .map(BooleanExpression::evaluateBothSimpleAndAggregatedExpressionRecursively)
                             .reduce((listOfPostings1, listOfPostings2) -> {
 
-                                SkipList<Posting> postings1 = new SkipList<>();
-                                postings1.setMaxListLevel(Math.max(1, (int) Math.round(Math.log(listOfPostings1.size()) / Math.log(0.5))));
-                                SkipList<Posting> postings2 = new SkipList<>();
-                                postings2.setMaxListLevel(Math.max(1, (int) Math.round(Math.log(listOfPostings2.size()) / Math.log(0.5))));
-                                postings1.addAll(listOfPostings1);  // TODO: create constructor in SkipList which takes a collection and sets the best SkipList level according to the collection size
-                                postings2.addAll(listOfPostings2);
+                                SkipList<Posting> postings1 = new SkipList<>(listOfPostings1);
+                                SkipList<Posting> postings2 = new SkipList<>(listOfPostings2);
 
                                 return switch (Objects.requireNonNull(binaryOperator)) {
                                     case AND -> Utility.intersection(postings1, postings2);
