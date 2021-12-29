@@ -13,7 +13,7 @@ class DocumentTest {
 
     @Test
     void testToString() {
-        assertEquals(SAMPLE_TITLE + "\t" + SAMPLE_DOCUMENT.toJson(), SAMPLE_DOCUMENT.toString());
+        assertEquals("{\"" + SAMPLE_TITLE + "\": " + SAMPLE_DOCUMENT.toJson() + "}", SAMPLE_DOCUMENT.toString());
     }
 
     @Test

@@ -57,6 +57,15 @@ public abstract class Document implements Serializable, Comparable<Document> {
     }
 
     /**
+     * Setter for {@link #title}.
+     *
+     * @param title The content.
+     */
+    protected void setTitle(@NotNull String title) {
+        this.title = Objects.requireNonNull(title);
+    }
+
+    /**
      * Getter for {@link #content}.
      * This method can be overridden, in fact the content does not need
      * to be stored in RAM for all the time, but it can be stored anywhere
@@ -78,18 +87,12 @@ public abstract class Document implements Serializable, Comparable<Document> {
         this.content = Objects.requireNonNull(content);
     }
 
-    /**
-     * Setter for {@link #title}.
-     *
-     * @param title The content.
-     */
-    protected void setTitle(@NotNull String title) {
-        this.title = Objects.requireNonNull(title);
-    }
-
     @NotNull
     public String toString() {
-        return title + "\t" + toJson();
+        return "{\"" +
+                (title != null ? Utility.encodeForJson(title) : "")
+                + "\": " + toJson()
+                + "}";
     }
 
     /**

@@ -343,14 +343,14 @@ public class Movie extends Document implements Serializable {
 
         LinkedHashMap<String, Object> mapOfProperties = new LinkedHashMap<>();
 
-        mapOfProperties.put("Title", movieTitle.replaceAll("\"", "'"));
-        mapOfProperties.put("Release date", releaseDate != null ? dateToString.apply(releaseDate) : null);
-        mapOfProperties.put("Box office revenue", boxOfficeRevenue > 0 ? boxOfficeRevenue + " $" : null);
-        mapOfProperties.put("Running time", runningTime > 0 ? runningTime / 60 + " min" : null);
+        mapOfProperties.put("Title", Utility.encodeForJson(movieTitle));
+        mapOfProperties.put("Release date", releaseDate != null ? Utility.encodeForJson(dateToString.apply(releaseDate)) : null);
+        mapOfProperties.put("Box office revenue", boxOfficeRevenue > 0 ? Utility.encodeForJson(boxOfficeRevenue + " $") : null);
+        mapOfProperties.put("Running time", runningTime > 0 ? Utility.encodeForJson(runningTime / 60 + " min") : null);
         mapOfProperties.put("Language", keyListToValueList.apply(languageKeys, languages));
-        mapOfProperties.put("Country", keyListToValueList.apply(genreKeys, genres));
+        mapOfProperties.put("Country", keyListToValueList.apply(countryKeys, countries));
         mapOfProperties.put("Genre", keyListToValueList.apply(genreKeys, genres));
-        mapOfProperties.put("Description", description);
+        mapOfProperties.put("Description", description == null ? null : Utility.encodeForJson(description));
 
         return mapOfProperties;
     }

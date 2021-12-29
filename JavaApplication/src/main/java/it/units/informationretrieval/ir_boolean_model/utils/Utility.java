@@ -324,6 +324,19 @@ public class Utility {
     }
 
     /**
+     * Replaces some characters (like quotes) such that the resulting string
+     * can be used for JSON attributes (names or values)
+     *
+     * @param str The input string to be encoded.
+     */
+    public static String encodeForJson(@NotNull String str) {
+        return Objects.requireNonNull(str)
+                .replaceAll("\"", "\\\"")
+                .replaceAll("'", "\\'");
+
+    }
+
+    /**
      * Generalization of {@link java.util.function.BiFunction} to take
      * three input arguments and produce one output argument.
      * From <a href="https://stackoverflow.com/a/19649473">Stackoverflow</a>.
