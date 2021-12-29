@@ -57,7 +57,7 @@ public class InformationRetrievalSystem implements Serializable {
      * @return the {@link List} of {@link Posting} for the given token.
      */
     @NotNull
-    public List<Posting> getListOfPostingForToken(@NotNull final String normalizedToken) {
+    public List<Posting> getListOfPostingForToken(@NotNull final String normalizedToken) {  // TODO: return SkipList?
         return invertedIndex.getPostingListForToken(normalizedToken).toUnmodifiableListOfPostings();
     }
 

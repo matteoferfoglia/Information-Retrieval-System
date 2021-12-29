@@ -7,9 +7,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import skiplist.SkipList;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiPredicate;
+import java.util.function.IntFunction;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -30,6 +35,8 @@ import java.util.stream.Stream;
  * @author Matteo Ferfoglia
  */
 public class BooleanExpression {
+
+    // TODO: add attribute maxNumberOfResults and its setter to limit the number of results
 
     /**
      * Flag which is true if this instance is an aggregated expression.
@@ -60,22 +67,14 @@ public class BooleanExpression {
     /**
      * The value to match.
      */
-    @Nullable   // if there is matching phrase
+    @Nullable   // not null if there is matching value, null otherwise
     private String matchingValue;
     /**
      * The phrase to match (for a phrasal query), as a {@link List} of
      * {@link String}s.
      */
-    @Nullable   // if there is matching value
-    private List<String> matchingPhrase;
-    /**
-     * If this instance has to match a phrase, this attribute (which has the size
-     * of {@link #matchingPhrase} -1) specifies at the k-th position the maximum
-     * distance (number of terms) which can be present between the k-th and the
-     * (k+1)-th term specified in {@link #matchingValue}.
-     */
-    @Nullable   // if the matchingPhrase is null
-    private List<Integer> matchingPhraseMaxDistance;
+    @Nullable   // not null if there is matching phrase, null otherwise
+    private Phrase matchingPhrase;
     /**
      * The {@link UNARY_OPERATOR} to apply to this instance.
      */
@@ -107,7 +106,6 @@ public class BooleanExpression {
         this.unaryOperator = booleanExpression.unaryOperator;
         this.binaryOperator = booleanExpression.binaryOperator;
         this.informationRetrievalSystem = booleanExpression.informationRetrievalSystem;
-        this.matchingPhraseMaxDistance = booleanExpression.matchingPhraseMaxDistance;
         this.leftChildOperand = booleanExpression.leftChildOperand;
         this.rightChildOperand = booleanExpression.rightChildOperand;
     }
@@ -135,16 +133,6 @@ public class BooleanExpression {
     }
 
     /**
-     * @return the result of {@link Utility#normalize(String)} or an empty
-     * string if {@link Utility#normalize(String)} returns null.
-     */
-    @NotNull
-    private static String normalizeToken(String inputWord) {
-        String normalized = Utility.normalize(inputWord);
-        return normalized == null ? "" : normalized;
-    }
-
-    /**
      * Sets the {@link #matchingValue}.
      *
      * @param matchingValue The value to match.
@@ -157,8 +145,7 @@ public class BooleanExpression {
         } else if (isMatchingValueSet()) {
             throw new IllegalStateException("Matching value already set, cannot re-set");
         }
-
-        this.matchingValue = normalizeToken(Objects.requireNonNull(matchingValue));
+        this.matchingValue = Utility.normalize(matchingValue);
         return this;
     }
 
@@ -172,41 +159,40 @@ public class BooleanExpression {
     }
 
     /**
-     * Sets the {@link #matchingPhrase} and the {@link #matchingPhraseMaxDistance}.
+     * Sets the {@link #matchingPhrase}.
      *
      * @param matchingPhrase            The phrase to match.
-     * @param matchingPhraseMaxDistance The value for {@link #matchingPhraseMaxDistance}.
+     * @param matchingPhraseMaxDistance Array with the exact distance allowed between words, saved as array:
+     *                                  specifies at the k-th position the exact distance (number of terms)
+     *                                  which must be present between the term at index k in the phrase and
+     *                                  the term at position 0.
      * @return This instance after the execution of this method.
      */
-    public BooleanExpression setMatchingPhrase(@NotNull List<String> matchingPhrase,
-                                               @NotNull List<Integer> matchingPhraseMaxDistance) {    // todo: needed to separate matching value and matching phrase?
+    public BooleanExpression setMatchingPhrase(String[] matchingPhrase, int[] matchingPhraseMaxDistance) {    // todo: needed to separate matching value and matching phrase?
         throwIfIsAggregated();
         if (isMatchingValueSet()) {
             throw new IllegalStateException("Matching value already set, cannot set matching value too.");
         } else if (isMatchingPhraseSet()) {
             throw new IllegalStateException("Matching phrase already set, cannot re-set");
         }
-
-        if (matchingPhraseMaxDistance.size() != matchingPhrase.size() - 1) {
-            throw new IllegalArgumentException("The size for the max distance list must be equal to the size of the phrase minus one");
-        } else if (matchingPhraseMaxDistance.stream().unordered().anyMatch(x -> x <= 0)) {
-            throw new IllegalArgumentException("The distances must be positive.");
+        String[] phrase = Arrays.stream(matchingPhrase).map(Utility::normalize).filter(Objects::nonNull).toArray(String[]::new);
+        if (phrase.length == 1) {
+            // normalization lead to a phrase of a single word (hence, it is not a phrase anymore)
+            return setMatchingValue(phrase[0]);
+        } else {
+            this.matchingPhrase = new Phrase(phrase, matchingPhraseMaxDistance);
+            return this;
         }
-        this.matchingPhraseMaxDistance = Objects.requireNonNull(matchingPhraseMaxDistance);
-
-        this.matchingPhrase = Objects.requireNonNull(matchingPhrase).stream().map(BooleanExpression::normalizeToken).toList();
-        return this;
     }
 
     /**
-     * Sets the {@link #matchingPhrase} and the {@link #matchingPhraseMaxDistance} considering
-     * that values in the phrase are adjacent.
+     * Sets the {@link #matchingPhrase} considering that values in the phrase are all adjacent.
      *
      * @param matchingPhrase The phrase to match.
      * @return This instance after the execution of this method.
      */
-    public BooleanExpression setMatchingPhrase(@NotNull List<String> matchingPhrase) {    // todo: needed to separate matching value and matching phrase?
-        return setMatchingPhrase(matchingPhrase, Collections.nCopies(Math.max(0, matchingPhrase.size() - 1), 1));
+    public BooleanExpression setMatchingPhrase(String[] matchingPhrase) {
+        return setMatchingPhrase(matchingPhrase, IntStream.range(1, matchingPhrase.length).toArray());
     }
 
     /**
@@ -267,14 +253,14 @@ public class BooleanExpression {
     /**
      * Like {@link #and(BooleanExpression)}, but accepts a phrase directly.
      */
-    public BooleanExpression and(@NotNull List<String> matchingPhrase) {    // TODO: test and benchmark
+    public BooleanExpression and(String[] matchingPhrase) {    // TODO: test and benchmark
         return and(new BooleanExpression(informationRetrievalSystem).setMatchingPhrase(Objects.requireNonNull(matchingPhrase)));
     }
 
     /**
      * Like {@link #and(BooleanExpression)}, but accepts a phrase directly.
      */
-    public BooleanExpression and(@NotNull List<String> matchingPhrase, @NotNull List<Integer> matchingPhraseMaxDistance) {// TODO: test and benchmark
+    public BooleanExpression and(String[] matchingPhrase, int[] matchingPhraseMaxDistance) {// TODO: test and benchmark
         return and(
                 new BooleanExpression(informationRetrievalSystem)
                         .setMatchingPhrase(
@@ -306,14 +292,14 @@ public class BooleanExpression {
     /**
      * Like {@link #or(BooleanExpression)}, but accepts a phrase directly.
      */
-    public BooleanExpression or(@NotNull List<String> matchingPhrase) {// TODO: test and benchmark
+    public BooleanExpression or(String[] matchingPhrase) {// TODO: test and benchmark
         return or(new BooleanExpression(informationRetrievalSystem).setMatchingPhrase(Objects.requireNonNull(matchingPhrase)));
     }
 
     /**
      * Like {@link #or(BooleanExpression)}, but accepts a phrase directly.
      */
-    public BooleanExpression or(@NotNull List<String> matchingPhrase, @NotNull List<Integer> matchingPhraseMaxDistance) {// TODO: test and benchmark
+    public BooleanExpression or(String[] matchingPhrase, int[] matchingPhraseMaxDistance) {// TODO: test and benchmark
         return or(
                 new BooleanExpression(informationRetrievalSystem)
                         .setMatchingPhrase(Objects.requireNonNull(matchingPhrase), Objects.requireNonNull(matchingPhraseMaxDistance)));
@@ -345,7 +331,7 @@ public class BooleanExpression {
      * @throws UnsupportedOperationException If the operator for the expression is unknown.
      */
     @NotNull
-    private SkipList<Posting> evaluateBothSimpleAndAggregatedExpressionRecursively()
+    private synchronized SkipList<Posting> evaluateBothSimpleAndAggregatedExpressionRecursively()
             throws UnsupportedOperationException {
 
         return switch (unaryOperator) {
@@ -382,20 +368,74 @@ public class BooleanExpression {
                             .orElse(new SkipList<>());
 
                 } else {
-                    if (isMatchingValueSet()) {
-                        String normalizedToken = Utility.normalize(matchingValue);
-                        if (normalizedToken == null) {
-                            // The normalization return null, then no matches
-                            yield new SkipList<>();
-                        } else {
-                            yield new SkipList<>(informationRetrievalSystem.getListOfPostingForToken(normalizedToken));
-                        }
-                    } else if (isMatchingPhraseSet()) {
-                        throw new UnsupportedOperationException("Not implemented yet");
-                        // TODO : implement for phrasal ir_system.queries (not implemented yet)
 
+                    if (isMatchingPhraseSet()) {
+                        //noinspection unchecked    // generic array creation
+                        BiPredicate<Posting, Posting>[] biPredicatesForCheckingPositionsForPhrasalQueries =
+                                IntStream.range(0, matchingPhrase.size() - 1)
+                                        .mapToObj(i -> (BiPredicate<Posting, Posting>) (Posting posting1, Posting posting2) -> {
+                                            // Note: order of input arg is important
+
+                                            var positions1 = posting1.getTermPositionsInTheDocument();
+                                            var positions2 = posting2.getTermPositionsInTheDocument();
+
+                                            // assert positions were sorted
+                                            assert Arrays.stream(positions1).sorted().boxed().toList().equals(Arrays.stream(positions1).boxed().toList());
+                                            assert Arrays.stream(positions2).sorted().boxed().toList().equals(Arrays.stream(positions2).boxed().toList());
+
+                                            int index1 = 0, index2 = 0;
+                                            while (index1 < positions1.length && index2 < positions2.length) {
+                                                int numberOfTermsBetweenWords =
+                                                        positions2[index2] - positions1[index1]             // number of words between the *first* word of phrase and the word of posting2  (Note: when inserting a posting to the intersection list, only the posting referencing the first word of phrase is kept, hence distances must be computed respect the position of the first word)
+                                                                - matchingPhrase.distanceFromFirstWord[i];   // exact distance allowed between *first* word and the word of posting 2
+                                                if (numberOfTermsBetweenWords == 0) {
+                                                    // words are adjacent
+                                                    return true;
+                                                } else if (numberOfTermsBetweenWords < 0) {
+                                                    // word from posting2 is present in the document before the word of posting1
+                                                    index2++;
+                                                } else {
+                                                    // word from posting1 is present in the document before the word of posting2
+                                                    index1++;
+                                                }
+                                            }
+                                            return false;   // no adjacency found
+                                        })
+                                        .toArray(BiPredicate[]::new);
+
+                        assert matchingPhrase.words.length >= 2;
+
+                        Map<String, SkipList<Posting>> cachedPostings =  // in phrases, common words (like articles) might be present more than once (if they were not excluded by normalization steps) and it would not be efficient to retrieve the corresponding posting list each time
+                                new ConcurrentHashMap<>(matchingPhrase.size());
+
+                        IntFunction<@NotNull SkipList<Posting>> getPostingListOfIthWordInPhrase = i -> {
+                            assert i >= 0 && i < matchingPhrase.size();
+                            String word = matchingPhrase.words[i];
+                            var correspondingPostingList = cachedPostings.get(word);
+                            if (correspondingPostingList == null) {
+                                // posting list for the term was not cached
+                                correspondingPostingList = new SkipList<>(informationRetrievalSystem
+                                        .getListOfPostingForToken(word));// TODO: do not create a new SkipList instance if it is already returned by getListOfPostingForToken
+                                cachedPostings.put(word, correspondingPostingList);
+                            }
+                            return correspondingPostingList;
+                        };
+
+                        SkipList<Posting> phraseQueryIntersection = getPostingListOfIthWordInPhrase.apply(0);
+                        for (int i = 1; !phraseQueryIntersection.isEmpty() && i < matchingPhrase.size(); i++) {
+                            SkipList<Posting> postings = getPostingListOfIthWordInPhrase.apply(i);
+                            phraseQueryIntersection = SkipList.intersection(
+                                    phraseQueryIntersection, postings, biPredicatesForCheckingPositionsForPhrasalQueries[i - 1]);
+                        }
+
+                        yield phraseQueryIntersection;
+                    }
+
+                    if (isMatchingValueSet()) {
+                        yield new SkipList<>(informationRetrievalSystem.getListOfPostingForToken(matchingValue));
                     } else {
-                        throw new NullPointerException("The matching value either the matching phrase were null but they should not.");
+                        // normalization of input matching value leads to null, hence no results can be found
+                        yield new SkipList<>();
                     }
                 }
             }
@@ -455,4 +495,69 @@ public class BooleanExpression {
 
 // TODO: query optimization
 // TODO: query expansion and reformulation
-}
+
+    /**
+     * Class representing a phrase, to be used for answering phrasal queries.
+     */
+    private static class Phrase {
+
+        /**
+         * The phrase represented as array of {@link String}.
+         */
+        final String[] words;
+
+        /**
+         * The exact distance allowed respect to the first word, saved
+         * as array: specifies at the k-th position the exact distance
+         * (number of words +1) which must be present between the first
+         * and the (k+1)-th term specified in {@link #words};
+         * e.g., the value at index 0 indicates the exact number of
+         * words (+1) allowed between the word at position 0 and the word
+         * at position 1, assuming that there are at least two words,
+         * and, if that value is 1, then words at index 0 and word at
+         * index 1 must be adjacent; assuming instead that three words are
+         * present, the value at index 1 indicates the exact number of
+         * words (+1) allowed between the word at position 0 and the word
+         * at position 2: if that value is 3, then words at index 0 and word at
+         * index 2 must be separated by exactly two words (in fact, number of
+         * words between first and third word +1 = 2 +1 = 3 = the value at
+         * index 2 of this attribute, i.e., the value referring to the
+         * third word of the phrase).
+         */
+        final int[] distanceFromFirstWord;
+
+        /**
+         * Constructor.
+         *
+         * @param words                 See {@link #words}.
+         * @param distanceFromFirstWord See {@link #distanceFromFirstWord}.
+         * @throws IllegalArgumentException if any of the conditions
+         *                                  <ul>
+         *                                      <li><code>words.length>=2</code></li>
+         *                                      <li><code>words.length==distanceFromFirstWord.length+1</code></li>
+         *                                      <li>distanceFromFirstWord[j] &ge; 1 &forall; j &isin; 	&#123;0,1,..,distanceFromFirstWord-1&#125;</li>
+         *                                      <li>distanceFromFirstWord[j] - distanceFromFirstWord[j-1] &ge; 1 &forall; j &isin; 	&#123;1,..,distanceFromFirstWord-1&#125;</li>
+         *                                  </ul>
+         *                                  do not hold. Phrase of a single word are not accepted.
+         */
+        Phrase(@NotNull String[] words, int[] distanceFromFirstWord) throws IllegalArgumentException {
+            if (words.length > 1
+                    && words.length == distanceFromFirstWord.length + 1
+                    && distanceFromFirstWord[0] > 0
+                    && IntStream.range(1, distanceFromFirstWord.length)
+                    .allMatch(i -> distanceFromFirstWord[i] - distanceFromFirstWord[i - 1] > 0)) {
+                this.words = words;
+                this.distanceFromFirstWord = distanceFromFirstWord;
+            } else {
+                throw new IllegalArgumentException();
+            }
+        }
+
+        /**
+         * @return the number of words composing the phrase represented by this instance.
+         */
+        synchronized int size() {
+            return words.length;
+        }
+    }
+}   // TODO: remove Objects.requireNonNull

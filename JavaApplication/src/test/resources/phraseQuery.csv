@@ -1,0 +1,12 @@
+# CSV file with samples of phrase query
+phrase,                     docIds of docs with phrase
+the cat,                    1
+the cat is,                 1
+The cat is on the table.,   1
+cat the,
+is table,
+on table,
+on the table,               1#2
+a car,
+123 sky,
+card the,

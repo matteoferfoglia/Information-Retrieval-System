@@ -26,13 +26,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 class BooleanExpressionTest {
 
     private static final String PATH_TO_FILE_WITH_QUERY_SAMPLES = "/singleWordQuery.csv";
+    private static final String PATH_TO_FILE_WITH_PHRASE_QUERY_SAMPLES = "/phraseQuery.csv";
     private static final String LIST_ELEMENTS_SEPARATOR_IN_CSV = "#";
     private static final int NUM_LINES_TO_SKIP_IN_CSV = 2;
     private static final String COMMENT_FOR_BENCHMARK = "Terms in queries randomly taken from the dictionary.";
-    private static BooleanExpression booleanExpression;
     private static final InformationRetrievalSystem irsForBenchmark =
             new InformationRetrievalSystem(InvertedIndexTest.invertedIndexForMovieCorpus);
     private static final Corpus corpus;
+    private static BooleanExpression booleanExpression;
     private static InformationRetrievalSystem irsForTests;
 
     static {
@@ -45,6 +46,103 @@ class BooleanExpressionTest {
         }
         corpus = irsForTests.getCorpus();
         System.setOut(realStdOut);
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluateOneWordQuery() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluateQueryNot() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluateQueryAnd() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .and(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluateQueryOr() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .or(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluateQueryAndThenNot() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .and(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluateQueryOrThenNot() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .or(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluateQueryNotThenNot() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .not()
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluateQueryNotThenAndThenAndThenNot() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .and(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .and(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluateQueryNotThenOr() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .or(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluateQueryNotThenOrThenOr() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .or(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .or(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluateQueryAndThenOr() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .and(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .or(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .evaluate();
     }
 
     private List<String> evaluateQueryAndGetResultingDocIdsAsStringList() {
@@ -70,26 +168,11 @@ class BooleanExpressionTest {
                 evaluateQueryAndGetResultingDocIdsAsStringList());
     }
 
-    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
-    static void createAndEvaluateOneWordQuery() {
-        irsForBenchmark.createNewBooleanExpression()
-                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .evaluate();
-    }
-
     @ParameterizedTest
     @CsvFileSource(resources = PATH_TO_FILE_WITH_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
     void evaluateOneWordQuery(String word, String ignored, String expectedResultingPostingList) {
         booleanExpression = booleanExpression.setMatchingValue(word);
         assertQueryResultsAreCorrect(expectedResultingPostingList);
-    }
-
-    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
-    static void createAndEvaluateQueryNot() {
-        irsForBenchmark.createNewBooleanExpression()
-                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .not()
-                .evaluate();
     }
 
     @ParameterizedTest
@@ -99,27 +182,11 @@ class BooleanExpressionTest {
         assertQueryResultsAreCorrect(expectedResultingPostingList);
     }
 
-    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
-    static void createAndEvaluateQueryAnd() {
-        irsForBenchmark.createNewBooleanExpression()
-                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .and(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .evaluate();
-    }
-
     @ParameterizedTest
     @CsvFileSource(resources = PATH_TO_FILE_WITH_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
     void evaluateQueryAnd(String word, String word2, String ignored, String ignored2, String expectedResultingPostingList) {
         booleanExpression = booleanExpression.setMatchingValue(word).and(word2);
         assertQueryResultsAreCorrect(expectedResultingPostingList);
-    }
-
-    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
-    static void createAndEvaluateQueryOr() {
-        irsForBenchmark.createNewBooleanExpression()
-                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .or(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .evaluate();
     }
 
     @ParameterizedTest
@@ -129,29 +196,11 @@ class BooleanExpressionTest {
         assertQueryResultsAreCorrect(expectedResultingPostingList);
     }
 
-    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
-    static void createAndEvaluateQueryAndThenNot() {
-        irsForBenchmark.createNewBooleanExpression()
-                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .and(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .not()
-                .evaluate();
-    }
-
     @ParameterizedTest
     @CsvFileSource(resources = PATH_TO_FILE_WITH_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
     void evaluateQueryAndThenNot(String word, String word2, String ignored, String ignored2, String ignored3, String ignored4, String expectedResultingPostingList) {
         booleanExpression = booleanExpression.setMatchingValue(word).and(word2).not();
         assertQueryResultsAreCorrect(expectedResultingPostingList);
-    }
-
-    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
-    static void createAndEvaluateQueryOrThenNot() {
-        irsForBenchmark.createNewBooleanExpression()
-                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .or(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .not()
-                .evaluate();
     }
 
     @ParameterizedTest
@@ -162,32 +211,12 @@ class BooleanExpressionTest {
         assertQueryResultsAreCorrect(expectedResultingPostingList);
     }
 
-    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
-    static void createAndEvaluateQueryNotThenNot() {
-        irsForBenchmark.createNewBooleanExpression()
-                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .not()
-                .not()
-                .evaluate();
-    }
-
     @ParameterizedTest
     @CsvFileSource(resources = PATH_TO_FILE_WITH_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
     void evaluateQueryNotThenNot(String word, String ignored, String ignored2, String ignored3, String ignored4, String ignored5, String ignored6, String ignored7,
                                  String expectedResultingPostingList) {
         booleanExpression = booleanExpression.setMatchingValue(word).not().not();
         assertQueryResultsAreCorrect(expectedResultingPostingList);
-    }
-
-    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
-    static void createAndEvaluateQueryNotThenAndThenAndThenNot() {
-        irsForBenchmark.createNewBooleanExpression()
-                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .not()
-                .and(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .and(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .not()
-                .evaluate();
     }
 
     @ParameterizedTest
@@ -198,31 +227,12 @@ class BooleanExpressionTest {
         assertQueryResultsAreCorrect(expectedResultingPostingList);
     }
 
-    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
-    static void createAndEvaluateQueryNotThenOr() {
-        irsForBenchmark.createNewBooleanExpression()
-                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .not()
-                .or(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .evaluate();
-    }
-
     @ParameterizedTest
     @CsvFileSource(resources = PATH_TO_FILE_WITH_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
     void evaluateQueryNotThenOr(String word, String word2, String ignored, String ignored2, String ignored3, String ignored4, String ignored5, String ignored6, String ignored7, String ignored8,
                                 String expectedResultingPostingList) {
         booleanExpression = booleanExpression.setMatchingValue(word).not().or(word);
         assertQueryResultsAreCorrect(expectedResultingPostingList);
-    }
-
-    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
-    static void createAndEvaluateQueryNotThenOrThenOr() {
-        irsForBenchmark.createNewBooleanExpression()
-                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .not()
-                .or(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .or(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .evaluate();
     }
 
     @ParameterizedTest
@@ -233,20 +243,18 @@ class BooleanExpressionTest {
         assertQueryResultsAreCorrect(expectedResultingPostingList);
     }
 
-    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
-    static void createAndEvaluateQueryAndThenOr() {
-        irsForBenchmark.createNewBooleanExpression()
-                .setMatchingValue(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .and(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .or(randomTokenFromDictionaryOfMovieInvertedIndex.get())
-                .evaluate();
-    }
-
     @ParameterizedTest
     @CsvFileSource(resources = PATH_TO_FILE_WITH_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
     void evaluateQueryAndThenOr(String word, String word2, String ignored, String ignored2, String ignored3, String ignored4, String ignored5, String ignored6, String ignored7, String ignored8, String ignored9, String ignored10,
                                 String expectedResultingPostingList) {
         booleanExpression = booleanExpression.setMatchingValue(word).and(word2).or(word);
+        assertQueryResultsAreCorrect(expectedResultingPostingList);
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = PATH_TO_FILE_WITH_PHRASE_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
+    void evaluatePhraseQuery(String phrase, String expectedResultingPostingList) {
+        booleanExpression = booleanExpression.setMatchingPhrase(phrase.split(" "));
         assertQueryResultsAreCorrect(expectedResultingPostingList);
     }
 
@@ -280,7 +288,7 @@ class BooleanExpressionTest {
         try {
             irsForTests.createNewBooleanExpression()
                     .and("")
-                    .setMatchingPhrase(Arrays.asList("impossible to set this".split(" ")));
+                    .setMatchingPhrase("impossible to set this".split(" "));
             fail("Should have thrown but did not.");
         } catch (IllegalStateException ignored) {
         }
@@ -301,7 +309,7 @@ class BooleanExpressionTest {
     void throwIfTryingToSetMatchingValueWhenMatchingPhraseIsAlreadySet() {
         try {
             irsForTests.createNewBooleanExpression()
-                    .setMatchingPhrase(Arrays.asList("foo bar".split(" ")))
+                    .setMatchingPhrase("foo bar".split(" "))
                     .setMatchingValue("impossible to set this");
             fail("Should have thrown but did not.");
         } catch (IllegalStateException ignored) {
@@ -313,7 +321,7 @@ class BooleanExpressionTest {
         try {
             irsForTests.createNewBooleanExpression()
                     .setMatchingValue("foo")
-                    .setMatchingPhrase(Arrays.asList("impossible to set this".split(" ")));
+                    .setMatchingPhrase("impossible to set this".split(" "));
             fail("Should have thrown but did not.");
         } catch (IllegalStateException ignored) {
         }
@@ -323,17 +331,11 @@ class BooleanExpressionTest {
     void throwIfTryingToSetMatchingPhraseWhenMatchingPhraseIsAlreadySet() {
         try {
             irsForTests.createNewBooleanExpression()
-                    .setMatchingPhrase(Arrays.asList("foo bar".split(" ")))
-                    .setMatchingPhrase(Arrays.asList("impossible to set this".split(" ")));
+                    .setMatchingPhrase("foo bar".split(" "))
+                    .setMatchingPhrase("impossible to set this".split(" "));
             fail("Should have thrown but did not.");
         } catch (IllegalStateException ignored) {
         }
     }
-
-
-//
-//    @Test
-//    void evaluatePhraseQuery() {// TODO: evaluate phrase queries
-//    }
 
 }

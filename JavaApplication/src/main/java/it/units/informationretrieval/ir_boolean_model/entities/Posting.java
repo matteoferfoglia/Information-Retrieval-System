@@ -45,34 +45,6 @@ public class Posting implements Comparable<Posting>, Serializable {
         termPositionsInTheDocument = Objects.requireNonNull(positions);
     }
 
-//    /**
-//     * Returns the {@link List} of {@link Posting} which is the union of the
-//     * two {@link PostingList}s given as parameters.
-//     *
-//     * @param a A {@link PostingList}.
-//     * @param b The other {@link PostingList}.
-//     * @return the {@link List} of {@link Posting} which is the union of the
-//     * two given {@link PostingList}s as parameters.
-//     */
-//    @NotNull
-//    public static List<Posting> union(@NotNull final List<Posting> a, @NotNull final List<Posting> b) {
-//        // TODO : positional union not implemented yet
-//    }
-
-//    /**
-//     * Returns Returns the {@link List} of {@link Posting} which is the intersection of the
-//     * two {@link PostingList}s given as parameters.
-//     *
-//     * @param a A {@link PostingList}.
-//     * @param b The other {@link PostingList}.
-//     * @return the {@link List} of {@link Posting} which is the union of the
-//     * two given {@link PostingList}s as parameters.
-//     */
-//    @NotNull
-//    public static List<Posting> intersection(@NotNull final List<Posting> a, @NotNull final List<Posting> b) {
-//        // TODO : positional intersect not implemented yet
-//    }
-
     /**
      * @return the number of occurrences of the {@link Term} associated with this
      * {@link Posting} (i.e., the term-frequency value).
