@@ -22,7 +22,7 @@ public class Term implements Comparable<Term>, Serializable {
      * The term associated with this instance.
      */
     @NotNull
-    private final String term;  // TODO : needed? In InvertedIndex there is the term as key for the list of terms
+    private final String term;
 
     /**
      * Constructor.
@@ -45,11 +45,11 @@ public class Term implements Comparable<Term>, Serializable {
      *                                                this {@link Term} are found.
      */
     public double idf(int numberOfDocsInCorpus) throws NoDocumentsAssociatedWithTermException {
-        int df = postingList.size();    // document frequency   // TODO : df may be an attribute of the class (faster, but occupies memory space and must be eventually updated)
+        int df = postingList.size();    // document frequency
         if (df == 0) {
             throw new NoDocumentsAssociatedWithTermException(this);
         }
-        return Math.log((double) numberOfDocsInCorpus / df);   // TODO : may be cached until any updated, as attribute
+        return Math.log((double) numberOfDocsInCorpus / df);
     }
 
     /**

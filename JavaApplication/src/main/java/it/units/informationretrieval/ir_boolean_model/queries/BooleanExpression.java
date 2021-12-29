@@ -144,7 +144,7 @@ public class BooleanExpression {
      * @param matchingValue The value to match.
      * @return This instance after the execution of this method.
      */
-    public BooleanExpression setMatchingValue(@NotNull String matchingValue) {    // todo: needed to separate matching value and matching phrase?
+    public BooleanExpression setMatchingValue(@NotNull String matchingValue) {
         throwIfIsAggregated();
         if (isMatchingPhraseSet()) {
             throw new IllegalStateException("Matching phrase already set, cannot set matching value too.");
@@ -174,7 +174,7 @@ public class BooleanExpression {
      *                                  the term at position 0.
      * @return This instance after the execution of this method.
      */
-    public BooleanExpression setMatchingPhrase(String[] matchingPhrase, int[] matchingPhraseMaxDistance) {    // todo: needed to separate matching value and matching phrase?
+    public BooleanExpression setMatchingPhrase(String[] matchingPhrase, int[] matchingPhraseMaxDistance) {
         throwIfIsAggregated();
         if (isMatchingValueSet()) {
             throw new IllegalStateException("Matching value already set, cannot set matching value too.");
@@ -361,7 +361,7 @@ public class BooleanExpression {
             throws UnsupportedOperationException {
 
         return switch (unaryOperator) {
-            case NOT -> {   // TODO: try to improve query not
+            case NOT -> {
                 // First: solve the direct query (create a new query without the NOT operator),
                 // then take the difference to get the results for the NOT query.
                 List<DocumentIdentifier> listOfDocIdToBeExcluded =
@@ -373,7 +373,11 @@ public class BooleanExpression {
                         informationRetrievalSystem.getAllDocIds()
                                 .stream().unordered()
                                 .filter(docId -> !listOfDocIdToBeExcluded.contains(docId))
-                                .map(docId -> new Posting(docId, new int[0]/*TODO: positions NOT handled!!!!!*/))
+                                .map(docId -> new Posting(docId, new int[0]/*TODO: positions NOT handled !!!!
+                                TODO : Save an HashSet with ALL postings of the entire IR system and filter postings
+                                        which not contain the docID,
+                                        NOTE: there exist more than one posting with the same docId
+                                        (update the hashCode method of class Posting)*/))
                                 .toList());
             }
             case IDENTITY -> {

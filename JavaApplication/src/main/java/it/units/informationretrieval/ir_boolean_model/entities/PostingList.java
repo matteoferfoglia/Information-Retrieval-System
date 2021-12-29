@@ -13,13 +13,13 @@ import java.util.List;
  *
  * @author Matteo Ferfoglia
  */
-public class PostingList implements Serializable/* TODO: implements Iterable with spliterator */ {
+public class PostingList implements Serializable {
 
     /**
      * The actual posting list.
      */
     @NotNull
-    private final SkipList<Posting> postings;   // TODO: a built-in array may be faster but must be kept ordered
+    private final SkipList<Posting> postings;
 
 
     /**

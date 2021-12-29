@@ -139,7 +139,9 @@ public class InvertedIndex implements Serializable {
                         Collectors.toConcurrentMap(
                                 Map.Entry::getKey,
                                 Map.Entry::getValue,
-                                (t1, t2) -> t1/*ignore duplicate tokens in the same document. TODO: resee this for positional indexing*/))
+                                (t1, t2) -> {
+                                    throw new IllegalStateException("Duplicated keys should not be present, but were");
+                                }))
                 .entrySet();
     }
 
