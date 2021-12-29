@@ -338,4 +338,22 @@ class BooleanExpressionTest {
         }
     }
 
+    @Test
+    void throwIfTryingToLimitResultsWithNegativeNumber() {
+        try {
+            irsForTests.createNewBooleanExpression()
+                    .limit(-1);
+            fail("Should have thrown but did not.");
+        } catch (IllegalArgumentException ignored) {
+        }
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = PATH_TO_FILE_WITH_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
+    void evaluateOneWordQueryAndLimitNumberOfResults(String word, String ignored, String expectedResultingPostingList) {
+        booleanExpression = booleanExpression.setMatchingValue(word);
+        final int NUM_OF_RESULTS = splitDocIdIntoList(expectedResultingPostingList).size();
+        final int LIMITED_NUM_OF_RESULTS = NUM_OF_RESULTS > 0 ? NUM_OF_RESULTS - 1 : NUM_OF_RESULTS;
+        assertEquals(LIMITED_NUM_OF_RESULTS, booleanExpression.limit(LIMITED_NUM_OF_RESULTS).evaluate().size());
+    }
 }

@@ -36,8 +36,6 @@ import java.util.stream.Stream;
  */
 public class BooleanExpression {
 
-    // TODO: add attribute maxNumberOfResults and its setter to limit the number of results
-
     /**
      * Flag which is true if this instance is an aggregated expression.
      * See the description of {@link BooleanExpression this class}.
@@ -64,6 +62,14 @@ public class BooleanExpression {
      */
     @NotNull
     private final InformationRetrievalSystem informationRetrievalSystem;
+    /**
+     * Flag: true if the {@link #maxNumberOfResults} is specified.
+     */
+    private boolean maxNumberOfResultsSpecified = false;
+    /**
+     * The maximum number of results that must be showed.
+     */
+    private int maxNumberOfResults = -1;
     /**
      * The value to match.
      */
@@ -183,6 +189,26 @@ public class BooleanExpression {
             this.matchingPhrase = new Phrase(phrase, matchingPhraseMaxDistance);
             return this;
         }
+    }
+
+    /**
+     * Sets the {@link #maxNumberOfResults}.
+     *
+     * @param maxNumberOfResults the maximum number of results that must be returned
+     *                           by {@link #evaluate()}.
+     * @return this instance after executing the method.
+     * @throws IllegalArgumentException if a parameter &lt; 0 is provided.
+     */
+    public BooleanExpression limit(int maxNumberOfResults) throws IllegalArgumentException {
+        final int MIN_ALLOWED_VALUE_INCLUDED = 0;
+        if (maxNumberOfResults < MIN_ALLOWED_VALUE_INCLUDED) {
+            throw new IllegalArgumentException(
+                    "The minimum allowed value for the parameter is " + MIN_ALLOWED_VALUE_INCLUDED
+                            + ", but " + maxNumberOfResults + " found.");
+        }
+        this.maxNumberOfResults = maxNumberOfResults;
+        this.maxNumberOfResultsSpecified = true;
+        return this;
     }
 
     /**
@@ -454,8 +480,11 @@ public class BooleanExpression {
             throws UnsupportedOperationException {
         var results = evaluateBothSimpleAndAggregatedExpressionRecursively();
         assert results.stream().sorted().distinct().toList().equals(results.stream().toList());
+        if (!maxNumberOfResultsSpecified) {
+            maxNumberOfResults = results.size();
+        }
         return informationRetrievalSystem.getCorpus()
-                .getDocuments(results.stream().map(Posting::getDocId).toList());
+                .getDocuments(results.stream().map(Posting::getDocId).limit(maxNumberOfResults).toList());
         // TODO : implement ranking and sort results accordingly and test the correct sorting of results
     }
 

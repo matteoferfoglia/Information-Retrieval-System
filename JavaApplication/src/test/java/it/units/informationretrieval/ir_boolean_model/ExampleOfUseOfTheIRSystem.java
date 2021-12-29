@@ -86,8 +86,11 @@ public class ExampleOfUseOfTheIRSystem {
             System.out.println(andQueryAndReturnResultsAsString(ir, Arrays.asList("Space", "jam"), MAX_N_RESULTS));
             System.out.println(andQueryAndReturnResultsAsString(ir, Collections.singletonList("hand"), MAX_N_RESULTS));
             System.out.println(ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" ")).evaluate());
-            System.out.println(ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" "))
-                    .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bagchi")).evaluate());
+            System.out.println(ir.createNewBooleanExpression()
+                    .setMatchingPhrase("Space jam".split(" "))
+                    .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bagchi"))
+                    .limit(1)
+                    .evaluate());
 
         } catch (URISyntaxException | IOException | NoMoreDocIdsAvailable e) {
             e.printStackTrace();
