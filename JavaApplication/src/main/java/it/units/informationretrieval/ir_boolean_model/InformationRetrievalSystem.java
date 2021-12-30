@@ -8,7 +8,6 @@ import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -73,7 +72,7 @@ public class InformationRetrievalSystem implements Serializable {
      */
     @NotNull
     public Set<DocumentIdentifier> getAllDocIds() {
-        return new HashSet<>(corpus.getCorpus().keySet());
+        return invertedIndex.getAllDocIds();
     }
 
     /**
@@ -82,5 +81,15 @@ public class InformationRetrievalSystem implements Serializable {
     @NotNull
     public Corpus getCorpus() {
         return corpus;
+    }
+
+    /**
+     * @param docId The {@link DocumentIdentifier} to find.
+     * @return the {@link Set} (eventually empty) with all {@link Posting}s
+     * having the given {@link DocumentIdentifier}.
+     */
+    @NotNull
+    public Set<Posting> getPostingList(@NotNull DocumentIdentifier docId) {
+        return invertedIndex.getPostingList(docId);
     }
 }

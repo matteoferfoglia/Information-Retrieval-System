@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -15,17 +16,21 @@ import java.util.Objects;
 public class Posting implements Comparable<Posting>, Serializable {
 
     /**
+     * Compare postings considering only their {@link DocumentIdentifier}s.
+     */
+    @NotNull
+    public static final Comparator<Posting> DOC_ID_COMPARATOR = Comparator.comparing(o -> o.docId);
+
+    /**
      * The {@link DocumentIdentifier} of the document associated with this posting.
      */
     @NotNull
     private final DocumentIdentifier docId;
-
     /**
      * The {@link java.time.Instant} at which this instance has been created.
      */
     @NotNull
     private final Instant creationInstant;
-
     /**
      * Array of positions in the document where the term appears.
      */
@@ -72,13 +77,19 @@ public class Posting implements Comparable<Posting>, Serializable {
     /**
      * Compares {@link Posting}s according to their {@link DocumentIdentifier}
      * (see {@link DocumentIdentifier#compareTo(DocumentIdentifier)}).
+     * If the instances have equal {@link DocumentIdentifier}s, then the
+     * comparison is done according to {@link #termPositionsInTheDocument}.
      *
      * @param o The posting to be compared with this one.
      * @return the result of the comparison of their {@link DocumentIdentifier}s.
      */
     @Override
     public int compareTo(@NotNull Posting o) {
-        return this.docId.compareTo(o.docId);
+        var docIdComparison = this.docId.compareTo(o.docId);
+        if (docIdComparison == 0) {  // same docId
+            return Arrays.compare(this.termPositionsInTheDocument, o.termPositionsInTheDocument);
+        }
+        return docIdComparison;
     }
 
     /**
@@ -107,19 +118,21 @@ public class Posting implements Comparable<Posting>, Serializable {
     }
 
     /**
-     * @return true if the instances have the same {@link #docId}.
+     * @return true if the instances have the same {@link #docId}
+     * and the same {@link #termPositionsInTheDocument}.
      */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Posting posting = (Posting) o;
-        return docId.equals(posting.docId);
+        if (!docId.equals(posting.docId)) return false;
+        return Arrays.equals(termPositionsInTheDocument, posting.termPositionsInTheDocument);
     }
 
     @Override
     public int hashCode() {
-        return docId.hashCode();
+        return Objects.hash(docId, Arrays.hashCode(termPositionsInTheDocument));
     }
 
 }

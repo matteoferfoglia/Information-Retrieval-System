@@ -368,17 +368,14 @@ public class BooleanExpression {
                         new BooleanExpression(this)
                                 .setUnaryOperator(UNARY_OPERATOR.IDENTITY)
                                 .evaluateBothSimpleAndAggregatedExpressionRecursively()
-                                .stream().map(Posting::getDocId).toList();
+                                .stream().map(Posting::getDocId).distinct().toList();
                 yield new SkipList<>(
                         informationRetrievalSystem.getAllDocIds()
-                                .stream().unordered()
+                                .stream()
                                 .filter(docId -> !listOfDocIdToBeExcluded.contains(docId))
-                                .map(docId -> new Posting(docId, new int[0]/*TODO: positions NOT handled !!!!
-                                TODO : Save an HashSet with ALL postings of the entire IR system and filter postings
-                                        which not contain the docID,
-                                        NOTE: there exist more than one posting with the same docId
-                                        (update the hashCode method of class Posting)*/))
-                                .toList());
+                                .flatMap(docId -> informationRetrievalSystem.getPostingList(docId).stream())
+                                .sorted()
+                                .toList(), Posting.DOC_ID_COMPARATOR);
             }
             case IDENTITY -> {
                 if (isAggregated) {
@@ -386,16 +383,16 @@ public class BooleanExpression {
                             .unordered()
                             .map(BooleanExpression::evaluateBothSimpleAndAggregatedExpressionRecursively)
                             .reduce((listOfPostings1, listOfPostings2) -> {
-                                SkipList<Posting> postings1 = new SkipList<>(listOfPostings1);
-                                SkipList<Posting> postings2 = new SkipList<>(listOfPostings2);
+                                SkipList<Posting> postings1 = new SkipList<>(listOfPostings1, Posting.DOC_ID_COMPARATOR);
+                                SkipList<Posting> postings2 = new SkipList<>(listOfPostings2, Posting.DOC_ID_COMPARATOR);
                                 return switch (Objects.requireNonNull(binaryOperator)) {
-                                    case AND -> Utility.intersection(postings1, postings2);
-                                    case OR -> Utility.union(postings1, postings2);
+                                    case AND -> Utility.intersection(postings1, postings2, Posting.DOC_ID_COMPARATOR);
+                                    case OR -> Utility.union(postings1, postings2, Posting.DOC_ID_COMPARATOR);
                                     //noinspection UnnecessaryDefault
                                     default -> throw new UnsupportedOperationException("Unknown operator");
                                 };
                             })
-                            .orElse(new SkipList<>());
+                            .orElse(new SkipList<>(Posting.DOC_ID_COMPARATOR));
 
                 } else {
 
@@ -444,8 +441,8 @@ public class BooleanExpression {
                             var correspondingPostingList = cachedPostings.get(word);
                             if (correspondingPostingList == null) {
                                 // posting list for the term was not cached
-                                correspondingPostingList = new SkipList<>(informationRetrievalSystem
-                                        .getListOfPostingForToken(word));// TODO: do not create a new SkipList instance if it is already returned by getListOfPostingForToken
+                                correspondingPostingList = new SkipList<>(
+                                        informationRetrievalSystem.getListOfPostingForToken(word), Posting.DOC_ID_COMPARATOR);// TODO: do not create a new SkipList instance if it is already returned by getListOfPostingForToken
                                 cachedPostings.put(word, correspondingPostingList);
                             }
                             return correspondingPostingList;
@@ -454,18 +451,18 @@ public class BooleanExpression {
                         SkipList<Posting> phraseQueryIntersection = getPostingListOfIthWordInPhrase.apply(0);
                         for (int i = 1; !phraseQueryIntersection.isEmpty() && i < matchingPhrase.size(); i++) {
                             SkipList<Posting> postings = getPostingListOfIthWordInPhrase.apply(i);
-                            phraseQueryIntersection = SkipList.intersection(
-                                    phraseQueryIntersection, postings, biPredicatesForCheckingPositionsForPhrasalQueries[i - 1]);
+                            phraseQueryIntersection = SkipList.intersection(    // TODO: move to class utility (for uniformity)
+                                    phraseQueryIntersection, postings, biPredicatesForCheckingPositionsForPhrasalQueries[i - 1], Posting.DOC_ID_COMPARATOR);
                         }
 
                         yield phraseQueryIntersection;
                     }
 
                     if (isMatchingValueSet()) {
-                        yield new SkipList<>(informationRetrievalSystem.getListOfPostingForToken(matchingValue));
+                        yield new SkipList<>(informationRetrievalSystem.getListOfPostingForToken(matchingValue), Posting.DOC_ID_COMPARATOR);
                     } else {
                         // normalization of input matching value leads to null, hence no results can be found
-                        yield new SkipList<>();
+                        yield new SkipList<>(Posting.DOC_ID_COMPARATOR);
                     }
                 }
             }

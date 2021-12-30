@@ -282,6 +282,38 @@ public class Utility {
     }
 
     /**
+     * Like {@link #intersectionOfSortedLists(List, List)}, but this method is
+     * specific for {@link SkipList}s.
+     *
+     * @param <T>        Type of each element of the {@link  SkipList}s.
+     * @param a          The first list.
+     * @param b          The second list.
+     * @param comparator The comparator to use to compare instances.
+     * @return the {@link SkipList} corresponding to the intersection of the given input lists.
+     */
+    @NotNull
+    public static <T extends Comparable<T>> SkipList<T> intersection(
+            @NotNull SkipList<T> a, @NotNull SkipList<T> b, @NotNull Comparator<T> comparator) {
+        return SkipList.intersection(a, b, comparator); // TODO: add support for intersection with comparator for varargs
+    }
+
+    /**
+     * Like {@link #unionOfSortedLists(List, List)}, but this method is
+     * specific for {@link SkipList}s.
+     *
+     * @param <T>        Type of each element of the {@link  SkipList}s.
+     * @param a          The first list.
+     * @param b          The second list.
+     * @param comparator The comparator to use to compare instances.
+     * @return the {@link SkipList} corresponding to the intersection of the given input lists.
+     */
+    @NotNull
+    public static <T extends Comparable<T>> SkipList<T> union(
+            @NotNull SkipList<T> a, @NotNull SkipList<T> b, @NotNull Comparator<T> comparator) {
+        return SkipList.union(a, b, comparator); // TODO: add support for intersection with comparator for varargs
+    }
+
+    /**
      * Like {@link #unionOfSortedLists(List, List)}, but this method is
      * specific for {@link SkipList}s.
      *

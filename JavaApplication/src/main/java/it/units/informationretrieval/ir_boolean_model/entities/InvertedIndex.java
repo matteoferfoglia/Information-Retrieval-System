@@ -38,6 +38,16 @@ public class InvertedIndex implements Serializable {
     private final Map<String, Term> invertedIndex;   // each Term has its own posting list
 
     /**
+     * The {@link Map} collecting as keys {@link DocumentIdentifier}s and ad
+     * corresponding value the {@link Set} of {@link Posting} referring to
+     * that {@link DocumentIdentifier}. This field can be used to answer
+     * NOT queries when also positions of words in {@link Document} matters
+     * (because positions are saved in {@link Posting}s).
+     */
+    @NotNull
+    private final ConcurrentHashMap<DocumentIdentifier, Set<Posting>> postingsByDocId;
+
+    /**
      * The (reference to the) {@link Corpus} on which indexing is done.
      */
     @NotNull
@@ -57,6 +67,7 @@ public class InvertedIndex implements Serializable {
     public InvertedIndex(@NotNull final Corpus corpus) {
 
         this.corpus = Objects.requireNonNull(corpus);
+        this.postingsByDocId = new ConcurrentHashMap<>(corpus.size());
 
         AtomicLong numberOfAlreadyProcessedDocuments = new AtomicLong(0L);
         Runnable indexingProgressPrinterInterrupter =
@@ -86,65 +97,6 @@ public class InvertedIndex implements Serializable {
         }
     }
 
-    protected static Map<String, Term> indexCorpusAndGet(
-            @NotNull Corpus corpus, @NotNull AtomicLong numberOfAlreadyProcessedDocuments) {
-        Predicate<Map.Entry<DocumentIdentifier, Document>> documentContentNotNullPredicate =
-                entry -> entry != null
-                        && entry.getKey() != null
-                        && entry.getValue() != null
-                        && entry.getValue().getContent() != null;
-
-        Map<String, Term> targetDataStructureForInvertedIndex = createEmptyInvertedIndex();
-        targetDataStructureForInvertedIndex.putAll(
-                corpus.getCorpus()
-                        .entrySet()
-                        .stream().unordered().parallel()
-                        .filter(documentContentNotNullPredicate)
-                        .map(InvertedIndex::getEntrySetOfTokensAndCorrespondingTermsFromADocument)
-                        .peek(ignored -> numberOfAlreadyProcessedDocuments.getAndIncrement()/*TODO: threads must wait to increase this value: needed?*/)
-                        .flatMap(Collection::stream /*outputs all entries from all the documents*/)
-                        .collect(
-                                Collectors.toMap(
-                                        Map.Entry::getKey,
-                                        Map.Entry::getValue,
-                                        Term::merge /* Merge terms with the same token */)));
-
-        return targetDataStructureForInvertedIndex;
-    }
-
-    /**
-     * Maps token (obtained from tokenization preprocessing) to correspondent {@link Term}s.
-     *
-     * @param entryFromCorpusRepresentingOneDocument A document from the {@link Corpus} represented as
-     *                                               entry of {@link DocumentIdentifier} (as key) and
-     *                                               the actual {@link Document} (as value).
-     * @return the entry set having as key a token and as value its correspondent {@link Term}.
-     */
-    @NotNull
-    private static Set<Map.Entry<String, Term>> getEntrySetOfTokensAndCorrespondingTermsFromADocument(
-            @NotNull Map.Entry<@NotNull DocumentIdentifier, @NotNull Document> entryFromCorpusRepresentingOneDocument) {
-        DocumentIdentifier docIdThisDocument = entryFromCorpusRepresentingOneDocument.getKey();
-        Document document = entryFromCorpusRepresentingOneDocument.getValue();
-        Map<String, int[]> tokensFromCurrentDocument = Utility.tokenizeAndGetMapWithPositionsInDocument(document);
-
-        return tokensFromCurrentDocument
-                .entrySet()
-                .stream().unordered().parallel()
-                .map(tokenAndPositions -> new AbstractMap.SimpleEntry<>(
-                        tokenAndPositions.getKey(),
-                        new Term(
-                                new PostingList(new Posting(docIdThisDocument, tokenAndPositions.getValue())),
-                                tokenAndPositions.getKey())))
-                .collect(
-                        Collectors.toConcurrentMap(
-                                Map.Entry::getKey,
-                                Map.Entry::getValue,
-                                (t1, t2) -> {
-                                    throw new IllegalStateException("Duplicated keys should not be present, but were");
-                                }))
-                .entrySet();
-    }
-
     /**
      * Creates the data structure hosting an empty inverted index.
      *
@@ -168,6 +120,84 @@ public class InvertedIndex implements Serializable {
                     invertedIndex = new Hashtable<>();
         }
         return invertedIndex;
+    }
+
+    /**
+     * Indexes the given {@link Corpus} and return the index as {@link Map}.
+     *
+     * @param corpus                            The {@link Corpus} to be indexed.
+     * @param numberOfAlreadyProcessedDocuments The reference to the number of already
+     *                                          processed documents (can be used by another
+     *                                          thread to print the indexing progress).
+     * @return The result of indexing represented as {@link Map} having a {@link DocumentIdentifier}
+     * as key and the {@link Term} as corresponding value.
+     */
+    protected Map<String, Term> indexCorpusAndGet(
+            @NotNull Corpus corpus, @NotNull AtomicLong numberOfAlreadyProcessedDocuments) {
+        Predicate<Map.Entry<DocumentIdentifier, Document>> documentContentNotNullPredicate =
+                entry -> entry != null
+                        && entry.getKey() != null
+                        && entry.getValue() != null
+                        && entry.getValue().getContent() != null;
+
+        Map<String, Term> targetDataStructureForInvertedIndex = createEmptyInvertedIndex();
+        targetDataStructureForInvertedIndex.putAll(
+                corpus.getCorpus()
+                        .entrySet()
+                        .stream().unordered().parallel()
+                        .filter(documentContentNotNullPredicate)
+                        .map(this::getEntrySetOfTokensAndCorrespondingTermsFromADocument)
+                        .peek(ignored -> numberOfAlreadyProcessedDocuments.getAndIncrement()/*TODO: threads must wait to increase this value: needed?*/)
+                        .flatMap(Collection::stream /*outputs all entries from all the documents*/)
+                        .collect(
+                                Collectors.toMap(
+                                        Map.Entry::getKey,
+                                        Map.Entry::getValue,
+                                        Term::merge /* Merge terms with the same token */)));
+
+        return targetDataStructureForInvertedIndex;
+    }
+
+    /**
+     * Maps token (obtained from tokenization preprocessing) to correspondent {@link Term}s.
+     *
+     * @param entryFromCorpusRepresentingOneDocument A document from the {@link Corpus} represented as
+     *                                               entry of {@link DocumentIdentifier} (as key) and
+     *                                               the actual {@link Document} (as value).
+     * @return the entry set having as key a token and as value its correspondent {@link Term}.
+     */
+    @NotNull
+    private Set<Map.Entry<String, Term>> getEntrySetOfTokensAndCorrespondingTermsFromADocument(
+            @NotNull Map.Entry<@NotNull DocumentIdentifier, @NotNull Document> entryFromCorpusRepresentingOneDocument) {
+        DocumentIdentifier docIdThisDocument = entryFromCorpusRepresentingOneDocument.getKey();
+        Document document = entryFromCorpusRepresentingOneDocument.getValue();
+        Map<String, int[]> tokensFromCurrentDocument = Utility.tokenizeAndGetMapWithPositionsInDocument(document);
+
+        return tokensFromCurrentDocument
+                .entrySet()
+                .stream().unordered().parallel()
+                .map(tokenAndPositions -> {
+                    Posting posting = new Posting(docIdThisDocument, tokenAndPositions.getValue());
+                    var setOfPostingsWithSameDocId = postingsByDocId.get(docIdThisDocument);
+                    final int INITIAL_SET_CAPACITY = 50;
+                    if (setOfPostingsWithSameDocId == null) {
+                        setOfPostingsWithSameDocId = ConcurrentHashMap.newKeySet(INITIAL_SET_CAPACITY);
+                        postingsByDocId.put(docIdThisDocument, setOfPostingsWithSameDocId);
+                    }
+                    boolean postingWasNotAlreadyPresent = setOfPostingsWithSameDocId.add(posting);
+                    assert postingWasNotAlreadyPresent;
+                    return new AbstractMap.SimpleEntry<>(
+                            tokenAndPositions.getKey(),
+                            new Term(new PostingList(posting), tokenAndPositions.getKey()));
+                })
+                .collect(
+                        Collectors.toConcurrentMap(
+                                Map.Entry::getKey,
+                                Map.Entry::getValue,
+                                (t1, t2) -> {
+                                    throw new IllegalStateException("Duplicated keys should not be present, but were");
+                                }))
+                .entrySet();
     }
 
     /**
@@ -242,5 +272,24 @@ public class InvertedIndex implements Serializable {
     public final PostingList getPostingListForToken(String normalizedToken) {
         Term t = invertedIndex.get(normalizedToken);
         return t == null ? new PostingList() : t.getPostingList();
+    }
+
+    /**
+     * @return the {@link Set} of all {@link DocumentIdentifier}s currently present.
+     */
+    @NotNull
+    public Set<DocumentIdentifier> getAllDocIds() {
+        return postingsByDocId.keySet();
+    }
+
+    /**
+     * @param docId The {@link DocumentIdentifier} to find.
+     * @return the {@link Set} (eventually empty) with all {@link Posting}s
+     * having the given {@link DocumentIdentifier}.
+     */
+    @NotNull
+    public Set<Posting> getPostingList(@NotNull DocumentIdentifier docId) {
+        var results = postingsByDocId.get(docId);
+        return results == null ? ConcurrentHashMap.newKeySet(0) : results;
     }
 }
