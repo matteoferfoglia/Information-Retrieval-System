@@ -13,7 +13,8 @@ public class Benchmarking {
 
     public static void main(String[] args) throws IOException {    // TODO: create a Maven plugin to run this automatically
         // TODO: this method may be invoked from production code (e.g., a flag as command line arg to main)
-        BenchmarkRunner benchmarkRunner = new BenchmarkRunner();
+        final boolean printBenchmarkProgress = true;
+        BenchmarkRunner benchmarkRunner = new BenchmarkRunner(printBenchmarkProgress);
         benchmarkRunner.benchmarkAllAnnotatedMethodsAndGetListOfResults();
         System.out.println(benchmarkRunner);
         Utility.writeToFile(
