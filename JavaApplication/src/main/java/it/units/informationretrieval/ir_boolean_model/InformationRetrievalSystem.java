@@ -6,6 +6,7 @@ import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex;
 import it.units.informationretrieval.ir_boolean_model.entities.Posting;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
 import org.jetbrains.annotations.NotNull;
+import skiplist.SkipList;
 
 import java.io.Serializable;
 import java.util.List;
@@ -53,11 +54,12 @@ public class InformationRetrievalSystem implements Serializable {
 
     /**
      * @param normalizedToken The token to search in the {@link #invertedIndex}.
-     * @return the {@link List} of {@link Posting} for the given token.
+     * @return the {@link List} of {@link Posting} for the given token. Updates
+     * on the object returned by this method reflects to the actual system data.
      */
     @NotNull
-    public List<Posting> getListOfPostingForToken(@NotNull final String normalizedToken) {  // TODO: return SkipList?
-        return invertedIndex.getPostingListForToken(normalizedToken).toUnmodifiableListOfPostings();
+    public SkipList<Posting> getListOfPostingForToken(@NotNull final String normalizedToken) {
+        return invertedIndex.getPostingListForToken(normalizedToken).toSkipList();
     }
 
     @NotNull

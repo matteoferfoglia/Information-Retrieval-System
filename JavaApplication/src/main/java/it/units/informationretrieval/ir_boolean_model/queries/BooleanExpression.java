@@ -442,7 +442,7 @@ public class BooleanExpression {
                             if (correspondingPostingList == null) {
                                 // posting list for the term was not cached
                                 correspondingPostingList = new SkipList<>(
-                                        informationRetrievalSystem.getListOfPostingForToken(word), Posting.DOC_ID_COMPARATOR);// TODO: do not create a new SkipList instance if it is already returned by getListOfPostingForToken
+                                        informationRetrievalSystem.getListOfPostingForToken(word), Posting.DOC_ID_COMPARATOR);
                                 cachedPostings.put(word, correspondingPostingList);
                             }
                             return correspondingPostingList;

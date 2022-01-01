@@ -52,8 +52,8 @@ public class PostingList implements Serializable {
      * @return This instance as unmodifiable {@link List} of {@link Posting}s.
      */
     @NotNull
-    public List<Posting> toUnmodifiableListOfPostings() {
-        return postings.stream().toList();
+    public SkipList<Posting> toSkipList() {
+        return postings;
     }
 
     /**
