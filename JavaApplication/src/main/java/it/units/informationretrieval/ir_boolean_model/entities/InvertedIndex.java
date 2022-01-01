@@ -66,7 +66,7 @@ public class InvertedIndex implements Serializable {
      */
     public InvertedIndex(@NotNull final Corpus corpus) {
 
-        this.corpus = Objects.requireNonNull(corpus);
+        this.corpus = corpus;
         this.postingsByDocId = new ConcurrentHashMap<>(corpus.size());
 
         AtomicLong numberOfAlreadyProcessedDocuments = new AtomicLong(0L);

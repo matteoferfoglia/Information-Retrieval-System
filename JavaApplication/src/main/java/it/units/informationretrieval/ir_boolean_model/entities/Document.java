@@ -117,7 +117,8 @@ public abstract class Document implements Serializable, Comparable<Document> {
      */
     public @NotNull LinkedHashMap<String, ?> toSortedMapOfProperties() {
         return new LinkedHashMap<>() {{
-            put("Content", Objects.requireNonNull(getContent()).getEntireTextContent());
+            assert getContent() != null;
+            put("Content", getContent().getEntireTextContent());
         }};
     }
 

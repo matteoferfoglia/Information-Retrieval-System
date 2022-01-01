@@ -174,7 +174,7 @@ public class BooleanExpression {
      *                                  the term at position 0.
      * @return This instance after the execution of this method.
      */
-    public BooleanExpression setMatchingPhrase(String[] matchingPhrase, int[] matchingPhraseMaxDistance) {
+    public BooleanExpression setMatchingPhrase(@NotNull String[] matchingPhrase, int[] matchingPhraseMaxDistance) {
         throwIfIsAggregated();
         if (isMatchingValueSet()) {
             throw new IllegalStateException("Matching value already set, cannot set matching value too.");
@@ -217,7 +217,7 @@ public class BooleanExpression {
      * @param matchingPhrase The phrase to match.
      * @return This instance after the execution of this method.
      */
-    public BooleanExpression setMatchingPhrase(String[] matchingPhrase) {
+    public BooleanExpression setMatchingPhrase(@NotNull String[] matchingPhrase) {
         return setMatchingPhrase(matchingPhrase, IntStream.range(1, matchingPhrase.length).toArray());
     }
 
@@ -273,24 +273,23 @@ public class BooleanExpression {
      * Like {@link #and(BooleanExpression)}, but accepts a word directly.
      */
     public BooleanExpression and(@NotNull String matchingValue) {
-        return and(new BooleanExpression(informationRetrievalSystem).setMatchingValue(Objects.requireNonNull(matchingValue)));
+        return and(new BooleanExpression(informationRetrievalSystem).setMatchingValue(matchingValue));
     }
 
     /**
      * Like {@link #and(BooleanExpression)}, but accepts a phrase directly.
      */
     public BooleanExpression and(String[] matchingPhrase) {    // TODO: test and benchmark
-        return and(new BooleanExpression(informationRetrievalSystem).setMatchingPhrase(Objects.requireNonNull(matchingPhrase)));
+        return and(new BooleanExpression(informationRetrievalSystem).setMatchingPhrase(matchingPhrase));
     }
 
     /**
      * Like {@link #and(BooleanExpression)}, but accepts a phrase directly.
      */
-    public BooleanExpression and(String[] matchingPhrase, int[] matchingPhraseMaxDistance) {// TODO: test and benchmark
+    public BooleanExpression and(@NotNull String[] matchingPhrase, int[] matchingPhraseMaxDistance) {// TODO: test and benchmark
         return and(
                 new BooleanExpression(informationRetrievalSystem)
-                        .setMatchingPhrase(
-                                Objects.requireNonNull(matchingPhrase), Objects.requireNonNull(matchingPhraseMaxDistance)));
+                        .setMatchingPhrase(matchingPhrase, matchingPhraseMaxDistance));
     }
     //endregion
 
@@ -312,14 +311,14 @@ public class BooleanExpression {
      * Like {@link #or(BooleanExpression)}, but accepts a word directly.
      */
     public BooleanExpression or(@NotNull String matchingValue) {
-        return or(new BooleanExpression(informationRetrievalSystem).setMatchingValue(Objects.requireNonNull(matchingValue)));
+        return or(new BooleanExpression(informationRetrievalSystem).setMatchingValue(matchingValue));
     }
 
     /**
      * Like {@link #or(BooleanExpression)}, but accepts a phrase directly.
      */
     public BooleanExpression or(String[] matchingPhrase) {// TODO: test and benchmark
-        return or(new BooleanExpression(informationRetrievalSystem).setMatchingPhrase(Objects.requireNonNull(matchingPhrase)));
+        return or(new BooleanExpression(informationRetrievalSystem).setMatchingPhrase(matchingPhrase));
     }
 
     /**
@@ -328,7 +327,7 @@ public class BooleanExpression {
     public BooleanExpression or(String[] matchingPhrase, int[] matchingPhraseMaxDistance) {// TODO: test and benchmark
         return or(
                 new BooleanExpression(informationRetrievalSystem)
-                        .setMatchingPhrase(Objects.requireNonNull(matchingPhrase), Objects.requireNonNull(matchingPhraseMaxDistance)));
+                        .setMatchingPhrase(matchingPhrase, matchingPhraseMaxDistance));
     }
     //endregion
 
@@ -385,7 +384,8 @@ public class BooleanExpression {
                             .reduce((listOfPostings1, listOfPostings2) -> {
                                 SkipList<Posting> postings1 = new SkipList<>(listOfPostings1, Posting.DOC_ID_COMPARATOR);
                                 SkipList<Posting> postings2 = new SkipList<>(listOfPostings2, Posting.DOC_ID_COMPARATOR);
-                                return switch (Objects.requireNonNull(binaryOperator)) {
+                                assert binaryOperator != null;
+                                return switch (binaryOperator) {
                                     case AND -> Utility.intersection(postings1, postings2, Posting.DOC_ID_COMPARATOR);
                                     case OR -> Utility.union(postings1, postings2, Posting.DOC_ID_COMPARATOR);
                                     //noinspection UnnecessaryDefault
@@ -572,7 +572,7 @@ public class BooleanExpression {
          */
         Phrase(@NotNull String[] words, int[] distanceFromFirstWord) throws IllegalArgumentException {
             if (words.length > 1
-                    && words.length == distanceFromFirstWord.length + 1
+                    && words.length == Objects.requireNonNull(distanceFromFirstWord).length + 1
                     && distanceFromFirstWord[0] > 0
                     && IntStream.range(1, distanceFromFirstWord.length)
                     .allMatch(i -> distanceFromFirstWord[i] - distanceFromFirstWord[i - 1] > 0)) {
@@ -590,4 +590,4 @@ public class BooleanExpression {
             return words.length;
         }
     }
-}   // TODO: remove Objects.requireNonNull
+}

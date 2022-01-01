@@ -1,6 +1,7 @@
 package it.units.informationretrieval.ir_boolean_model.utils;
 
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.stream.IntStream;
 
 /**
@@ -12,17 +13,17 @@ public abstract class Soundex {
      * @param inputWord A word.
      * @return the phonetic hash of the input word (lowercase).
      */
-    public static String getPhoneticHash(String inputWord) {
-        inputWord = Objects.requireNonNull(inputWord).trim().toLowerCase();
-        if (!inputWord.isBlank()) {
-            if (inputWord.length() == 1) {
-                return inputWord;
+    public static String getPhoneticHash(@NotNull final String inputWord) {
+        var inputWord_ = inputWord.trim().toLowerCase();
+        if (!inputWord_.isBlank()) {
+            if (inputWord_.length() == 1) {
+                return inputWord_;
             } else {
                 return padWith0IfNeededAndGetFirst4LettersOf(
-                        inputWord.charAt(0) +
+                        inputWord_.charAt(0) +
                                 removeAllOccurrencesOf0ButFirstLetter(
                                         replaceLettersWithSoundexDigits(
-                                                keepOnlyTheFirstLetterIfTwoOrMoreLettersWithTheSameSoundexDigitAreAdjacentOrSeparatedByHorWorY(inputWord)))
+                                                keepOnlyTheFirstLetterIfTwoOrMoreLettersWithTheSameSoundexDigitAreAdjacentOrSeparatedByHorWorY(inputWord_)))
                                         .substring(1));
             }
         } else {

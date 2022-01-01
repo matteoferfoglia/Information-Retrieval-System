@@ -40,8 +40,9 @@ public class Utility {
      */
     @NotNull
     public static String[] tokenize(@NotNull Document document) {
+        assert document.getContent() != null;
         return Arrays.stream(
-                        (Objects.requireNonNull(document).getTitle() + " " + Objects.requireNonNull(document.getContent()).getEntireTextContent())
+                        (document.getTitle() + " " + document.getContent().getEntireTextContent())
                                 .split(" "))
                 .filter(text -> !text.isBlank())
                 .map(Utility::normalize)
@@ -159,7 +160,7 @@ public class Utility {
      *                                       a new {@link List}, e.g.: <code>new ArrayList<>(Array.asList(1,2,3))</code>).
      */
     public static void sortAndRemoveDuplicates(@NotNull List<?>... lists) throws UnsupportedOperationException {  // TODO: test (with example from the Javadoc of this method) and benchmark
-        if (Objects.requireNonNull(lists).length == 0 || lists[0].isEmpty()) {
+        if (lists.length == 0 || lists[0].isEmpty()) {
             return;
         }
 
@@ -201,7 +202,8 @@ public class Utility {
      */
     @NotNull
     public static List<List<?>> transpose(@NotNull final List<List<?>> inputMatrix) { // TODO: test
-        return IntStream.range(0, Objects.requireNonNull(Objects.requireNonNull(inputMatrix).get(0)).size())
+        assert inputMatrix.get(0) != null;
+        return IntStream.range(0, inputMatrix.get(0).size())
                 .mapToObj(colIndexInInputMtx ->
                         inputMatrix.stream().map(rowInInputMtx -> rowInInputMtx.get(colIndexInInputMtx))
                                 .collect(toList()))
@@ -216,8 +218,7 @@ public class Utility {
      */
     @NotNull
     public static <T extends Comparable<T>> List<T> unionOfSortedLists(@NotNull List<T> a, @NotNull List<T> b) {
-        ArrayList<T> union = new ArrayList<>(
-                Objects.requireNonNull(a).size() + Objects.requireNonNull(b).size());
+        ArrayList<T> union = new ArrayList<>(a.size() + b.size());
         int i = 0, j = 0, comparison;
         while (i < a.size() && j < b.size()) {
             comparison = a.get(i).compareTo(b.get(j));
@@ -245,8 +246,6 @@ public class Utility {
     @NotNull
     public static <T extends Comparable<T>> List<T> intersectionOfSortedLists(
             @NotNull List<T> a, @NotNull List<T> b) {
-        Objects.requireNonNull(a);
-        Objects.requireNonNull(b);
 
         ArrayList<T> intersection = new ArrayList<>(a.size());
         int i = 0, j = 0, comparison;
@@ -362,7 +361,7 @@ public class Utility {
      * @param str The input string to be encoded.
      */
     public static String encodeForJson(@NotNull String str) {
-        return Objects.requireNonNull(str)
+        return str
                 .replaceAll("\"", "\\\"")
                 .replaceAll("'", "\\'");
 
@@ -385,13 +384,11 @@ public class Utility {
 
         default <V> TriFunction<A, B, C, V> andThen(
                 Function<? super R, ? extends V> after) {
-            Objects.requireNonNull(after);
             return (A a, B b, C c) -> after.apply(apply(a, b, c));
         }
 
         default <D, V> TriFunction<A, B, C, V> andThen(
                 BiFunction<? super R, D, ? extends V> after, D parameter) {
-            Objects.requireNonNull(after);
             return (A a, B b, C c) -> after.apply(apply(a, b, c), parameter);
         }
     }
@@ -408,7 +405,6 @@ public class Utility {
 
         default <D, V> BiFunction<A, B, V> andThen(
                 BiFunction<? super R, D, V> after, D parameter) {
-            Objects.requireNonNull(after);
             return (A a, B b) -> after.apply(apply(a, b), parameter);
         }
     }

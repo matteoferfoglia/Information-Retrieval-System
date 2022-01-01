@@ -49,7 +49,7 @@ public class Corpus implements Serializable {
 
         AtomicReference<NoMoreDocIdsAvailable> eventuallyThrownException = new AtomicReference<>();
 
-        ConcurrentMap<DocumentIdentifier, Document> corpus = Objects.requireNonNull(documents)
+        ConcurrentMap<DocumentIdentifier, Document> corpus = documents
                 .stream().unordered().parallel()
                 .map(aDocument -> {
                     try {
@@ -80,7 +80,7 @@ public class Corpus implements Serializable {
      */
     @NotNull
     public List<Document> getDocuments(@NotNull List<DocumentIdentifier> docIds) {
-        return Objects.requireNonNull(docIds)
+        return docIds
                 .stream().unordered().parallel()
                 .map(corpus::get)
                 .filter(Objects::nonNull)
