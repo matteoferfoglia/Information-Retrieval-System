@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static it.units.informationretrieval.ir_boolean_model.entities.InvertedIndexTest.randomPhraseFromDictionaryOfMovieInvertedIndex;
 import static it.units.informationretrieval.ir_boolean_model.entities.InvertedIndexTest.randomTokenFromDictionaryOfMovieInvertedIndex;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -28,7 +29,7 @@ class BooleanExpressionTest {
     private static final String PATH_TO_FILE_WITH_QUERY_SAMPLES = "/singleWordQuery.csv";
     private static final String PATH_TO_FILE_WITH_PHRASE_QUERY_SAMPLES = "/phraseQuery.csv";
     private static final String LIST_ELEMENTS_SEPARATOR_IN_CSV = "#";
-    private static final int NUM_LINES_TO_SKIP_IN_CSV = 2;
+    private static final int NUM_LINES_TO_SKIP_IN_CSV = 1;
     private static final String COMMENT_FOR_BENCHMARK = "Terms in queries randomly taken from the dictionary.";
     private static final InformationRetrievalSystem irsForBenchmark =
             new InformationRetrievalSystem(InvertedIndexTest.invertedIndexForMovieCorpus);
@@ -145,6 +146,103 @@ class BooleanExpressionTest {
                 .evaluate();
     }
 
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluatePhraseQueryNot() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingPhrase(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluatePhraseQueryAnd() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingPhrase(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .and(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluatePhraseQueryOr() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingPhrase(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .or(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluatePhraseQueryAndThenNot() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingPhrase(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .and(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluatePhraseQueryOrThenNot() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingPhrase(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .or(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluatePhraseQueryNotThenNot() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingPhrase(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .not()
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluatePhraseQueryNotThenAndThenAndThenNot() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingPhrase(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .and(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .and(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluatePhraseQueryNotThenOr() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingPhrase(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .or(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluatePhraseQueryNotThenOrThenOr() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingPhrase(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .not()
+                .or(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .or(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    static void createAndEvaluatePhraseQueryAndThenOr() {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingPhrase(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .and(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .or(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .evaluate();
+    }
+
+    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    void createAndEvaluatePhraseQuery(String phrase, String expectedResultingPostingList) {
+        irsForBenchmark.createNewBooleanExpression()
+                .setMatchingPhrase(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
+                .evaluate();
+    }
+
     private List<String> evaluateQueryAndGetResultingDocIdsAsStringList() {
         List<Document> queryResults = booleanExpression.evaluate();
         return corpus.getCorpus().entrySet()
@@ -229,7 +327,7 @@ class BooleanExpressionTest {
 
     @ParameterizedTest
     @CsvFileSource(resources = PATH_TO_FILE_WITH_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
-    void evaluateQueryNotThenOr(String word, String word2, String ignored, String ignored2, String ignored3, String ignored4, String ignored5, String ignored6, String ignored7, String ignored8,
+    void evaluateQueryNotThenOr(String word, String ignored, String ignored2, String ignored3, String ignored4, String ignored5, String ignored6, String ignored7, String ignored8, String ignored9,
                                 String expectedResultingPostingList) {
         booleanExpression = booleanExpression.setMatchingValue(word).not().or(word);
         assertQueryResultsAreCorrect(expectedResultingPostingList);
@@ -253,8 +351,80 @@ class BooleanExpressionTest {
 
     @ParameterizedTest
     @CsvFileSource(resources = PATH_TO_FILE_WITH_PHRASE_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
-    void evaluatePhraseQuery(String phrase, String expectedResultingPostingList) {
+    void evaluatePhraseQuery(String phrase, String ignored, String expectedResultingPostingList) {
         booleanExpression = booleanExpression.setMatchingPhrase(phrase.split(" "));
+        assertQueryResultsAreCorrect(expectedResultingPostingList);
+    }
+
+
+    @ParameterizedTest
+    @CsvFileSource(resources = PATH_TO_FILE_WITH_PHRASE_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
+    void evaluatePhraseQueryNot(String phrase, String ignored, String ignored2, String ignored3, String expectedResultingPostingList) {
+        booleanExpression = booleanExpression.setMatchingPhrase(phrase.split(" ")).not();
+        assertQueryResultsAreCorrect(expectedResultingPostingList);
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = PATH_TO_FILE_WITH_PHRASE_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
+    void evaluateQueryAnd(String phrase1, String phrase2, String ignored, String expectedResultingPostingList) {
+        booleanExpression = booleanExpression.setMatchingPhrase(phrase1.split(" ")).and(phrase2.split(" "));
+        assertQueryResultsAreCorrect(expectedResultingPostingList);
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = PATH_TO_FILE_WITH_PHRASE_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
+    void evaluatePhraseQueryOr(String phrase1, String phrase2, String ignored, String ignored2, String ignored3,
+                               String expectedResultingPostingList) {
+        booleanExpression = booleanExpression.setMatchingPhrase(phrase1.split(" ")).or(phrase2.split(" "));
+        assertQueryResultsAreCorrect(expectedResultingPostingList);
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = PATH_TO_FILE_WITH_PHRASE_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
+    void evaluatePhraseQueryAndThenNot(String phrase1, String phrase2, String ignored, String ignored2, String ignored3, String ignored4,
+                                       String expectedResultingPostingList) {
+        booleanExpression = booleanExpression.setMatchingPhrase(phrase1.split(" ")).and(phrase2.split(" ")).not();
+        assertQueryResultsAreCorrect(expectedResultingPostingList);
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = PATH_TO_FILE_WITH_PHRASE_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
+    void evaluatePhraseQueryOrThenNot(String phrase1, String phrase2, String ignored, String ignored2, String ignored3, String ignored4, String ignored5,
+                                      String expectedResultingPostingList) {
+        booleanExpression = booleanExpression.setMatchingPhrase(phrase1.split(" ")).or(phrase2.split(" ")).not();
+        assertQueryResultsAreCorrect(expectedResultingPostingList);
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = PATH_TO_FILE_WITH_PHRASE_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
+    void evaluatePhraseQueryNotThenNot(String phrase1, String ignored, String ignored2, String ignored3, String ignored4, String ignored5, String ignored6, String ignored7,
+                                       String expectedResultingPostingList) {
+        booleanExpression = booleanExpression.setMatchingPhrase(phrase1.split(" ")).not().not();
+        assertQueryResultsAreCorrect(expectedResultingPostingList);
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = PATH_TO_FILE_WITH_PHRASE_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
+    void evaluatePhraseQueryNotThenAndThenAnd(String phrase1, String phrase2, String ignored, String ignored2, String ignored3, String ignored4, String ignored5, String ignored6, String ignored7,
+                                              String expectedResultingPostingList) {
+        booleanExpression = booleanExpression.setMatchingPhrase(phrase1.split(" "))
+                .not().and(phrase2.split(" ")).and(phrase1.split(" "));
+        assertQueryResultsAreCorrect(expectedResultingPostingList);
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = PATH_TO_FILE_WITH_PHRASE_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
+    void evaluatePhraseQueryNotThenOr(String phrase1, String phrase2, String ignored, String ignored2, String ignored3, String ignored4, String ignored5, String ignored6, String ignored7, String ignored8,
+                                      String expectedResultingPostingList) {
+        booleanExpression = booleanExpression.setMatchingPhrase(phrase1.split(" ")).not().or(phrase2.split(" "));
+        assertQueryResultsAreCorrect(expectedResultingPostingList);
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = PATH_TO_FILE_WITH_PHRASE_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)
+    void evaluatePhraseQueryNotThenOr2(String phrase1, String ignored0, String ignored, String ignored2, String ignored3, String ignored4, String ignored5, String ignored6, String ignored7, String ignored8, String ignored9,
+                                       String expectedResultingPostingList) {
+        booleanExpression = booleanExpression.setMatchingPhrase(phrase1.split(" ")).not().or(phrase1.split(" "));
         assertQueryResultsAreCorrect(expectedResultingPostingList);
     }
 

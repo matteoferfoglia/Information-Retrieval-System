@@ -279,14 +279,14 @@ public class BooleanExpression {
     /**
      * Like {@link #and(BooleanExpression)}, but accepts a phrase directly.
      */
-    public BooleanExpression and(String[] matchingPhrase) {    // TODO: test and benchmark
+    public BooleanExpression and(@NotNull String[] matchingPhrase) {
         return and(new BooleanExpression(informationRetrievalSystem).setMatchingPhrase(matchingPhrase));
     }
 
     /**
      * Like {@link #and(BooleanExpression)}, but accepts a phrase directly.
      */
-    public BooleanExpression and(@NotNull String[] matchingPhrase, int[] matchingPhraseMaxDistance) {// TODO: test and benchmark
+    public BooleanExpression and(@NotNull String[] matchingPhrase, int[] matchingPhraseMaxDistance) {
         return and(
                 new BooleanExpression(informationRetrievalSystem)
                         .setMatchingPhrase(matchingPhrase, matchingPhraseMaxDistance));
@@ -317,14 +317,14 @@ public class BooleanExpression {
     /**
      * Like {@link #or(BooleanExpression)}, but accepts a phrase directly.
      */
-    public BooleanExpression or(String[] matchingPhrase) {// TODO: test and benchmark
+    public BooleanExpression or(String[] matchingPhrase) {
         return or(new BooleanExpression(informationRetrievalSystem).setMatchingPhrase(matchingPhrase));
     }
 
     /**
      * Like {@link #or(BooleanExpression)}, but accepts a phrase directly.
      */
-    public BooleanExpression or(String[] matchingPhrase, int[] matchingPhraseMaxDistance) {// TODO: test and benchmark
+    public BooleanExpression or(String[] matchingPhrase, int[] matchingPhraseMaxDistance) {
         return or(
                 new BooleanExpression(informationRetrievalSystem)
                         .setMatchingPhrase(matchingPhrase, matchingPhraseMaxDistance));

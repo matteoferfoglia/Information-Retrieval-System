@@ -1,12 +1,14 @@
 # CSV file with samples of phrase query
-phrase,                     docIds of docs with phrase
-the cat,                    1
-the cat is,                 1
-The cat is on the table.,   1
-cat the,
-is table,
-on table,
-on the table,               1#2
-a car,
-123 sky,
-card the,
+phrase1,                    phrase2,                        docIds of docs with phrase, AND,    NOT,        OR,     NOT(phrase1 AND phrase2),   NOT(phrase1 OR phrase2),    NOT(NOT phrase1), ((NOT phrase1) AND phrase2) AND phrase1,     (NOT phrase1) OR phrase2,   NOT(phrase1) OR phrase1
+the cat,                    is on,                          1,                          1,      2#3#4,      1#2,    2#3#4,                      3#4,                        1,                ,                                                 1#2#3#4,                    1#2#3#4
+the cat is,                 0,                              1,                          ,       2#3#4,      1,      1#2#3#4,                    2#3#4,                      1,                ,                                                 2#3#4,                      1#2#3#4
+The cat is on the table.,   The dog is,                     1,                          ,       2#3#4,      1#2,    1#2#3#4,                    3#4,                        1,                ,                                                 2#3#4,                      1#2#3#4
+cat the,                    table,                          ,                           ,       1#2#3#4,    1#2,    1#2#3#4,                    3#4,                        ,                 ,                                                 1#2#3#4,                    1#2#3#4
+the cat,                    table,                          1,                          1,      2#3#4,      1#2,    2#3#4,                      3#4,                        1,                ,                                                 1#2#3#4,                    1#2#3#4
+is table,                   0,                              ,                           ,       1#2#3#4,    ,       1#2#3#4,                    1#2#3#4,                    ,                 ,                                                 1#2#3#4,                    1#2#3#4
+on table,                   0,                              ,                           ,       1#2#3#4,    ,       1#2#3#4,                    1#2#3#4,                    ,                 ,                                                 1#2#3#4,                    1#2#3#4
+on the table,               the car,                        1#2,                        ,       3#4,        1#2#3,  1#2#3#4,                    4,                          1#2,              ,                                                 3#4,                        1#2#3#4
+on the table,               dog,                            1#2,                        2,      3#4,        1#2,    1#3#4,                      3#4,                        1#2,              ,                                                 2#3#4,                      1#2#3#4
+a car,                      0,                              ,                           ,       1#2#3#4,    ,       1#2#3#4,                    1#2#3#4,                    ,                 ,                                                 1#2#3#4,                    1#2#3#4
+123 sky,                    cat,                            ,                           ,       1#2#3#4,    1,      1#2#3#4,                    2#3#4,                      ,                 ,                                                 1#2#3#4,                    1#2#3#4
+card the,                   0,                              ,                           ,       1#2#3#4,    ,       1#2#3#4,                    1#2#3#4,                    ,                 ,                                                 1#2#3#4,                    1#2#3#4

@@ -35,6 +35,8 @@ public class InvertedIndexTest {
     private static final String POSTINGS_SEPARATOR_IN_CSV_FILE = "\\|";
     private static final String LIST_ELEMENTS_SEPARATOR_IN_CSV_FILE = "#";
     public static InvertedIndex invertedIndexForMovieCorpus;
+    public static Supplier<String> randomTokenFromDictionaryOfMovieInvertedIndex;
+    public static Supplier<String[]> randomPhraseFromDictionaryOfMovieInvertedIndex;
     private static Corpus movieCorpus;
     private static Corpus sampleCorpus;
     private static InvertedIndex invertedIndexForTests;
@@ -46,27 +48,59 @@ public class InvertedIndexTest {
         try {
             movieCorpus = Movie.createCorpus();                           // used for benchmarks
             invertedIndexForMovieCorpus = new InvertedIndex(movieCorpus); // used for benchmarks
+            randomTokenFromDictionaryOfMovieInvertedIndex = new Supplier<>() {
+
+                private static final List<String> dictionary = new ArrayList<>(invertedIndexForMovieCorpus.getDictionary());
+                private static final int dictionaryLength = dictionary.size();
+                private static final String[] randomPermutationOfTokensFromDictionary;
+                private static int numberOfGeneratedToken = 0;
+
+                static {
+                    Collections.shuffle(dictionary);
+                    randomPermutationOfTokensFromDictionary = dictionary.toArray(String[]::new);
+                }
+
+                @Override
+                public String get() {
+                    return randomPermutationOfTokensFromDictionary[numberOfGeneratedToken++ % dictionaryLength];
+                }
+            };
+            randomPhraseFromDictionaryOfMovieInvertedIndex = new Supplier<>() {
+
+                private static final int PHRASE_LENGTH = 5;
+                private static final int NUM_OF_DOCS_TO_USE = 10000;
+
+                private static final List<Document> movies = new ArrayList<>(invertedIndexForMovieCorpus.getCorpus().getCorpus().values());
+                private static final List<String[]> randomPermutationOfPhrasesFromDocuments =
+                        movies.stream().unordered().sequential()
+                                .map(Document::getContent)
+                                .filter(Objects::nonNull)
+                                .limit(NUM_OF_DOCS_TO_USE)
+                                .map(DocumentContent::getEntireTextContent)
+                                .map(docContent -> {
+                                    var randomStartingPosition = (int) (Math.random() * Math.max(0, docContent.length() - PHRASE_LENGTH));
+                                    return docContent.substring(randomStartingPosition, randomStartingPosition + PHRASE_LENGTH);
+                                })
+                                .map(phrase -> phrase.split(" "))
+                                .collect(Collectors.toList());
+                private static int numberOfGeneratedPhrase = 0;
+
+                static {
+                    assert randomPermutationOfPhrasesFromDocuments.size() > 0;
+                    Collections.shuffle(randomPermutationOfPhrasesFromDocuments);
+                }
+
+                @Override
+                public String[] get() {
+                    return randomPermutationOfPhrasesFromDocuments
+                            .get(numberOfGeneratedPhrase++ % randomPermutationOfPhrasesFromDocuments.size());
+                }
+            };
         } catch (NoMoreDocIdsAvailable | URISyntaxException e) {
             fail(e);
         }
         System.setOut(realStdOut);
     }
-    public static final Supplier<String> randomTokenFromDictionaryOfMovieInvertedIndex = new Supplier<>() {
-
-        private static final List<String> dictionary = new ArrayList<>(invertedIndexForMovieCorpus.getDictionary());
-        private static final int dictionaryLength = dictionary.size();
-        private static final String[] randomPermutationOfTokensFromDictionary = dictionary.toArray(String[]::new);
-        private static int numberOfGeneratedToken = 0;
-
-        static {
-            Collections.shuffle(dictionary);
-        }
-
-        @Override
-        public String get() {
-            return randomPermutationOfTokensFromDictionary[numberOfGeneratedToken++ % dictionaryLength];
-        }
-    };
 
     @Benchmark(warmUpIterations = 1, iterations = 3, tearDownIterations = 1, commentToReport = "Inverted index for the Movie corpus.")
     static void createInvertedIndexForMovieCorpus() {
