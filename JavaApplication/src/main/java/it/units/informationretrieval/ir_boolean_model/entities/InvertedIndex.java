@@ -150,7 +150,7 @@ public class InvertedIndex implements Serializable {
                         .peek(ignored -> numberOfAlreadyProcessedDocuments.getAndIncrement()/*TODO: threads must wait to increase this value: needed?*/)
                         .flatMap(Collection::stream /*outputs all entries from all the documents*/)
                         .collect(
-                                Collectors.toMap(
+                                Collectors.toConcurrentMap(
                                         Map.Entry::getKey,
                                         Map.Entry::getValue,
                                         Term::merge /* Merge terms with the same token */)));
