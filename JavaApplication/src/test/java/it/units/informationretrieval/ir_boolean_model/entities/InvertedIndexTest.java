@@ -6,6 +6,7 @@ import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_de
 import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocumentIdentifier;
 import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocument_LineOfAFile;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
+import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,6 +17,7 @@ import skiplist.SkipList;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,18 +33,30 @@ public class InvertedIndexTest {
 
     private static final String PATH_TO_CORPUS = "/SampleCorpus.csv";
     private static final String PATH_TO_INVERTED_INDEX = "/InvertedIndexForSampleCorpus.csv";
+    private static final String PATH_TO_PERMUTERM_INDEX = "/PermutermIndexForSampleCorpus.csv";
     private static final String CSV_SEPARATOR = ",";
     private static final String POSTINGS_SEPARATOR_IN_CSV_FILE = "\\|";
     private static final String LIST_ELEMENTS_SEPARATOR_IN_CSV_FILE = "#";
+    private static final String END_OF_WORD_PERMUTERM_USED_IN_TESTS = "\\$";
     public static InvertedIndex invertedIndexForMovieCorpus;
     public static Supplier<String> randomTokenFromDictionaryOfMovieInvertedIndex;
     public static Supplier<String[]> randomPhraseFromDictionaryOfMovieInvertedIndex;
+    private static String END_OF_WORD_PERMUTERM_USED_IN_INVERTED_INDEX;
     private static Corpus movieCorpus;
     private static Corpus sampleCorpus;
     private static InvertedIndex invertedIndexForTests;
     private static Map<String, SkipList<Posting>> expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings;
+    private static Map<String, String> expectedPermutermIndexFromFileAsMapOfStringAndCorrespondingStringFromDictionary;
 
     static {
+        try {
+            Field endOfWordPermutermField = InvertedIndex.class.getDeclaredField("END_OF_WORD");
+            endOfWordPermutermField.setAccessible(true);
+            END_OF_WORD_PERMUTERM_USED_IN_INVERTED_INDEX = (String) endOfWordPermutermField.get(null);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            fail(e);
+        }
+
         PrintStream realStdOut = System.out;
         System.setOut(new PrintStream(new ByteArrayOutputStream()));      // ignore std out for this block
         try {
@@ -124,7 +138,7 @@ public class InvertedIndexTest {
     }
 
     @BeforeAll
-    static void loadExpectedInvertedIndexFromFile() throws URISyntaxException, IOException {
+    static void loadExpectedInvertedAndPermutermIndexFromFile() throws URISyntaxException, IOException {
         // parsing of file from resources for tests
         expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings =
                 readCsvAndGetStreamWithAnArrayForEachLine(PATH_TO_INVERTED_INDEX)
@@ -146,6 +160,15 @@ public class InvertedIndexTest {
                                                             new FakeDocumentIdentifier(docIdValue), positionsOfTokenInThisDoc);
                                                 })
                                                 .toList())))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        expectedPermutermIndexFromFileAsMapOfStringAndCorrespondingStringFromDictionary =
+                readCsvAndGetStreamWithAnArrayForEachLine(PATH_TO_PERMUTERM_INDEX)
+                        .map(aRow -> Arrays.stream(aRow)
+                                .map(val -> (String) val)
+                                .map(val -> val.replaceAll(END_OF_WORD_PERMUTERM_USED_IN_TESTS, END_OF_WORD_PERMUTERM_USED_IN_INVERTED_INDEX))
+                                .toArray(String[]::new))
+                        .map(aRow -> new Pair<>(aRow[0], aRow[1]))
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -177,10 +200,11 @@ public class InvertedIndexTest {
     @NotNull
     private static Stream<Object[]> readCsvAndGetStreamWithAnArrayForEachLine(String pathToCSVFile)
             throws IOException, URISyntaxException {
-        final int NUMBER_OF_HEADING_LINES = 1;
+        final int NUMBER_OF_HEADING_LINES = 1; // commented lines excluded
         return Files
                 .lines(Path.of(Objects.requireNonNull(FakeDocument_LineOfAFile.class.getResource(pathToCSVFile)).toURI()))
                 .sequential()
+                .filter(line -> !line.strip().startsWith("#")/*commented lines start with #*/)
                 .skip(NUMBER_OF_HEADING_LINES)
                 .map(aLine -> Arrays.stream(aLine.split(CSV_SEPARATOR))
                         .sequential()
@@ -221,6 +245,18 @@ public class InvertedIndexTest {
         assertEquals(
                 expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings,
                 getMapOfTermAndCorrespondingListOfPostingsFromInvertedIndex(invertedIndexForTests));
+    }
+
+
+    @Test
+    void testPermutermIndexCreation() {
+        PrintStream realStdOut = System.out;
+        System.setOut(new PrintStream(new ByteArrayOutputStream()));      // ignore std out for this block
+        invertedIndexForTests = new InvertedIndex(sampleCorpus);
+        System.setOut(realStdOut);
+        assertEquals(
+                expectedPermutermIndexFromFileAsMapOfStringAndCorrespondingStringFromDictionary,
+                invertedIndexForTests.getCopyOfPermutermIndex());
     }
 
     @Test

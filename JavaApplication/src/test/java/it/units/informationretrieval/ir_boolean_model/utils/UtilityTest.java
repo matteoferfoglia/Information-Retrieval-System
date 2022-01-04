@@ -294,4 +294,16 @@ class UtilityTest {
     void convertToJson() throws JsonProcessingException {
         convertMapOf3EntriesToJson();
     }
+
+    @ParameterizedTest
+    @CsvSource({
+            "a,a",
+            "b\3a,b\3a#\3ab#ab\3#",// # at the end because otherwise the special char '\3' is not detected by CsvSource
+            "abc,abc#bca#cab"
+    })
+    void getAllRotationsOf(String inputString, String expectedArrayAsString) {
+        Set<String> expectedSetOfRotations = Arrays.stream(expectedArrayAsString.split("#")).collect(Collectors.toSet());
+        Set<String> actualSetOfRotations = Arrays.stream(Utility.getAllRotationsOf(inputString)).collect(Collectors.toSet());
+        assertEquals(expectedSetOfRotations, actualSetOfRotations);
+    }
 }

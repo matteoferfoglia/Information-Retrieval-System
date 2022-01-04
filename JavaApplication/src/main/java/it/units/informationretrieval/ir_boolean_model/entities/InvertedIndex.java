@@ -1,24 +1,17 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
-import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
 import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.Soundex;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -30,12 +23,18 @@ import java.util.stream.Collectors;
 public class InvertedIndex implements Serializable {
 
     /**
+     * The symbol which indicates the end of a word, used in {@link #permutermIndex}.
+     */
+    @NotNull
+    private static final String END_OF_WORD = "\3";
+
+    /**
      * The inverted index, i.e., a {@link Map} having tokens as keys and a {@link Term}
      * as corresponding values, where the {@link Term} in the entry, if tokenized,
      * returns the corresponding key.
      */
     @NotNull
-    private final Map<String, Term> invertedIndex;   // each Term has its own posting list
+    private final ConcurrentMap<String, Term> invertedIndex;   // each Term has its own posting list
 
     /**
      * The {@link Map} collecting as keys {@link DocumentIdentifier}s and ad
@@ -45,7 +44,7 @@ public class InvertedIndex implements Serializable {
      * (because positions are saved in {@link Posting}s).
      */
     @NotNull
-    private final ConcurrentHashMap<DocumentIdentifier, Set<Posting>> postingsByDocId;
+    private final ConcurrentMap<DocumentIdentifier, Set<Posting>> postingsByDocId;
 
     /**
      * The (reference to the) {@link Corpus} on which indexing is done.
@@ -57,7 +56,15 @@ public class InvertedIndex implements Serializable {
      * The phonetic hash.
      */
     @NotNull
-    private final ConcurrentHashMap<String, List<Term>> phoneticHash;   // TODO: test and use phonetic hash for queries
+    private final ConcurrentMap<String, List<Term>> phoneticHashes;   // TODO: test and use phonetic hash for queries
+
+    /**
+     * The permuterm index, having as keys all rotations of all tokens in the dictionary
+     * followed by the EndOfWord symbol and as corresponding values the corresponding
+     * (un-rotated) token from the dictionary.
+     */
+    @NotNull
+    private final Map<String, String> permutermIndex;   // TODO: test and use permutermIndex for wildcard queries
 
     /**
      * Constructor. Creates the instance and indexes the given {@link Corpus}.
@@ -75,21 +82,8 @@ public class InvertedIndex implements Serializable {
 
         try {
             invertedIndex = indexCorpusAndGet(corpus, numberOfAlreadyProcessedDocuments);
-            phoneticHash = invertedIndex.entrySet()
-                    .stream().unordered().parallel()
-                    .map(stringTermEntry -> {
-                        var termList = new ArrayList<Term>();
-                        termList.add(stringTermEntry.getValue());
-                        return new Pair<>(Soundex.getPhoneticHash(stringTermEntry.getKey()), termList);
-                    })
-                    .collect(Collectors.toConcurrentMap(
-                            Map.Entry::getKey,
-                            AbstractMap.SimpleEntry::getValue,
-                            (a, b) -> {
-                                a.addAll(b);
-                                return a;
-                            },
-                            ConcurrentHashMap::new));
+            phoneticHashes = getPhoneticHashesOfDictionary();
+            permutermIndex = createPermutermIndexAndGet();
         } finally {
             // Join the thread used to print the indexing progress
             indexingProgressPrinterInterrupter.run();
@@ -100,26 +94,71 @@ public class InvertedIndex implements Serializable {
     /**
      * Creates the data structure hosting an empty inverted index.
      *
-     * @return an empty data structure which can host an inverted index.
+     * @return an empty data structure which can host the permuterm index,
+     * consisting in a {@link Map} having all rotation of all terms from
+     * the dictionary as keys and the corresponding terms (exact match)
+     * of the dictionary as corresponding value; this means that from a
+     * rotation the corresponding term can be found and from the un-rotated
+     * term, the corresponding {@link PostingList} can be found in O(1)
+     * from the actual inverted index (assuming it is saved as hash table).
+     * In the instance returned by this method there will be duplicated
+     * values (all rotations (each one is a key of the returned instance)
+     * of the same term map to the same term (value)).
      */
     @NotNull
-    private static Map<String, Term> createEmptyInvertedIndex() {
-        final Map<String, Term> invertedIndex;
-        short invertedIndexType = 0;
-        try {
-            invertedIndexType = Short.parseShort(Objects.requireNonNull(
-                    AppProperties.getInstance().get("index.dataStructure.type")));
-        } catch (IOException e) {
-            Logger.getLogger(InvertedIndex.class.getCanonicalName())
-                    .log(Level.SEVERE, "Error reading data-structure type.", e);
-        }
-        switch (invertedIndexType) {
-            case 1 -> invertedIndex = new ConcurrentHashMap<>();
-            case 2 -> invertedIndex = new PatriciaTrie<>();
-            default ->    // 0 or anything else
-                    invertedIndex = new Hashtable<>();
-        }
-        return invertedIndex;
+    private static Map<String, String> permutermIndexFactory() {
+        return new PatriciaTrie<>();
+    }
+
+    /**
+     * @return a copy of {@link #permutermIndex}.
+     */
+    public Map<String, String> getCopyOfPermutermIndex() {
+        return permutermIndex.entrySet().stream().sequential()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a, b) -> {
+                            throw new IllegalStateException("No duplicates should be present");
+                        },
+                        InvertedIndex::permutermIndexFactory));
+    }
+
+    @NotNull
+    private Map<String, String> createPermutermIndexAndGet() {
+        return getDictionary()
+                .stream().unordered().parallel()
+                .flatMap(strFromDictionary -> {
+                    String str = strFromDictionary + END_OF_WORD;
+                    return Arrays.stream(Utility.getAllRotationsOf(str))
+                            .map(aRotation -> new Pair<>(aRotation, strFromDictionary));
+                })
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a, b) -> {
+                            throw new IllegalStateException("No duplicates should be present");
+                        },
+                        InvertedIndex::permutermIndexFactory));
+    }
+
+    @NotNull
+    private ConcurrentMap<String, List<Term>> getPhoneticHashesOfDictionary() {
+        return invertedIndex.entrySet()
+                .stream().unordered().parallel()
+                .map(stringTermEntry -> {
+                    var termList = new ArrayList<Term>();
+                    termList.add(stringTermEntry.getValue());
+                    return new Pair<>(Soundex.getPhoneticHash(stringTermEntry.getKey()), termList);
+                })
+                .collect(Collectors.toConcurrentMap(
+                        Map.Entry::getKey,
+                        AbstractMap.SimpleEntry::getValue,
+                        (a, b) -> {
+                            a.addAll(b);
+                            return a;
+                        },
+                        ConcurrentHashMap::new));
     }
 
     /**
@@ -132,7 +171,7 @@ public class InvertedIndex implements Serializable {
      * @return The result of indexing represented as {@link Map} having a {@link DocumentIdentifier}
      * as key and the {@link Term} as corresponding value.
      */
-    protected Map<String, Term> indexCorpusAndGet(
+    protected ConcurrentMap<String, Term> indexCorpusAndGet(
             @NotNull Corpus corpus, @NotNull AtomicLong numberOfAlreadyProcessedDocuments) {
         Predicate<Map.Entry<DocumentIdentifier, Document>> documentContentNotNullPredicate =
                 entry -> entry != null
@@ -140,22 +179,19 @@ public class InvertedIndex implements Serializable {
                         && entry.getValue() != null
                         && entry.getValue().getContent() != null;
 
-        Map<String, Term> targetDataStructureForInvertedIndex = createEmptyInvertedIndex();
-        targetDataStructureForInvertedIndex.putAll(
-                corpus.getCorpus()
-                        .entrySet()
-                        .stream().unordered().parallel()
-                        .filter(documentContentNotNullPredicate)
-                        .map(this::getEntrySetOfTokensAndCorrespondingTermsFromADocument)
-                        .peek(ignored -> numberOfAlreadyProcessedDocuments.getAndIncrement()/*TODO: threads must wait to increase this value: needed?*/)
-                        .flatMap(Collection::stream /*outputs all entries from all the documents*/)
-                        .collect(
-                                Collectors.toConcurrentMap(
-                                        Map.Entry::getKey,
-                                        Map.Entry::getValue,
-                                        Term::merge /* Merge terms with the same token */)));
-
-        return targetDataStructureForInvertedIndex;
+        return corpus.getCorpus()
+                .entrySet()
+                .stream().unordered().parallel()
+                .filter(documentContentNotNullPredicate)
+                .map(this::getEntrySetOfTokensAndCorrespondingTermsFromADocument)
+                .peek(ignored -> numberOfAlreadyProcessedDocuments.getAndIncrement()/*TODO: threads must wait to increase this value: needed?*/)
+                .flatMap(Collection::stream /*outputs all entries from all the documents*/)
+                .collect(
+                        Collectors.toConcurrentMap(
+                                Map.Entry::getKey,
+                                Map.Entry::getValue,
+                                Term::merge /* Merge terms with the same token */,
+                                ConcurrentHashMap::new));
     }
 
     /**
@@ -230,7 +266,7 @@ public class InvertedIndex implements Serializable {
         return () -> {
             scheduler.shutdown();
             try {
-                short awaitTermination = 1;    // s
+                short awaitTermination = 1;    // seconds
                 if (!scheduler.awaitTermination(awaitTermination, TimeUnit.SECONDS)) {
                     System.err.println("Still waiting for thread termination after " + awaitTermination + " s.");
                 }

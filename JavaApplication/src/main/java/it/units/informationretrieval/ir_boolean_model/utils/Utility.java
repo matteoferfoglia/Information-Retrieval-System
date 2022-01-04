@@ -368,6 +368,22 @@ public class Utility {
     }
 
     /**
+     * @param input Input string.
+     * @return The array with all the rotations of the given input string.
+     */
+    @NotNull
+    public static String[] getAllRotationsOf(@NotNull String input) {
+        final char[] charArray = input.toCharArray();
+        final int stringLength = charArray.length;
+        return IntStream.range(0, stringLength)
+                .mapToObj(i -> IntStream.range(i, i + stringLength)
+                        .sequential()
+                        .mapToObj(j -> String.valueOf(charArray[j % stringLength]))
+                        .collect(Collectors.joining()))
+                .toArray(String[]::new);
+    }
+
+    /**
      * Generalization of {@link java.util.function.BiFunction} to take
      * three input arguments and produce one output argument.
      * From <a href="https://stackoverflow.com/a/19649473">Stackoverflow</a>.
