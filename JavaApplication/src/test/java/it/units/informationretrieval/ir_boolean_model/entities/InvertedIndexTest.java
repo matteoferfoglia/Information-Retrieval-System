@@ -132,7 +132,7 @@ public class InvertedIndexTest {
         invertedIndexForMovieCorpus.getCorpus();
     }
 
-    @Benchmark(warmUpIterations = 100, iterations = 10000, tearDownIterations = 100)
+    @Benchmark(warmUpIterations = 100, iterations = 100, tearDownIterations = 100)
     static void getPostingListOfARandomTokenChosenFromDictionaryFromInvertedIndexForMovieCorpus() {
         invertedIndexForMovieCorpus.getPostingListForToken(randomTokenFromDictionaryOfMovieInvertedIndex.get());
     }

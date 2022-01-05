@@ -306,4 +306,39 @@ class UtilityTest {
         Set<String> actualSetOfRotations = Arrays.stream(Utility.getAllRotationsOf(inputString)).collect(Collectors.toSet());
         assertEquals(expectedSetOfRotations, actualSetOfRotations);
     }
+
+    @ParameterizedTest
+    @CsvSource({
+            "The cat is on the table, the[0#4]|cat[1]|is[2]|on[3]|table[5]",
+            "Foo bar foo foo bar bar bar, foo[0#2#3]|bar[1#4#5#6]"
+    })
+    void tokenizeAndGetMapWithPositionsInDocument(String document, String expectedMapTokenToPositionsAsString) {
+        // Use List instead of array in  tests (otherwise test assertion may fail)
+        Map<String, List<Integer>> actualMapTokenToPositions =
+                Utility.tokenizeAndGetMapWithPositionsInDocument(new FakeDocument_LineOfAFile("", document))
+                        .entrySet()
+                        .stream()
+                        .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), Arrays.stream(entry.getValue()).boxed().toList()))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        Map<String, List<Integer>> expectedMapTokenToPositions =
+                Arrays.stream(expectedMapTokenToPositionsAsString.split("\\|"))
+                        .map(entryAsString -> {
+                            assert entryAsString.length() > 2;
+                            assert entryAsString.contains("[");
+                            assert entryAsString.contains("]");
+                            int indexOf1stBracket = entryAsString.indexOf("[");
+                            int indexOf2ndBracket = entryAsString.indexOf("]");
+                            assert indexOf1stBracket < indexOf2ndBracket;
+                            String token = entryAsString.substring(0, indexOf1stBracket);
+                            List<Integer> positions =
+                                    Arrays.stream(
+                                                    entryAsString.substring(indexOf1stBracket + 1, indexOf2ndBracket)
+                                                            .split("#"))
+                                            .map(Integer::parseInt)
+                                            .toList();
+                            return new AbstractMap.SimpleEntry<>(token, positions);
+                        })
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        assertEquals(expectedMapTokenToPositions, actualMapTokenToPositions);
+    }
 }

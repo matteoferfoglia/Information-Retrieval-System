@@ -16,6 +16,7 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -58,21 +59,25 @@ public class Utility {
      * {@link String} (eventually with duplicates) obtained from the {@link Document}.
      */
     @NotNull
-    public static Map<String, int[]> tokenizeAndGetMapWithPositionsInDocument(@NotNull final Document document) {   // TODO: test and benchmark
+    public static Map<String, int[]> tokenizeAndGetMapWithPositionsInDocument(@NotNull final Document document) {
         String[] tokensEventuallyDuplicatesSortedByPositionInDocument = tokenize(document);
-        return IntStream
+        Map<String, Set<Integer>> mapTokenToPositionsInDoc = IntStream
                 .range(0, tokensEventuallyDuplicatesSortedByPositionInDocument.length)
-                .unordered().parallel()
                 .mapToObj(i -> new AbstractMap.SimpleEntry<>(
                         tokensEventuallyDuplicatesSortedByPositionInDocument[i], i))
-                .collect(Collectors.groupingBy(
+                .collect(Collectors.groupingByConcurrent(
                         Map.Entry::getKey,
-                        Collectors.mapping(Map.Entry::getValue, toSet())))
-                .entrySet()
-                .stream().unordered().parallel()
-                .collect(Collectors.toMap(
+                        Collectors.mapping(Map.Entry::getValue, toSet())));
+        return mapTokenToPositionsInDoc.entrySet()
+                .stream()
+                .collect(Collectors.toConcurrentMap(
                         Map.Entry::getKey,
-                        entry -> entry.getValue().stream().sorted().mapToInt(i -> i).toArray()));
+                        entry -> entry.getValue().stream().sorted().mapToInt(i -> i).toArray(),
+                        (a, b) -> {
+                            throw new IllegalStateException("No duplicates should be present, but were.");
+                            // entries already grouped by token, hence no duplicates should be present
+                        },
+                        ConcurrentHashMap::new));
     }
 
     /**
