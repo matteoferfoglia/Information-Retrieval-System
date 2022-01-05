@@ -334,7 +334,7 @@ public class InvertedIndex implements Serializable {
 
             return new SkipList<>(permutermIndex.prefixMap(rotatedToken)
                     .values()
-                    .stream()
+                    .stream().unordered().parallel()
                     .distinct()
                     .filter(tokenFromDictionary -> pattern.matcher(tokenFromDictionary).matches())
                     .map(invertedIndex::get)

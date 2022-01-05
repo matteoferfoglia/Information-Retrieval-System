@@ -100,9 +100,11 @@ public class ExampleOfUseOfTheIRSystem {
                     ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" ")), MAX_N_RESULTS));
             System.out.println(queryAndReturnResultsAsString(
                     ir.createNewBooleanExpression()
+                            .setMatchingPhrase("Space *am".split(" ")), MAX_N_RESULTS));
+            System.out.println(queryAndReturnResultsAsString(
+                    ir.createNewBooleanExpression()
                             .setMatchingPhrase("Space *am".split(" "))
-                            .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bag*"))
-                            .limit(1), MAX_N_RESULTS));
+                            .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bag*")), MAX_N_RESULTS));
 
         } catch (URISyntaxException | IOException | NoMoreDocIdsAvailable e) {
             e.printStackTrace();
