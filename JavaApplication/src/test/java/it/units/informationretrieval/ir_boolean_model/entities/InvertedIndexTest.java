@@ -34,6 +34,7 @@ public class InvertedIndexTest {
     private static final String PATH_TO_CORPUS = "/SampleCorpus.csv";
     private static final String PATH_TO_INVERTED_INDEX = "/InvertedIndexForSampleCorpus.csv";
     private static final String PATH_TO_PERMUTERM_INDEX = "/PermutermIndexForSampleCorpus.csv";
+    private static final String PATH_TO_TOKEN_WITH_WILDCARDS_AND_CORRESPONDING_LIST_OF_POSTING = "/WildcardTokenForSampleCorpus.csv";
     private static final String CSV_SEPARATOR = ",";
     private static final String POSTINGS_SEPARATOR_IN_CSV_FILE = "\\|";
     private static final String LIST_ELEMENTS_SEPARATOR_IN_CSV_FILE = "#";
@@ -47,6 +48,7 @@ public class InvertedIndexTest {
     private static InvertedIndex invertedIndexForTests;
     private static Map<String, SkipList<Posting>> expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings;
     private static Map<String, String> expectedPermutermIndexFromFileAsMapOfStringAndCorrespondingStringFromDictionary;
+    private static Map<String, SkipList<Posting>> expectedMapOfStringWithWildcardAndCorrespondingListOfPostingsFromFile;
 
     static {
         try {
@@ -134,7 +136,7 @@ public class InvertedIndexTest {
 
     @Benchmark(warmUpIterations = 100, iterations = 100, tearDownIterations = 100)
     static void getPostingListOfARandomTokenChosenFromDictionaryFromInvertedIndexForMovieCorpus() {
-        invertedIndexForMovieCorpus.getPostingListForToken(randomTokenFromDictionaryOfMovieInvertedIndex.get());
+        invertedIndexForMovieCorpus.getListOfPostingsForToken(randomTokenFromDictionaryOfMovieInvertedIndex.get());
     }
 
     @BeforeAll
@@ -159,6 +161,19 @@ public class InvertedIndexTest {
                                                     return new Posting(
                                                             new FakeDocumentIdentifier(docIdValue), positionsOfTokenInThisDoc);
                                                 })
+                                                .toList())))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        expectedMapOfStringWithWildcardAndCorrespondingListOfPostingsFromFile =
+                readCsvAndGetStreamWithAnArrayForEachLine(PATH_TO_TOKEN_WITH_WILDCARDS_AND_CORRESPONDING_LIST_OF_POSTING)
+                        .map(invertedIndexEntry -> new AbstractMap.SimpleEntry<>(
+                                (String) invertedIndexEntry[0],
+                                new SkipList<>(
+                                        Arrays.stream(((String) invertedIndexEntry[1])
+                                                        .split(POSTINGS_SEPARATOR_IN_CSV_FILE))
+                                                .map(Integer::parseInt)
+                                                .map(FakeDocumentIdentifier::new)
+                                                .map(docId -> new Posting(docId, new int[0]))
                                                 .toList())))
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
@@ -232,7 +247,7 @@ public class InvertedIndexTest {
                 .stream()
                 .map(tokenFromIndex -> new AbstractMap.SimpleEntry<>(
                         tokenFromIndex,
-                        invertedIndex.getPostingListForToken(tokenFromIndex).toSkipList()))
+                        invertedIndex.getListOfPostingsForToken(tokenFromIndex)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -265,8 +280,7 @@ public class InvertedIndexTest {
         invertedIndexForTests.getDictionary()
                 .forEach(tokenFromDictionaryOfCreatedInvertedIndex -> {
                     var createdListOfPostings = invertedIndexForTests
-                            .getPostingListForToken(tokenFromDictionaryOfCreatedInvertedIndex)
-                            .toSkipList();
+                            .getListOfPostingsForToken(tokenFromDictionaryOfCreatedInvertedIndex);
                     var expectedListOfPostings =
                             expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings
                                     .get(tokenFromDictionaryOfCreatedInvertedIndex);
@@ -303,6 +317,15 @@ public class InvertedIndexTest {
                 .forEach((token, listOfPostings) ->
                         assertEquals(
                                 listOfPostings,
-                                invertedIndexForTests.getPostingListForToken(token).toSkipList()));
+                                invertedIndexForTests.getListOfPostingsForToken(token)));
+    }
+
+    @Test
+    void getListOfPostingForTokenWithWildcard() {
+        expectedMapOfStringWithWildcardAndCorrespondingListOfPostingsFromFile
+                .forEach((token, listOfPostings) ->
+                        assertEquals(
+                                new SkipList<>(listOfPostings, Posting.DOC_ID_COMPARATOR),
+                                new SkipList<>(invertedIndexForTests.getListOfPostingsForToken(token), Posting.DOC_ID_COMPARATOR)));
     }
 }

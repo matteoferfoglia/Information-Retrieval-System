@@ -5,6 +5,7 @@ import it.units.informationretrieval.ir_boolean_model.utils.Soundex;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.jetbrains.annotations.NotNull;
+import skiplist.SkipList;
 
 import java.io.Serializable;
 import java.util.*;
@@ -12,6 +13,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -27,6 +29,25 @@ public class InvertedIndex implements Serializable {
      */
     @NotNull
     private static final String END_OF_WORD = "\3";
+
+    /**
+     * Wildcard to indicate 0, 1 or more characters,
+     * used to answer wildcard queries.
+     */
+    @NotNull
+    private static final String WILDCARD = "*";
+
+    /**
+     * Same as {@link #WILDCARD}, but escaped (usable in regex).
+     */
+    @NotNull
+    private static final String ESCAPED_WILDCARD = "\\*";
+
+    /**
+     * Same as {@link #WILDCARD}, but escaped to be used in wildcard queries.
+     */
+    @NotNull
+    private static final String ESCAPED_WILDCARD_FOR_REGEX = "\\" + WILDCARD;
 
     /**
      * The inverted index, i.e., a {@link Map} having tokens as keys and a {@link Term}
@@ -64,7 +85,7 @@ public class InvertedIndex implements Serializable {
      * (un-rotated) token from the dictionary.
      */
     @NotNull
-    private final Map<String, String> permutermIndex;   // TODO: test and use permutermIndex for wildcard queries
+    private final PatriciaTrie<String> permutermIndex;
 
     /**
      * Constructor. Creates the instance and indexes the given {@link Corpus}.
@@ -92,28 +113,9 @@ public class InvertedIndex implements Serializable {
     }
 
     /**
-     * Creates the data structure hosting an empty inverted index.
-     *
-     * @return an empty data structure which can host the permuterm index,
-     * consisting in a {@link Map} having all rotation of all terms from
-     * the dictionary as keys and the corresponding terms (exact match)
-     * of the dictionary as corresponding value; this means that from a
-     * rotation the corresponding term can be found and from the un-rotated
-     * term, the corresponding {@link PostingList} can be found in O(1)
-     * from the actual inverted index (assuming it is saved as hash table).
-     * In the instance returned by this method there will be duplicated
-     * values (all rotations (each one is a key of the returned instance)
-     * of the same term map to the same term (value)).
-     */
-    @NotNull
-    private static Map<String, String> permutermIndexFactory() {
-        return new PatriciaTrie<>();
-    }
-
-    /**
      * @return a copy of {@link #permutermIndex}.
      */
-    public Map<String, String> getCopyOfPermutermIndex() {
+    public PatriciaTrie<String> getCopyOfPermutermIndex() {
         return permutermIndex.entrySet().stream().sequential()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
@@ -121,11 +123,11 @@ public class InvertedIndex implements Serializable {
                         (a, b) -> {
                             throw new IllegalStateException("No duplicates should be present");
                         },
-                        InvertedIndex::permutermIndexFactory));
+                        PatriciaTrie::new));
     }
 
     @NotNull
-    private Map<String, String> createPermutermIndexAndGet() {
+    private PatriciaTrie<String> createPermutermIndexAndGet() {
         return getDictionary()
                 .stream().unordered().parallel()
                 .flatMap(strFromDictionary -> {
@@ -139,7 +141,7 @@ public class InvertedIndex implements Serializable {
                         (a, b) -> {
                             throw new IllegalStateException("No duplicates should be present");
                         },
-                        InvertedIndex::permutermIndexFactory));
+                        PatriciaTrie::new));
     }
 
     @NotNull
@@ -305,9 +307,46 @@ public class InvertedIndex implements Serializable {
      * if it is not found in this {@link InvertedIndex}.
      */
     @NotNull
-    public final PostingList getPostingListForToken(String normalizedToken) {
-        Term t = invertedIndex.get(normalizedToken);
-        return t == null ? new PostingList() : t.getPostingList();
+    public final SkipList<Posting> getListOfPostingsForToken(String normalizedToken) {  // TODO: wildcard is not capturing spaces
+        String tokenWithEndOfWord = normalizedToken + END_OF_WORD;
+        int indexOfFirstWildcardIfPresent = tokenWithEndOfWord.indexOf(WILDCARD);
+        if (indexOfFirstWildcardIfPresent > -1) {
+            int indexOfLastWildcardIfPresent = tokenWithEndOfWord.lastIndexOf(WILDCARD);
+            boolean moreThanOneWildcardIsPresent = indexOfLastWildcardIfPresent > indexOfFirstWildcardIfPresent;
+
+            if (moreThanOneWildcardIsPresent) {
+                // Consider the simplified wildcard input token where everything between the first and
+                // the last wildcard is folded in a single wildcard and
+                tokenWithEndOfWord = tokenWithEndOfWord.replaceAll(
+                        ESCAPED_WILDCARD_FOR_REGEX + ".*" + ESCAPED_WILDCARD_FOR_REGEX,
+                        ESCAPED_WILDCARD_FOR_REGEX);
+            }
+
+            // Rotate the token such that the wildcard appears at the end
+            String rotatedToken = tokenWithEndOfWord.substring(indexOfFirstWildcardIfPresent + 1)
+                    + tokenWithEndOfWord.substring(0, indexOfFirstWildcardIfPresent);
+            // now the wildcard is removed (via substring) but the token has been rotated correctly
+            // and, because we are here, we are sure that there is at least one wildcard
+
+            // Prepare the regex used to match the initial input token (with wildcards)
+            Pattern pattern = Pattern.compile(normalizedToken.replaceAll(ESCAPED_WILDCARD_FOR_REGEX, ".*"));
+
+            return new SkipList<>(permutermIndex.prefixMap(rotatedToken)
+                    .values()
+                    .stream()
+                    .distinct()
+                    .filter(tokenFromDictionary -> pattern.matcher(tokenFromDictionary).matches())
+                    .map(invertedIndex::get)
+                    .filter(Objects::nonNull)
+                    .map(Term::getListOfPostings)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList()));
+
+        } else {
+            // no wildcards present in input token
+            Term t = invertedIndex.get(normalizedToken);
+            return t == null ? new SkipList<>() : t.getListOfPostings();
+        }
     }
 
     /**

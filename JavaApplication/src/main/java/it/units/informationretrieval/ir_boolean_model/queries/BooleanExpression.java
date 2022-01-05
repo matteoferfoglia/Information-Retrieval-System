@@ -357,7 +357,7 @@ public class BooleanExpression {
      */
     @NotNull
     private synchronized SkipList<Posting> evaluateBothSimpleAndAggregatedExpressionRecursively()
-            throws UnsupportedOperationException {
+            throws UnsupportedOperationException {  // TODO: benchmark wildcard queries
 
         return switch (unaryOperator) {
             case NOT -> {
@@ -413,7 +413,7 @@ public class BooleanExpression {
                                             int index1 = 0, index2 = 0;
                                             while (index1 < positions1.length && index2 < positions2.length) {
                                                 int numberOfTermsBetweenWords =
-                                                        positions2[index2] - positions1[index1]             // number of words between the *first* word of phrase and the word of posting2  (Note: when inserting a posting to the intersection list, only the posting referencing the first word of phrase is kept, hence distances must be computed respect the position of the first word)
+                                                        positions2[index2] - positions1[index1]              // number of words between the *first* word of phrase and the word of posting2  (Note: when inserting a posting to the intersection list, only the posting referencing the first word of phrase is kept, hence distances must be computed respect the position of the first word)
                                                                 - matchingPhrase.distanceFromFirstWord[i];   // exact distance allowed between *first* word and the word of posting 2
                                                 if (numberOfTermsBetweenWords == 0) {
                                                     // words are adjacent

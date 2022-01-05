@@ -59,7 +59,7 @@ public class InformationRetrievalSystem implements Serializable {
      */
     @NotNull
     public SkipList<Posting> getListOfPostingForToken(@NotNull final String normalizedToken) {
-        return invertedIndex.getPostingListForToken(normalizedToken).toSkipList();
+        return invertedIndex.getListOfPostingsForToken(normalizedToken);
     }
 
     @NotNull

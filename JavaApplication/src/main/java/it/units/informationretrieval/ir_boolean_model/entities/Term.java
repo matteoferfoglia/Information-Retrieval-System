@@ -1,6 +1,7 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
 import org.jetbrains.annotations.NotNull;
+import skiplist.SkipList;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -99,6 +100,11 @@ public class Term implements Comparable<Term>, Serializable {
     @Override
     public String toString() {
         return "{" + term + ": " + postingList + "}";
+    }
+
+    @NotNull
+    public SkipList<Posting> getListOfPostings() {
+        return postingList.toSkipList();
     }
 
     /**

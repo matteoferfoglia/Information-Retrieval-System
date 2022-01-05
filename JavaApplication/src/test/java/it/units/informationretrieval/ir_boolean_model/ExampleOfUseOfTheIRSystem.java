@@ -85,10 +85,20 @@ public class ExampleOfUseOfTheIRSystem {
             System.out.println(andQueryAndReturnResultsAsString(ir, Arrays.asList("Vidya", "Bagchi", "Kolkata"), MAX_N_RESULTS));
             System.out.println(andQueryAndReturnResultsAsString(ir, Arrays.asList("Space", "jam"), MAX_N_RESULTS));
             System.out.println(andQueryAndReturnResultsAsString(ir, Collections.singletonList("hand"), MAX_N_RESULTS));
+
+            // Using Boolean expressions
             System.out.println(ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" ")).evaluate());
             System.out.println(ir.createNewBooleanExpression()
                     .setMatchingPhrase("Space jam".split(" "))
                     .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bagchi"))
+                    .limit(1)
+                    .evaluate());
+
+            // Wildcards queries
+            System.out.println(ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" ")).evaluate());
+            System.out.println(ir.createNewBooleanExpression()
+                    .setMatchingPhrase("Space *am".split(" "))
+                    .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bag*"))
                     .limit(1)
                     .evaluate());
 
