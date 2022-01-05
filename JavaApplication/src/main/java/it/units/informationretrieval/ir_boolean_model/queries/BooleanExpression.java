@@ -356,7 +356,7 @@ public class BooleanExpression {
      * @throws UnsupportedOperationException If the operator for the expression is unknown.
      */
     @NotNull
-    private synchronized SkipList<Posting> evaluateBothSimpleAndAggregatedExpressionRecursively()
+    private SkipList<Posting> evaluateBothSimpleAndAggregatedExpressionRecursively()
             throws UnsupportedOperationException {  // TODO: benchmark wildcard queries
 
         return switch (unaryOperator) {
@@ -593,7 +593,7 @@ public class BooleanExpression {
         /**
          * @return the number of words composing the phrase represented by this instance.
          */
-        synchronized int size() {
+        int size() {
             return words.length;
         }
     }

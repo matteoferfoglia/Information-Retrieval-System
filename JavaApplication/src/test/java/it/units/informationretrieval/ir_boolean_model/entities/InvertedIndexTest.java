@@ -118,10 +118,11 @@ public class InvertedIndexTest {
         System.setOut(realStdOut);
     }
 
-    @Benchmark(warmUpIterations = 1, iterations = 3, tearDownIterations = 1, commentToReport = "Inverted index for the Movie corpus.")
-    static void createInvertedIndexForMovieCorpus() {
-        new InvertedIndex(movieCorpus);
-    }
+// Creation of a new instance via reflection (by benchmark framework) is slow
+//    @Benchmark(warmUpIterations = 1, iterations = 3, tearDownIterations = 1, commentToReport = "Inverted index for the Movie corpus.")
+//    static void createInvertedIndexForMovieCorpus() {
+//        new InvertedIndex(movieCorpus);
+//    }
 
     @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10)
     static void getDictionaryOfInvertedIndexForMovieCorpus() {

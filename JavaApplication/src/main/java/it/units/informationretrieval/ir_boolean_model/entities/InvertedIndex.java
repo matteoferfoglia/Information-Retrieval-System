@@ -99,7 +99,7 @@ public class InvertedIndex implements Serializable {
 
         AtomicLong numberOfAlreadyProcessedDocuments = new AtomicLong(0L);
         Runnable indexingProgressPrinterInterrupter =
-                printIndexingProgressAndGetTheRunnableToInterruptPrinting(corpus, numberOfAlreadyProcessedDocuments);
+                printIndexingProgressAndGetTheRunnableToInterruptPrinting(corpus.size(), numberOfAlreadyProcessedDocuments);
 
         try {
             invertedIndex = indexCorpusAndGet(corpus, numberOfAlreadyProcessedDocuments);
@@ -243,20 +243,20 @@ public class InvertedIndex implements Serializable {
      */
     @NotNull
     private Runnable printIndexingProgressAndGetTheRunnableToInterruptPrinting(
-            @NotNull Corpus corpus, AtomicLong numberOfAlreadyProcessedDocuments) {
+            int corpusSize, final AtomicLong numberOfAlreadyProcessedDocuments) {
 
         AtomicReference<Double> progressValue = new AtomicReference<>(0d);   // used only to show the indexing progress
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         Thread progressControllerThread = new Thread(() -> {
             final double EPSILON = 0.001;
             double oldProgressValue = progressValue.get();
-            progressValue.set(Math.round((0.0 + numberOfAlreadyProcessedDocuments.get()) / corpus.size() * 10000) / 100.0);
+            progressValue.set(Math.round((0.0 + numberOfAlreadyProcessedDocuments.get()) / corpusSize * 10000) / 100.0);
             String currentProgress = "";
             if (progressValue.get() - oldProgressValue > EPSILON) {
                 currentProgress = progressValue.toString();
                 System.out.print(currentProgress + " % \t ");
             }
-            if (numberOfAlreadyProcessedDocuments.get() == corpus.size() && !currentProgress.equals(progressValue.toString())) {
+            if (numberOfAlreadyProcessedDocuments.get() == corpusSize && !currentProgress.equals(progressValue.toString())) {
                 // Avoid duplicate prints
                 System.out.print("100 % \t ");
             }
@@ -294,7 +294,8 @@ public class InvertedIndex implements Serializable {
      *
      * @return The {@link Corpus} on which indexing was done for this instance.
      */
-    public @NotNull Corpus getCorpus() {
+    @NotNull
+    public Corpus getCorpus() {
         return corpus;
     }
 
