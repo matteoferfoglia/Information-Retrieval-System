@@ -47,7 +47,7 @@ public class InvertedIndex implements Serializable {
      * Same as {@link #WILDCARD}, but escaped to be used in wildcard queries.
      */
     @NotNull
-    private static final String ESCAPED_WILDCARD_FOR_REGEX = "\\" + WILDCARD;
+    public static final String ESCAPED_WILDCARD_FOR_REGEX = "\\" + WILDCARD;
 
     /**
      * The inverted index, i.e., a {@link Map} having tokens as keys and a {@link Term}

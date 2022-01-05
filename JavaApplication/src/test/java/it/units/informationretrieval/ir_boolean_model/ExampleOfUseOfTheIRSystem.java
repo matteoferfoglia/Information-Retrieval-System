@@ -87,20 +87,22 @@ public class ExampleOfUseOfTheIRSystem {
             System.out.println(andQueryAndReturnResultsAsString(ir, Collections.singletonList("hand"), MAX_N_RESULTS));
 
             // Using Boolean expressions
-            System.out.println(ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" ")).evaluate());
-            System.out.println(ir.createNewBooleanExpression()
-                    .setMatchingPhrase("Space jam".split(" "))
-                    .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bagchi"))
-                    .limit(1)
-                    .evaluate());
+            System.out.println(queryAndReturnResultsAsString(
+                    ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" ")), MAX_N_RESULTS));
+            System.out.println(queryAndReturnResultsAsString(
+                    ir.createNewBooleanExpression()
+                            .setMatchingPhrase("Space jam".split(" "))
+                            .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bagchi"))
+                            .limit(1), MAX_N_RESULTS));
 
             // Wildcards queries
-            System.out.println(ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" ")).evaluate());
-            System.out.println(ir.createNewBooleanExpression()
-                    .setMatchingPhrase("Space *am".split(" "))
-                    .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bag*"))
-                    .limit(1)
-                    .evaluate());
+            System.out.println(queryAndReturnResultsAsString(
+                    ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" ")), MAX_N_RESULTS));
+            System.out.println(queryAndReturnResultsAsString(
+                    ir.createNewBooleanExpression()
+                            .setMatchingPhrase("Space *am".split(" "))
+                            .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bag*"))
+                            .limit(1), MAX_N_RESULTS));
 
         } catch (URISyntaxException | IOException | NoMoreDocIdsAvailable e) {
             e.printStackTrace();
@@ -111,21 +113,27 @@ public class ExampleOfUseOfTheIRSystem {
     static String andQueryAndReturnResultsAsString(@NotNull final InformationRetrievalSystem irs,
                                                    @NotNull final Collection<@NotNull String> stringsToBePresent,
                                                    int maxNumberOfResultsToReturn) {
-        long startTime, endTime;
-        StringBuilder sb = new StringBuilder();
-        startTime = System.currentTimeMillis();
-
         BooleanExpression be = Objects.requireNonNull(stringsToBePresent)
                 .stream()
                 .map(aValueToBePresent -> irs.createNewBooleanExpression().setMatchingValue(aValueToBePresent))
                 .reduce(BooleanExpression::and)
                 .orElse(irs.createNewBooleanExpression());
+        return queryAndReturnResultsAsString(be, maxNumberOfResultsToReturn);
+    }
+
+    static String queryAndReturnResultsAsString(@NotNull final BooleanExpression be,
+                                                int maxNumberOfResultsToReturn) {
+        long startTime, endTime;
+        StringBuilder sb = new StringBuilder();
+        startTime = System.currentTimeMillis();
 
         List<?> results = be.evaluate();
         endTime = System.currentTimeMillis();
-        sb.append(results.size()).append(" result").append(results.size() > 1 ? "s" : "").append(" for (\"")
-                .append(String.join("\" AND \"", stringsToBePresent))
-                .append("\") found in ").append(endTime - startTime)
+        sb.append(System.lineSeparator())
+                .append(results.size()).append(" result").append(results.size() > 1 ? "s" : "")
+                .append(" for ")
+                .append(be.getQueryString())
+                .append(" found in ").append(endTime - startTime)
                 .append(" ms. ");
         if (results.size() > 1) {
             if (results.size() > maxNumberOfResultsToReturn) {

@@ -529,6 +529,37 @@ public class BooleanExpression {
     }
 
     /**
+     * @return the input query string.
+     */
+    @NotNull
+    public String getQueryString()
+            throws UnsupportedOperationException {
+
+        return (switch (unaryOperator) {
+            case NOT -> "NOT " + new BooleanExpression(this).setUnaryOperator(UNARY_OPERATOR.IDENTITY);
+            case IDENTITY -> {
+                if (isAggregated) {
+                    assert leftChildOperand != null;
+                    assert binaryOperator != null;
+                    assert rightChildOperand != null;
+                    yield "( " + leftChildOperand.getQueryString() + " " + binaryOperator + " "
+                            + rightChildOperand.getQueryString() + " )";
+                } else {
+                    StringBuilder sb = new StringBuilder("(");
+                    if (isMatchingPhraseSet()) {
+                        yield matchingPhrase.toString();
+                    } else if (isMatchingValueSet()) {
+                        yield matchingValue;
+                    } else {
+                        throw new IllegalStateException("Should never arrive here");
+                    }
+                }
+            }
+        }).replaceAll(InvertedIndex.ESCAPED_WILDCARD_FOR_REGEX, "*");
+
+    }
+
+    /**
      * Enumeration for possible unary operators to apply on a {@link BooleanExpression}.
      */
     public enum UNARY_OPERATOR {
@@ -634,6 +665,22 @@ public class BooleanExpression {
          */
         int size() {
             return words.length;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("\"");
+            if (Arrays.equals(distanceFromFirstWord, IntStream.rangeClosed(1, distanceFromFirstWord.length).toArray())) {
+                // all words in phrase are adjacent
+                sb.append(String.join(" ", words));
+            } else {
+                int i = 0;
+                for (; i < distanceFromFirstWord.length; i++) {
+                    sb.append(words[i]).append("\\").append(distanceFromFirstWord[i]);
+                }
+                sb.append(words[i]);
+            }
+            return sb.append("\"").toString();
         }
     }
 }
