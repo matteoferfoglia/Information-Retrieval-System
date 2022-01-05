@@ -237,7 +237,7 @@ class BooleanExpressionTest {
     }
 
     @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
-    void createAndEvaluatePhraseQuery(String phrase, String expectedResultingPostingList) {
+    static void createAndEvaluatePhraseQuery() {
         irsForBenchmark.createNewBooleanExpression()
                 .setMatchingPhrase(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
                 .evaluate();
@@ -355,7 +355,6 @@ class BooleanExpressionTest {
         booleanExpression = booleanExpression.setMatchingPhrase(phrase.split(" "));
         assertQueryResultsAreCorrect(expectedResultingPostingList);
     }
-
 
     @ParameterizedTest
     @CsvFileSource(resources = PATH_TO_FILE_WITH_PHRASE_QUERY_SAMPLES, numLinesToSkip = NUM_LINES_TO_SKIP_IN_CSV)

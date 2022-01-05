@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.IntFunction;
 import java.util.stream.IntStream;
@@ -181,14 +182,52 @@ public class BooleanExpression {
         } else if (isMatchingPhraseSet()) {
             throw new IllegalStateException("Matching phrase already set, cannot re-set");
         }
-        String[] phrase = Arrays.stream(matchingPhrase).map(Utility::normalize).filter(Objects::nonNull).toArray(String[]::new);
-        if (phrase.length == 1) {
-            // normalization lead to a phrase of a single word (hence, it is not a phrase anymore)
-            return setMatchingValue(phrase[0]);
+
+        // Function used later to avoid code duplication
+        BiFunction<String[], int[], BooleanExpression> returnBooleanExpression = (words, distancesBetweenWords) -> {
+            if (words.length == 1) {
+                // normalization may lead to a phrase of a single word (hence, it is not a phrase anymore)
+                return setMatchingValue(words[0]);
+            } else {
+                this.matchingPhrase = new Phrase(words, distancesBetweenWords);
+                return this;
+            }
+        };
+
+        String[] tmpPhrase = Arrays.stream(matchingPhrase).map(Utility::normalize).toArray(String[]::new);
+        String[] phrase = new String[tmpPhrase.length];
+        int[] distances = new int[tmpPhrase.length - 1];
+
+        int i = 0, j = 0, remainingWords = 0;
+        if (tmpPhrase.length != matchingPhrase.length) {
+            // some word has been removed
+
+            for (; i < matchingPhraseMaxDistance.length; i++) {
+                if (tmpPhrase[i] != null) {
+                    phrase[j] = tmpPhrase[i];
+                    distances[j++] = matchingPhraseMaxDistance[i];
+                }
+                remainingWords = distances.length - j;
+                if (matchingPhraseMaxDistance.length - i == remainingWords) {
+                    // if there are no more removed words, use System.arraycopy (more efficient) to copy the remaining words
+                    break;
+                }
+            }
+
+            String[] finalPhrase = new String[i + remainingWords + 1];
+            int[] finalDistances = new int[i + remainingWords];
+            System.arraycopy(phrase, 0, finalPhrase, 0, j);
+            System.arraycopy(distances, 0, finalDistances, 0, j);
+            System.arraycopy(tmpPhrase, i, finalPhrase, j, remainingWords + 1);
+            System.arraycopy(matchingPhraseMaxDistance, i, finalDistances, j, remainingWords);
+
+            return returnBooleanExpression.apply(finalPhrase, finalDistances);
+
         } else {
-            this.matchingPhrase = new Phrase(phrase, matchingPhraseMaxDistance);
-            return this;
+            // no words were removed by normalization
+            return returnBooleanExpression.apply(tmpPhrase, matchingPhraseMaxDistance);
         }
+
     }
 
     /**
