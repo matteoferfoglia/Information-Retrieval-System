@@ -579,7 +579,14 @@ public class BooleanExpression {
                 this.words = words;
                 this.distanceFromFirstWord = distanceFromFirstWord;
             } else {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException(
+                        "\twords: " + Arrays.toString(words) + System.lineSeparator()
+                                + "\tdistanceFromFirstWord: " + Arrays.toString(distanceFromFirstWord) + System.lineSeparator()
+                                + "\twords.length: " + words.length
+                                + ", distanceFromFirstWord.length: " + distanceFromFirstWord.length
+                                + ", distances are monotonically growing: "
+                                + (IntStream.range(1, distanceFromFirstWord.length)
+                                .allMatch(i -> distanceFromFirstWord[i] - distanceFromFirstWord[i - 1] > 0)));
             }
         }
 
