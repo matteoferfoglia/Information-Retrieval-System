@@ -89,6 +89,12 @@ public class BooleanExpression {
     private UNARY_OPERATOR unaryOperator = UNARY_OPERATOR.IDENTITY;// default is the unary operator
 
     /**
+     * The query represented as {@link String} for this instance.
+     */
+    @NotNull
+    private String queryString = "";
+
+    /**
      * Constructor. Creates a non-aggregated expression.
      *
      * @param informationRetrievalSystem The {@link InformationRetrievalSystem} on which the query must be performed.
@@ -152,6 +158,11 @@ public class BooleanExpression {
         } else if (isMatchingValueSet()) {
             throw new IllegalStateException("Matching value already set, cannot re-set");
         }
+
+        // Save the query string inserted by the user, before any normalization is applied
+        // This query string will NOT be used for the evaluation but only for toString methods
+        this.queryString = matchingValue;
+
         this.matchingValue = Utility.normalize(matchingValue);
         return this;
     }
@@ -193,6 +204,14 @@ public class BooleanExpression {
                 return this;
             }
         };
+
+        // Save the query string inserted by the user, before any normalization is applied
+        // This query string will NOT be used for the evaluation but only for toString methods
+        try {
+            queryString = new Phrase(matchingPhrase, matchingPhraseMaxDistance).toString();
+        } catch (IllegalArgumentException e) {
+            queryString = matchingPhrase[0];
+        }
 
         String[] tmpPhrase = Arrays.stream(matchingPhrase).map(Utility::normalize).toArray(String[]::new);
         String[] phrase = new String[tmpPhrase.length];
@@ -532,10 +551,9 @@ public class BooleanExpression {
      * @return the input query string.
      */
     @NotNull
-    public String getQueryString()
-            throws UnsupportedOperationException {
+    public String getQueryString() throws UnsupportedOperationException {
 
-        return (switch (unaryOperator) {
+        return switch (unaryOperator) {
             case NOT -> "NOT " + new BooleanExpression(this).setUnaryOperator(UNARY_OPERATOR.IDENTITY);
             case IDENTITY -> {
                 if (isAggregated) {
@@ -545,17 +563,10 @@ public class BooleanExpression {
                     yield "( " + leftChildOperand.getQueryString() + " " + binaryOperator + " "
                             + rightChildOperand.getQueryString() + " )";
                 } else {
-                    StringBuilder sb = new StringBuilder("(");
-                    if (isMatchingPhraseSet()) {
-                        yield matchingPhrase.toString();
-                    } else if (isMatchingValueSet()) {
-                        yield matchingValue;
-                    } else {
-                        throw new IllegalStateException("Should never arrive here");
-                    }
+                    yield queryString;
                 }
             }
-        }).replaceAll(InvertedIndex.ESCAPED_WILDCARD_FOR_REGEX, "*");
+        };
 
     }
 
