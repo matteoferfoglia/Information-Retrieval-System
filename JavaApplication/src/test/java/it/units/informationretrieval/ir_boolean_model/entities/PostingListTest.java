@@ -90,14 +90,14 @@ class PostingListTest {
 
     private void assertThatPostingsAreSortedAndDistinct(PostingList postingList) {
         int i = 0;
-        for (var posting : postingList.toSkipList()) {
+        for (var posting : postingList.getSkipList()) {
             assertEquals(mapOfSampleDocIdsAndCorrespondingPosting.get(++i/*docId in the map starts from 1*/), posting);
         }
         assertThatPostingsAreDistinct(postingList);
     }
 
     private void assertThatPostingsAreDistinct(PostingList postingList) {
-        assertEquals(postingList.size(), postingList.toSkipList().stream().distinct().count());
+        assertEquals(postingList.size(), postingList.getSkipList().stream().distinct().count());
     }
 
     @Test
@@ -161,6 +161,6 @@ class PostingListTest {
                 mapOfSampleDocIdsAndCorrespondingPosting.get(1),
                 mapOfSampleDocIdsAndCorrespondingPosting.get(2),
                 mapOfSampleDocIdsAndCorrespondingPosting.get(5));
-        assertEquals(EXPECTED_LIST_OF_POSTING, samplePostingList.toSkipList().stream().toList());
+        assertEquals(EXPECTED_LIST_OF_POSTING, samplePostingList.getSkipList().stream().toList());
     }
 }

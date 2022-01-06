@@ -6,6 +6,7 @@ open module it.units.informationretrieval.ir_boolean_model {
     requires org.apache.commons.collections4;
     requires com.fasterxml.jackson.databind;
     requires skiplist;
+    requires edit_distance;
 
     exports it.units.informationretrieval.ir_boolean_model.document_descriptors;
     exports it.units.informationretrieval.ir_boolean_model.entities;

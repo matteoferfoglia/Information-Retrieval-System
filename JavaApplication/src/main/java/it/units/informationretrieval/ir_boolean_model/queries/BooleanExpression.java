@@ -1,20 +1,20 @@
 package it.units.informationretrieval.ir_boolean_model.queries;
 
+import edit_distance.entities.EditDistanceCalculator;
 import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem;
 import it.units.informationretrieval.ir_boolean_model.entities.*;
+import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import skiplist.SkipList;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -38,31 +38,36 @@ import java.util.stream.Stream;
 public class BooleanExpression {
 
     /**
-     * Flag which is true if this instance is an aggregated expression.
-     * See the description of {@link BooleanExpression this class}.
+     * The {@link InformationRetrievalSystem} to use for evaluating this instance.
      */
-    private final boolean isAggregated;
+    @NotNull
+    private final InformationRetrievalSystem informationRetrievalSystem;
     /**
-     * The left-child (first) expression to evaluateBothSimpleAndAggregatedExpressionRecursively (for aggregated expressions).
+     * Flag: the value is true if this instance was created as consequence of
+     * a spelling correction.
      */
-    @Nullable   // if this expression is not aggregated
-    private final BooleanExpression leftChildOperand;
-    /**
-     * The right-child (second) expression to evaluateBothSimpleAndAggregatedExpressionRecursively (for aggregated expressions).
-     */
-    @Nullable   // if this expression is not aggregated
-    private final BooleanExpression rightChildOperand;
+    private final boolean createdForSpellingCorrection;   // default value is false
     /**
      * The {@link BINARY_OPERATOR} to apply to this instance.
      * It must be null if this is a non-aggregated instance.
      */
     @Nullable   // if this expression is not aggregated
-    private final BINARY_OPERATOR binaryOperator;
+    private BINARY_OPERATOR binaryOperator;
     /**
-     * The {@link InformationRetrievalSystem} to use for evaluating this instance.
+     * Flag which is true if this instance is an aggregated expression.
+     * See the description of {@link BooleanExpression this class}.
      */
-    @NotNull
-    private final InformationRetrievalSystem informationRetrievalSystem;
+    private boolean isAggregated;
+    /**
+     * The left-child (first) expression to evaluate (for aggregated expressions).
+     */
+    @Nullable   // if this expression is not aggregated
+    private BooleanExpression leftChildOperand;
+    /**
+     * The right-child (second) expression to evaluate (for aggregated expressions).
+     */
+    @Nullable   // if this expression is not aggregated
+    private BooleanExpression rightChildOperand;
     /**
      * Flag: true if the {@link #maxNumberOfResults} is specified.
      */
@@ -87,12 +92,20 @@ public class BooleanExpression {
      */
     @NotNull
     private UNARY_OPERATOR unaryOperator = UNARY_OPERATOR.IDENTITY;// default is the unary operator
-
     /**
      * The query represented as {@link String} for this instance.
      */
     @NotNull
     private String queryString = "";
+    /**
+     * Edit-distance: if a spelling correction was applied, this field
+     * saves the max edit-distance currently used between the user query
+     * and the actual query to the IR system.
+     * Saving this field allows, e.g., to increment the edit-distance
+     * (and possibly the number of results of the evaluation) each time
+     * the method {@link #spellingCorrection()} is invoked.
+     */
+    private int editDistanceForSpellingCorrection = 0;
 
     /**
      * Constructor. Creates a non-aggregated expression.
@@ -101,6 +114,7 @@ public class BooleanExpression {
      */
     protected BooleanExpression(@NotNull final InformationRetrievalSystem informationRetrievalSystem) {
         this.isAggregated = false;
+        this.createdForSpellingCorrection = false;
         this.leftChildOperand = null;
         this.rightChildOperand = null;
         this.binaryOperator = null;
@@ -113,14 +127,7 @@ public class BooleanExpression {
      * @param booleanExpression The instance to be copied.
      */
     private BooleanExpression(@NotNull BooleanExpression booleanExpression) throws IllegalArgumentException {
-        this.isAggregated = booleanExpression.isAggregated;
-        this.matchingValue = booleanExpression.matchingValue;
-        this.matchingPhrase = booleanExpression.matchingPhrase;
-        this.unaryOperator = booleanExpression.unaryOperator;
-        this.binaryOperator = booleanExpression.binaryOperator;
-        this.informationRetrievalSystem = booleanExpression.informationRetrievalSystem;
-        this.leftChildOperand = booleanExpression.leftChildOperand;
-        this.rightChildOperand = booleanExpression.rightChildOperand;
+        this(booleanExpression, false);
     }
 
     /**
@@ -136,13 +143,134 @@ public class BooleanExpression {
         if (Objects.requireNonNull(expr1.informationRetrievalSystem).equals(expr2.informationRetrievalSystem)) {
             this.informationRetrievalSystem = expr1.informationRetrievalSystem;
             this.isAggregated = true;
+            this.createdForSpellingCorrection = false;
             this.leftChildOperand = Objects.requireNonNull(expr1);
             this.rightChildOperand = Objects.requireNonNull(expr2);
             this.binaryOperator = Objects.requireNonNull(operator);
         } else {
-            throw new IllegalStateException("Impossible to create an aggregate expression with children" +
-                    " expressions referring to different IR Systems.");
+            throw new IllegalStateException(
+                    "Impossible to create an aggregate expression with children" +
+                            " expressions referring to different IR Systems.");
         }
+    }
+
+    private BooleanExpression(BooleanExpression booleanExpression, boolean createdForSpellingCorrection) {
+        this.createdForSpellingCorrection = createdForSpellingCorrection;
+        this.isAggregated = booleanExpression.isAggregated;
+        this.matchingValue = booleanExpression.matchingValue;
+        this.matchingPhrase = booleanExpression.matchingPhrase;
+        this.unaryOperator = booleanExpression.unaryOperator;
+        this.binaryOperator = booleanExpression.binaryOperator;
+        this.informationRetrievalSystem = booleanExpression.informationRetrievalSystem;
+        this.leftChildOperand = booleanExpression.leftChildOperand;
+        this.rightChildOperand = booleanExpression.rightChildOperand;
+        this.queryString = booleanExpression.queryString;
+    }
+
+    /**
+     * This method tries to perform a spelling correction on the query inserted
+     * by the user and returns the instance, ready for a new evaluation.
+     *
+     * @return a new instance of this class with the spelling correction, ready
+     * to invoke {@link #evaluate()} for a new evaluation of the instance on the
+     * spelling-corrected query.
+     */
+    @NotNull
+    public BooleanExpression spellingCorrection() {
+
+        // If this is an aggregated query, then spelling correction must be performed on its children too
+        if (isAggregated) {
+            assert leftChildOperand != null;
+            assert binaryOperator != null;
+            assert rightChildOperand != null;
+
+            // don't apply spelling correction on an instance that was created by this method
+            leftChildOperand = leftChildOperand.createdForSpellingCorrection
+                    ? leftChildOperand : leftChildOperand.spellingCorrection();
+            rightChildOperand = rightChildOperand.createdForSpellingCorrection
+                    ? rightChildOperand : rightChildOperand.spellingCorrection();
+        } else {
+
+            if (isMatchingValueSet()) {
+
+                final String normalizedQueryString = Utility.normalize(queryString);
+                if (normalizedQueryString != null) {
+
+                    final int SUFFIX_LENGTH = 2;    // TODO: what if the string is shorter?
+                    String[] rotations = Utility.getAllRotationsOf(normalizedQueryString);
+                    LinkedHashMap<String, Integer> sortedMapWithNearestTermFromDictionaryAtBegin =
+                            Arrays.stream(rotations)
+                                    .unordered().parallel()
+                                    .filter(s -> s.length() > SUFFIX_LENGTH)
+                                    .map(s -> s.substring(SUFFIX_LENGTH))
+                                    .map(informationRetrievalSystem::getDictionaryTermsContainingSubstring)
+                                    .flatMap(Collection::stream)
+                                    .distinct()
+                                    .map(termFromDictionary -> new Pair<>(
+                                            termFromDictionary,
+                                            new EditDistanceCalculator(
+                                                    normalizedQueryString, termFromDictionary).getEditDistance()))
+                                    .sorted((entry1, entry2) -> {
+                                        int comparison = entry1.getValue().compareTo(entry2.getValue());
+                                        return comparison == 0  // if same edit-distance, then give precedence to the most frequent term// TODO: rethink about ranking
+                                                ? informationRetrievalSystem.getTotalNumberOfOccurrencesOfTerm(entry2.getKey())
+                                                - informationRetrievalSystem.getTotalNumberOfOccurrencesOfTerm(entry1.getKey())
+                                                : comparison;
+                                    })
+                                    .collect(Collectors.toMap(
+                                            Map.Entry::getKey,
+                                            Map.Entry::getValue,
+                                            (a, b) -> {
+                                                throw new IllegalStateException("No duplicates should be present");
+                                            },
+                                            LinkedHashMap::new));
+
+                    int newEditDistance = sortedMapWithNearestTermFromDictionaryAtBegin
+                            .values()
+                            .stream().mapToInt(i -> i)
+                            .filter(editDistanceComputed -> editDistanceComputed > editDistanceForSpellingCorrection)
+                            .min()
+                            .orElse(editDistanceForSpellingCorrection);
+
+                    if (newEditDistance != editDistanceForSpellingCorrection) {
+                        var booleanExpressionWithCorrection =
+                                sortedMapWithNearestTermFromDictionaryAtBegin.entrySet()
+                                        .stream()
+                                        .filter(entry ->
+                                                entry.getValue() > editDistanceForSpellingCorrection // avoid reconsidering the same corrected words // TODO: may be useful to cache results
+                                                        && entry.getValue() <= newEditDistance)
+                                        .map(Map.Entry::getKey)
+                                        .map(correctedWord -> new BooleanExpression(this, true)
+                                                .setMatchingValueWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(correctedWord))
+                                        .reduce(BooleanExpression::or)
+                                        .orElse(this);
+                        if (booleanExpressionWithCorrection == this/*same reference if no corrections were made*/) {
+                            return this;
+                        } else {
+                            // this becomes an aggregated expression
+                            leftChildOperand = new BooleanExpression(this); // this is the actual expression inserted by the user to be spelling-corrected
+                            editDistanceForSpellingCorrection = newEditDistance;
+                            leftChildOperand.editDistanceForSpellingCorrection = newEditDistance;
+                            isAggregated = true;
+                            matchingValue = null;
+                            matchingPhrase = null;
+                            rightChildOperand = booleanExpressionWithCorrection;
+                            binaryOperator = BINARY_OPERATOR.OR;
+                        }
+                    }
+                    // TODO: just a draft, method not ended (part for phrase queries is missing)
+                    //       for phrase query you may compute the correction on each word of the
+                    //       phrase (one at a time) and then sum the obtained distances and save
+                    //       this value as edit-distance between initial query
+                }
+                return this;    // nothing else to do
+            }
+
+
+        }
+
+
+        return this;
     }
 
     /**
@@ -159,6 +287,12 @@ public class BooleanExpression {
             throw new IllegalStateException("Matching value already set, cannot re-set");
         }
 
+        return setMatchingValueWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(matchingValue);
+    }
+
+    @NotNull
+    private BooleanExpression setMatchingValueWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(
+            @NotNull String matchingValue) {
         // Save the query string inserted by the user, before any normalization is applied
         // This query string will NOT be used for the evaluation but only for toString methods
         this.queryString = matchingValue;
@@ -194,6 +328,13 @@ public class BooleanExpression {
             throw new IllegalStateException("Matching phrase already set, cannot re-set");
         }
 
+        return setMatchingPhraseWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(
+                matchingPhrase, matchingPhraseMaxDistance);
+
+    }
+
+    private BooleanExpression setMatchingPhraseWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(
+            @NotNull String[] matchingPhrase, int[] matchingPhraseMaxDistance) {
         // Function used later to avoid code duplication
         BiFunction<String[], int[], BooleanExpression> returnBooleanExpression = (words, distancesBetweenWords) -> {
             if (words.length == 1) {
@@ -228,7 +369,8 @@ public class BooleanExpression {
                 }
                 remainingWords = distances.length - j;
                 if (matchingPhraseMaxDistance.length - i == remainingWords) {
-                    // if there are no more removed words, use System.arraycopy (more efficient) to copy the remaining words
+                    // if there are no more removed words, use System.arraycopy (more
+                    //  efficient) to copy the remaining words
                     break;
                 }
             }
@@ -246,7 +388,6 @@ public class BooleanExpression {
             // no words were removed by normalization
             return returnBooleanExpression.apply(tmpPhrase, matchingPhraseMaxDistance);
         }
-
     }
 
     /**
@@ -458,34 +599,35 @@ public class BooleanExpression {
                         //noinspection unchecked    // generic array creation
                         BiPredicate<Posting, Posting>[] biPredicatesForCheckingPositionsForPhrasalQueries =
                                 IntStream.range(0, matchingPhrase.size() - 1)
-                                        .mapToObj(i -> (BiPredicate<Posting, Posting>) (Posting posting1, Posting posting2) -> {
-                                            // Note: order of input arg is important
+                                        .mapToObj(i -> (BiPredicate<Posting, Posting>)
+                                                (Posting posting1, Posting posting2) -> {
+                                                    // Note: order of input arg is important
 
-                                            var positions1 = posting1.getTermPositionsInTheDocument();
-                                            var positions2 = posting2.getTermPositionsInTheDocument();
+                                                    var positions1 = posting1.getTermPositionsInTheDocument();
+                                                    var positions2 = posting2.getTermPositionsInTheDocument();
 
-                                            // assert positions were sorted
-                                            assert Arrays.stream(positions1).sorted().boxed().toList().equals(Arrays.stream(positions1).boxed().toList());
-                                            assert Arrays.stream(positions2).sorted().boxed().toList().equals(Arrays.stream(positions2).boxed().toList());
+                                                    // assert positions were sorted
+                                                    assert Arrays.stream(positions1).sorted().boxed().toList().equals(Arrays.stream(positions1).boxed().toList());
+                                                    assert Arrays.stream(positions2).sorted().boxed().toList().equals(Arrays.stream(positions2).boxed().toList());
 
-                                            int index1 = 0, index2 = 0;
-                                            while (index1 < positions1.length && index2 < positions2.length) {
-                                                int numberOfTermsBetweenWords =
-                                                        positions2[index2] - positions1[index1]              // number of words between the *first* word of phrase and the word of posting2  (Note: when inserting a posting to the intersection list, only the posting referencing the first word of phrase is kept, hence distances must be computed respect the position of the first word)
-                                                                - matchingPhrase.distanceFromFirstWord[i];   // exact distance allowed between *first* word and the word of posting 2
-                                                if (numberOfTermsBetweenWords == 0) {
-                                                    // words are adjacent
-                                                    return true;
-                                                } else if (numberOfTermsBetweenWords < 0) {
-                                                    // word from posting2 is present in the document before the word of posting1
-                                                    index2++;
-                                                } else {
-                                                    // word from posting1 is present in the document before the word of posting2
-                                                    index1++;
-                                                }
-                                            }
-                                            return false;   // no adjacency found
-                                        })
+                                                    int index1 = 0, index2 = 0;
+                                                    while (index1 < positions1.length && index2 < positions2.length) {
+                                                        int numberOfTermsBetweenWords =
+                                                                positions2[index2] - positions1[index1]              // number of words between the *first* word of phrase and the word of posting2  (Note: when inserting a posting to the intersection list, only the posting referencing the first word of phrase is kept, hence distances must be computed respect the position of the first word)
+                                                                        - matchingPhrase.distanceFromFirstWord[i];   // exact distance allowed between *first* word and the word of posting 2
+                                                        if (numberOfTermsBetweenWords == 0) {
+                                                            // words are adjacent
+                                                            return true;
+                                                        } else if (numberOfTermsBetweenWords < 0) {
+                                                            // word from posting2 is present in the document before the word of posting1
+                                                            index2++;
+                                                        } else {
+                                                            // word from posting1 is present in the document before the word of posting2
+                                                            index1++;
+                                                        }
+                                                    }
+                                                    return false;   // no adjacency found
+                                                })
                                         .toArray(BiPredicate[]::new);
 
                         assert matchingPhrase.words.length >= 2;
@@ -500,7 +642,8 @@ public class BooleanExpression {
                             if (correspondingPostingList == null) {
                                 // posting list for the term was not cached
                                 correspondingPostingList = new SkipList<>(
-                                        informationRetrievalSystem.getListOfPostingForToken(word), Posting.DOC_ID_COMPARATOR);
+                                        informationRetrievalSystem.getListOfPostingForToken(word),
+                                        Posting.DOC_ID_COMPARATOR);
                                 cachedPostings.put(word, correspondingPostingList);
                             }
                             return correspondingPostingList;
@@ -510,14 +653,17 @@ public class BooleanExpression {
                         for (int i = 1; !phraseQueryIntersection.isEmpty() && i < matchingPhrase.size(); i++) {
                             SkipList<Posting> postings = getPostingListOfIthWordInPhrase.apply(i);
                             phraseQueryIntersection = SkipList.intersection(    // TODO: move to class utility (for uniformity)
-                                    phraseQueryIntersection, postings, biPredicatesForCheckingPositionsForPhrasalQueries[i - 1], Posting.DOC_ID_COMPARATOR);
+                                    phraseQueryIntersection, postings,
+                                    biPredicatesForCheckingPositionsForPhrasalQueries[i - 1], Posting.DOC_ID_COMPARATOR);
                         }
 
                         yield phraseQueryIntersection;
                     }
 
                     if (isMatchingValueSet()) {
-                        yield new SkipList<>(informationRetrievalSystem.getListOfPostingForToken(matchingValue), Posting.DOC_ID_COMPARATOR);
+                        yield new SkipList<>(
+                                informationRetrievalSystem.getListOfPostingForToken(matchingValue),
+                                Posting.DOC_ID_COMPARATOR);
                     } else {
                         // normalization of input matching value leads to null, hence no results can be found
                         yield new SkipList<>(Posting.DOC_ID_COMPARATOR);
@@ -568,6 +714,28 @@ public class BooleanExpression {
             }
         };
 
+    }
+
+    /**
+     * @return true if a spelling correction was applied on this instance.
+     */
+    public boolean isSpellingCorrectionApplied() {
+        return editDistanceForSpellingCorrection > 0;
+    }
+
+    /**
+     * @return the distance between words in this query (if it was spelling-corrected)
+     * respect to the query inserted by the user.
+     */
+    public int getEditDistanceForSpellingCorrection() {
+        return editDistanceForSpellingCorrection;
+    }
+
+    /**
+     * @return the initial queryString without any spelling-correction.
+     */
+    public String getInitialQueryString() {
+        return queryString;
     }
 
     /**

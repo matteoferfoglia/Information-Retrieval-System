@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import skiplist.SkipList;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -60,6 +61,27 @@ public class InformationRetrievalSystem implements Serializable {
     @NotNull
     public SkipList<Posting> getListOfPostingForToken(@NotNull final String normalizedToken) {
         return invertedIndex.getListOfPostingsForToken(normalizedToken);
+    }
+
+    /**
+     * @param term The term to search.
+     * @return the total number of occurrences of the given term in the entire {@link Corpus}
+     * handled by this instance.
+     */
+    public int getTotalNumberOfOccurrencesOfTerm(@NotNull String term) {
+        return invertedIndex.getTotalNumberOfOccurrencesOfTerm(term);
+    }
+
+    /**
+     * Exploits the permuterm index to get all terms in the dictionary having
+     * a substring which is equal to the given input.
+     *
+     * @param substring The substring which must match with some term in the dictionary.
+     * @return The {@link Collection} (eventually with duplicates) of terms in the
+     * dictionary having a substring which is equal to the given one.
+     */
+    public Collection<String> getDictionaryTermsContainingSubstring(@NotNull String substring) {
+        return invertedIndex.getDictionaryTermsContainingSubstring(substring);
     }
 
     @NotNull

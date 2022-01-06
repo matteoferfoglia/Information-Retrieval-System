@@ -54,6 +54,16 @@ public class Term implements Comparable<Term>, Serializable {
     }
 
     /**
+     * @return the total number of occurrences of this {@link Term} in the entire {@link Corpus}.
+     */
+    public int totalNumberOfOccurrencesInCorpus() {
+        return postingList.getSkipList()
+                .stream().unordered().parallel()
+                .mapToInt(Posting::tf)
+                .sum();
+    }
+
+    /**
      * Merges a {@link Term} into this one (destructive merging).
      *
      * @param other The other {@link Term} to be merged into this one.
@@ -104,7 +114,7 @@ public class Term implements Comparable<Term>, Serializable {
 
     @NotNull
     public SkipList<Posting> getListOfPostings() {
-        return postingList.toSkipList();
+        return postingList.getSkipList();
     }
 
     /**

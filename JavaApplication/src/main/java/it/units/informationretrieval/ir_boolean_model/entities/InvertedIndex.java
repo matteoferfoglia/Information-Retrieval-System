@@ -25,30 +25,21 @@ import java.util.stream.Collectors;
 public class InvertedIndex implements Serializable {
 
     /**
-     * The symbol which indicates the end of a word, used in {@link #permutermIndex}.
-     */
-    @NotNull
-    private static final String END_OF_WORD = "\3";
-
-    /**
      * Wildcard to indicate 0, 1 or more characters,
      * used to answer wildcard queries.
      */
     @NotNull
-    private static final String WILDCARD = "*";
-
-    /**
-     * Same as {@link #WILDCARD}, but escaped (usable in regex).
-     */
-    @NotNull
-    private static final String ESCAPED_WILDCARD = "\\*";
-
+    public static final String WILDCARD = "*";
     /**
      * Same as {@link #WILDCARD}, but escaped to be used in wildcard queries.
      */
     @NotNull
     public static final String ESCAPED_WILDCARD_FOR_REGEX = "\\" + WILDCARD;
-
+    /**
+     * The symbol which indicates the end of a word, used in {@link #permutermIndex}.
+     */
+    @NotNull
+    private static final String END_OF_WORD = "\3";
     /**
      * The inverted index, i.e., a {@link Map} having tokens as keys and a {@link Term}
      * as corresponding values, where the {@link Term} in the entry, if tokenized,
@@ -161,6 +152,15 @@ public class InvertedIndex implements Serializable {
                             return a;
                         },
                         ConcurrentHashMap::new));
+    }
+
+    /**
+     * @param term The term to search.
+     * @return the total number of occurrences of the given term in the entire {@link Corpus}.
+     */
+    public int getTotalNumberOfOccurrencesOfTerm(@NotNull String term) {
+        Term termFromIndex = invertedIndex.get(term);
+        return termFromIndex == null ? 0 : termFromIndex.totalNumberOfOccurrencesInCorpus();
     }
 
     /**
@@ -332,8 +332,7 @@ public class InvertedIndex implements Serializable {
             // Prepare the regex used to match the initial input token (with wildcards)
             Pattern pattern = Pattern.compile(normalizedToken.replaceAll(ESCAPED_WILDCARD_FOR_REGEX, ".*"));
 
-            return new SkipList<>(permutermIndex.prefixMap(rotatedToken)
-                    .values()
+            return new SkipList<>(getDictionaryTermsContainingSubstring(rotatedToken)
                     .stream().unordered().parallel()
                     .distinct()
                     .filter(tokenFromDictionary -> pattern.matcher(tokenFromDictionary).matches())
@@ -348,6 +347,18 @@ public class InvertedIndex implements Serializable {
             Term t = invertedIndex.get(normalizedToken);
             return t == null ? new SkipList<>() : t.getListOfPostings();
         }
+    }
+
+    /**
+     * Exploits the permuterm index to get all terms in the dictionary having
+     * a substring which is equal to the given input.
+     *
+     * @param substring The substring which must match with some term in the dictionary.
+     * @return The {@link Collection} (eventually with duplicates) of terms in the
+     * dictionary having a substring which is equal to the given one.
+     */
+    public Collection<String> getDictionaryTermsContainingSubstring(@NotNull String substring) {
+        return permutermIndex.prefixMap(substring).values();
     }
 
     /**

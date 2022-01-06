@@ -106,6 +106,12 @@ public class ExampleOfUseOfTheIRSystem {
                             .setMatchingPhrase("Space *am".split(" "))
                             .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bag*")), MAX_N_RESULTS));
 
+            // Spelling correction
+            BooleanExpression wrongQueryBE = ir.createNewBooleanExpression().setMatchingValue("Spack");
+            System.out.println(queryAndReturnResultsAsString(wrongQueryBE, MAX_N_RESULTS));
+            System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(), MAX_N_RESULTS));
+            System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(), MAX_N_RESULTS));// edit distance increases each time
+
         } catch (URISyntaxException | IOException | NoMoreDocIdsAvailable e) {
             e.printStackTrace();
         }
@@ -135,9 +141,19 @@ public class ExampleOfUseOfTheIRSystem {
                 .append(results.size()).append(" result").append(results.size() > 1 ? "s" : "")
                 .append(" for ")
                 .append(be.getQueryString())
-                .append(" found in ").append(endTime - startTime)
-                .append(" ms. ");
+                .append(System.lineSeparator())
+                .append("  found in ").append(endTime - startTime)
+                .append(" ms. ")
+                .append(System.lineSeparator());
+        if (be.isSpellingCorrectionApplied()) {
+            sb.append(" Spelling correction applied and terms are at most ")
+                    .append(be.getEditDistanceForSpellingCorrection())
+                    .append(" (edit-distance) far from the inserted query {")
+                    .append(be.getInitialQueryString())
+                    .append("}.");
+        }
         if (results.size() > 1) {
+            sb.append(System.lineSeparator());
             if (results.size() > maxNumberOfResultsToReturn) {
                 sb.append("First ")
                         .append(maxNumberOfResultsToReturn)
@@ -145,9 +161,10 @@ public class ExampleOfUseOfTheIRSystem {
             } else {
                 sb.append("Results");
             }
+            sb.append(System.lineSeparator());
         }
         if (results.size() > 0) {
-            sb.append(":\n-\t")
+            sb.append("-\t")
                     .append(
                             results.stream()
                                     .limit(maxNumberOfResultsToReturn)

@@ -6,7 +6,6 @@ import skiplist.SkipList;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Class representing a {@link PostingList}.
@@ -20,7 +19,6 @@ public class PostingList implements Serializable {
      */
     @NotNull
     private final SkipList<Posting> postings;
-
 
     /**
      * Constructor.
@@ -49,10 +47,10 @@ public class PostingList implements Serializable {
     }
 
     /**
-     * @return This instance as unmodifiable {@link List} of {@link Posting}s.
+     * @return This {@link SkipList} of {@link Posting}s contained in this instance.
      */
     @NotNull
-    public SkipList<Posting> toSkipList() {
+    public SkipList<Posting> getSkipList() {
         return postings;
     }
 
