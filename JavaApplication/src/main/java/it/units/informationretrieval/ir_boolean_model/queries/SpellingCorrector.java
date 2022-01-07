@@ -345,7 +345,7 @@ class SpellingCorrector {   // TODO: benchmark
             if (normalizedQueryWord != null) {
 
                 String[] rotations;
-                if (phoneticCorrection) {
+                if (!phoneticCorrection) {
                     rotations = Utility.getAllRotationsOf(normalizedQueryWord);
                 } else {
                     // no rotations for phonetic correction
