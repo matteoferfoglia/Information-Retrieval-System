@@ -144,10 +144,10 @@ public class ExampleOfUseOfTheIRSystem {
                 .append(be.getQueryString())
                 .append(System.lineSeparator())
                 .append("  found in ").append(endTime - startTime)
-                .append(" ms. ")
-                .append(System.lineSeparator());
+                .append(" ms. ");
         if (be.isSpellingCorrectionApplied()) {
-            sb.append(" Spelling correction applied and terms are at most ")
+            sb.append(System.lineSeparator())
+                    .append(" Spelling correction applied and terms are at most ")
                     .append(be.getEditDistanceForSpellingCorrection())
                     .append(" (edit-distance) far from the inserted query {")
                     .append(be.getInitialQueryString())
@@ -162,10 +162,11 @@ public class ExampleOfUseOfTheIRSystem {
             } else {
                 sb.append("Results");
             }
-            sb.append(System.lineSeparator());
         }
         if (results.size() > 0) {
-            sb.append("-\t")
+            sb.append(":")
+                    .append(System.lineSeparator())
+                    .append("-\t")
                     .append(
                             results.stream()
                                     .limit(maxNumberOfResultsToReturn)
