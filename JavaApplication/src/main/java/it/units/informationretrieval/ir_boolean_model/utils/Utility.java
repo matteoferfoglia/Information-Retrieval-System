@@ -391,6 +391,34 @@ public class Utility {
     }
 
     /**
+     * Computes and returns the cartesian product of the input lists
+     * (all combinations).
+     *
+     * @param lists Input lists.
+     * @return the list of lists which is the cartesian product of the input list.
+     */
+    public static <T> List<List<T>> getCartesianProduct(List<List<T>> lists) {
+        final int CARTESIAN_PRODUCT_SIZE = lists.stream().mapToInt(List::size).reduce((a, b) -> a * b).orElse(0);
+        List<List<T>> resultLists = new ArrayList<>(CARTESIAN_PRODUCT_SIZE);
+        if (lists.size() == 0) {
+            resultLists.add(new ArrayList<>());
+            return resultLists;
+        } else {
+            List<T> firstList = lists.get(0);
+            List<List<T>> remainingLists = getCartesianProduct(lists.subList(1, lists.size()));
+            for (T el : firstList) {
+                for (List<T> remainingList : remainingLists) {
+                    List<T> resultList = new ArrayList<>(1 + remainingList.size());
+                    resultList.add(el);
+                    resultList.addAll(remainingList);
+                    resultLists.add(resultList);
+                }
+            }
+        }
+        return resultLists;
+    }
+
+    /**
      * Generalization of {@link java.util.function.BiFunction} to take
      * three input arguments and produce one output argument.
      * From <a href="https://stackoverflow.com/a/19649473">Stackoverflow</a>.

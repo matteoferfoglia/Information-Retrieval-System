@@ -18,6 +18,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -340,5 +341,31 @@ class UtilityTest {
                         })
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         assertEquals(expectedMapTokenToPositions, actualMapTokenToPositions);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "{\"input\": [[0#1]#[0#1]]}, {\"expected\": [[0#0]#[0#1]#[1#0]#[1#1]]}",
+            "{\"input\": [[0#1]#[0#1]#[0#1]]}, {\"expected\": [[0#0#0]#[0#0#1]#[0#1#0]#[0#1#1]#[1#0#0]#[1#0#1]#[1#1#0]#[1#1#1]]}"
+    })
+    void getCartesianProduct(String inputList, String expectedCartesianProduct) {
+        Function<String, List<List<Integer>>> convertFromJson = json -> {
+            try {
+                return Utility.convertFromJsonToMap(json.replaceAll("#", ","))
+                        .values()
+                        .stream()
+                        .flatMap(value -> ((List<?>) value)
+                                .stream()
+                                .map(innerList -> ((List<?>) innerList).stream().map(i -> (int) i).toList()))
+                        .toList();
+            } catch (JsonProcessingException e) {
+                fail(e);
+                return new ArrayList<>();
+            }
+        };
+        List<List<Integer>> input = convertFromJson.apply(inputList);
+        List<List<Integer>> expected = convertFromJson.apply(expectedCartesianProduct);
+        List<List<Integer>> actual = Utility.getCartesianProduct(input);
+        assertEquals(expected, actual);
     }
 }

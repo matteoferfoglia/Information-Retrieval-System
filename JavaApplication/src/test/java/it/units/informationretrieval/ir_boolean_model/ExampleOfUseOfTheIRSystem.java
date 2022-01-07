@@ -35,7 +35,7 @@ public class ExampleOfUseOfTheIRSystem {
 
             switch (file_irSystem.isFile() ? 1 : 0) {
                 case 1:    // file exists
-                    System.out.println("Loading the IRSystem from file system");
+                    System.out.println("Loading the IRSystem from the file system");
                     ObjectInputStream ois = new ObjectInputStream(
                             new BufferedInputStream(
                                     new FileInputStream(file_irSystem)));
@@ -111,6 +111,7 @@ public class ExampleOfUseOfTheIRSystem {
             System.out.println(queryAndReturnResultsAsString(wrongQueryBE, MAX_N_RESULTS));
             System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(), MAX_N_RESULTS));
             System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(), MAX_N_RESULTS));// edit distance increases each time
+            // TODO: try spelling correction with phrases
 
         } catch (URISyntaxException | IOException | NoMoreDocIdsAvailable e) {
             e.printStackTrace();
