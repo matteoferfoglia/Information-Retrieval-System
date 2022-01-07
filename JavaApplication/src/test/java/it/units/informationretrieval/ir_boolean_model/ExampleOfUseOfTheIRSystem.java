@@ -116,6 +116,12 @@ public class ExampleOfUseOfTheIRSystem {
             System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE, MAX_N_RESULTS));
             System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));
             System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));// edit distance increases each time
+            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));
+            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));
+            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));
+            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));
+            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));
+            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));
 
 
         } catch (URISyntaxException | IOException | NoMoreDocIdsAvailable e) {

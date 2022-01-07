@@ -343,4 +343,11 @@ class SpellingCorrector {   // TODO: benchmark
         }
     }
 
+    /**
+     * If invoked, this method will stop any further spelling-correction
+     * procedure, like if no more results are available.
+     */
+    public void stop() {
+        overallEditDistance = oldOverallEditDistance;
+    }
 }
