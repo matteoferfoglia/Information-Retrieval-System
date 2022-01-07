@@ -7,7 +7,7 @@ import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
  *
  * @author Matteo Ferfoglia.
  */
-public class UsePropertiesExample {
+class UsePropertiesExample {
     public static void main(String[] args) {
         try {
             // Load application properties and create working directory

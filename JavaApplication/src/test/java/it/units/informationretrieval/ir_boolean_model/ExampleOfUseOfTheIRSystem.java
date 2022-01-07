@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  *
  * @author Matteo Ferfoglia
  */
-public class ExampleOfUseOfTheIRSystem {
+class ExampleOfUseOfTheIRSystem {
 
     public static void main(String[] args) {
 

@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-public class Benchmarking {
+class Benchmarking {
 
     private static final String FOLDER_NAME_TO_SAVE_RESULTS = "benchmarks";
 
