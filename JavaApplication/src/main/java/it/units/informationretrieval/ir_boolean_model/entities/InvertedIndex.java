@@ -149,7 +149,7 @@ public class InvertedIndex implements Serializable {
                         AbstractMap.SimpleEntry::getValue,
                         (a, b) -> {
                             a.addAll(b);
-                            return a.stream().distinct().toList();
+                            return a.stream().distinct().collect(Collectors.toList());
                         },
                         ConcurrentHashMap::new));
     }
