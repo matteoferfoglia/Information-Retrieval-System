@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -228,14 +227,17 @@ class SpellingCorrector {   // TODO: benchmark
 
     private List<Phrase> getCorrections(int overallEditDistance) {
         var editDistancesAfterCorrection = getEditDistances(overallEditDistance);
-        var corrections = editDistancesAfterCorrection.stream()
-                .flatMap(oneTupleOfEditDistancesAfterCorrection ->
+        var corrections = editDistancesAfterCorrection
+                .stream()
+                .map(oneTupleOfEditDistancesAfterCorrection ->
                         IntStream.range(0, oneTupleOfEditDistancesAfterCorrection.size())
                                 .mapToObj(wordIndex -> correct(
                                         PHRASE_TO_CORRECT.getWordAt(wordIndex),
-                                        oneTupleOfEditDistancesAfterCorrection.get(wordIndex))
-                                        .stream().map(Phrase::new)))
-                .flatMap(Function.identity())
+                                        oneTupleOfEditDistancesAfterCorrection.get(wordIndex)))
+                                .toList())
+                .map(Utility::getCartesianProduct)
+                .flatMap(Collection::stream)
+                .map(Phrase::new)
                 .toList();
         if (corrections.isEmpty()) {
             boolean furtherCorrectionsPossible = PHRASE_TO_CORRECT.getListOfWords()
