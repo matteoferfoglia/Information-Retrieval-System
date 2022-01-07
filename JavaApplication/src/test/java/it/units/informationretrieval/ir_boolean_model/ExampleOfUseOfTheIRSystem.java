@@ -106,22 +106,28 @@ public class ExampleOfUseOfTheIRSystem {
 
 
             // Spelling correction
-            BooleanExpression wrongQueryBE = ir.createNewBooleanExpression().setMatchingValue("Spack");
-            System.out.println(queryAndReturnResultsAsString(wrongQueryBE, MAX_N_RESULTS));
-            System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(), MAX_N_RESULTS));
-            System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(), MAX_N_RESULTS));// edit distance increases each time
+            for (var phoneticCorrection : new boolean[]{true, false}) {
 
-            // Spelling correction with phrase
-            BooleanExpression wrongPhraseQueryBE = ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" "));
-            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE, MAX_N_RESULTS));
-            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));
-            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));// edit distance increases each time
-            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));
-            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));
-            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));
-            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));
-            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));
-            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));
+                System.out.println(System.lineSeparator() + System.lineSeparator()
+                        + "## " + (phoneticCorrection ? "Phonetic" : "Spelling") + " correction ##");
+
+                BooleanExpression wrongQueryBE = ir.createNewBooleanExpression().setMatchingValue("Spack");
+                System.out.println(queryAndReturnResultsAsString(wrongQueryBE, MAX_N_RESULTS));
+                System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
+                System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));// edit distance increases each time
+
+                // Spelling correction with phrase
+                BooleanExpression wrongPhraseQueryBE = ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" "));
+                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE, MAX_N_RESULTS));
+                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
+                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));// edit distance increases each time
+//                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
+//                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
+//                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
+//                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
+//                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
+//                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
+            }
 
 
         } catch (URISyntaxException | IOException | NoMoreDocIdsAvailable e) {
@@ -162,7 +168,7 @@ public class ExampleOfUseOfTheIRSystem {
                     .append(be.getEditDistanceForSpellingCorrection())
                     .append(" (edit-distance) far from the inserted query {")
                     .append(be.getInitialQueryString())
-                    .append("}.");
+                    .append("}");
         }
         if (results.size() > 1) {
             sb.append(System.lineSeparator());

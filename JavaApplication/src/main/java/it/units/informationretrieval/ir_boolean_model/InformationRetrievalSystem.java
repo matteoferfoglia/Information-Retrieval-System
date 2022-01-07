@@ -116,4 +116,16 @@ public class InformationRetrievalSystem implements Serializable {
     public Set<Posting> getPostingList(@NotNull DocumentIdentifier docId) {
         return invertedIndex.getPostingList(docId);
     }
+
+    /**
+     * Exploits the phonetic-hash index to get all terms in the dictionary
+     * which are the same hash as computed by the Soundex algorithm.
+     *
+     * @param word The input word.
+     * @return The {@link Collection} (without duplicates) having the same
+     * phonetic hash as the input word.
+     */
+    public Collection<String> getDictionaryTermsFromSoundexCorrectionOf(@NotNull String word) {
+        return invertedIndex.getDictionaryTermsFromSoundexCorrectionOf(word);
+    }
 }

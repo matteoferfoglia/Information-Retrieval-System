@@ -68,7 +68,7 @@ public class InvertedIndex implements Serializable {
      * The phonetic hash.
      */
     @NotNull
-    private final ConcurrentMap<String, List<Term>> phoneticHashes;   // TODO: test and use phonetic hash for queries
+    private final ConcurrentMap<String, List<Term>> phoneticHashes;
 
     /**
      * The permuterm index, having as keys all rotations of all tokens in the dictionary
@@ -149,7 +149,7 @@ public class InvertedIndex implements Serializable {
                         AbstractMap.SimpleEntry::getValue,
                         (a, b) -> {
                             a.addAll(b);
-                            return a;
+                            return a.stream().distinct().toList();
                         },
                         ConcurrentHashMap::new));
     }
@@ -378,5 +378,20 @@ public class InvertedIndex implements Serializable {
     public Set<Posting> getPostingList(@NotNull DocumentIdentifier docId) {
         var results = postingsByDocId.get(docId);
         return results == null ? ConcurrentHashMap.newKeySet(0) : results;
+    }
+
+    /**
+     * Exploits the phonetic-hash index to get all terms in the dictionary
+     * which are the same hash as computed by the Soundex algorithm.
+     *
+     * @param word The input word.
+     * @return The {@link Collection} (without duplicates) having the same
+     * phonetic hash as the input word.
+     */
+    public Collection<String> getDictionaryTermsFromSoundexCorrectionOf(@NotNull String word) {
+        var phoneticHashes = this.phoneticHashes.get(Soundex.getPhoneticHash(word));
+        return phoneticHashes == null
+                ? new ArrayList<>(0)
+                : phoneticHashes.stream().map(Term::getTermString).toList();
     }
 }

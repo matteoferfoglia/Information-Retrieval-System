@@ -60,7 +60,7 @@ public class BooleanExpression {
     private SkipList<Posting> results = new SkipList<>(new ArrayList<>(), Posting.DOC_ID_COMPARATOR);
     /**
      * The {@link SpellingCorrector} used for this instance. It is important
-     * to save this field to handle multiple invocation of {@link #spellingCorrection()}.
+     * to save this field to handle multiple invocation of {@link #spellingCorrection(boolean)}.
      */
     @Nullable
     private SpellingCorrector spellingCorrector = null;
@@ -197,12 +197,14 @@ public class BooleanExpression {
      * This method tries to perform a spelling correction on the query inserted
      * by the user and returns the instance, ready for a new evaluation.
      *
+     * @param phoneticCorrection true if phonetic correction is desired, false if
+     *                           "classic" spelling correction is preferred.
      * @return a new instance of this class with the spelling correction, ready
      * to invoke {@link #evaluate()} for a new evaluation of the instance on the
      * spelling-corrected query.
      */
     @NotNull
-    public BooleanExpression spellingCorrection() {
+    public BooleanExpression spellingCorrection(boolean phoneticCorrection) {
 
         try {
 
@@ -214,9 +216,9 @@ public class BooleanExpression {
 
                 // don't apply spelling correction on an instance that was created by this method
                 leftChildOperand = leftChildOperand.createdForSpellingCorrection
-                        ? leftChildOperand : leftChildOperand.spellingCorrection();
+                        ? leftChildOperand : leftChildOperand.spellingCorrection(phoneticCorrection);
                 rightChildOperand = rightChildOperand.createdForSpellingCorrection
-                        ? rightChildOperand : rightChildOperand.spellingCorrection();
+                        ? rightChildOperand : rightChildOperand.spellingCorrection(phoneticCorrection);
             } else {
 
                 if (!isSpellingCorrectionApplied()) {   // first initialization for this instance
@@ -224,11 +226,11 @@ public class BooleanExpression {
                     if (isMatchingValueSet()) {
                         spellingCorrector = new SpellingCorrector(
                                 new it.units.informationretrieval.ir_boolean_model.queries.Phrase(matchingValue),
-                                informationRetrievalSystem, spellingCorrectedQueryWordsComparator);
+                                phoneticCorrection, informationRetrievalSystem, spellingCorrectedQueryWordsComparator);
                     } else if (isMatchingPhraseSet()) {
                         spellingCorrector = new SpellingCorrector(
                                 new it.units.informationretrieval.ir_boolean_model.queries.Phrase(matchingPhrase.words),
-                                informationRetrievalSystem, spellingCorrectedQueryWordsComparator);
+                                phoneticCorrection, informationRetrievalSystem, spellingCorrectedQueryWordsComparator);
                     } else {
                         throw new IllegalStateException("Unexpected that neither the value nor the phrase were not set.");
                     }
@@ -242,6 +244,11 @@ public class BooleanExpression {
                         booleanExpressionWithCorrection =
                                 corrections.stream()
                                         .map(phrase -> phrase.getWordAt(0)/*single word query, so take the first word in the phrase*/)
+                                        .filter(correctedWord ->
+                                                // check that corrected words are not equals to input words
+                                                !Objects.equals(
+                                                        Utility.normalize(correctedWord, false),
+                                                        Utility.normalize(matchingValue, false)))
                                         .map(correctedWord -> new BooleanExpression(this, true)
                                                 .setMatchingValueWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(correctedWord))
                                         .reduce(BooleanExpression::or)
@@ -249,6 +256,14 @@ public class BooleanExpression {
                     } else if (isMatchingPhraseSet()) {
                         booleanExpressionWithCorrection =
                                 corrections.stream()
+                                        .filter(correctedPhrase ->
+                                                // check that corrected phrases are not equal to input phrases
+                                                !correctedPhrase.getListOfWords().stream()
+                                                        .map(aCorrectedWord -> Utility.normalize(aCorrectedWord, false))
+                                                        .toList()
+                                                        .equals(Arrays.stream(matchingPhrase.words)
+                                                                .map(aWord -> Utility.normalize(aWord, false))
+                                                                .toList()))
                                         .map(it.units.informationretrieval.ir_boolean_model.queries.Phrase::getArrayOfWords)
                                         .map(correctedPhrase -> new BooleanExpression(this, true)
                                                 .setMatchingPhraseWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(

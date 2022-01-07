@@ -146,6 +146,23 @@ class SpellingCorrector {   // TODO: benchmark
             correctionsCache = new ConcurrentHashMap<>();
 
     /**
+     * True if this instance will handle phone corrections or false for spelling corrections.
+     */
+    private final boolean phoneticCorrection;
+
+    /**
+     * Similar to {@link #correctionsCache} but used for phonetic correction.
+     * This field caches a {@link Map} having as key a word (let id be w) and as value
+     * another {@link Map} which saves as value a {@link List} of words ({@link String}s)
+     * and as corresponding key the edit-distance between each of the word in the
+     * inner {@link List} and the word w.
+     * The inner-most list of words is computed according to the Soundex algorithm.
+     */
+    @NotNull
+    private final ConcurrentMap<String, ConcurrentMap<Integer, List<String>>>
+            phoneticCorrectionsCache = new ConcurrentHashMap<>();
+
+    /**
      * Saves the overall edit-distance between the last returned instance
      * from {@link #getNewCorrections()} and the initial {@link #PHRASE_TO_CORRECT}.
      */
@@ -161,15 +178,19 @@ class SpellingCorrector {   // TODO: benchmark
      * Constructor.
      *
      * @param phraseToCorrect            The phrase to be corrected.
+     * @param phoneticCorrection         True if phonetic correction must be performed,
+     *                                   false if "classic" spelling correction is desired
      * @param informationRetrievalSystem The {@link InformationRetrievalSystem} to use for corrections.
      * @param comparator                 The comparator to use to sort words when they have the same edit-distance.
      */
     public SpellingCorrector(@NotNull final Phrase phraseToCorrect,
+                             boolean phoneticCorrection,
                              @NotNull final InformationRetrievalSystem informationRetrievalSystem,
                              @NotNull final Comparator<String> comparator) {
         this.PHRASE_TO_CORRECT = Objects.requireNonNull(phraseToCorrect);
         this.informationRetrievalSystem = Objects.requireNonNull(informationRetrievalSystem);
         this.comparator = Objects.requireNonNull(comparator);
+        this.phoneticCorrection = phoneticCorrection;
     }
 
     /**
@@ -221,46 +242,55 @@ class SpellingCorrector {   // TODO: benchmark
      */
     @NotNull
     public List<Phrase> getNewCorrections() {
+        oldOverallEditDistance = overallEditDistance;
+        var results = getCorrections(overallEditDistance++);
+        if (results.isEmpty()) {
+            // no corrections were made
+            overallEditDistance--;
+        }
+        return results;
+    }
+
+    /**
+     * This method actually does what explained by {@link #getNewCorrections()},
+     * but this method does not change the value of {@link #overallEditDistance},
+     * which is taken as input parameter.
+     *
+     * @param overallEditDistance The desired overall edit-distance.
+     */
+    private List<Phrase> getCorrections(int overallEditDistance) {
+
         if (isPossibleToCorrect()) {
-            oldOverallEditDistance = overallEditDistance++;
-            var results = getCorrections(overallEditDistance);
-            if (results.isEmpty()) {
-                // no corrections were made
-                overallEditDistance--;
+            var editDistancesAfterCorrection = getEditDistances(overallEditDistance);
+            var corrections = editDistancesAfterCorrection
+                    .stream()
+                    .map(oneTupleOfEditDistancesAfterCorrection ->
+                            IntStream.range(0, oneTupleOfEditDistancesAfterCorrection.size())
+                                    .mapToObj(wordIndex -> correct(
+                                            PHRASE_TO_CORRECT.getWordAt(wordIndex),
+                                            oneTupleOfEditDistancesAfterCorrection.get(wordIndex)))
+                                    .toList())
+                    .map(Utility::getCartesianProduct)
+                    .flatMap(Collection::stream)
+                    .map(Phrase::new)
+                    .toList();
+            if (corrections.isEmpty()) {
+                boolean furtherCorrectionsPossible = PHRASE_TO_CORRECT.getListOfWords()
+                        .stream()
+                        .map(correctionsCache::get)
+                        .map(Map::keySet)
+                        .flatMap(Collection::stream)
+                        .mapToInt(i -> i)
+                        .filter(editDistanceComputed -> editDistanceComputed >= overallEditDistance)
+                        .findAny()
+                        .isPresent();
+                return furtherCorrectionsPossible ? getNewCorrections() : corrections;
             }
-            return results;
+            return corrections;
         } else {
             return new ArrayList<>();
         }
-    }
 
-    private List<Phrase> getCorrections(int overallEditDistance) {
-        var editDistancesAfterCorrection = getEditDistances(overallEditDistance);
-        var corrections = editDistancesAfterCorrection
-                .stream()
-                .map(oneTupleOfEditDistancesAfterCorrection ->
-                        IntStream.range(0, oneTupleOfEditDistancesAfterCorrection.size())
-                                .mapToObj(wordIndex -> correct(
-                                        PHRASE_TO_CORRECT.getWordAt(wordIndex),
-                                        oneTupleOfEditDistancesAfterCorrection.get(wordIndex)))
-                                .toList())
-                .map(Utility::getCartesianProduct)
-                .flatMap(Collection::stream)
-                .map(Phrase::new)
-                .toList();
-        if (corrections.isEmpty()) {
-            boolean furtherCorrectionsPossible = PHRASE_TO_CORRECT.getListOfWords()
-                    .stream()
-                    .map(correctionsCache::get)
-                    .map(Map::keySet)
-                    .flatMap(Collection::stream)
-                    .mapToInt(i -> i)
-                    .filter(editDistanceComputed -> editDistanceComputed >= overallEditDistance)
-                    .findAny()
-                    .isPresent();
-            return furtherCorrectionsPossible ? getNewCorrections() : corrections;
-        }
-        return corrections;
     }
 
     /**
@@ -282,6 +312,8 @@ class SpellingCorrector {   // TODO: benchmark
      * Corrects the given query word (single word) and returns a {@link List}
      * of words which have an edit-distance from the given word of exactly
      * the given value.
+     * This method performs either the classic spelling correction or the
+     * phonetic correction, according to {@link #phoneticCorrection}.
      *
      * @param queryWord          The word to correct.
      * @param targetEditDistance The desired edit-distance which must be present
@@ -294,10 +326,11 @@ class SpellingCorrector {   // TODO: benchmark
     private List<String> correct(String queryWord, int targetEditDistance) {
 
         List<String> correctionForTargetDistance;
+        var cache = phoneticCorrection ? phoneticCorrectionsCache : correctionsCache;
 
         // First: check if present in cache
         @Nullable // null if not present
-        var correctionsMapIfPresent = correctionsCache.get(queryWord);
+        var correctionsMapIfPresent = cache.get(queryWord);
 
         if (correctionsMapIfPresent != null
                 && (correctionForTargetDistance = correctionsMapIfPresent.get(targetEditDistance)) != null) {
@@ -306,18 +339,26 @@ class SpellingCorrector {   // TODO: benchmark
 
         } else {
 
-            final String normalizedQueryWord = Utility.normalize(queryWord, true);
+            final String normalizedQueryWord = Utility.normalize(queryWord, !phoneticCorrection);
             ConcurrentMap<Integer, List<String>> mapOfCorrectionsHavingDistanceAsKey = null;
 
             if (normalizedQueryWord != null) {
 
-                String[] rotations = Utility.getAllRotationsOf(normalizedQueryWord);
+                String[] rotations;
+                if (phoneticCorrection) {
+                    rotations = Utility.getAllRotationsOf(normalizedQueryWord);
+                } else {
+                    // no rotations for phonetic correction
+                    rotations = new String[]{normalizedQueryWord};
+                }
                 mapOfCorrectionsHavingDistanceAsKey =
                         Arrays.stream(rotations)
                                 .parallel()
-                                .filter(s -> s.length() > SUFFIX_LENGTH)
-                                .map(s -> s.substring(SUFFIX_LENGTH))
-                                .map(informationRetrievalSystem::getDictionaryTermsContainingSubstring)
+                                .filter(s -> phoneticCorrection || s.length() > SUFFIX_LENGTH)
+                                .map(s -> phoneticCorrection ? s : s.substring(SUFFIX_LENGTH))
+                                .map(s -> phoneticCorrection
+                                        ? informationRetrievalSystem.getDictionaryTermsFromSoundexCorrectionOf(s)
+                                        : informationRetrievalSystem.getDictionaryTermsContainingSubstring(s))
                                 .flatMap(Collection::stream)
                                 .distinct()
                                 .map(termFromDictionary -> new Pair<>(
@@ -332,9 +373,9 @@ class SpellingCorrector {   // TODO: benchmark
                                                         .map(Map.Entry::getKey)
                                                         .sorted(comparator)
                                                         .toList())));
-                correctionsCache.put(queryWord, mapOfCorrectionsHavingDistanceAsKey);
+                cache.put(queryWord, mapOfCorrectionsHavingDistanceAsKey);
             } else {
-                correctionsCache.put(queryWord, new ConcurrentHashMap<>(0));
+                cache.put(queryWord, new ConcurrentHashMap<>(0));
             }
 
             assert mapOfCorrectionsHavingDistanceAsKey != null; // map must be initialized in one of IF branches

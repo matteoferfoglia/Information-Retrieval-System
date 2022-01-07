@@ -118,6 +118,14 @@ public class Term implements Comparable<Term>, Serializable {
     }
 
     /**
+     * @return the term (as {@link String}) of this instance.
+     */
+    @NotNull
+    public String getTermString() {
+        return term;
+    }
+
+    /**
      * This exception is thrown when no documents associated with
      * the {@link Term} are found.
      */
