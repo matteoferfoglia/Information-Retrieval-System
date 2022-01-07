@@ -168,6 +168,9 @@ public class BooleanExpression {
         }
     }
 
+    /**
+     * Copy constructor.
+     */
     private BooleanExpression(BooleanExpression booleanExpression, boolean createdForSpellingCorrection) {
         this.createdForSpellingCorrection = createdForSpellingCorrection;
         this.isAggregated = booleanExpression.isAggregated;
@@ -179,6 +182,7 @@ public class BooleanExpression {
         this.leftChildOperand = booleanExpression.leftChildOperand;
         this.rightChildOperand = booleanExpression.rightChildOperand;
         this.queryString = booleanExpression.queryString;
+        this.spellingCorrector = booleanExpression.spellingCorrector;
         this.spellingCorrectedQueryWordsComparator = spellingCorrectedQueryWordsComparatorFactory();
     }
 
