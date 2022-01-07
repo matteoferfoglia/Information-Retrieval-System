@@ -17,7 +17,7 @@
   <notes />
   <edges>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex" target="it.units.informationretrieval.ir_boolean_model.entities.Document" relationship="DEPENDENCY">
-      <point x="47.33333333333334" y="-15.5" />
+      <point x="47.33333333333337" y="-15.5" />
       <point x="285.6890350877193" y="543.5" />
       <point x="418.87894736842094" y="543.5" />
       <point x="30.25" y="15.5" />
@@ -123,7 +123,7 @@
       <point x="61.25" y="15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex" target="it.units.informationretrieval.ir_boolean_model.entities.Corpus" relationship="DEPENDENCY">
-      <point x="47.33333333333334" y="-15.5" />
+      <point x="47.33333333333337" y="-15.5" />
       <point x="285.6890350877193" y="507.0" />
       <point x="309.3140350877192" y="507.0" />
       <point x="-24.5" y="15.5" />
@@ -184,7 +184,7 @@
       <point x="-20.5" y="571.0" />
       <point x="-20.5" y="177.5" />
       <point x="118.2956140350876" y="177.5" />
-      <point x="-60.333333333333336" y="15.5" />
+      <point x="-60.33333333333334" y="15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Document" target="it.units.informationretrieval.ir_boolean_model.entities.DocumentContent" relationship="TO_ONE">
       <point x="-30.25" y="-15.5" />
