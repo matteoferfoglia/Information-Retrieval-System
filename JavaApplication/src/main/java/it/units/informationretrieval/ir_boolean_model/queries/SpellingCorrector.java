@@ -221,8 +221,17 @@ class SpellingCorrector {   // TODO: benchmark
      */
     @NotNull
     public List<Phrase> getNewCorrections() {
-        oldOverallEditDistance = overallEditDistance++;
-        return getCorrections(overallEditDistance);
+        if (isPossibleToCorrect()) {
+            oldOverallEditDistance = overallEditDistance++;
+            var results = getCorrections(overallEditDistance);
+            if (results.isEmpty()) {
+                // no corrections were made
+                overallEditDistance--;
+            }
+            return results;
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     private List<Phrase> getCorrections(int overallEditDistance) {
@@ -297,7 +306,7 @@ class SpellingCorrector {   // TODO: benchmark
 
         } else {
 
-            final String normalizedQueryWord = Utility.normalize(queryWord);
+            final String normalizedQueryWord = Utility.normalize(queryWord, true);
             ConcurrentMap<Integer, List<String>> mapOfCorrectionsHavingDistanceAsKey = null;
 
             if (normalizedQueryWord != null) {

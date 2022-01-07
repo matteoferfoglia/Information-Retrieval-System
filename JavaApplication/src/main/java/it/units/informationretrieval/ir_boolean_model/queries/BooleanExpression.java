@@ -108,15 +108,6 @@ public class BooleanExpression {
      */
     @NotNull
     private String queryString = "";
-    /**
-     * Edit-distance: if a spelling correction was applied, this field
-     * saves the max edit-distance currently used between the user query
-     * and the actual query to the IR system.
-     * Saving this field allows, e.g., to increment the edit-distance
-     * (and possibly the number of results of the evaluation) each time
-     * the method {@link #spellingCorrection()} is invoked.
-     */
-    private int editDistanceForSpellingCorrection = 0;
 
     /**
      * Constructor. Creates a non-aggregated expression.
@@ -220,7 +211,7 @@ public class BooleanExpression {
                     ? rightChildOperand : rightChildOperand.spellingCorrection();
         } else {
 
-            if (spellingCorrector == null) {   // first initialization for this instance
+            if (!isSpellingCorrectionApplied()) {   // first initialization for this instance
 
                 if (isMatchingValueSet()) {
                     spellingCorrector = new SpellingCorrector(
@@ -235,6 +226,7 @@ public class BooleanExpression {
                 }
             }
 
+            assert spellingCorrector != null;
             var corrections = spellingCorrector.getNewCorrections();
             if (corrections.size() > 0) {
                 BooleanExpression booleanExpressionWithCorrection;
@@ -263,9 +255,7 @@ public class BooleanExpression {
                     return this;
                 } else {
                     // this becomes an aggregated expression
-                    leftChildOperand = new BooleanExpression(this); // this is the actual expression inserted by the user to be spelling-corrected
-                    editDistanceForSpellingCorrection = spellingCorrector.getOverallEditDistance();
-                    leftChildOperand.editDistanceForSpellingCorrection = editDistanceForSpellingCorrection;
+                    leftChildOperand = new BooleanExpression(this, false); // this is the actual expression inserted by the user to be spelling-corrected
                     isAggregated = true;
                     matchingValue = null;
                     matchingPhrase = null;
@@ -302,7 +292,7 @@ public class BooleanExpression {
         // This query string will NOT be used for the evaluation but only for toString methods
         this.queryString = matchingValue;
 
-        this.matchingValue = Utility.normalize(matchingValue);
+        this.matchingValue = Utility.normalize(matchingValue, true);
         return this;
     }
 
@@ -359,7 +349,7 @@ public class BooleanExpression {
             queryString = matchingPhrase[0];
         }
 
-        String[] tmpPhrase = Arrays.stream(matchingPhrase).map(Utility::normalize).toArray(String[]::new);
+        String[] tmpPhrase = Arrays.stream(matchingPhrase).map(word -> Utility.normalize(word, true)).toArray(String[]::new);
         String[] phrase = new String[tmpPhrase.length];
         int[] distances = new int[tmpPhrase.length - 1];
 
@@ -722,15 +712,24 @@ public class BooleanExpression {
      * @return true if a spelling correction was applied on this instance.
      */
     public boolean isSpellingCorrectionApplied() {
-        return editDistanceForSpellingCorrection > 0;
+        return spellingCorrector != null;
     }
 
     /**
+     * Edit-distance: if a spelling correction was applied, this method
+     * returns the max edit-distance currently used between the user query
+     * and the actual query to the IR system.
+     *
      * @return the distance between words in this query (if it was spelling-corrected)
      * respect to the query inserted by the user.
      */
     public int getEditDistanceForSpellingCorrection() {
-        return editDistanceForSpellingCorrection;
+        if (isSpellingCorrectionApplied()) {
+            assert spellingCorrector != null;
+            return spellingCorrector.getOverallEditDistance();
+        } else {
+            return 0;
+        }
     }
 
     /**
