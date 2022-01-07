@@ -97,8 +97,6 @@ public class ExampleOfUseOfTheIRSystem {
 
             // Wildcards queries
             System.out.println(queryAndReturnResultsAsString(
-                    ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" ")), MAX_N_RESULTS));
-            System.out.println(queryAndReturnResultsAsString(
                     ir.createNewBooleanExpression()
                             .setMatchingPhrase("Space *am".split(" ")), MAX_N_RESULTS));
             System.out.println(queryAndReturnResultsAsString(
@@ -106,12 +104,19 @@ public class ExampleOfUseOfTheIRSystem {
                             .setMatchingPhrase("Space *am".split(" "))
                             .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bag*")), MAX_N_RESULTS));
 
+
             // Spelling correction
             BooleanExpression wrongQueryBE = ir.createNewBooleanExpression().setMatchingValue("Spack");
             System.out.println(queryAndReturnResultsAsString(wrongQueryBE, MAX_N_RESULTS));
             System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(), MAX_N_RESULTS));
             System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(), MAX_N_RESULTS));// edit distance increases each time
-            // TODO: try spelling correction with phrases
+
+            // Spelling correction with phrase
+            BooleanExpression wrongPhraseQueryBE = ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" "));
+            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE, MAX_N_RESULTS));
+            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));
+            System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(), MAX_N_RESULTS));// edit distance increases each time
+
 
         } catch (URISyntaxException | IOException | NoMoreDocIdsAvailable e) {
             e.printStackTrace();
