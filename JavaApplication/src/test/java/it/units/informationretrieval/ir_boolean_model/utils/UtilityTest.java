@@ -121,7 +121,7 @@ class UtilityTest {
             tearDownIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
             commentToReport = COMMENT_FOR_BENCHMARKS)
     static void normalizeLongDocument() {
-        Utility.normalize(LONG_DOCUMENT_CONTENT);
+        Utility.normalize(LONG_DOCUMENT_CONTENT, false);
     }
 
     @Benchmark
@@ -252,9 +252,12 @@ class UtilityTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"Foo  bar, foo bar"})
+    @CsvSource({
+            "Foo  bar, foo bar",
+            "a*, a"
+    })
     void normalize(String input, String expectedOutput) {
-        assertEquals(expectedOutput, Utility.normalize(input));
+        assertEquals(expectedOutput, Utility.normalize(input, false));
     }
 
     @ParameterizedTest

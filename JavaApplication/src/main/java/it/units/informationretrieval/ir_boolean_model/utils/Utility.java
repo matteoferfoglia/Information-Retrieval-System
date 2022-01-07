@@ -33,8 +33,20 @@ import static java.util.stream.Collectors.toSet;
  */
 public class Utility {
 
-    private static final String REGEX__NOT__VALID_CHARACTERS =
+    /**
+     * Regex used in {@link #normalize(String, boolean)}.
+     */
+    private static final String REGEX__NOT__VALID_CHARACTERS_WHEN_INDEXING = "[^a-zA-Z0-9 ]";
+
+    /**
+     * Regex used in {@link #normalize(String, boolean)}.
+     */
+    private static final String REGEX__NOT__VALID_CHARACTERS_WHEN_QUERYING =
             "[^a-zA-Z0-9 " + InvertedIndex.ESCAPED_WILDCARD_FOR_REGEX + "]";
+
+    /**
+     * Regex used in {@link #normalize(String, boolean)}.
+     */
     private static final String REGEX_MULTIPLE_SPACES = " +";
 
     /**
@@ -48,7 +60,7 @@ public class Utility {
                         (document.getTitle() + " " + document.getContent().getEntireTextContent())
                                 .split(" "))
                 .filter(text -> !text.isBlank())
-                .map(Utility::normalize)
+                .map(token -> Utility.normalize(token, false))
                 .filter(Objects::nonNull)
                 .toArray(String[]::new);
         // TODO : not implemented yet, just a draft (only split documents into strings which are the token - DO NOT CUT)
@@ -85,15 +97,25 @@ public class Utility {
     /**
      * Normalize a token ({@link String}).
      *
-     * @param token The {@link String token} to be normalized.
+     * @param token     The {@link String token} to be normalized.
+     * @param fromQuery True if this method was invoked to normalize a query,
+     *                  false if it was invoked to normalize a word while
+     *                  indexing process. This differentiation is made because
+     *                  the user should be able to insert special characters
+     *                  (like wildcards) in queries, but special characters
+     *                  should not be present in the dictionary of the index.
      * @return the corresponding normalized token or null if the normalization
      * brings to an empty string.
      */
     @Nullable
-    public static String normalize(@NotNull String token) {
+    public static String normalize(@NotNull String token, boolean fromQuery) {
         // TODO : not implemented yet, just a draft
         String toReturn = token
-                .replaceAll(REGEX__NOT__VALID_CHARACTERS, " ")
+                .replaceAll(
+                        fromQuery
+                                ? REGEX__NOT__VALID_CHARACTERS_WHEN_QUERYING
+                                : REGEX__NOT__VALID_CHARACTERS_WHEN_INDEXING,
+                        " ")
                 .replaceAll(REGEX_MULTIPLE_SPACES, " ")
                 .toLowerCase(Locale.ROOT)
                 .trim();
