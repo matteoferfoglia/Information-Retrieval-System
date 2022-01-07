@@ -13,7 +13,6 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.IntFunction;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * An instance of this class is a boolean expression to be evaluated
@@ -583,21 +582,18 @@ public class BooleanExpression {
             }
             case IDENTITY -> {
                 if (isAggregated) {
-                    yield Stream.of(leftChildOperand, rightChildOperand)
-                            .unordered()
-                            .map(BooleanExpression::evaluateBothSimpleAndAggregatedExpressionRecursively)
-                            .reduce((listOfPostings1, listOfPostings2) -> {
-                                SkipList<Posting> postings1 = new SkipList<>(listOfPostings1, Posting.DOC_ID_COMPARATOR);
-                                SkipList<Posting> postings2 = new SkipList<>(listOfPostings2, Posting.DOC_ID_COMPARATOR);
-                                assert binaryOperator != null;
-                                return switch (binaryOperator) {
-                                    case AND -> Utility.intersection(postings1, postings2, Posting.DOC_ID_COMPARATOR);
-                                    case OR -> Utility.union(postings1, postings2, Posting.DOC_ID_COMPARATOR);
-                                    //noinspection UnnecessaryDefault
-                                    default -> throw new UnsupportedOperationException("Unknown operator");
-                                };
-                            })
-                            .orElse(new SkipList<>(Posting.DOC_ID_COMPARATOR));
+
+                    assert leftChildOperand != null;
+                    assert rightChildOperand != null;
+                    SkipList<Posting> fromLeftChild = leftChildOperand.evaluateBothSimpleAndAggregatedExpressionRecursively();
+                    SkipList<Posting> fromRightChild = rightChildOperand.evaluateBothSimpleAndAggregatedExpressionRecursively();
+                    assert binaryOperator != null;
+                    yield switch (binaryOperator) {
+                        case AND -> Utility.intersection(fromLeftChild, fromRightChild, Posting.DOC_ID_COMPARATOR);
+                        case OR -> Utility.union(fromLeftChild, fromRightChild, Posting.DOC_ID_COMPARATOR);
+                        //noinspection UnnecessaryDefault
+                        default -> throw new UnsupportedOperationException("Unknown operator");
+                    };
 
                 } else {
 
