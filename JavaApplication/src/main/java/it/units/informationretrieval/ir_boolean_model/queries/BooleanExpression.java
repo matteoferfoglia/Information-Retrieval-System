@@ -60,7 +60,7 @@ public class BooleanExpression {
     private SkipList<Posting> results = new SkipList<>(new ArrayList<>(), Posting.DOC_ID_COMPARATOR);
     /**
      * The {@link SpellingCorrector} used for this instance. It is important
-     * to save this field to handle multiple invocation of {@link #spellingCorrection(boolean)}.
+     * to save this field to handle multiple invocation of {@link #spellingCorrection(boolean, boolean)}.
      */
     @Nullable
     private SpellingCorrector spellingCorrector = null;
@@ -108,7 +108,7 @@ public class BooleanExpression {
      * The {@link UNARY_OPERATOR} to apply to this instance.
      */
     @NotNull
-    private UNARY_OPERATOR unaryOperator = UNARY_OPERATOR.IDENTITY;// default is the unary operator
+    private UNARY_OPERATOR unaryOperator = UNARY_OPERATOR.IDENTITY; // default is the unary operator
     /**
      * The query represented as {@link String} for this instance.
      */
@@ -199,100 +199,102 @@ public class BooleanExpression {
      *
      * @param phoneticCorrection true if phonetic correction is desired, false if
      *                           "classic" spelling correction is preferred.
+     * @param useEditDistance    Is a flag which is <strong>ignored if</strong> a
+     *                           <strong>non</strong> phonetic correction is being
+     *                           performed, and, if it is set to true, the edit distance
+     *                           is used (like in normal spelling correction), while if
+     *                           it is set to false, all possible phonetic corrections
+     *                           will be considered, independently of how far the resulting
+     *                           correction is from the initial query.
      * @return a new instance of this class with the spelling correction, ready
      * to invoke {@link #evaluate()} for a new evaluation of the instance on the
      * spelling-corrected query.
      */
     @NotNull
-    public BooleanExpression spellingCorrection(boolean phoneticCorrection) {
+    public BooleanExpression spellingCorrection(boolean phoneticCorrection, boolean useEditDistance) {
 
-        try {
-
-            // If this is an aggregated query, then spelling correction must be performed on its children too
-            if (isAggregated) {
-                assert leftChildOperand != null;
-                assert binaryOperator != null;
-                assert rightChildOperand != null;
-
-                // don't apply spelling correction on an instance that was created by this method
-                leftChildOperand = leftChildOperand.createdForSpellingCorrection
-                        ? leftChildOperand : leftChildOperand.spellingCorrection(phoneticCorrection);
-                rightChildOperand = rightChildOperand.createdForSpellingCorrection
-                        ? rightChildOperand : rightChildOperand.spellingCorrection(phoneticCorrection);
-            } else {
-
-                if (!isSpellingCorrectionApplied()) {   // first initialization for this instance
-
-                    if (isMatchingValueSet()) {
-                        spellingCorrector = new SpellingCorrector(
-                                new it.units.informationretrieval.ir_boolean_model.queries.Phrase(matchingValue),
-                                phoneticCorrection, informationRetrievalSystem, spellingCorrectedQueryWordsComparator);
-                    } else if (isMatchingPhraseSet()) {
-                        spellingCorrector = new SpellingCorrector(
-                                new it.units.informationretrieval.ir_boolean_model.queries.Phrase(matchingPhrase.words),
-                                phoneticCorrection, informationRetrievalSystem, spellingCorrectedQueryWordsComparator);
-                    } else {
-                        throw new IllegalStateException("Unexpected that neither the value nor the phrase were not set.");
-                    }
-                }
-
-                assert spellingCorrector != null;
-                var corrections = spellingCorrector.getNewCorrections();
-                if (corrections.size() > 0) {
-                    BooleanExpression booleanExpressionWithCorrection;
-                    if (isMatchingValueSet()) {
-                        booleanExpressionWithCorrection =
-                                corrections.stream()
-                                        .map(phrase -> phrase.getWordAt(0)/*single word query, so take the first word in the phrase*/)
-                                        .filter(correctedWord ->
-                                                // check that corrected words are not equals to input words
-                                                !Objects.equals(
-                                                        Utility.normalize(correctedWord, false),
-                                                        Utility.normalize(matchingValue, false)))
-                                        .map(correctedWord -> new BooleanExpression(this, true)
-                                                .setMatchingValueWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(correctedWord))
-                                        .reduce(BooleanExpression::or)
-                                        .orElse(this);
-                    } else if (isMatchingPhraseSet()) {
-                        booleanExpressionWithCorrection =
-                                corrections.stream()
-                                        .filter(correctedPhrase ->
-                                                // check that corrected phrases are not equal to input phrases
-                                                !correctedPhrase.getListOfWords().stream()
-                                                        .map(aCorrectedWord -> Utility.normalize(aCorrectedWord, false))
-                                                        .toList()
-                                                        .equals(Arrays.stream(matchingPhrase.words)
-                                                                .map(aWord -> Utility.normalize(aWord, false))
-                                                                .toList()))
-                                        .map(it.units.informationretrieval.ir_boolean_model.queries.Phrase::getArrayOfWords)
-                                        .map(correctedPhrase -> new BooleanExpression(this, true)
-                                                .setMatchingPhraseWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(
-                                                        correctedPhrase, matchingPhrase.distanceFromFirstWord))
-                                        .reduce(BooleanExpression::or)
-                                        .orElse(this);
-                    } else {
-                        throw new IllegalStateException("Unexpected that neither the value nor the phrase were not set.");
-                    }
-
-                    if (booleanExpressionWithCorrection == this/*same reference if no corrections were made*/) {
-                        return this;
-                    } else {
-                        // this becomes an aggregated expression
-                        leftChildOperand = new BooleanExpression(this, false); // this is the actual expression inserted by the user to be spelling-corrected
-                        isAggregated = true;
-                        matchingValue = null;
-                        matchingPhrase = null;
-                        rightChildOperand = booleanExpressionWithCorrection;
-                        binaryOperator = BINARY_OPERATOR.OR;
-                    }
-                }
-            }
-            return this;    // nothing else to do
-        } catch (StackOverflowError e) {
-            if (spellingCorrector != null) {
-                spellingCorrector.stop();
-            }
+        if (spellingCorrector != null && !spellingCorrector.isPossibleToCorrect()) {
             return this;
+        } else {
+
+            try {
+
+                // If this is an aggregated query, then spelling correction must be performed on its children too
+                if (isAggregated) {
+                    assert leftChildOperand != null;
+                    assert binaryOperator != null;
+                    assert rightChildOperand != null;
+
+                    // don't apply spelling correction on an instance that was created by this method
+                    leftChildOperand = leftChildOperand.createdForSpellingCorrection
+                            ? leftChildOperand : leftChildOperand.spellingCorrection(phoneticCorrection, useEditDistance);
+                    rightChildOperand = rightChildOperand.createdForSpellingCorrection
+                            ? rightChildOperand : rightChildOperand.spellingCorrection(phoneticCorrection, useEditDistance);
+                } else {
+
+                    if (!isSpellingCorrectionApplied()) {   // first initialization for this instance
+
+                        if (isMatchingValueSet()) {
+                            spellingCorrector = new SpellingCorrector(
+                                    new it.units.informationretrieval.ir_boolean_model.queries.Phrase(matchingValue),
+                                    phoneticCorrection, useEditDistance,
+                                    informationRetrievalSystem, spellingCorrectedQueryWordsComparator);
+                        } else if (isMatchingPhraseSet()) {
+                            spellingCorrector = new SpellingCorrector(
+                                    new it.units.informationretrieval.ir_boolean_model.queries.Phrase(matchingPhrase.words),
+                                    phoneticCorrection, useEditDistance,
+                                    informationRetrievalSystem, spellingCorrectedQueryWordsComparator);
+                        } else {
+                            throw new IllegalStateException("Unexpected that neither the value nor the phrase were not set.");
+                        }
+                    }
+
+                    assert spellingCorrector != null;
+                    var corrections = spellingCorrector.getNewCorrections();
+                    if (corrections.size() > 0) {
+                        BooleanExpression booleanExpressionWithCorrection;
+                        if (isMatchingValueSet()) {
+                            booleanExpressionWithCorrection =
+                                    corrections.stream()
+                                            .map(phrase -> phrase.getWordAt(0)/*single word query, so take the first word in the phrase*/)
+                                            .map(correctedWord -> new BooleanExpression(this, true)
+                                                    .setMatchingValueWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(correctedWord))
+                                            .reduce(BooleanExpression::or)
+                                            .orElse(this);
+                        } else if (isMatchingPhraseSet()) {
+                            booleanExpressionWithCorrection =
+                                    corrections.stream()
+                                            .map(it.units.informationretrieval.ir_boolean_model.queries.Phrase::getArrayOfWords)
+                                            .map(correctedPhrase -> new BooleanExpression(this, true)
+                                                    .setMatchingPhraseWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(
+                                                            correctedPhrase, matchingPhrase.distanceFromFirstWord))
+                                            .reduce(BooleanExpression::or)
+                                            .orElse(this);
+                        } else {
+                            throw new IllegalStateException("Unexpected that neither the value nor the phrase were not set.");
+                        }
+
+                        if (booleanExpressionWithCorrection == this/*same reference if no corrections were made*/) {
+                            return this;
+                        } else {
+                            // this becomes an aggregated expression
+                            leftChildOperand = new BooleanExpression(this, false); // this is the actual expression inserted by the user to be spelling-corrected
+                            isAggregated = true;
+                            matchingValue = null;
+                            matchingPhrase = null;
+                            rightChildOperand = booleanExpressionWithCorrection;
+                            binaryOperator = BINARY_OPERATOR.OR;
+                        }
+                    }
+                }
+                return this;    // nothing else to do
+            } catch (StackOverflowError e) {
+                if (spellingCorrector != null) {
+                    spellingCorrector.stop();
+                }
+                return this;
+            }
+
         }
     }
 

@@ -148,7 +148,13 @@ class SpellingCorrector {   // TODO: benchmark
     /**
      * True if this instance will handle phone corrections or false for spelling corrections.
      */
-    private final boolean phoneticCorrection;
+    private final boolean PHONETIC_CORRECTION;
+
+    /**
+     * True if this edit distance must be ignored.
+     * This flag is ignored if {@link #PHONETIC_CORRECTION} is false.
+     */
+    private final boolean USE_EDIT_DISTANCE;
 
     /**
      * Similar to {@link #correctionsCache} but used for phonetic correction.
@@ -175,22 +181,44 @@ class SpellingCorrector {   // TODO: benchmark
     private int oldOverallEditDistance = overallEditDistance - 1;
 
     /**
+     * Changes status according to {@link #stop()}.
+     */
+    private boolean stopped = false;
+
+    /**
      * Constructor.
      *
      * @param phraseToCorrect            The phrase to be corrected.
      * @param phoneticCorrection         True if phonetic correction must be performed,
-     *                                   false if "classic" spelling correction is desired
+     *                                   false if "classic" spelling correction is desired.
+     * @param useEditDistance            is a flag which is <strong>ignored if</strong> a
+     *                                   <strong>non</strong> phonetic correction is being
+     *                                   performed, and, if it is set to true, the edit distance
+     *                                   is used (like in normal spelling correction), while if
+     *                                   it is set to false, all possible phonetic corrections
+     *                                   will be considered, independently of how far the resulting
+     *                                   correction is from the initial query.
      * @param informationRetrievalSystem The {@link InformationRetrievalSystem} to use for corrections.
      * @param comparator                 The comparator to use to sort words when they have the same edit-distance.
      */
     public SpellingCorrector(@NotNull final Phrase phraseToCorrect,
                              boolean phoneticCorrection,
+                             boolean useEditDistance,
                              @NotNull final InformationRetrievalSystem informationRetrievalSystem,
                              @NotNull final Comparator<String> comparator) {
         this.PHRASE_TO_CORRECT = Objects.requireNonNull(phraseToCorrect);
         this.informationRetrievalSystem = Objects.requireNonNull(informationRetrievalSystem);
         this.comparator = Objects.requireNonNull(comparator);
-        this.phoneticCorrection = phoneticCorrection;
+        this.PHONETIC_CORRECTION = phoneticCorrection;
+        if (phoneticCorrection) {
+            this.USE_EDIT_DISTANCE = useEditDistance;
+            if (!useEditDistance) {
+                this.overallEditDistance = // fictitious value to ignore edit distance to be sure to ignore the edit distance
+                        2 * PHRASE_TO_CORRECT.getListOfWords().stream().mapToInt(String::length).sum();
+            }
+        } else {
+            this.USE_EDIT_DISTANCE = true;
+        }
     }
 
     /**
@@ -242,11 +270,17 @@ class SpellingCorrector {   // TODO: benchmark
      */
     @NotNull
     public List<Phrase> getNewCorrections() {
-        oldOverallEditDistance = overallEditDistance;
-        var results = getCorrections(overallEditDistance++);
-        if (results.isEmpty()) {
+        oldOverallEditDistance = overallEditDistance++;
+        var results = getCorrections(overallEditDistance);
+        if (results.isEmpty() && USE_EDIT_DISTANCE) {
             // no corrections were made
             overallEditDistance--;
+        }
+        if (!USE_EDIT_DISTANCE) {
+            // during this invocation all results were retrieved ignoring how far they are from the input query
+            // so there is no sense to repeat the correction in the future because there will not be more results.
+            stop();
+            overallEditDistance = Integer.MAX_VALUE;    // fictitious value
         }
         return results;
     }
@@ -295,6 +329,8 @@ class SpellingCorrector {   // TODO: benchmark
 
     /**
      * @return the currently considered edit-distance wrt. the initial query.
+     * A returned value of {@link Integer#MAX_VALUE} means that the edit-distance
+     * is not used by this instance.
      */
     public int getOverallEditDistance() {
         return overallEditDistance;
@@ -305,7 +341,7 @@ class SpellingCorrector {   // TODO: benchmark
      */
     public boolean isPossibleToCorrect() {
         // if counter was not updated, means that no further corrections are possible
-        return oldOverallEditDistance < overallEditDistance;
+        return !stopped && oldOverallEditDistance < overallEditDistance;
     }
 
     /**
@@ -313,7 +349,7 @@ class SpellingCorrector {   // TODO: benchmark
      * of words which have an edit-distance from the given word of exactly
      * the given value.
      * This method performs either the classic spelling correction or the
-     * phonetic correction, according to {@link #phoneticCorrection}.
+     * phonetic correction, according to {@link #PHONETIC_CORRECTION}.
      *
      * @param queryWord          The word to correct.
      * @param targetEditDistance The desired edit-distance which must be present
@@ -326,7 +362,7 @@ class SpellingCorrector {   // TODO: benchmark
     private List<String> correct(String queryWord, int targetEditDistance) {
 
         List<String> correctionForTargetDistance;
-        var cache = phoneticCorrection ? phoneticCorrectionsCache : correctionsCache;
+        var cache = PHONETIC_CORRECTION ? phoneticCorrectionsCache : correctionsCache;
 
         // First: check if present in cache
         @Nullable // null if not present
@@ -339,13 +375,13 @@ class SpellingCorrector {   // TODO: benchmark
 
         } else {
 
-            final String normalizedQueryWord = Utility.normalize(queryWord, !phoneticCorrection);
+            final String normalizedQueryWord = Utility.normalize(queryWord, !PHONETIC_CORRECTION);
             ConcurrentMap<Integer, List<String>> mapOfCorrectionsHavingDistanceAsKey = null;
 
             if (normalizedQueryWord != null) {
 
                 String[] rotations;
-                if (!phoneticCorrection) {
+                if (!PHONETIC_CORRECTION) {
                     rotations = Utility.getAllRotationsOf(normalizedQueryWord);
                 } else {
                     // no rotations for phonetic correction
@@ -354,9 +390,9 @@ class SpellingCorrector {   // TODO: benchmark
                 mapOfCorrectionsHavingDistanceAsKey =
                         Arrays.stream(rotations)
                                 .parallel()
-                                .filter(s -> phoneticCorrection || s.length() > SUFFIX_LENGTH)
-                                .map(s -> phoneticCorrection ? s : s.substring(SUFFIX_LENGTH))
-                                .map(s -> phoneticCorrection
+                                .filter(s -> PHONETIC_CORRECTION || s.length() > SUFFIX_LENGTH)
+                                .map(s -> PHONETIC_CORRECTION ? s : s.substring(SUFFIX_LENGTH))
+                                .map(s -> PHONETIC_CORRECTION
                                         ? informationRetrievalSystem.getDictionaryTermsFromSoundexCorrectionOf(s)
                                         : informationRetrievalSystem.getDictionaryTermsContainingSubstring(s))
                                 .flatMap(Collection::stream)
@@ -379,7 +415,9 @@ class SpellingCorrector {   // TODO: benchmark
             }
 
             assert mapOfCorrectionsHavingDistanceAsKey != null; // map must be initialized in one of IF branches
-            return mapOfCorrectionsHavingDistanceAsKey.get(targetEditDistance);
+            return USE_EDIT_DISTANCE
+                    ? mapOfCorrectionsHavingDistanceAsKey.get(targetEditDistance)
+                    : mapOfCorrectionsHavingDistanceAsKey.values().stream().flatMap(Collection::stream).toList();
 
         }
     }
@@ -389,6 +427,7 @@ class SpellingCorrector {   // TODO: benchmark
      * procedure, like if no more results are available.
      */
     public void stop() {
-        overallEditDistance = oldOverallEditDistance;
+        stopped = true;
+        oldOverallEditDistance = overallEditDistance;
     }
 }

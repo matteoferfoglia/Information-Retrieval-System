@@ -108,25 +108,30 @@ public class ExampleOfUseOfTheIRSystem {
             // Spelling correction
             for (var phoneticCorrection : new boolean[]{true, false}) {
 
-                System.out.println(System.lineSeparator() + System.lineSeparator()
-                        + "## " + (phoneticCorrection ? "Phonetic" : "Spelling") + " correction ##");
+                for (var useEditDistance : new boolean[]{true, false}) {
 
-                BooleanExpression wrongQueryBE = ir.createNewBooleanExpression().setMatchingValue("Spack");
-                System.out.println(queryAndReturnResultsAsString(wrongQueryBE, MAX_N_RESULTS));
-                System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
-                System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));// edit distance increases each time
+                    System.out.println(System.lineSeparator() + System.lineSeparator()
+                            + "## " + (phoneticCorrection ? "Phonetic" : "Spelling") + " correction ##");
+                    System.out.println("### " + (useEditDistance ? "with" : "without") + " edit distance ###");
+                    System.out.println("### Note: edit-distance can be ignored only with phonetic correction");
 
-                // Spelling correction with phrase
-                BooleanExpression wrongPhraseQueryBE = ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" "));
-                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE, MAX_N_RESULTS));
-                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
-                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));// edit distance increases each time
+                    BooleanExpression wrongQueryBE = ir.createNewBooleanExpression().setMatchingValue("Spack");
+                    System.out.println(queryAndReturnResultsAsString(wrongQueryBE, MAX_N_RESULTS));
+                    System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(phoneticCorrection, useEditDistance), MAX_N_RESULTS));
+                    System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(phoneticCorrection, useEditDistance), MAX_N_RESULTS));// edit distance increases each time
+
+                    // Spelling correction with phrase
+                    BooleanExpression wrongPhraseQueryBE = ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" "));
+                    System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE, MAX_N_RESULTS));
+                    System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection, useEditDistance), MAX_N_RESULTS));
+                    System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection, useEditDistance), MAX_N_RESULTS));// edit distance increases each time
 //                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
 //                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
 //                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
 //                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
 //                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
 //                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
+                }
             }
 
 
