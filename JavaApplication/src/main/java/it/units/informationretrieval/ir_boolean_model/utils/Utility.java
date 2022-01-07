@@ -115,7 +115,7 @@ public class Utility {
                         fromQuery
                                 ? REGEX__NOT__VALID_CHARACTERS_WHEN_QUERYING
                                 : REGEX__NOT__VALID_CHARACTERS_WHEN_INDEXING,
-                        " ")
+                        "")
                 .replaceAll(REGEX_MULTIPLE_SPACES, " ")
                 .toLowerCase(Locale.ROOT)
                 .trim();
