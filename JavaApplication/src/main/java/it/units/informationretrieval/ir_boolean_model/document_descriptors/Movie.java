@@ -320,7 +320,8 @@ public class Movie extends Document implements Serializable {
                 movies.values()
                         .stream().unordered().parallel()
                         .filter(aMovie -> aMovie.movieTitle != null)
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toList()),
+                Language.ENGLISH   // corpus is written in English
         );
 
     }

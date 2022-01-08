@@ -26,6 +26,25 @@ public class Corpus implements Serializable {
     private final Map<DocumentIdentifier, Document> corpus;
 
     /**
+     * The language of the corpus.
+     */
+    @NotNull
+    private final Language language;
+
+    /**
+     * Constructor. Creates a corpus from a {@link Collection}.
+     *
+     * @param documents The {@link Collection} of {@link Document}s to use to create this instance.
+     * @param language  The {@link Language} used in the corpus.
+     * @throws NoMoreDocIdsAvailable If no more {@link DocumentIdentifier}s
+     *                               are available, hence the {@link Corpus} cannot be created.
+     */
+    public Corpus(@NotNull Collection<Document> documents, @NotNull Language language) throws NoMoreDocIdsAvailable {
+        this.language = Objects.requireNonNull(language);
+        this.corpus = createCorpusFromDocumentCollectionAndGet(documents);
+    }
+
+    /**
      * Constructor. Creates a corpus from a {@link Collection}.
      *
      * @param documents The {@link Collection} of {@link Document}s to use to create this instance.
@@ -33,14 +52,26 @@ public class Corpus implements Serializable {
      *                               are available, hence the {@link Corpus} cannot be created.
      */
     public Corpus(@NotNull Collection<Document> documents) throws NoMoreDocIdsAvailable {
+        this.language = Objects.requireNonNull(Language.UNDEFINED);
         this.corpus = createCorpusFromDocumentCollectionAndGet(documents);
+    }
+
+    /**
+     * Creates an empty corpus.
+     *
+     * @param language The {@link Language} used in the corpus.
+     */
+    protected Corpus(@NotNull Language language) {
+        this.language = Objects.requireNonNull(language);
+        this.corpus = new ConcurrentHashMap<>();
     }
 
     /**
      * Creates an empty corpus.
      */
     protected Corpus() {
-        corpus = new ConcurrentHashMap<>();
+        this.language = Language.UNDEFINED;
+        this.corpus = new ConcurrentHashMap<>();
     }
 
     @NotNull
