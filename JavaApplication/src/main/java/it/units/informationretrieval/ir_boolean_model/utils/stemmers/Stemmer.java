@@ -9,21 +9,21 @@ import org.jetbrains.annotations.NotNull;
 public interface Stemmer {
 
     /**
-     * @param input The input <strong>word</strong> to be stemmed.
-     * @return the stemmed word.
-     */
-    String stem(@NotNull String input, @NotNull Language language);
-
-    /**
      * @param stemmer the desired stemmer.
      * @return the desired stemmer.
      */
-    default Stemmer getStemmer(@NotNull AvailableStemmer stemmer) {
+    static Stemmer getStemmer(@NotNull AvailableStemmer stemmer) {
         return switch (stemmer) {
             case PORTER -> new PorterStemmer();
             case SNOWBALL -> new SnowballStemmer();
         };
     }
+
+    /**
+     * @param input The input <strong>word</strong> to be stemmed.
+     * @return the stemmed word.
+     */
+    String stem(@NotNull String input, @NotNull Language language);
 
     /**
      * The available stemmers

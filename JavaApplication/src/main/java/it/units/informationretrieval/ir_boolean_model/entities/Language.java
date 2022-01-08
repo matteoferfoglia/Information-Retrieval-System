@@ -61,7 +61,7 @@ public enum Language {
                     ? new String[0]
                     : Files.readAllLines(Path.of(Objects.requireNonNull(pathToStopWordsDataset)))
                     .stream()
-                    .map(stopWord -> Utility.normalize(stopWord, false))
+                    .map(stopWord -> Utility.removeInvalidCharsAndToLowerCase(stopWord, false))
                     .toArray(String[]::new);
         } catch (IOException e) {
             tmpStopWords = new String[0];

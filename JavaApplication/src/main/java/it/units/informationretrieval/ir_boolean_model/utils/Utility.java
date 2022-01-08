@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex;
 import it.units.informationretrieval.ir_boolean_model.entities.Language;
+import it.units.informationretrieval.ir_boolean_model.utils.stemmers.Stemmer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import skiplist.SkipList;
@@ -105,8 +106,8 @@ public class Utility {
      * Normalize a token ({@link String}).
      *
      * @param token     The {@link String token} to be normalized.
-     * @param fromQuery True if this method was invoked to normalize a query,
-     *                  false if it was invoked to normalize a word while
+     * @param fromQuery True if this method was invoked to removeInvalidCharsAndToLowerCase a query,
+     *                  false if it was invoked to removeInvalidCharsAndToLowerCase a word while
      *                  indexing process. This differentiation is made because
      *                  the user should be able to insert special characters
      *                  (like wildcards) in queries, but special characters
@@ -119,28 +120,75 @@ public class Utility {
     @Nullable
     public static String normalize(@NotNull String token, boolean fromQuery, @NotNull Language language) {
 
-        String toReturn = normalize(token, fromQuery);
+        String toReturn = removeInvalidCharsAndToLowerCase(token, fromQuery);
 
         // Stop-words handling
-        try {
-            if (Boolean.parseBoolean(AppProperties.getInstance().get("app.exclude_stop_words"))) {
-                if (Arrays.asList(language.getStopWords()).contains(toReturn)) {
-                    return null;
-                }
+        if (shouldExcludeStopWords()) {
+            if (isStopWord(toReturn, language)) {
+                return null;
             }
-        } catch (IOException e) {
-            System.err.println("Error while reading app properties. Stop words not excluded.");
-            e.printStackTrace();
+        }
+
+        // Stemming
+        Stemmer stemmer = getStemmer();
+        if (stemmer != null) {
+            toReturn = stemmer.stem(toReturn, language);
         }
 
         return toReturn.isEmpty() ? null : toReturn;
     }
 
     /**
+     * @return the {@link Stemmer} to use or null, if the IR System is configured
+     * to not performing stemming or if no {@link Stemmer} is available for the
+     * name set in the IR System config file.
+     */
+    @Nullable
+    private static Stemmer getStemmer() {
+        try {
+            String stemmerName = AppProperties.getInstance().get("app.stemmer");
+            if (stemmerName == null || stemmerName.equals("null")) {
+                return null;
+            }
+            return Stemmer.getStemmer(Stemmer.AvailableStemmer.valueOf(stemmerName.toUpperCase()));
+        } catch (IOException e) {
+            System.err.println("Error while reading app properties. Stemming will not be performed.");
+            e.printStackTrace();
+            return null;
+        } catch (IllegalArgumentException e) {
+            System.err.println("Stemmer not available while reading app properties. Stemming will not be performed.");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * @return true if the IR system is configured to exclude stop words.
+     */
+    private static boolean shouldExcludeStopWords() {
+        try {
+            return Boolean.parseBoolean(AppProperties.getInstance().get("app.exclude_stop_words"));
+        } catch (IOException e) {
+            System.err.println("Error while reading app properties. Stop words not excluded.");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * @param word     The word.
+     * @param language The language of the word.
+     * @return true if the given word is a stop word for the given language.
+     */
+    private static boolean isStopWord(String word, @NotNull Language language) {
+        return Arrays.asList(language.getStopWords()).contains(word);
+    }
+
+    /**
      * Like {@link #normalize(String, boolean, Language)}, but without stop-words removal.
      */
     @NotNull
-    public static String normalize(@NotNull String token, boolean fromQuery) {
+    public static String removeInvalidCharsAndToLowerCase(@NotNull String token, boolean fromQuery) {
         return token
                 .replaceAll(
                         fromQuery

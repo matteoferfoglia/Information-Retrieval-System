@@ -5,6 +5,8 @@ import it.units.informationretrieval.ir_boolean_model.utils.stemmers.org.tartaru
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -115,9 +117,18 @@ class SnowballStemmer implements Stemmer {
                 return input;
             } else {
                 assert snowballStemmer != null;
-                snowballStemmer.setCurrent(input);
-                snowballStemmer.stem();
-                return snowballStemmer.getCurrent();
+                String stemmed = input;
+                PrintStream err = System.err;
+                try {
+                    System.setErr(new PrintStream(new ByteArrayOutputStream()));
+                    snowballStemmer.setCurrent(input);
+                    snowballStemmer.stem();
+                    stemmed = snowballStemmer.getCurrent();
+                } catch (Exception ignored) {
+                } finally {
+                    System.setErr(err);
+                }
+                return stemmed;
             }
         } else {
             return input;   // no stemming due to undefined language
