@@ -43,9 +43,17 @@ public class BooleanExpression {
      */
     private static boolean RANK_RESULTS;
 
+    /**
+     * Flag which is set to true if, for ranking query results, the
+     * wf-idf value must be used, otherwise (if it is false) the tf-idf
+     * value will be used.
+     */
+    private static boolean USE_WF_IDF;
+
     static {
         try {
             RANK_RESULTS = Boolean.parseBoolean(AppProperties.getInstance().get("app.rank_query_results"));
+            USE_WF_IDF = Boolean.parseBoolean(AppProperties.getInstance().get("app.rank_query_results"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -747,15 +755,15 @@ public class BooleanExpression {
 
         final var corpus = informationRetrievalSystem.getCorpus();
         final var entireCorpusSize = corpus.size();
-        return results.stream()
-                .collect(Collectors.toMap(
-                        posting -> corpus.getDocument(posting.getDocId()),
-                        posting -> posting.tfIdf(entireCorpusSize),         // score
-                        Double::sum,    // sum scores if more query terms are present in the same document
-                        LinkedHashMap::new))
-                .entrySet().stream().sequential()
-                .sorted((docToRank1, docToRank2) -> {
-                    if (RANK_RESULTS) {
+        if (RANK_RESULTS) {
+            return results.stream()
+                    .collect(Collectors.toMap(
+                            posting -> corpus.getDocument(posting.getDocId()),
+                            posting -> USE_WF_IDF ? posting.wfIdf(entireCorpusSize) : posting.tfIdf(entireCorpusSize),         // score
+                            Double::sum,    // sum scores if more query terms are present in the same document
+                            LinkedHashMap::new))
+                    .entrySet().stream().sequential()
+                    .sorted((docToRank1, docToRank2) -> {
                         // Assign extra rank if any of query terms are present in the title of the document
                         double score1 = docToRank1.getValue();
                         double score2 = docToRank2.getValue();
@@ -768,13 +776,17 @@ public class BooleanExpression {
                         score1 = assignExtraScore.apply(score1, extraScore1);
                         score2 = assignExtraScore.apply(score2, extraScore2);
                         return Double.compare(score2, score1);  // highest scores at top
-                    } else {
-                        return 0;
-                    }
-                })
-                .map(Map.Entry::getKey)
-                .limit(maxNumberOfResults)
-                .toList();
+                    })
+                    .map(Map.Entry::getKey)
+                    .limit(maxNumberOfResults)
+                    .toList();
+        } else {
+            return results.stream()
+                    .map(Posting::getDocId)
+                    .map(corpus::getDocument)
+                    .limit(maxNumberOfResults)
+                    .toList();
+        }
     }
 
     /**

@@ -78,7 +78,15 @@ public class Posting implements Comparable<Posting>, Serializable {
     }
 
     /**
-     * @param numberOfDocsInCorpus The toal number of documents in the corpus.
+     * @return the variant "wf" of {@link #tf()} associated to this instance.
+     */
+    public double wf() {
+        var tf = tf();
+        return tf > 0 ? 1 + Math.log(tf) : 0;
+    }
+
+    /**
+     * @param numberOfDocsInCorpus The total number of documents in the corpus.
      * @return the tf-idf value associated to this instance.
      */
     public double tfIdf(int numberOfDocsInCorpus) {
@@ -86,6 +94,18 @@ public class Posting implements Comparable<Posting>, Serializable {
             throw new IllegalStateException("Term not set, impossible to compute the idf value.");
         } else {
             return tf() * term.idf(numberOfDocsInCorpus);
+        }
+    }
+
+    /**
+     * @param numberOfDocsInCorpus The total number of documents in the corpus.
+     * @return the wf-idf value associated to this instance.
+     */
+    public double wfIdf(int numberOfDocsInCorpus) {
+        if (term == null) {
+            throw new IllegalStateException("Term not set, impossible to compute the idf value.");
+        } else {
+            return wf() * term.idf(numberOfDocsInCorpus);
         }
     }
 
