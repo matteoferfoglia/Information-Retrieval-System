@@ -92,8 +92,7 @@ class ExampleOfUseOfTheIRSystem {
             System.out.println(queryAndReturnResultsAsString(
                     ir.createNewBooleanExpression()
                             .setMatchingPhrase("Space jam".split(" "))
-                            .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bagchi"))
-                            .limit(1), MAX_N_RESULTS));
+                            .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bagchi")), MAX_N_RESULTS));
 
             // Wildcards queries
             System.out.println(queryAndReturnResultsAsString(

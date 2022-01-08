@@ -745,11 +745,14 @@ public class BooleanExpression {
                     double score2 = docToRank2.getValue();
                     List<String> queryTerms = Arrays.asList(
                             Utility.split(getQueryWords(false, true)));
-                    score1 += docToRank1.getKey().howManyCommonNormalizedWords(queryTerms);
-                    score2 += docToRank2.getKey().howManyCommonNormalizedWords(queryTerms);
-                    return Double.compare(score1, score2);
+                    long extraScore1 = docToRank1.getKey().howManyCommonNormalizedWords(queryTerms);
+                    long extraScore2 = docToRank2.getKey().howManyCommonNormalizedWords(queryTerms);
+                    BiFunction<Double, Long, Double> assignExtraScore = (initialScore, extraScore) ->
+                            extraScore > 1 ? initialScore * extraScore : extraScore + initialScore;
+                    score1 = assignExtraScore.apply(score1, extraScore1);
+                    score2 = assignExtraScore.apply(score2, extraScore2);
+                    return Double.compare(score2, score1);  // highest scores at top
                 })
-                .sorted(Comparator.comparingDouble(Map.Entry::getValue))    // sort according ranking
                 .map(Map.Entry::getKey)
                 .limit(maxNumberOfResults)
                 .toList();
