@@ -1,9 +1,9 @@
 package it.units.informationretrieval.ir_boolean_model.utils.stemmers;
 
 import it.units.informationretrieval.ir_boolean_model.entities.Language;
+import it.units.informationretrieval.ir_boolean_model.utils.stemmers.org.tartarus.snowball.SnowballProgram;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.tartarus.snowball.SnowballProgram;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
