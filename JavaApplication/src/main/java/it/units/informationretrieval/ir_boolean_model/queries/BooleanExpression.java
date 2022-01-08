@@ -732,18 +732,27 @@ public class BooleanExpression {
 
         final var corpus = informationRetrievalSystem.getCorpus();
         final var entireCorpusSize = corpus.size();
-        return corpus.getDocuments(
-                results.stream()
-                        .collect(Collectors.toMap(
-                                Posting::getDocId,
-                                posting -> posting.tfIdf(entireCorpusSize),         // score
-                                Double::sum,    // sum scores if more query terms are present in the same document
-                                LinkedHashMap::new))
-                        .entrySet().stream().sequential()
-                        .sorted(Comparator.comparingDouble(Map.Entry::getValue))    // sort according ranking
-                        .map(Map.Entry::getKey)
-                        .limit(maxNumberOfResults)
-                        .toList());
+        return results.stream()
+                .collect(Collectors.toMap(
+                        posting -> corpus.getDocument(posting.getDocId()),
+                        posting -> posting.tfIdf(entireCorpusSize),         // score
+                        Double::sum,    // sum scores if more query terms are present in the same document
+                        LinkedHashMap::new))
+                .entrySet().stream().sequential()
+                .sorted((docToRank1, docToRank2) -> {
+                    // Assign extra rank if any of query terms are present in the title of the document
+                    double score1 = docToRank1.getValue();
+                    double score2 = docToRank2.getValue();
+                    List<String> queryTerms = Arrays.asList(
+                            Utility.split(getQueryWords(false, true)));
+                    score1 += docToRank1.getKey().howManyCommonNormalizedWords(queryTerms);
+                    score2 += docToRank2.getKey().howManyCommonNormalizedWords(queryTerms);
+                    return Double.compare(score1, score2);
+                })
+                .sorted(Comparator.comparingDouble(Map.Entry::getValue))    // sort according ranking
+                .map(Map.Entry::getKey)
+                .limit(maxNumberOfResults)
+                .toList();
     }
 
     /**
@@ -751,26 +760,43 @@ public class BooleanExpression {
      */
     @NotNull
     public String getQueryString() throws UnsupportedOperationException {
+        return getQueryWords(true, false);
+    }
 
+    /**
+     * @param withOperator true if operators (AND/OR/NOT) must be included in the returned string.
+     * @param normalize    true if operands ({@link #matchingValue} / {@link #matchingPhrase}) must
+     *                     be normalized in the returned string.
+     * @return the entire query string.
+     */
+    @NotNull
+    private String getQueryWords(boolean withOperator, boolean normalize) {
         return switch (unaryOperator) {
-            case NOT -> "NOT " + new BooleanExpression(this).setUnaryOperator(UNARY_OPERATOR.IDENTITY);
+            case NOT -> (withOperator ? "NOT " : "") + new BooleanExpression(this).setUnaryOperator(UNARY_OPERATOR.IDENTITY);
             case IDENTITY -> {
                 if (isAggregated) {
                     assert leftChildOperand != null;
                     assert binaryOperator != null;
                     assert rightChildOperand != null;
                     try {
-                        yield "( " + leftChildOperand.getQueryString() + " " + binaryOperator + " "
-                                + rightChildOperand.getQueryString() + " )";
+                        yield (withOperator ? "( " : "")
+                                + leftChildOperand.getQueryWords(withOperator, normalize)
+                                + (withOperator ? " " + binaryOperator : "") + " "
+                                + rightChildOperand.getQueryWords(withOperator, normalize)
+                                + (withOperator ? " )" : "");
                     } catch (StackOverflowError e) {
-                        yield "...";
+                        yield withOperator ? "..." : "";
                     }
                 } else {
-                    yield queryString;
+                    if (normalize) {
+                        var normalized = Utility.normalize(queryString, true, informationRetrievalSystem.getLanguage());
+                        yield normalized == null ? "" : normalized;
+                    } else {
+                        yield queryString;
+                    }
                 }
             }
         };
-
     }
 
     /**

@@ -62,8 +62,7 @@ public class Utility {
     public static String[] tokenize(@NotNull Document document, @NotNull Language language) {
         assert document.getContent() != null;
         return Arrays.stream(
-                        (document.getTitle() + " " + document.getContent().getEntireTextContent())
-                                .split(" "))
+                        split(document.getTitle() + " " + document.getContent().getEntireTextContent()))
                 .filter(text -> !text.isBlank())
                 .map(token -> Utility.normalize(token, false, language))
                 .filter(Objects::nonNull)
@@ -516,6 +515,17 @@ public class Utility {
             }
         }
         return resultLists;
+    }
+
+    /**
+     * Splits an input {@link String} to an array.
+     *
+     * @param toSplit The input {@link String} to be split.
+     * @return the array obtained by splitting the input {@link String}.
+     */
+    public static String[] split(@NotNull String toSplit) {
+        final String REGEX = " ";   //  the delimiting regular expression when split
+        return toSplit.split(REGEX);
     }
 
     /**

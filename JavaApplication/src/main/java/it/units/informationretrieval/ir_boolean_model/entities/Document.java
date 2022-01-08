@@ -6,7 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,11 +21,25 @@ import java.util.logging.Logger;
 public abstract class Document implements Serializable, Comparable<Document> {
 
     /**
+     * The language of this instance.
+     */
+    @NotNull
+    private final Language language;
+    /**
      * The title of the document.
      */
     @Nullable
     private String title;
-
+    /**
+     * The {@link List} in which elements are the normalized
+     * tokens of the title.
+     * This field can be used to give a higher rank to documents
+     * which have in the title terms in common with a query (it
+     * would mean that some query terms are present in the
+     * title, and so the document is probably more relevant).
+     */
+    @Nullable
+    private List<String> normalizedTokensComposingTitle;
     /**
      * The content of this instance.
      */
@@ -33,17 +49,23 @@ public abstract class Document implements Serializable, Comparable<Document> {
     /**
      * Constructor.
      *
-     * @param content The content of the document.
+     * @param title    The title of this instance.
+     * @param content  The content of this instance.
+     * @param language The language of this instance.
      */
-    public Document(@NotNull String title, @NotNull DocumentContent content) {
+    public Document(@NotNull String title, @NotNull DocumentContent content, @NotNull Language language) {
+        this(language);
         this.title = Objects.requireNonNull(title, "The document title cannot be null.");
         this.content = Objects.requireNonNull(content, "The content cannot be null.");
     }
 
     /**
      * Constructor.
+     *
+     * @param language The language of this instance.
      */
-    protected Document() {
+    protected Document(@NotNull Language language) {
+        this.language = Objects.requireNonNull(language);
     }
 
     /**
@@ -122,4 +144,24 @@ public abstract class Document implements Serializable, Comparable<Document> {
         }};
     }
 
+    /**
+     * @param stringList The string list to be searched in the title for the matching.
+     *                   <strong>No normalization</strong> is performed on the input
+     *                   parameters.
+     * @return the number of (normalized) words in common between
+     * the title of this instance and the input parameters of the method.
+     */
+    public long howManyCommonNormalizedWords(List<String> stringList) {
+        if (title == null) {
+            return 0;
+        } else {
+            if (normalizedTokensComposingTitle == null) {
+                normalizedTokensComposingTitle = Arrays.stream(Utility.split(title))
+                        .map(token -> Utility.normalize(token, true, language))
+                        .filter(Objects::nonNull)
+                        .toList();
+            }
+            return normalizedTokensComposingTitle.stream().filter(stringList::contains).count();
+        }
+    }
 }
