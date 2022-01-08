@@ -42,11 +42,19 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
     </repositories>
     <pluginRepositories>
-        <pluginRepository>
+        <pluginRepository><!--To load dependencies from GitHub-->
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2/</url>
         </pluginRepository>
     </pluginRepositories>
 
@@ -246,6 +254,13 @@
             <artifactId>edit-distance</artifactId>
             <version>2.0.1</version>
         </dependency>
+
+        <dependency><!-- Snowball stemmer -->
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-snowball</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+
 
     </dependencies>
 
