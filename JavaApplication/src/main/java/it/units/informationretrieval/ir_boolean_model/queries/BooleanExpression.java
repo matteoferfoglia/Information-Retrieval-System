@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -728,12 +729,19 @@ public class BooleanExpression {
         if (!maxNumberOfResultsSpecified) {
             maxNumberOfResults = results.size();
         }
-        final var entireCorpusSize = informationRetrievalSystem.getCorpus().size();
-        return informationRetrievalSystem.getCorpus()
-                .getDocuments(results
-                        .stream().sequential()
-                        .sorted(Comparator.comparingDouble(posting -> posting.tfIdf(entireCorpusSize))) // sort according tfIdf
-                        .map(Posting::getDocId)
+
+        final var corpus = informationRetrievalSystem.getCorpus();
+        final var entireCorpusSize = corpus.size();
+        return corpus.getDocuments(
+                results.stream()
+                        .collect(Collectors.toMap(
+                                Posting::getDocId,
+                                posting -> posting.tfIdf(entireCorpusSize),         // score
+                                Double::sum,    // sum scores if more query terms are present in the same document
+                                LinkedHashMap::new))
+                        .entrySet().stream().sequential()
+                        .sorted(Comparator.comparingDouble(Map.Entry::getValue))    // sort according ranking
+                        .map(Map.Entry::getKey)
                         .limit(maxNumberOfResults)
                         .toList());
     }

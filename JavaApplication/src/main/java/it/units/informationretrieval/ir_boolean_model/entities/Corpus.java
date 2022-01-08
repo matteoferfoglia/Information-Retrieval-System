@@ -3,6 +3,7 @@ package it.units.informationretrieval.ir_boolean_model.entities;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.*;
@@ -107,15 +108,26 @@ public class Corpus implements Serializable {
      * @param docIds The {@link List} of {@link DocumentIdentifier}s for which the
      *               corresponding {@link List} of {@link Document}s is desired.
      * @return the {@link List} of {@link Document}s in this {@link Corpus}
-     * corresponding matching the parameter.
+     * matching the input parameter.
      */
     @NotNull
     public List<Document> getDocuments(@NotNull List<DocumentIdentifier> docIds) {
         return docIds
-                .stream().unordered().parallel()
+                .stream()
+                .distinct()
                 .map(corpus::get)
                 .filter(Objects::nonNull)
                 .toList();
+    }
+
+    /**
+     * @param docId The {@link DocumentIdentifier} of the desired {@link Document}.
+     * @return the {@link Document} in this {@link Corpus} corresponding to the
+     * input {@link DocumentIdentifier} or null if it is not present.
+     */
+    @Nullable
+    public Document getDocument(@NotNull DocumentIdentifier docId) {
+        return corpus.get(docId);
     }
 
     /**
