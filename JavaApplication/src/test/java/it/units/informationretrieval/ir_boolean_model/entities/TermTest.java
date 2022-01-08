@@ -16,7 +16,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TermTest {
 
@@ -128,16 +129,10 @@ class TermTest {
 
     @Test
     void idf() {
-        allTermStatistics.forEach((posting, termStatistics) -> {
-            try {
-                assertTrue(
-                        allTermStatistics.get(posting).inverseDocumentFrequency()
-                                - termStatistics.term().idf(SAMPLE_CORPUS.length)
-                                < EPSILON_FOR_DOUBLE_COMPARISON);
-            } catch (Term.NoDocumentsAssociatedWithTermException e) {
-                fail(e);
-            }
-        });
+        allTermStatistics.forEach((posting, termStatistics) -> assertTrue(
+                allTermStatistics.get(posting).inverseDocumentFrequency()
+                        - termStatistics.term().idf(SAMPLE_CORPUS.length)
+                        < EPSILON_FOR_DOUBLE_COMPARISON));
     }
 
     @Test

@@ -35,6 +35,7 @@ public class Term implements Comparable<Term>, Serializable {
     public Term(@NotNull final PostingList postingList, @NotNull final String term) {
         this.postingList = Objects.requireNonNull(postingList);
         this.term = Objects.requireNonNull(term);
+        this.postingList.setTermToPosting(this);
     }
 
     /**
@@ -42,14 +43,10 @@ public class Term implements Comparable<Term>, Serializable {
      *
      * @param numberOfDocsInCorpus The total number of documents in the Corpus.
      * @return the Inverse-Document-Frequency for this {@link Term}.
-     * @throws NoDocumentsAssociatedWithTermException If no documents associated with
-     *                                                this {@link Term} are found.
      */
-    public double idf(int numberOfDocsInCorpus) throws NoDocumentsAssociatedWithTermException {
+    public double idf(int numberOfDocsInCorpus) {
         int df = postingList.size();    // document frequency
-        if (df == 0) {
-            throw new NoDocumentsAssociatedWithTermException(this);
-        }
+        assert df > 0;
         return Math.log((double) numberOfDocsInCorpus / df);
     }
 
@@ -71,6 +68,7 @@ public class Term implements Comparable<Term>, Serializable {
      */
     public Term merge(@NotNull final Term other) {
         if (this.term.equals(other.term)) {
+            other.postingList.setTermToPosting(this);
             this.postingList.merge(other.postingList);
         } else {
             throw new ImpossibleTermsMergingException(this, other);
@@ -123,16 +121,6 @@ public class Term implements Comparable<Term>, Serializable {
     @NotNull
     public String getTermString() {
         return term;
-    }
-
-    /**
-     * This exception is thrown when no documents associated with
-     * the {@link Term} are found.
-     */
-    public static class NoDocumentsAssociatedWithTermException extends Exception {
-        public NoDocumentsAssociatedWithTermException(@NotNull final Term term) {
-            super("No documents associated with the term " + Objects.requireNonNull(term));
-        }
     }
 
     /**

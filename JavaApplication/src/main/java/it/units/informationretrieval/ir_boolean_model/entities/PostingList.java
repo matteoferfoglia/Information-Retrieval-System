@@ -32,6 +32,16 @@ public class PostingList implements Serializable {
     }
 
     /**
+     * Sets to all {@link Posting}s belonging to this instance the
+     * {@link Term} given as parameter.
+     *
+     * @param term The term to set.
+     */
+    public void setTermToPosting(@NotNull final Term term) {
+        postings.forEach(posting -> posting.setTerm(term));
+    }
+
+    /**
      * Merges the {@link PostingList} given as parameter into this one (destructive merging).
      * Only distinct {@link Posting}s are kept (see {@link Posting#equals(Object)}) and the
      * resulting {@link PostingList} (this one) is sorted.

@@ -298,7 +298,6 @@ public class BooleanExpression {
         }
     }
 
-
     /**
      * Sets the {@link #matchingValue}.
      *
@@ -316,6 +315,10 @@ public class BooleanExpression {
         return setMatchingValueWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(matchingValue);
     }
 
+    /**
+     * Like {@link #setMatchingValue(String)}, but this method does not check
+     * either if the query is aggregated nor if matching value/phrase is already set.
+     */
     @NotNull
     private BooleanExpression setMatchingValueWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(
             @NotNull String matchingValue) {
@@ -359,6 +362,11 @@ public class BooleanExpression {
 
     }
 
+    /**
+     * Like {@link #setMatchingPhrase(String[], int[])}, but this method does not check
+     * either if the query is aggregated nor if matching value/phrase is already set.
+     */
+    @NotNull
     private BooleanExpression setMatchingPhraseWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(
             @NotNull String[] matchingPhrase, int[] matchingPhraseMaxDistance) {
         // Function used later to avoid code duplication
@@ -720,9 +728,14 @@ public class BooleanExpression {
         if (!maxNumberOfResultsSpecified) {
             maxNumberOfResults = results.size();
         }
+        final var entireCorpusSize = informationRetrievalSystem.getCorpus().size();
         return informationRetrievalSystem.getCorpus()
-                .getDocuments(results.stream().map(Posting::getDocId).limit(maxNumberOfResults).toList());
-        // TODO : implement ranking and sort results accordingly and test the correct sorting of results
+                .getDocuments(results
+                        .stream().sequential()
+                        .sorted(Comparator.comparingDouble(posting -> posting.tfIdf(entireCorpusSize))) // sort according tfIdf
+                        .map(Posting::getDocId)
+                        .limit(maxNumberOfResults)
+                        .toList());
     }
 
     /**

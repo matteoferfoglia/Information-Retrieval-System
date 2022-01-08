@@ -26,15 +26,25 @@ public class Posting implements Comparable<Posting>, Serializable {
      */
     @NotNull
     private final DocumentIdentifier docId;
+
     /**
      * The {@link java.time.Instant} at which this instance has been created.
      */
     @NotNull
     private final Instant creationInstant;
+
     /**
      * Array of positions in the document where the term appears.
      */
     private final int[] termPositionsInTheDocument;
+
+    /**
+     * The {@link Term} to which this instance refers.
+     * This field can be used, e.g., to get the {@link Term#idf(int)}
+     * value, which can be combined with the {@link #tf()} to obtain
+     * the tf-idf value.
+     */
+    private Term term = null;
 
     /**
      * Constructor. Given a {@link DocumentIdentifier}, creates a new instance of this class.
@@ -51,11 +61,32 @@ public class Posting implements Comparable<Posting>, Serializable {
     }
 
     /**
+     * Setter for the {@link Term} to which this instance refers.
+     *
+     * @param term The {@link Term} to which this instance refers.
+     */
+    public void setTerm(@NotNull final Term term) {
+        this.term = term;
+    }
+
+    /**
      * @return the number of occurrences of the {@link Term} associated with this
      * {@link Posting} (i.e., the term-frequency value).
      */
     public int tf() {
         return termPositionsInTheDocument.length;
+    }
+
+    /**
+     * @param numberOfDocsInCorpus The toal number of documents in the corpus.
+     * @return the tf-idf value associated to this instance.
+     */
+    public double tfIdf(int numberOfDocsInCorpus) {
+        if (term == null) {
+            throw new IllegalStateException("Term not set, impossible to compute the idf value.");
+        } else {
+            return tf() * term.idf(numberOfDocsInCorpus);
+        }
     }
 
     /**
