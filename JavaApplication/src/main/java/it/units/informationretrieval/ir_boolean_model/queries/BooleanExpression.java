@@ -2,11 +2,13 @@ package it.units.informationretrieval.ir_boolean_model.queries;
 
 import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem;
 import it.units.informationretrieval.ir_boolean_model.entities.*;
+import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import skiplist.SkipList;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
@@ -35,6 +37,19 @@ import java.util.stream.IntStream;
 public class BooleanExpression {
 
     // TODO: try to solve StackOverflow errors
+
+    /**
+     * Flag which is set to true if results of queries must be ranked.
+     */
+    private static boolean RANK_RESULTS;
+
+    static {
+        try {
+            RANK_RESULTS = Boolean.parseBoolean(AppProperties.getInstance().get("app.rank_query_results"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * The {@link InformationRetrievalSystem} to use for evaluating this instance.
@@ -740,18 +755,22 @@ public class BooleanExpression {
                         LinkedHashMap::new))
                 .entrySet().stream().sequential()
                 .sorted((docToRank1, docToRank2) -> {
-                    // Assign extra rank if any of query terms are present in the title of the document
-                    double score1 = docToRank1.getValue();
-                    double score2 = docToRank2.getValue();
-                    List<String> queryTerms = Arrays.asList(
-                            Utility.split(getQueryWords(false, true)));
-                    long extraScore1 = docToRank1.getKey().howManyCommonNormalizedWords(queryTerms);
-                    long extraScore2 = docToRank2.getKey().howManyCommonNormalizedWords(queryTerms);
-                    BiFunction<Double, Long, Double> assignExtraScore = (initialScore, extraScore) ->
-                            extraScore > 1 ? initialScore * extraScore : extraScore + initialScore;
-                    score1 = assignExtraScore.apply(score1, extraScore1);
-                    score2 = assignExtraScore.apply(score2, extraScore2);
-                    return Double.compare(score2, score1);  // highest scores at top
+                    if (RANK_RESULTS) {
+                        // Assign extra rank if any of query terms are present in the title of the document
+                        double score1 = docToRank1.getValue();
+                        double score2 = docToRank2.getValue();
+                        List<String> queryTerms = Arrays.asList(
+                                Utility.split(getQueryWords(false, true)));
+                        long extraScore1 = docToRank1.getKey().howManyCommonNormalizedWords(queryTerms);
+                        long extraScore2 = docToRank2.getKey().howManyCommonNormalizedWords(queryTerms);
+                        BiFunction<Double, Long, Double> assignExtraScore = (initialScore, extraScore) ->
+                                extraScore > 1 ? initialScore * extraScore : extraScore + initialScore;
+                        score1 = assignExtraScore.apply(score1, extraScore1);
+                        score2 = assignExtraScore.apply(score2, extraScore2);
+                        return Double.compare(score2, score1);  // highest scores at top
+                    } else {
+                        return 0;
+                    }
                 })
                 .map(Map.Entry::getKey)
                 .limit(maxNumberOfResults)
