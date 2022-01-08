@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex;
+import it.units.informationretrieval.ir_boolean_model.entities.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import skiplist.SkipList;
@@ -34,36 +35,38 @@ import static java.util.stream.Collectors.toSet;
 public class Utility {
 
     /**
-     * Regex used in {@link #normalize(String, boolean)}.
+     * Regex used in {@link #normalize(String, boolean, Language)}.
      */
     private static final String REGEX__NOT__VALID_CHARACTERS_WHEN_INDEXING = "[^a-zA-Z0-9 ]";
 
     /**
-     * Regex used in {@link #normalize(String, boolean)}.
+     * Regex used in {@link #normalize(String, boolean, Language)}.
      */
     private static final String REGEX__NOT__VALID_CHARACTERS_WHEN_QUERYING =
             "[^a-zA-Z0-9 " + InvertedIndex.ESCAPED_WILDCARD_FOR_REGEX + "]";
 
     /**
-     * Regex used in {@link #normalize(String, boolean)}.
+     * Regex used in {@link #normalize(String, boolean, Language)}.
      */
     private static final String REGEX_MULTIPLE_SPACES = " +";
 
     /**
      * Tokenize a {@link Document} and return the {@link java.util.List} of tokens as
      * {@link String} (eventually with duplicates) obtained from the {@link Document}.
+     *
+     * @param document The {@link Document} to tokenize.
+     * @param language The {@link Language} of the document.
      */
     @NotNull
-    public static String[] tokenize(@NotNull Document document) {
+    public static String[] tokenize(@NotNull Document document, @NotNull Language language) {
         assert document.getContent() != null;
         return Arrays.stream(
                         (document.getTitle() + " " + document.getContent().getEntireTextContent())
                                 .split(" "))
                 .filter(text -> !text.isBlank())
-                .map(token -> Utility.normalize(token, false))
+                .map(token -> Utility.normalize(token, false, language))
                 .filter(Objects::nonNull)
                 .toArray(String[]::new);
-        // TODO : not implemented yet, just a draft (only split documents into strings which are the token - DO NOT CUT)
     }
 
     /**
@@ -71,10 +74,14 @@ public class Utility {
      * a token and as corresponding value the sorted array of positions in the
      * {@link Document} at which the token in the key appears.
      * {@link String} (eventually with duplicates) obtained from the {@link Document}.
+     *
+     * @param document The {@link Document} to tokenize.
+     * @param language The {@link Language} of the document.
      */
     @NotNull
-    public static Map<String, int[]> tokenizeAndGetMapWithPositionsInDocument(@NotNull final Document document) {
-        String[] tokensEventuallyDuplicatesSortedByPositionInDocument = tokenize(document);
+    public static Map<String, int[]> tokenizeAndGetMapWithPositionsInDocument(
+            @NotNull final Document document, @NotNull Language language) {
+        String[] tokensEventuallyDuplicatesSortedByPositionInDocument = tokenize(document, language);
         Map<String, Set<Integer>> mapTokenToPositionsInDoc = IntStream
                 .range(0, tokensEventuallyDuplicatesSortedByPositionInDocument.length)
                 .mapToObj(i -> new AbstractMap.SimpleEntry<>(
@@ -104,13 +111,37 @@ public class Utility {
      *                  the user should be able to insert special characters
      *                  (like wildcards) in queries, but special characters
      *                  should not be present in the dictionary of the index.
-     * @return the corresponding normalized token or null if the normalization
-     * brings to an empty string.
+     * @param language  The language of the input token.
+     * @return the corresponding normalized token or null either if the normalization
+     * leads to an empty string or (in the case that stop-words must be excluded) if
+     * the input string is a stop word.
      */
     @Nullable
+    public static String normalize(@NotNull String token, boolean fromQuery, @NotNull Language language) {
+
+        String toReturn = normalize(token, fromQuery);
+
+        // Stop-words handling
+        try {
+            if (Boolean.parseBoolean(AppProperties.getInstance().get("app.exclude_stop_words"))) {
+                if (Arrays.asList(language.getStopWords()).contains(toReturn)) {
+                    return null;
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error while reading app properties. Stop words not excluded.");
+            e.printStackTrace();
+        }
+
+        return toReturn.isEmpty() ? null : toReturn;
+    }
+
+    /**
+     * Like {@link #normalize(String, boolean, Language)}, but without stop-words removal.
+     */
+    @NotNull
     public static String normalize(@NotNull String token, boolean fromQuery) {
-        // TODO : not implemented yet, just a draft
-        String toReturn = token
+        return token
                 .replaceAll(
                         fromQuery
                                 ? REGEX__NOT__VALID_CHARACTERS_WHEN_QUERYING
@@ -119,7 +150,6 @@ public class Utility {
                 .replaceAll(REGEX_MULTIPLE_SPACES, " ")
                 .toLowerCase(Locale.ROOT)
                 .trim();
-        return toReturn.isEmpty() ? null : toReturn;
     }
 
     /**

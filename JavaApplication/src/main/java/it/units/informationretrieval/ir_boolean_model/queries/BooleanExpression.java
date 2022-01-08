@@ -323,7 +323,7 @@ public class BooleanExpression {
         // This query string will NOT be used for the evaluation but only for toString methods
         this.queryString = matchingValue;
 
-        this.matchingValue = Utility.normalize(matchingValue, true);
+        this.matchingValue = Utility.normalize(matchingValue, true, informationRetrievalSystem.getLanguage());
         return this;
     }
 
@@ -380,7 +380,9 @@ public class BooleanExpression {
             queryString = matchingPhrase[0];
         }
 
-        String[] tmpPhrase = Arrays.stream(matchingPhrase).map(word -> Utility.normalize(word, true)).toArray(String[]::new);
+        String[] tmpPhrase = Arrays.stream(matchingPhrase)
+                .map(word -> Utility.normalize(word, true, informationRetrievalSystem.getLanguage()))
+                .toArray(String[]::new);
         String[] phrase = new String[tmpPhrase.length];
         int[] distances = new int[tmpPhrase.length - 1];
 

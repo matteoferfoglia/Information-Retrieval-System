@@ -1,5 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -59,6 +60,8 @@ public enum Language {
             tmpStopWords = pathToStopWordsDataset.equals(PATH_TO_FILE_FOR_UNDEFINED_LANGUAGE)
                     ? new String[0]
                     : Files.readAllLines(Path.of(Objects.requireNonNull(pathToStopWordsDataset)))
+                    .stream()
+                    .map(stopWord -> Utility.normalize(stopWord, false))
                     .toArray(String[]::new);
         } catch (IOException e) {
             tmpStopWords = new String[0];

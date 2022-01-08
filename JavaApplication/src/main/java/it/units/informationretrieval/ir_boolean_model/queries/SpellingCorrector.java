@@ -375,7 +375,8 @@ class SpellingCorrector {   // TODO: benchmark
 
         } else {
 
-            final String normalizedQueryWord = Utility.normalize(queryWord, !PHONETIC_CORRECTION);
+            final String normalizedQueryWord = Utility.normalize(
+                    queryWord, !PHONETIC_CORRECTION, informationRetrievalSystem.getLanguage());
             ConcurrentMap<Integer, List<String>> mapOfCorrectionsHavingDistanceAsKey = null;
 
             if (normalizedQueryWord != null) {

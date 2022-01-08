@@ -119,6 +119,14 @@ public class Corpus implements Serializable {
     }
 
     /**
+     * @return the language used in this instance.
+     */
+    @NotNull
+    public Language getLanguage() {
+        return language;
+    }
+
+    /**
      * Returns the head of this instance, i.e., the first documents,
      * ordered according to their {@link DocumentIdentifier}.
      * This method can be used for printing purposes (e.g., during testing).

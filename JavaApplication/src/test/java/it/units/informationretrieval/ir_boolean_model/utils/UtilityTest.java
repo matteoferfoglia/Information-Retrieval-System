@@ -3,6 +3,7 @@ package it.units.informationretrieval.ir_boolean_model.utils;
 import benchmark.Benchmark;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
+import it.units.informationretrieval.ir_boolean_model.entities.Language;
 import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocument_LineOfAFile;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -112,7 +113,7 @@ class UtilityTest {
             tearDownIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
             commentToReport = COMMENT_FOR_BENCHMARKS)
     static void tokenizeLongDocument() {
-        Utility.tokenize(LONG_DOCUMENT);
+        Utility.tokenize(LONG_DOCUMENT, Language.UNDEFINED);
     }
 
     @Benchmark(
@@ -121,7 +122,7 @@ class UtilityTest {
             tearDownIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
             commentToReport = COMMENT_FOR_BENCHMARKS)
     static void normalizeLongDocument() {
-        Utility.normalize(LONG_DOCUMENT_CONTENT, false);
+        Utility.normalize(LONG_DOCUMENT_CONTENT, false, Language.UNDEFINED);
     }
 
     @Benchmark
@@ -248,7 +249,7 @@ class UtilityTest {
         Document document = new FakeDocument_LineOfAFile("a line  ", "  Content of A  line");
         assertEquals(
                 Arrays.asList("a", "line", "content", "of", "a", "line"),   // conversion to lists because the test framework cannot compare arrays
-                Arrays.asList(Utility.tokenize(document)));
+                Arrays.asList(Utility.tokenize(document, Language.UNDEFINED)));
     }
 
     @ParameterizedTest
@@ -257,7 +258,7 @@ class UtilityTest {
             "a*, a"
     })
     void normalize(String input, String expectedOutput) {
-        assertEquals(expectedOutput, Utility.normalize(input, false));
+        assertEquals(expectedOutput, Utility.normalize(input, false, Language.UNDEFINED));
     }
 
     @ParameterizedTest
@@ -319,7 +320,8 @@ class UtilityTest {
     void tokenizeAndGetMapWithPositionsInDocument(String document, String expectedMapTokenToPositionsAsString) {
         // Use List instead of array in  tests (otherwise test assertion may fail)
         Map<String, List<Integer>> actualMapTokenToPositions =
-                Utility.tokenizeAndGetMapWithPositionsInDocument(new FakeDocument_LineOfAFile("", document))
+                Utility.tokenizeAndGetMapWithPositionsInDocument(
+                                new FakeDocument_LineOfAFile("", document), Language.UNDEFINED)
                         .entrySet()
                         .stream()
                         .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), Arrays.stream(entry.getValue()).boxed().toList()))
@@ -370,5 +372,21 @@ class UtilityTest {
         List<List<Integer>> expected = convertFromJson.apply(expectedCartesianProduct);
         List<List<Integer>> actual = Utility.getCartesianProduct(input);
         assertEquals(expected, actual);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "The, ",
+            "car , car",
+            "car?, car"
+
+    })
+    void normalizeEnglishWordsAndRemoveStopWords(String input, String expected) throws IOException {
+        final String STOP_WORDS_EXCLUSION_PROP_NAME = "app.exclude_stop_words";
+        var oldPropertyValue = AppProperties.getInstance()
+                .set(STOP_WORDS_EXCLUSION_PROP_NAME, String.valueOf(true));
+        assertEquals(expected, Utility.normalize(input, false, Language.ENGLISH));
+        assert oldPropertyValue != null;
+        AppProperties.getInstance().set(STOP_WORDS_EXCLUSION_PROP_NAME, oldPropertyValue);
     }
 }

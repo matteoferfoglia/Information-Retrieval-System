@@ -175,6 +175,8 @@ public class InvertedIndex implements Serializable {
      */
     protected ConcurrentMap<String, Term> indexCorpusAndGet(
             @NotNull Corpus corpus, @NotNull AtomicLong numberOfAlreadyProcessedDocuments) {
+
+        // Avoid documents with null content
         Predicate<Map.Entry<DocumentIdentifier, Document>> documentContentNotNullPredicate =
                 entry -> entry != null
                         && entry.getKey() != null
@@ -207,9 +209,11 @@ public class InvertedIndex implements Serializable {
     @NotNull
     private Set<Map.Entry<String, Term>> getEntrySetOfTokensAndCorrespondingTermsFromADocument(
             @NotNull Map.Entry<@NotNull DocumentIdentifier, @NotNull Document> entryFromCorpusRepresentingOneDocument) {
+
         DocumentIdentifier docIdThisDocument = entryFromCorpusRepresentingOneDocument.getKey();
         Document document = entryFromCorpusRepresentingOneDocument.getValue();
-        Map<String, int[]> tokensFromCurrentDocument = Utility.tokenizeAndGetMapWithPositionsInDocument(document);
+        Map<String, int[]> tokensFromCurrentDocument =
+                Utility.tokenizeAndGetMapWithPositionsInDocument(document, corpus.getLanguage());
 
         return tokensFromCurrentDocument
                 .entrySet()

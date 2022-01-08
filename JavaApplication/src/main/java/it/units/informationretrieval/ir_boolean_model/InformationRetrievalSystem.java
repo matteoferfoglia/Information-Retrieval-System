@@ -1,9 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model;
 
-import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
-import it.units.informationretrieval.ir_boolean_model.entities.DocumentIdentifier;
-import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex;
-import it.units.informationretrieval.ir_boolean_model.entities.Posting;
+import it.units.informationretrieval.ir_boolean_model.entities.*;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
 import org.jetbrains.annotations.NotNull;
 import skiplist.SkipList;
@@ -105,6 +102,14 @@ public class InformationRetrievalSystem implements Serializable {
     @NotNull
     public Corpus getCorpus() {
         return corpus;
+    }
+
+    /**
+     * @return the language used in this instance.
+     */
+    @NotNull
+    public Language getLanguage() {
+        return corpus.getLanguage();
     }
 
     /**
