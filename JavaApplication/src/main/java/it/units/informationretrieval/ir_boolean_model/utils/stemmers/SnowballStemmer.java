@@ -7,20 +7,33 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
- * LICENSE: this class makes use of {@link SnowballProgram} and derived classes
- * under the <a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2 license</a>,
- * as stated at the <a href="https://mvnrepository.com/artifact/org.apache.lucene/lucene-snowball/3.0.3">source</a>
- * where the repository was taken.
+ * LICENSE: this class makes use of {@link SnowballProgram} and derived classes.
+ * See the license in corresponding package.
  */
 class SnowballStemmer implements Stemmer {
 
     /**
-     * The stemmer or null if not initialized.
+     * Caches stemmers of different language to avoid to re-instantiate them each
+     * time that they are required.
+     */
+    private static final ConcurrentMap<Language, SnowballStemmer> stemmersByLanguage =
+            new ConcurrentHashMap<>(Language.values().length);
+
+    /**
+     * The actual stemmer or null if not initialized.
      */
     @Nullable
     private SnowballProgram snowballStemmer = null;
+
+    /**
+     * Flag set to true if no stemmer is available for the specified language
+     * (see {@link #initStemmer(Language)}).
+     */
+    private boolean noStemmerForTheLanguage = false;
 
     /**
      * Test method.
@@ -56,29 +69,58 @@ class SnowballStemmer implements Stemmer {
         }
     }
 
-    private void setStemmer(@NotNull Language language)
+    /**
+     * Sets the stemmer for the given {@link Language}, according to the desired language.
+     *
+     * @param language The language for the stemmer.
+     */
+    private void setStemmer(@NotNull Language language) {
+        var stemmerIfPresentOrNull = stemmersByLanguage.get(language);
+        if (stemmerIfPresentOrNull == null) {
+            stemmerIfPresentOrNull = new SnowballStemmer();
+            try {
+                stemmerIfPresentOrNull.initStemmer(language);
+            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+                System.err.println("No stemmer available for language " + language);
+                stemmerIfPresentOrNull.noStemmerForTheLanguage = true;
+            }
+            stemmersByLanguage.put(language, stemmerIfPresentOrNull);
+        }
+        assert stemmerIfPresentOrNull.snowballStemmer != null;    // must have been initialized if it was initially null
+        this.snowballStemmer = stemmerIfPresentOrNull.snowballStemmer;
+        this.noStemmerForTheLanguage = stemmerIfPresentOrNull.noStemmerForTheLanguage;
+    }
+
+    /**
+     * Initialize the stemmer.
+     *
+     * @param language The language for the stemmer.
+     */
+    private void initStemmer(@NotNull Language language)
             throws ClassNotFoundException, NoSuchMethodException,
             InvocationTargetException, InstantiationException, IllegalAccessException {
         String languageName = language.name().toLowerCase();
         languageName = languageName.substring(0, 1).toUpperCase() + languageName.substring(1);
-        Class<?> stemClass = Class.forName("org.tartarus.snowball.ext." + languageName + "Stemmer");
+        Class<?> stemClass = Class.forName(
+                getClass().getPackageName() + ".org.tartarus.snowball.ext." + languageName + "Stemmer");
         Constructor<?> ctor = stemClass.getConstructor();
         snowballStemmer = (SnowballProgram) ctor.newInstance();
     }
 
     @Override
     public String stem(@NotNull String input, @NotNull Language language) {
-        try {
+        if (!language.equals(Language.UNDEFINED)) {
             setStemmer(language);
-            assert snowballStemmer != null;
-            snowballStemmer.setCurrent(input);
-            snowballStemmer.stem();
-            return snowballStemmer.getCurrent();
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
-                InstantiationException | IllegalAccessException e) {
-            System.err.println("Error during stemming. No stemming will be performed.");
-            e.printStackTrace();
-            return input;
+            if (noStemmerForTheLanguage) {
+                return input;
+            } else {
+                assert snowballStemmer != null;
+                snowballStemmer.setCurrent(input);
+                snowballStemmer.stem();
+                return snowballStemmer.getCurrent();
+            }
+        } else {
+            return input;   // no stemming due to undefined language
         }
     }
 }
