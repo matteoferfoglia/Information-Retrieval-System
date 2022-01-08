@@ -208,18 +208,18 @@ public class Movie extends Document implements Serializable {
         final DocumentContent content;
         {
             // Creation of the ranked subcontents
-            List<DocumentRankedSubcontent> documentRankedSubcontents = new ArrayList<>();
-            documentRankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.TITLE), this.movieTitle));
+            List<DocumentRankedZone> documentRankedZones = new ArrayList<>();
+            documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.TITLE), this.movieTitle));
             if (this.releaseDate != null) { // may be null
-                documentRankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.RELEASE_DATE), String.valueOf(this.releaseDate)));
+                documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.RELEASE_DATE), String.valueOf(this.releaseDate)));
             }
-            documentRankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.BOX_OFFICE_REVENUE), String.valueOf(this.boxOfficeRevenue)));
-            documentRankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.RUNNING_TIME), String.valueOf(this.runningTime)));
-            documentRankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.LANGUAGE), this.languageKeys.stream().map(languages::get).collect(Collectors.joining())));
-            documentRankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.COUNTRY), this.countryKeys.stream().map(countries::get).collect(Collectors.joining())));
-            documentRankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.GENRE), this.genreKeys.stream().map(genres::get).collect(Collectors.joining())));
-            documentRankedSubcontents.add(new MovieContentRank.MovieRankedSubcontent(new MovieContentRank(MovieContentRank.Rank.DESCRIPTION), this.description));
-            content = new DocumentContent(documentRankedSubcontents);
+            documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.BOX_OFFICE_REVENUE), String.valueOf(this.boxOfficeRevenue)));
+            documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.RUNNING_TIME), String.valueOf(this.runningTime)));
+            documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.LANGUAGE), this.languageKeys.stream().map(languages::get).collect(Collectors.joining())));
+            documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.COUNTRY), this.countryKeys.stream().map(countries::get).collect(Collectors.joining())));
+            documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.GENRE), this.genreKeys.stream().map(genres::get).collect(Collectors.joining())));
+            documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.DESCRIPTION), this.description));
+            content = new DocumentContent(documentRankedZones);
         }
 
         super.setTitle(this.movieTitle);
@@ -384,22 +384,22 @@ public class Movie extends Document implements Serializable {
     }
 
     /**
-     * Class implementing {@link DocumentContentRank} for {@link Movie}s.
+     * Class implementing {@link DocumentZoneRank} for {@link Movie}s.
      */
-    private static class MovieContentRank implements DocumentContentRank {
+    private static class MovieZoneRank implements DocumentZoneRank {
         /**
          * The rank.
          */
         private final Rank rank;
 
-        MovieContentRank(@NotNull final Rank rank) {
+        MovieZoneRank(@NotNull final Rank rank) {
             this.rank = Objects.requireNonNull(rank);
         }
 
         @Override
-        public int compareTo(@NotNull DocumentContentRank otherContentRank) {
-            if (Objects.requireNonNull(otherContentRank) instanceof MovieContentRank) {
-                return ((MovieContentRank) otherContentRank).rank.getRankValue() - this.rank.getRankValue();
+        public int compareTo(@NotNull DocumentZoneRank otherContentRank) {
+            if (Objects.requireNonNull(otherContentRank) instanceof MovieZoneRank) {
+                return ((MovieZoneRank) otherContentRank).rank.getRankValue() - this.rank.getRankValue();
             } else {
                 throw new IllegalArgumentException(otherContentRank + " is not an instance of " +
                         this.getClass().getCanonicalName() + ", hence it is not comparable with " +
@@ -440,9 +440,9 @@ public class Movie extends Document implements Serializable {
 
 
         /**
-         * Concrete cass extending {@link DocumentRankedSubcontent}.
+         * Concrete cass extending {@link DocumentRankedZone}.
          */
-        static class MovieRankedSubcontent extends DocumentRankedSubcontent {
+        static class MovieRankedZone extends DocumentRankedZone {
 
             /**
              * Constructor.
@@ -450,14 +450,14 @@ public class Movie extends Document implements Serializable {
              * @param rank       The rank for this subcontent.
              * @param subcontent The subcontent.
              */
-            public MovieRankedSubcontent(@NotNull DocumentContentRank rank, @NotNull String subcontent) {
+            public MovieRankedZone(@NotNull DocumentZoneRank rank, @NotNull String subcontent) {
                 super(Objects.requireNonNull(rank), Objects.requireNonNull(subcontent));
             }
 
-            private static int sumRanks(@NotNull DocumentRankedSubcontent first, @NotNull DocumentRankedSubcontent second) {
+            private static int sumRanks(@NotNull DocumentRankedZone first, @NotNull DocumentRankedZone second) {
                 return sumRanks(
-                        ((MovieContentRank) first.getRank()).rank.getRankValue(),
-                        ((MovieContentRank) second.getRank()).rank.getRankValue()
+                        ((MovieZoneRank) first.getRank()).rank.getRankValue(),
+                        ((MovieZoneRank) second.getRank()).rank.getRankValue()
                 );
             }
 
@@ -466,16 +466,16 @@ public class Movie extends Document implements Serializable {
             }
 
             @Override
-            public int sum(@NotNull DocumentRankedSubcontent documentRankedSubcontent) {
-                return sumRanks(this, documentRankedSubcontent);
+            public int sum(@NotNull DocumentRankedZone documentRankedZone) {
+                return sumRanks(this, documentRankedZone);
             }
 
             @Override
-            public int sum(@NotNull Collection<DocumentRankedSubcontent> documentRankedSubcontents) {
-                return Objects.requireNonNull(documentRankedSubcontents)
+            public int sum(@NotNull Collection<DocumentRankedZone> documentRankedZones) {
+                return Objects.requireNonNull(documentRankedZones)
                         .stream().unordered()
-                        .map(aRank -> ((MovieContentRank) aRank.getRank()).rank.getRankValue())
-                        .reduce(MovieRankedSubcontent::sumRanks)
+                        .map(aRank -> ((MovieZoneRank) aRank.getRank()).rank.getRankValue())
+                        .reduce(MovieRankedZone::sumRanks)
                         .orElse(0);
             }
         }

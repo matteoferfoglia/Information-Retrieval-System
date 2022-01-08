@@ -2,8 +2,8 @@ package it.units.informationretrieval.ir_boolean_model.entities.fake_documents_d
 
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.DocumentContent;
-import it.units.informationretrieval.ir_boolean_model.entities.DocumentContentRank;
-import it.units.informationretrieval.ir_boolean_model.entities.DocumentRankedSubcontent;
+import it.units.informationretrieval.ir_boolean_model.entities.DocumentRankedZone;
+import it.units.informationretrieval.ir_boolean_model.entities.DocumentZoneRank;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class FakeDocument_LineOfAFile extends Document {
      */
     public FakeDocument_LineOfAFile(@NotNull final String title, @NotNull final List<String> contents) {
         this(title, new DocumentContent(new ArrayList<>() {{
-            contents.forEach(aContent -> add(new LineRankedSubcontent(new LineRank(), aContent)));
+            contents.forEach(aContent -> add(new LineRankedZone(new LineRank(), aContent)));
         }}));
     }
 
@@ -75,8 +75,8 @@ public class FakeDocument_LineOfAFile extends Document {
                 .sequential()
                 .mapToObj(i -> {
                     String title = String.valueOf(i + 1);
-                    List<DocumentRankedSubcontent> content = new ArrayList<>();
-                    content.add(new LineRankedSubcontent(new LineRank(), SAMPLE_DOCUMENT_CONTENT));
+                    List<DocumentRankedZone> content = new ArrayList<>();
+                    content.add(new LineRankedZone(new LineRank(), SAMPLE_DOCUMENT_CONTENT));
                     return (Document) new FakeDocument_LineOfAFile(title, new DocumentContent(content));
                 })
                 .toList();
@@ -87,26 +87,26 @@ public class FakeDocument_LineOfAFile extends Document {
         return toString().compareTo(o.toString());
     }
 
-    private static class LineRank implements DocumentContentRank {
+    private static class LineRank implements DocumentZoneRank {
         @Override
-        public int compareTo(@NotNull DocumentContentRank o) {
+        public int compareTo(@NotNull DocumentZoneRank o) {
             return 0;
         }
     }
 
-    private static class LineRankedSubcontent extends DocumentRankedSubcontent {
+    private static class LineRankedZone extends DocumentRankedZone {
 
-        public LineRankedSubcontent(@NotNull DocumentContentRank rank, @NotNull String subcontent) {
+        public LineRankedZone(@NotNull DocumentZoneRank rank, @NotNull String subcontent) {
             super(rank, subcontent);
         }
 
         @Override
-        public int sum(@NotNull DocumentRankedSubcontent documentRankedSubcontent) {
+        public int sum(@NotNull DocumentRankedZone documentRankedZone) {
             return 0;
         }
 
         @Override
-        public int sum(@NotNull Collection<@NotNull DocumentRankedSubcontent> documentRankedSubcontents) {
+        public int sum(@NotNull Collection<@NotNull DocumentRankedZone> documentRankedZones) {
             return 0;
         }
     }
