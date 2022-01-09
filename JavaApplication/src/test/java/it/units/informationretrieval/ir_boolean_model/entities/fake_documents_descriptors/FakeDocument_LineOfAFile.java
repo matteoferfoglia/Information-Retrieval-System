@@ -1,21 +1,16 @@
 package it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors;
 
-import it.units.informationretrieval.ir_boolean_model.entities.*;
+import it.units.informationretrieval.ir_boolean_model.entities.Document;
+import it.units.informationretrieval.ir_boolean_model.entities.DocumentContent;
+import it.units.informationretrieval.ir_boolean_model.entities.Language;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.IntStream;
 
 public class FakeDocument_LineOfAFile extends Document {
 
-    private static final String PATH_TO_CORPUS = "/SampleCorpusWithDuplicates.txt";
     private static final String SAMPLE_DOCUMENT_CONTENT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
     public FakeDocument_LineOfAFile(@NotNull final String title, @NotNull final DocumentContent content) {
@@ -38,24 +33,7 @@ public class FakeDocument_LineOfAFile extends Document {
      * @param contents The contents of this instance.
      */
     public FakeDocument_LineOfAFile(@NotNull final String title, @NotNull final List<String> contents) {
-        this(title, new DocumentContent(new ArrayList<>() {{
-            contents.forEach(aContent -> add(new LineRankedZone(new LineRank(), aContent)));
-        }}));
-    }
-
-    /**
-     * Loads document from the file {@link #PATH_TO_CORPUS}
-     */
-    public static List<Document> loadDocumentsFromFile() throws IOException, URISyntaxException {
-        List<String> linesFromFile = Files.readAllLines(
-                Path.of(Objects.requireNonNull(FakeDocument_LineOfAFile.class.getResource(PATH_TO_CORPUS)).toURI()));
-        return linesFromFile
-                .stream().sequential()
-                .map(aLine -> {
-                    String title = aLine.length() > 0 ? aLine.substring(0, aLine.indexOf(' ')) : "";
-                    return (Document) new FakeDocument_LineOfAFile(title, aLine);
-                })
-                .toList();
+        this(title, new DocumentContent(contents));
     }
 
     /**
@@ -72,8 +50,8 @@ public class FakeDocument_LineOfAFile extends Document {
                 .sequential()
                 .mapToObj(i -> {
                     String title = String.valueOf(i + 1);
-                    List<DocumentRankedZone> content = new ArrayList<>();
-                    content.add(new LineRankedZone(new LineRank(), SAMPLE_DOCUMENT_CONTENT));
+                    List<String> content = new ArrayList<>();
+                    content.add(SAMPLE_DOCUMENT_CONTENT);
                     return (Document) new FakeDocument_LineOfAFile(title, new DocumentContent(content));
                 })
                 .toList();
@@ -84,27 +62,4 @@ public class FakeDocument_LineOfAFile extends Document {
         return toString().compareTo(o.toString());
     }
 
-    private static class LineRank implements DocumentZoneRank {
-        @Override
-        public int compareTo(@NotNull DocumentZoneRank o) {
-            return 0;
-        }
-    }
-
-    private static class LineRankedZone extends DocumentRankedZone {
-
-        public LineRankedZone(@NotNull DocumentZoneRank rank, @NotNull String subcontent) {
-            super(rank, subcontent);
-        }
-
-        @Override
-        public int sum(@NotNull DocumentRankedZone documentRankedZone) {
-            return 0;
-        }
-
-        @Override
-        public int sum(@NotNull Collection<@NotNull DocumentRankedZone> documentRankedZones) {
-            return 0;
-        }
-    }
 }

@@ -209,18 +209,18 @@ public class Movie extends Document implements Serializable {
         final DocumentContent content;
         {
             // Creation of the ranked subcontents
-            List<DocumentRankedZone> documentRankedZones = new ArrayList<>();
-            documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.TITLE), this.movieTitle));
+            List<String> documentContent = new ArrayList<>();
+            documentContent.add(this.movieTitle);
             if (this.releaseDate != null) { // may be null
-                documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.RELEASE_DATE), String.valueOf(this.releaseDate)));
+                documentContent.add(String.valueOf(this.releaseDate));
             }
-            documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.BOX_OFFICE_REVENUE), String.valueOf(this.boxOfficeRevenue)));
-            documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.RUNNING_TIME), String.valueOf(this.runningTime)));
-            documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.LANGUAGE), this.languageKeys.stream().map(languages::get).collect(Collectors.joining())));
-            documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.COUNTRY), this.countryKeys.stream().map(countries::get).collect(Collectors.joining())));
-            documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.GENRE), this.genreKeys.stream().map(genres::get).collect(Collectors.joining())));
-            documentRankedZones.add(new MovieZoneRank.MovieRankedZone(new MovieZoneRank(MovieZoneRank.Rank.DESCRIPTION), this.description));
-            content = new DocumentContent(documentRankedZones);
+            documentContent.add(String.valueOf(this.boxOfficeRevenue));
+            documentContent.add(String.valueOf(this.runningTime));
+            documentContent.add(this.languageKeys.stream().map(languages::get).collect(Collectors.joining()));
+            documentContent.add(this.countryKeys.stream().map(countries::get).collect(Collectors.joining()));
+            documentContent.add(this.genreKeys.stream().map(genres::get).collect(Collectors.joining()));
+            documentContent.add(this.description);
+            content = new DocumentContent(documentContent);
         }
 
         super.setTitle(this.movieTitle);
@@ -385,101 +385,4 @@ public class Movie extends Document implements Serializable {
         return super.getContent();// TODO: The content of the document does not need to be stored in RAM, but the system must know hot to retrieve it quickly. This may be the task of "getContent()
     }
 
-    /**
-     * Class implementing {@link DocumentZoneRank} for {@link Movie}s.
-     */
-    private static class MovieZoneRank implements DocumentZoneRank {
-        /**
-         * The rank.
-         */
-        private final Rank rank;
-
-        MovieZoneRank(@NotNull final Rank rank) {
-            this.rank = Objects.requireNonNull(rank);
-        }
-
-        @Override
-        public int compareTo(@NotNull DocumentZoneRank otherContentRank) {
-            if (Objects.requireNonNull(otherContentRank) instanceof MovieZoneRank) {
-                return ((MovieZoneRank) otherContentRank).rank.getRankValue() - this.rank.getRankValue();
-            } else {
-                throw new IllegalArgumentException(otherContentRank + " is not an instance of " +
-                        this.getClass().getCanonicalName() + ", hence it is not comparable with " +
-                        "this instance (" + this + ").");
-            }
-        }
-
-        /**
-         * Enum of possible ranks.
-         */
-        public enum Rank {
-            TITLE(0),
-            DESCRIPTION(1),
-            GENRE(2),
-            COUNTRY(3),
-            LANGUAGE(4),
-            RELEASE_DATE(5),
-            RUNNING_TIME(6),
-            BOX_OFFICE_REVENUE(7);
-            /**
-             * The numeric value for the rank. The <strong>lower</strong> the best.
-             */
-            private final int rankValue;
-
-            /**
-             * Constructor.
-             *
-             * @param rankValue The rank value: the lower the best.
-             */
-            Rank(int rankValue) {
-                this.rankValue = rankValue;
-            }
-
-            public int getRankValue() {
-                return rankValue;
-            }
-        }
-
-
-        /**
-         * Concrete cass extending {@link DocumentRankedZone}.
-         */
-        static class MovieRankedZone extends DocumentRankedZone {
-
-            /**
-             * Constructor.
-             *
-             * @param rank       The rank for this subcontent.
-             * @param subcontent The subcontent.
-             */
-            public MovieRankedZone(@NotNull DocumentZoneRank rank, @NotNull String subcontent) {
-                super(Objects.requireNonNull(rank), Objects.requireNonNull(subcontent));
-            }
-
-            private static int sumRanks(@NotNull DocumentRankedZone first, @NotNull DocumentRankedZone second) {
-                return sumRanks(
-                        ((MovieZoneRank) first.getRank()).rank.getRankValue(),
-                        ((MovieZoneRank) second.getRank()).rank.getRankValue()
-                );
-            }
-
-            private static int sumRanks(int rank1, int rank2) {
-                return (Rank.values().length - rank1) + (Rank.values().length - rank2);
-            }
-
-            @Override
-            public int sum(@NotNull DocumentRankedZone documentRankedZone) {
-                return sumRanks(this, documentRankedZone);
-            }
-
-            @Override
-            public int sum(@NotNull Collection<DocumentRankedZone> documentRankedZones) {
-                return Objects.requireNonNull(documentRankedZones)
-                        .stream().unordered()
-                        .map(aRank -> ((MovieZoneRank) aRank.getRank()).rank.getRankValue())
-                        .reduce(MovieRankedZone::sumRanks)
-                        .orElse(0);
-            }
-        }
-    }
 }

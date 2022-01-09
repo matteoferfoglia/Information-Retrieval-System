@@ -10,25 +10,22 @@ import java.util.stream.Collectors;
 /**
  * Class representing the content of a {@link Document}.
  * Different part of the document may have different ranks.
+ *
+ * @param content The list of {@link String}s present in this instance
+ *                of {@link Document}. The list should be sorted according to the
+ *                order in which the content actually appears in the document.
  */
-public class DocumentContent implements Serializable {
-
-    /**
-     * {@link List} of {@link DocumentRankedZone}.
-     * The list is sorted according to the order in which the subcontent appears
-     * in the document.
-     */
-    private final List<DocumentRankedZone> content;
+public record DocumentContent(List<String> content) implements Serializable {
 
     /**
      * Constructor.
      *
-     * @param documentRankedZoneList The list of {@link DocumentRankedZone}s present in
-     *                               this instance of {@link Document}. The list should be sorted according to the
-     *                               order in which it appears in the document.
+     * @param content The list of {@link String}s present in this instance
+     *                of {@link Document}. The list should be sorted according to the
+     *                order in which the content actually appears in the document.
      */
-    public DocumentContent(@NotNull List<@NotNull DocumentRankedZone> documentRankedZoneList) {
-        this.content = Objects.requireNonNull(documentRankedZoneList);
+    public DocumentContent(@NotNull List<@NotNull String> content) {
+        this.content = Objects.requireNonNull(content);
     }
 
     /**
@@ -37,7 +34,6 @@ public class DocumentContent implements Serializable {
     @NotNull
     public String getEntireTextContent() {
         return content.stream().sequential()
-                .map(DocumentRankedZone::getContent)
                 .collect(Collectors.joining(System.lineSeparator()));
     }
 
