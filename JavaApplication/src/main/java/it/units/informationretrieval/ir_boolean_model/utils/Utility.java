@@ -196,7 +196,7 @@ public class Utility {
                         "")
                 .replaceAll(REGEX_MULTIPLE_SPACES, " ")
                 .toLowerCase(Locale.ROOT)
-                .trim();
+                .strip();
     }
 
     /**

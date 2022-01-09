@@ -14,7 +14,7 @@ public abstract class Soundex {
      * @return the phonetic hash of the input word (lowercase).
      */
     public static String getPhoneticHash(@NotNull final String inputWord) {
-        var inputWord_ = inputWord.trim().toLowerCase();
+        var inputWord_ = inputWord.strip().toLowerCase();
         if (!inputWord_.isBlank()) {
             if (inputWord_.length() == 1) {
                 return inputWord_;
