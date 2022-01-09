@@ -158,7 +158,7 @@ class BooleanExpressionTest {
     static void createAndEvaluatePhraseQueryAnd() {
         irsForBenchmark.createNewBooleanExpression()
                 .setMatchingPhrase(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
-                .and(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .and(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
                 .evaluate();
     }
 
@@ -166,7 +166,7 @@ class BooleanExpressionTest {
     static void createAndEvaluatePhraseQueryOr() {
         irsForBenchmark.createNewBooleanExpression()
                 .setMatchingPhrase(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
-                .or(randomTokenFromDictionaryOfMovieInvertedIndex.get())
+                .or(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
                 .evaluate();
     }
 

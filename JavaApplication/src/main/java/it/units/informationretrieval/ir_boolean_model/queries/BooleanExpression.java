@@ -366,14 +366,14 @@ public class BooleanExpression {
     /**
      * Sets the {@link #matchingPhrase}.
      *
-     * @param matchingPhrase            The phrase to match.
-     * @param matchingPhraseMaxDistance Array with the exact distance allowed between words, saved as array:
-     *                                  specifies at the k-th position the exact distance (number of terms)
-     *                                  which must be present between the term at index k in the phrase and
-     *                                  the term at position 0.
+     * @param matchingPhrase          The phrase to match.
+     * @param matchingPhraseDistances Array with the exact distance allowed between words, saved as array:
+     *                                specifies at the k-th position the exact distance (number of terms)
+     *                                which must be present between the term at index k in the phrase and
+     *                                the term at position 0.
      * @return This instance after the execution of this method.
      */
-    public BooleanExpression setMatchingPhrase(@NotNull String[] matchingPhrase, int[] matchingPhraseMaxDistance) {
+    public BooleanExpression setMatchingPhrase(@NotNull String[] matchingPhrase, int[] matchingPhraseDistances) {
         throwIfIsAggregated();
         if (isMatchingValueSet()) {
             throw new IllegalStateException("Matching value already set, cannot set matching value too.");
@@ -382,71 +382,102 @@ public class BooleanExpression {
         }
 
         return setMatchingPhraseWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(
-                matchingPhrase, matchingPhraseMaxDistance);
+                matchingPhrase, matchingPhraseDistances);
 
     }
 
     /**
      * Like {@link #setMatchingPhrase(String[], int[])}, but this method does not check
      * either if the query is aggregated nor if matching value/phrase is already set.
+     *
+     * @throws IllegalArgumentException if the length of the array of distances is not equal to
+     *                                  the length of the array composing the phrase minus 1.
      */
     @NotNull
     private BooleanExpression setMatchingPhraseWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(
-            @NotNull String[] matchingPhrase, int[] matchingPhraseMaxDistance) {
-        // Function used later to avoid code duplication
-        BiFunction<String[], int[], BooleanExpression> returnBooleanExpression = (words, distancesBetweenWords) -> {
-            if (words.length == 1) {
-                // normalization may lead to a phrase of a single word (hence, it is not a phrase anymore)
-                return setMatchingValue(words[0]);
-            } else {
-                this.matchingPhrase = new Phrase(words, distancesBetweenWords);
-                return this;
-            }
-        };
+            @NotNull String[] matchingPhrase, int[] matchingPhraseDistances)
+            throws IllegalArgumentException {
+
+        if (matchingPhrase.length < 1 || matchingPhraseDistances.length != matchingPhrase.length - 1) {
+            throw new IllegalArgumentException(
+                    "The size of the array of distances must be equal to the phrase length minus 1, but it is not:"
+                            + System.lineSeparator()
+                            + "\t- phrase length: " + matchingPhrase.length
+                            + System.lineSeparator()
+                            + "\t- distances length: " + matchingPhraseDistances.length);
+        }
 
         // Save the query string inserted by the user, before any normalization is applied
         // This query string will NOT be used for the evaluation but only for toString methods
         try {
-            queryString = new Phrase(matchingPhrase, matchingPhraseMaxDistance).toString();
+            queryString = new Phrase(matchingPhrase, matchingPhraseDistances).toString();
         } catch (IllegalArgumentException e) {
             queryString = matchingPhrase[0];
         }
 
         String[] tmpPhrase = Arrays.stream(matchingPhrase)
                 .map(word -> Utility.normalize(word, true, informationRetrievalSystem.getLanguage()))
-                .toArray(String[]::new);
+                .toArray(String[]::new);    // null elements might be present
+
         String[] phrase = new String[tmpPhrase.length];
         int[] distances = new int[tmpPhrase.length - 1];
 
-        int i = 0, j = 0, remainingWords = 0;
-        if (tmpPhrase.length != matchingPhrase.length) {
-            // some word has been removed
+        int wordCounter = 0;
+        int nonNullWordsCounter = 0;
 
-            for (; i < matchingPhraseMaxDistance.length; i++) {
-                if (tmpPhrase[i] != null) {
-                    phrase[j] = tmpPhrase[i];
-                    distances[j++] = matchingPhraseMaxDistance[i];
-                }
-                remainingWords = distances.length - j;
-                if (matchingPhraseMaxDistance.length - i == remainingWords) {
-                    // if there are no more removed words, use System.arraycopy (more
-                    //  efficient) to copy the remaining words
-                    break;
+        //noinspection StatementWithEmptyBody
+        for (; wordCounter < tmpPhrase.length && tmpPhrase[wordCounter] == null; wordCounter++) {
+            // find the first non-null word and increment the counter
+            // if the first word is NOT null, the counter is however incremented to 1
+        }
+        if (wordCounter == tmpPhrase.length) { // true if all words are null
+            return this;    // do not set anything
+        } else {
+            if (wordCounter > 0) {
+                // Update distances due to removed words
+                for (int i = 0; i < wordCounter; i++) {
+                    matchingPhraseDistances[i]--;
                 }
             }
+            for (; wordCounter < matchingPhraseDistances.length; wordCounter++) {
+                if (tmpPhrase[wordCounter] != null) {
+                    phrase[nonNullWordsCounter] = tmpPhrase[wordCounter];
+                    distances[nonNullWordsCounter++] = matchingPhraseDistances[wordCounter];
+                } else {
+                    // Update distances due to removed words
+                    for (int i = wordCounter + 1; i < matchingPhraseDistances.length; i++) {
+                        matchingPhraseDistances[i]--;  // remove the space occupied by the (one) just removed word
+                    }
+                }
+            }
+            if (tmpPhrase[wordCounter] != null) {    // copy the last word if non-null
+                phrase[nonNullWordsCounter++] = tmpPhrase[wordCounter];
+            }
+            assert Arrays.stream(distances).filter(val -> val >= 0).count() == distances.length;
+            assert distances.length < 2 || Arrays.stream(distances).sequential().reduce((a, b) -> a < b ? 1 : 0).orElse(1/*if here, array is empty*/) == 1;// check distances are monotonically growing
+            assert wordCounter + 1 == tmpPhrase.length;
+            assert nonNullWordsCounter >= 1;
 
-            String[] finalPhrase = new String[i + remainingWords + 1];
-            int[] finalDistances = new int[i + remainingWords];
-            System.arraycopy(phrase, 0, finalPhrase, 0, j);
-            System.arraycopy(distances, 0, finalDistances, 0, j);
-            System.arraycopy(tmpPhrase, i, finalPhrase, j, remainingWords + 1);
-            System.arraycopy(matchingPhraseMaxDistance, i, finalDistances, j, remainingWords);
+            String[] finalPhrase = new String[nonNullWordsCounter];
+            int[] finalDistances = new int[nonNullWordsCounter - 1];
+            assert finalPhrase.length == Arrays.stream(tmpPhrase).filter(Objects::nonNull).count();
+            assert finalDistances.length == finalPhrase.length - 1;
 
-            return returnBooleanExpression.apply(finalPhrase, finalDistances);
+            System.arraycopy(phrase, 0, finalPhrase, 0, nonNullWordsCounter);
+            System.arraycopy(distances, 0, finalDistances, 0, nonNullWordsCounter - 1);
+            assert finalDistances.length == finalPhrase.length - 1;
+            assert Arrays.stream(finalPhrase).filter(Objects::nonNull).count() == finalPhrase.length;
+            assert Arrays.stream(finalDistances).filter(val -> val >= 0).count() == finalDistances.length;
+            assert finalDistances.length < 2 || Arrays.stream(finalDistances).sequential().reduce((a, b) -> a < b ? 1 : 0).orElse(1/*if here, array is empty*/) == 1;// check distances are monotonically growing
 
-        } else {
-            // no words were removed by normalization
-            return returnBooleanExpression.apply(tmpPhrase, matchingPhraseMaxDistance);
+            if (finalPhrase.length == 1) {
+                // normalization may lead to a single word (hence, it is not a phrase anymore)
+                return setMatchingValueWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(finalPhrase[0]);
+            } else {
+                assert Arrays.stream(finalPhrase).noneMatch(Objects::isNull);
+                this.matchingPhrase = new Phrase(finalPhrase, finalDistances);
+                return this;
+            }
         }
     }
 
@@ -695,6 +726,7 @@ public class BooleanExpression {
                         IntFunction<@NotNull SkipList<Posting>> getPostingListOfIthWordInPhrase = i -> {
                             assert i >= 0 && i < matchingPhrase.size();
                             String word = matchingPhrase.words[i];
+                            assert word != null;
                             var correspondingPostingList = cachedPostings.get(word);
                             if (correspondingPostingList == null) {
                                 // posting list for the term was not cached

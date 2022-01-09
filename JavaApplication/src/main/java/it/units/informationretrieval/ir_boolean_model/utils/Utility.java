@@ -134,7 +134,7 @@ public class Utility {
             toReturn = stemmer.stem(toReturn, language);
         }
 
-        return toReturn.isEmpty() ? null : toReturn;
+        return toReturn.isBlank() ? null : toReturn;
     }
 
     /**

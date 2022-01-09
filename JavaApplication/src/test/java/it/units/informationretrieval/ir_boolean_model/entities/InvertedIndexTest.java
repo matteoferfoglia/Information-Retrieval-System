@@ -43,7 +43,6 @@ public class InvertedIndexTest {
     public static Supplier<String> randomTokenFromDictionaryOfMovieInvertedIndex;
     public static Supplier<String[]> randomPhraseFromDictionaryOfMovieInvertedIndex;
     private static String END_OF_WORD_PERMUTERM_USED_IN_INVERTED_INDEX;
-    private static Corpus movieCorpus;
     private static Corpus sampleCorpus;
     private static InvertedIndex invertedIndexForTests;
     private static Map<String, SkipList<Posting>> expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings;
@@ -62,7 +61,7 @@ public class InvertedIndexTest {
         PrintStream realStdOut = System.out;
         System.setOut(new PrintStream(new ByteArrayOutputStream()));      // ignore std out for this block
         try {
-            movieCorpus = Movie.createCorpus();                           // used for benchmarks
+            Corpus movieCorpus = Movie.createCorpus();                           // used for benchmarks
             invertedIndexForMovieCorpus = new InvertedIndex(movieCorpus); // used for benchmarks
             randomTokenFromDictionaryOfMovieInvertedIndex = new Supplier<>() {
 
@@ -97,7 +96,8 @@ public class InvertedIndexTest {
                                     var randomStartingPosition = (int) (Math.random() * Math.max(0, docContent.length() - PHRASE_LENGTH));
                                     return docContent.substring(randomStartingPosition, randomStartingPosition + PHRASE_LENGTH);
                                 })
-                                .map(phrase -> phrase.split(" "))
+                                .map(phrase -> Arrays.stream(phrase.split(" "))
+                                        .filter(Objects::nonNull).toArray(String[]::new))
                                 .collect(Collectors.toList());
                 private static int numberOfGeneratedPhrase = 0;
 
@@ -108,8 +108,10 @@ public class InvertedIndexTest {
 
                 @Override
                 public String[] get() {
-                    return randomPermutationOfPhrasesFromDocuments
+                    var phraseToReturn = randomPermutationOfPhrasesFromDocuments
                             .get(numberOfGeneratedPhrase++ % randomPermutationOfPhrasesFromDocuments.size());
+                    assert Arrays.stream(phraseToReturn).noneMatch(Objects::isNull);
+                    return phraseToReturn;
                 }
             };
         } catch (NoMoreDocIdsAvailable | URISyntaxException e) {
