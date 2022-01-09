@@ -132,18 +132,7 @@ public class Movie extends Document implements Serializable {
      * Constructor to initialize an instance with null values, for all fields
      * but the {@link #description} which will be set to the default value.
      * An array of metadata is expected as input parameter, and it must
-     * contain the metadata in the correct order, i.e.:
-     * <ol>
-     *     <li>Wikipedia movie ID</li>
-     *     <li>Freebase movie ID</li>
-     *     <li>Movie name</li>
-     *     <li>Movie release date</li>
-     *     <li>Movie box office revenue</li>
-     *     <li>Movie runtime</li>
-     *     <li>Movie languages (Freebase ID:name tuples)</li>
-     *     <li>Movie countries (Freebase ID:name tuples)</li>
-     *     <li>Movie genres (Freebase ID:name tuples)</li>
-     * </ol>
+     * contain the metadata in the correct order, as specified by {@link MOVIE_METADATA}.
      */
     private Movie(Object[] metadata) {
         super(MOVIE_CORPUS_LANGUAGE);
@@ -157,7 +146,7 @@ public class Movie extends Document implements Serializable {
         String boxOfficeRevenueAsString = (String) metadata[MOVIE_METADATA.MOVIE_BOX_OFFICE_REVENUE.getPositionInFile()];
         this.boxOfficeRevenue = boxOfficeRevenueAsString.strip().isEmpty() ? 0 : Long.parseLong(boxOfficeRevenueAsString);
 
-        // running time conversion
+        // runtime conversion
         String runTimeAsString = ((String) metadata[MOVIE_METADATA.MOVIE_RUNTIME.getPositionInFile()]).strip();
         this.runTime = runTimeAsString.isEmpty() ? 0 : (int) (Double.parseDouble(runTimeAsString) * 60);   // convert to seconds
 
@@ -227,9 +216,12 @@ public class Movie extends Document implements Serializable {
         }
 
         super.setTitle(this.movieTitle);
-        super.setContent(content);   // TODO : inefficient because a new string which is the concatenation is created
+        super.setContent(content);
     }
 
+    /**
+     * No-args constructor.
+     */
     public Movie() {
         super(MOVIE_CORPUS_LANGUAGE);
     }
@@ -278,10 +270,32 @@ public class Movie extends Document implements Serializable {
 
         ConcurrentMap<Integer, Movie> movieMetaData = getMovieMetadata(openFileFunction);
         ConcurrentMap<Integer, Movie> movieDescriptions = getMovieDescriptions(openFileFunction);
+        ConcurrentMap<Integer, Movie> movies = mergeMovieMetadataWithDescriptionsAndGet(movieMetaData, movieDescriptions);
 
-        // Merge movie names with corresponding descriptions
-        //   movie id as key, corresponding movie as value
-        ConcurrentMap<Integer, Movie> movies = Stream.of(movieMetaData, movieDescriptions)
+        // Create the corpus avoiding movies without the title
+        return new Corpus(
+                movies.values()
+                        .stream().unordered().parallel()
+                        .filter(aMovie -> aMovie.movieTitle != null)
+                        .collect(Collectors.toList()),
+                MOVIE_CORPUS_LANGUAGE);
+
+    }
+
+    /**
+     * Merges movie metadata with corresponding descriptions.
+     *
+     * @param movieMetaData     the {@link ConcurrentMap} having movie ids as key and corresponding metadata as value.
+     * @param movieDescriptions the {@link ConcurrentMap} having movie ids as key and corresponding description as value.
+     * @return the {@link ConcurrentMap} having movie ids as key and corresponding {@link Movie} instance resulting
+     * from merging metadata and descriptions as value.
+     */
+    @NotNull
+    private static ConcurrentMap<Integer, Movie> mergeMovieMetadataWithDescriptionsAndGet(
+            @NotNull final ConcurrentMap<Integer, Movie> movieMetaData,
+            @NotNull final ConcurrentMap<Integer, Movie> movieDescriptions) {
+
+        return Stream.of(movieMetaData, movieDescriptions)
                 .unordered().parallel()
                 .map(Map::entrySet)
                 .flatMap(Collection::stream)
@@ -304,15 +318,6 @@ public class Movie extends Document implements Serializable {
                                             Objects.requireNonNull(movieWithDescription.description)
                                     );
                                 }));
-
-        // Create the corpus avoiding movies without the title
-        return new Corpus(
-                movies.values()
-                        .stream().unordered().parallel()
-                        .filter(aMovie -> aMovie.movieTitle != null)
-                        .collect(Collectors.toList()),
-                MOVIE_CORPUS_LANGUAGE);
-
     }
 
     /**
@@ -422,14 +427,17 @@ public class Movie extends Document implements Serializable {
         mapOfProperties.put("Release date", releaseDate != null ? Utility.encodeForJson(dateToString.apply(releaseDate)) : null);
         mapOfProperties.put("Box office revenue", boxOfficeRevenue > 0 ? Utility.encodeForJson(boxOfficeRevenue + " $") : null);
         mapOfProperties.put("Run time", runTime > 0 ? Utility.encodeForJson(runTime / 60 + " min") : null);
-        mapOfProperties.put("Language", keyListToValueList.apply(languageKeys, LANGUAGES_MAP));
-        mapOfProperties.put("Country", keyListToValueList.apply(countryKeys, COUNTRIES_MAP));
-        mapOfProperties.put("Genre", keyListToValueList.apply(genreKeys, GENRES_MAP));
+        mapOfProperties.put("Languages", keyListToValueList.apply(languageKeys, LANGUAGES_MAP));
+        mapOfProperties.put("Countries", keyListToValueList.apply(countryKeys, COUNTRIES_MAP));
+        mapOfProperties.put("Genres", keyListToValueList.apply(genreKeys, GENRES_MAP));
         mapOfProperties.put("Description", description == null ? null : Utility.encodeForJson(description));
 
         return mapOfProperties;
     }
 
+    /**
+     * Compare movies according to their title.
+     */
     @Override
     public int compareTo(@NotNull Document otherDocument) {
 
@@ -454,7 +462,7 @@ public class Movie extends Document implements Serializable {
 
     @Override
     public @Nullable DocumentContent getContent() {
-        return super.getContent();// TODO: The content of the document does not need to be stored in RAM, but the system must know hot to retrieve it quickly. This may be the task of "getContent()
+        return super.getContent();
     }
 
     /**
@@ -477,6 +485,9 @@ public class Movie extends Document implements Serializable {
          */
         private final int POSITION;
 
+        /**
+         * @param position The position of the metadata in the input file.
+         */
         MOVIE_METADATA(int position) {
             POSITION = position;
         }
