@@ -15,6 +15,8 @@ class QueryParsingTest {
             "d&&&&e, (d AND e)",
             "!a, NOT(a)",
             "a&b, (a AND b)",
+            "!a&b, (NOT(a)AND b)",
+            "!(a&b), NOT(a AND b)",
             "a&!b|c, ((a AND NOT(b)) OR c)",
             "a&b&c, ((a AND b) AND c)",
             "(a&b)&c, ((a AND b) AND c)",

@@ -240,7 +240,7 @@ class QueryParsing {
 
             return switch (alreadyFoundExpressions.size()) {
                 case 0 -> new UnaryExpression(new Expression.Value(remainingQueryString.getAndRemove()), unaryOperator);
-                case 1 -> alreadyFoundExpressions.pop();
+                case 1 -> new UnaryExpression(alreadyFoundExpressions.pop(), unaryOperator);
                 default -> BinaryExpression.createFromList(alreadyFoundExpressions, binaryOperator);
             };
         }
@@ -362,7 +362,7 @@ class QueryParsing {
                 innerToString = value.value();
             }
             return operator.equals(NOT)
-                    ? "NOT( " + innerToString + " )"
+                    ? "NOT " + (innerExpression == null ? "(" : "") + innerToString + " " + (innerExpression == null ? ")" : "")
                     : innerToString;
         }
 
