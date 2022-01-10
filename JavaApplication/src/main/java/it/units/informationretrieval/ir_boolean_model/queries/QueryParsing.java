@@ -3,6 +3,7 @@ package it.units.informationretrieval.ir_boolean_model.queries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -16,6 +17,13 @@ import static it.units.informationretrieval.ir_boolean_model.queries.BooleanExpr
 /**
  * This class provides the functionalities to parseBinaryExpression an input
  * query string and translate it to a {@link BooleanExpression}.
+ * Expressions allowed are:
+ * <ul>
+ *     <li>AND queries, with the syntax, e.g.: <pre>a & b</pre> (spaces are not mandatory)</li>
+ *     <li>OR queries, with the syntax, e.g.:: <pre>a | b</pre> (spaces are not mandatory)</li>
+ *     <li>NOT queries, with the syntax, e.g.:: <pre>! a</pre> (spaces are not mandatory)</li>
+ *     <li>parenthesis can be used to impose the priority, e.g.: <pre>(a|b)&c</pre> (spaces are not mandatory)</li>
+ * </ul>
  *
  * @author Matteo Ferfoglia
  */
@@ -39,6 +47,10 @@ class QueryParsing {
      */
     private static final Pattern REGEX_AND = Pattern.compile(
             getRegexMatchingBinaryExpressionIgnoringUnaryExpressions(AND));
+    /**
+     * Compiled regex matching balanced brackets and text between them.
+     */
+    private static final Pattern REGEX_BRACKETS = Pattern.compile("[(][^()]*[)]");
 
     /**
      * @param binaryOperator The {@link BooleanExpression.BINARY_OPERATOR} of the expression
@@ -62,7 +74,6 @@ class QueryParsing {
 
     /**
      * Parses the input textual query string.
-     * // TODO: write here and in the class description the rule for the input.
      *
      * @param queryString The input query string to be parsed.
      * @return the expression for the input query string.
@@ -73,18 +84,63 @@ class QueryParsing {
         Wrapper<String> wrappedQueryString = new Wrapper<>(
                 queryString.replaceAll(REPLACED_EXPRESSION_PLACEHOLDER, ""));
 
-        // Match low priority binary expressions (OR) first
-        Expression topLevelOrExpression = parseBinaryExpression(new Stack<>(), wrappedQueryString, OR);
+        return parseWithBracketsPriority(new Stack<>(), wrappedQueryString);
+    }
 
-        // Match high priority binary expressions (AND), if no OR expressions were present
-        if (topLevelOrExpression instanceof UnaryExpression unaryExpression
-                && (queryString = unaryExpression.getValue()) != null) {
-            // here if no OR expressions were present and the expression was evaluated as a unary expression
-            return new UnaryExpression(
-                    parseBinaryExpression(new Stack<>(), new Wrapper<>(queryString), AND),
-                    unaryExpression.getOperator());
+    /**
+     * The idea of this method is similar to {@link #parseBinaryExpression(Stack, Wrapper, BooleanExpression.BINARY_OPERATOR)}
+     * and is used to handle the priority of the expressions thanks to brackets.
+     *
+     * @param alreadyFoundExpressions The {@link Stack} of already detected higher-priority expressions.
+     *                                The higher priority is given by brackets.
+     * @param remainingQueryString    The remaining query string, not yet parsed.
+     * @return the {@link Expression} which considers both the remaining
+     * query string terms and the already matched ones.
+     */
+    @NotNull
+    private static Expression parseWithBracketsPriority(
+            @NotNull Stack<Expression> alreadyFoundExpressions,
+            @NotNull Wrapper<String> remainingQueryString) {
+
+        // Handle brackets which determine the priority
+        assert remainingQueryString.get() != null;
+        Matcher bracketsMatcher = REGEX_BRACKETS.matcher(remainingQueryString.get());
+        if (bracketsMatcher.find()) {
+            bracketsMatcher.reset();
+            while (bracketsMatcher.find()) {
+                String bracketsPriorityQueryString = bracketsMatcher.group()
+                        .replaceAll("[()]+", "");    // remove brackets rounding the higher priority query string
+
+                Expression higherPriorityExpression = bracketsPriorityQueryString.equals(REPLACED_EXPRESSION_PLACEHOLDER)
+                        ? alreadyFoundExpressions.pop() // expression previously matched
+                        : parseWithBracketsPriority(alreadyFoundExpressions, new Wrapper<>(bracketsPriorityQueryString));
+                alreadyFoundExpressions.add(higherPriorityExpression);
+            }
+            remainingQueryString.set(
+                    remainingQueryString.get()
+                            .replaceAll(REGEX_BRACKETS.pattern(), REPLACED_EXPRESSION_PLACEHOLDER)  // remove the already matched expression
+                            .replaceAll("\\s*", ""));                               // remove extra spaces
+            return parseWithBracketsPriority(alreadyFoundExpressions, remainingQueryString);
         } else {
-            return topLevelOrExpression;
+
+            // Match low priority binary expressions (OR) first
+            Expression topLevelORExpression = parseBinaryExpression(alreadyFoundExpressions, remainingQueryString, OR);
+
+            // Match high priority binary expressions (AND)
+            String queryString;
+            if (topLevelORExpression instanceof UnaryExpression unaryExpression
+                    && (queryString = unaryExpression.getValue()) != null) {
+                // here if no OR expressions were present and the expression was evaluated as a unary expression
+                return new UnaryExpression(
+                        parseBinaryExpression(new Stack<>(), new Wrapper<>(queryString), AND),
+                        unaryExpression.getOperator());
+            } else if (remainingQueryString.get() != null) {
+                return parseBinaryExpression(new Stack<>() {{
+                    add(topLevelORExpression);
+                }}, remainingQueryString, AND);
+            } else {
+                return topLevelORExpression;
+            }
         }
     }
 
@@ -117,7 +173,7 @@ class QueryParsing {
      */
     @NotNull
     private static Expression parseBinaryExpression(
-            @NotNull Stack<BinaryExpression> alreadyFoundExpressions,
+            @NotNull Stack<Expression> alreadyFoundExpressions,
             @NotNull Wrapper<String> remainingQueryString,
             @NotNull BooleanExpression.BINARY_OPERATOR binaryOperator) {
 
@@ -152,9 +208,12 @@ class QueryParsing {
             remainingQueryString.set(
                     remainingQueryString.get()
                             .replaceAll(compiledRegex.pattern(), REPLACED_EXPRESSION_PLACEHOLDER)     // remove the already matched expression
-                            .replaceAll("\\s*", ""));    // remove parenthesis if used to box the just matched expression
+                            .replaceAll("\\s*", ""));                                 // remove extra spaces
 
             return parseBinaryExpression(alreadyFoundExpressions, remainingQueryString, binaryOperator);
+        } else if (binaryOperator.equals(OR)) {
+            // let the work to AND operations
+            return parseBinaryExpression(alreadyFoundExpressions, remainingQueryString, AND);
         } else {
             // no more match, the remaining query string might be nothing (i.e., everything already parsed) or a unary expression
 
@@ -179,9 +238,11 @@ class QueryParsing {
                 remainingQueryString.set(remainingQueryStringVal);
             }
 
-            return alreadyFoundExpressions.size() == 0
-                    ? new UnaryExpression(new Expression.Value(remainingQueryString.getAndRemove()), unaryOperator)
-                    : BinaryExpression.createFromList(alreadyFoundExpressions, binaryOperator);
+            return switch (alreadyFoundExpressions.size()) {
+                case 0 -> new UnaryExpression(new Expression.Value(remainingQueryString.getAndRemove()), unaryOperator);
+                case 1 -> alreadyFoundExpressions.pop();
+                default -> BinaryExpression.createFromList(alreadyFoundExpressions, binaryOperator);
+            };
         }
     }
 
@@ -372,16 +433,54 @@ class QueryParsing {
          *                     to concatenate the input list of expressions.
          */
         public static BinaryExpression createFromList(
-                @NotNull Stack<BinaryExpression> expressions,
+                @NotNull Stack<Expression> expressions,
                 @NotNull BooleanExpression.BINARY_OPERATOR concatenator) {
+
             return switch (expressions.size()) {
                 case 0 -> throw new IllegalArgumentException(
                         "At least one expression must be present in the input list");
-                case 1 -> expressions.pop();
-                default -> new BinaryExpression( // more than one boolean expression are present
-                        expressions.pop(),
-                        concatenator,
-                        createFromList(expressions, concatenator));
+                case 1 -> {
+                    Expression e = expressions.pop();
+                    if (e instanceof BinaryExpression binaryExpression) {
+                        yield binaryExpression;
+                    } else {
+                        throw new IllegalArgumentException(BinaryExpression.class.getCanonicalName() + " expected, but "
+                                + e.getClass().getCanonicalName() + " found");
+                    }
+                }
+                default -> {
+                    List<UnaryExpression> unaryExpressions = expressions.stream()
+                            .filter(expression -> expression instanceof UnaryExpression)
+                            .map(expression -> (UnaryExpression) expression)
+                            .toList();
+                    expressions.removeAll(unaryExpressions);
+                    if (unaryExpressions.size() > 0) {
+                        if (unaryExpressions.size() % 2 == 0) {
+                            for (int i = 0; i < unaryExpressions.size(); ) {
+                                expressions.push(new BinaryExpression(
+                                        unaryExpressions.get(i++), concatenator, unaryExpressions.get(i++)));
+                            }
+                        } else {
+                            BinaryExpression be = (BinaryExpression) expressions.stream()
+                                    .filter(expression -> expression instanceof BinaryExpression)
+                                    .findAny()
+                                    .orElseThrow(); // if here: expressions.size()>=2 && unaryExpressions.size() is odd, hence a Binary expression MUST be present
+                            expressions.remove(be);
+                            expressions.push(new BinaryExpression(be, concatenator, unaryExpressions.get(0)));
+                            unaryExpressions.remove(0);
+                            assert unaryExpressions.size() == 0 || unaryExpressions.size() % 2 == 1;
+                            for (int i = 0; i < unaryExpressions.size(); ) {
+                                expressions.push(new BinaryExpression(
+                                        unaryExpressions.get(i++), concatenator, unaryExpressions.get(i++)));
+                            }
+                        }
+                    }
+
+                    yield new BinaryExpression( // more than one boolean expression are present
+                            expressions.pop(),
+                            concatenator,
+                            createFromList(expressions, concatenator));
+                }
             };
         }
 
