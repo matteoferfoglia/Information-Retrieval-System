@@ -164,4 +164,21 @@ public abstract class Document implements Serializable, Comparable<Document> {
             return normalizedTokensComposingTitle.stream().filter(stringList::contains).count();
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Document document = (Document) o;
+
+        if (language != document.language) return false;
+        if (!Objects.equals(title, document.title)) return false;
+        return Objects.equals(content, document.content);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(language, title, content);
+    }
 }

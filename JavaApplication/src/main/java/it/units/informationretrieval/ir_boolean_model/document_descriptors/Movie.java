@@ -144,11 +144,11 @@ public class Movie extends Document implements Serializable {
 
         // box office revenue conversion
         String boxOfficeRevenueAsString = (String) metadata[MOVIE_METADATA.MOVIE_BOX_OFFICE_REVENUE.getPositionInFile()];
-        this.boxOfficeRevenue = boxOfficeRevenueAsString.strip().isEmpty() ? 0 : Long.parseLong(boxOfficeRevenueAsString);
+        this.boxOfficeRevenue = boxOfficeRevenueAsString.strip().isEmpty() ? this.boxOfficeRevenue : Long.parseLong(boxOfficeRevenueAsString);
 
         // runtime conversion
         String runTimeAsString = ((String) metadata[MOVIE_METADATA.MOVIE_RUNTIME.getPositionInFile()]).strip();
-        this.runTime = runTimeAsString.isEmpty() ? 0 : (int) (Double.parseDouble(runTimeAsString) * 60);   // convert to seconds
+        this.runTime = runTimeAsString.isEmpty() ? this.runTime : (int) (Double.parseDouble(runTimeAsString) * 60);   // convert to seconds
 
         BiFunction<String, ConcurrentMap<String, String>, List<String>> fromJsonToListWithParsing =
                 (jsonString, concurrentMap) -> {
@@ -208,9 +208,9 @@ public class Movie extends Document implements Serializable {
             }
             documentContent.add(String.valueOf(this.boxOfficeRevenue));
             documentContent.add(String.valueOf(this.runTime));
-            documentContent.add(this.languageKeys.stream().map(LANGUAGES_MAP::get).collect(Collectors.joining()));
-            documentContent.add(this.countryKeys.stream().map(COUNTRIES_MAP::get).collect(Collectors.joining()));
-            documentContent.add(this.genreKeys.stream().map(GENRES_MAP::get).collect(Collectors.joining()));
+            documentContent.add(this.languageKeys.stream().map(LANGUAGES_MAP::get).sorted().collect(Collectors.joining()));
+            documentContent.add(this.countryKeys.stream().map(COUNTRIES_MAP::get).sorted().collect(Collectors.joining()));
+            documentContent.add(this.genreKeys.stream().map(GENRES_MAP::get).sorted().collect(Collectors.joining()));
             documentContent.add(this.description);
             content = new DocumentContent(documentContent);
         }

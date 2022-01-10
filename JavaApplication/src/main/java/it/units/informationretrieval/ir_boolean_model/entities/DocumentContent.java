@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  *                of {@link Document}. The list should be sorted according to the
  *                order in which the content actually appears in the document.
  */
-public record DocumentContent(List<String> content) implements Serializable {
+public record DocumentContent(@NotNull List<String> content) implements Serializable {
 
     /**
      * Constructor.
@@ -37,4 +37,18 @@ public record DocumentContent(List<String> content) implements Serializable {
                 .collect(Collectors.joining(System.lineSeparator()));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DocumentContent that = (DocumentContent) o;
+
+        return Objects.equals(content, that.content);
+    }
+
+    @Override
+    public int hashCode() {
+        return content.hashCode();
+    }
 }
