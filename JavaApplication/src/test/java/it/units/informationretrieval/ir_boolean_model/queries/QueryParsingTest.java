@@ -14,7 +14,10 @@ class QueryParsingTest {
             "a&b|c||d&&&&f|, (((a AND b)OR c) OR (d AND f))",
             "d&&&&e, (d AND e)",
             "!a, NOT(a)",
-            "a&b, (a AND b)"
+            "a&b, (a AND b)",
+            "a&!b|c, ((a AND NOT(b)) OR c)",
+            "a&b&c, ((a AND b) AND c)"
+
     })
     void parse(String inputQueryString, String expectedParsedQueryString) {
         Function<String, String> whiteSpacesRemover = input -> input.replaceAll(" ", "");

@@ -52,11 +52,12 @@ class QueryParsing {
             @NotNull final BooleanExpression.BINARY_OPERATOR binaryOperator) {
         boolean andOperatorMustBeCaptured = binaryOperator.equals(OR);
         String otherThingsToCapture = andOperatorMustBeCaptured
-                ? "|([^\\|]+\\&[^\\|]+)+"    // OR has lower precedence than AND, so AND expressions can be present inside OR expressions (as inner expressions)
+                ? "([^\\|]+\\&[^\\|]+)+"    // OR has lower precedence than AND, so AND expressions can be present inside OR expressions (as inner expressions)
                 : "";
-        return "((" + REPLACED_EXPRESSION_PLACEHOLDER + otherThingsToCapture + "|\\w+)\\s*\\"
+        String escapedNotSymbol = "\\" + NOT.getSymbol();
+        return "([" + REPLACED_EXPRESSION_PLACEHOLDER + escapedNotSymbol + otherThingsToCapture + "\\w]+\\s*\\"
                 + binaryOperator.getSymbol() + "+"  // "+" to handle the case if the use erroneously insert multiple time the operator in he query string
-                + "\\s*(" + REPLACED_EXPRESSION_PLACEHOLDER + otherThingsToCapture + "|\\w+))";
+                + "\\s*[" + REPLACED_EXPRESSION_PLACEHOLDER + escapedNotSymbol + otherThingsToCapture + "\\w]+)";
     }
 
     /**
@@ -73,8 +74,7 @@ class QueryParsing {
                 queryString.replaceAll(REPLACED_EXPRESSION_PLACEHOLDER, ""));
 
         // Match low priority binary expressions (OR) first
-        Expression topLevelOrExpression = parseBinaryExpression(
-                new Stack<>(), wrappedQueryString, OR);
+        Expression topLevelOrExpression = parseBinaryExpression(new Stack<>(), wrappedQueryString, OR);
 
         // Match high priority binary expressions (AND), if no OR expressions were present
         if (topLevelOrExpression instanceof UnaryExpression unaryExpression
