@@ -12,7 +12,9 @@ class QueryParsingTest {
     @ParameterizedTest
     @CsvSource({
             "a&b|c||d&&&&f|, (((a AND b)OR c) OR (d AND f))",
-            "d&&&&e, (d AND e)"
+            "d&&&&e, (d AND e)",
+            "!a, NOT(a)",
+            "a&b, (a AND b)"
     })
     void parse(String inputQueryString, String expectedParsedQueryString) {
         Function<String, String> whiteSpacesRemover = input -> input.replaceAll(" ", "");

@@ -9,6 +9,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression.BINARY_OPERATOR.AND;
+import static it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression.BINARY_OPERATOR.OR;
+import static it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression.UNARY_OPERATOR.IDENTITY;
+import static it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression.UNARY_OPERATOR.NOT;
 
 /**
  * This class provides the functionalities to parseBinaryExpression an input
@@ -25,12 +28,12 @@ class QueryParsing {
      * special character, i.e.: this special character is used in
      * intermediate operations.
      */
-    private static final String REPLACED_EXPRESSION_PLACEHOLDER = "§";
+    private static final String REPLACED_EXPRESSION_PLACEHOLDER = "\0";
     /**
      * Compiled regex matching OR boolean expressions in text.
      */
     private static final Pattern REGEX_OR = Pattern.compile(
-            getRegexMatchingBinaryExpressionIgnoringUnaryExpressions(BooleanExpression.BINARY_OPERATOR.OR));
+            getRegexMatchingBinaryExpressionIgnoringUnaryExpressions(OR));
     /**
      * Compiled regex matching AND boolean expressions in text.
      */
@@ -47,7 +50,7 @@ class QueryParsing {
      */
     private static String getRegexMatchingBinaryExpressionIgnoringUnaryExpressions(
             @NotNull final BooleanExpression.BINARY_OPERATOR binaryOperator) {
-        boolean andOperatorMustBeCaptured = binaryOperator.equals(BooleanExpression.BINARY_OPERATOR.OR);
+        boolean andOperatorMustBeCaptured = binaryOperator.equals(OR);
         String otherThingsToCapture = andOperatorMustBeCaptured
                 ? "|([^\\|]+\\&[^\\|]+)+"    // OR has lower precedence than AND, so AND expressions can be present inside OR expressions (as inner expressions)
                 : "";
@@ -71,13 +74,15 @@ class QueryParsing {
 
         // Match low priority binary expressions (OR) first
         Expression topLevelOrExpression = parseBinaryExpression(
-                new Stack<>(), wrappedQueryString, BooleanExpression.BINARY_OPERATOR.OR);
+                new Stack<>(), wrappedQueryString, OR);
 
         // Match high priority binary expressions (AND), if no OR expressions were present
         if (topLevelOrExpression instanceof UnaryExpression unaryExpression
                 && (queryString = unaryExpression.getValue()) != null) {
             // here if no OR expressions were present and the expression was evaluated as a unary expression
-            return parseBinaryExpression(new Stack<>(), new Wrapper<>(queryString), AND);
+            return new UnaryExpression(
+                    parseBinaryExpression(new Stack<>(), new Wrapper<>(queryString), AND),
+                    unaryExpression.getOperator());
         } else {
             return topLevelOrExpression;
         }
@@ -151,13 +156,31 @@ class QueryParsing {
 
             return parseBinaryExpression(alreadyFoundExpressions, remainingQueryString, binaryOperator);
         } else {
-            // no more match, the remaining query string might be nothing (i.e., everything already parsed) or an unary expression
-            // TODO : regex for unary operations and negations not handled
+            // no more match, the remaining query string might be nothing (i.e., everything already parsed) or a unary expression
+
+            BooleanExpression.UNARY_OPERATOR unaryOperator = IDENTITY;  // default;
+
+            String remainingQueryStringVal = remainingQueryString.get().strip();
+            int indexOfNotOperator = remainingQueryStringVal.indexOf(NOT.getSymbol());
+            if (indexOfNotOperator > 0) {
+                // NOT operator is present, but it is not at the beginning
+                throw new IllegalArgumentException("Invalid expression (" + remainingQueryStringVal + ")");
+            } else if (indexOfNotOperator == 0) {
+
+                // remove all duplicated negations (which results in an identity)
+                remainingQueryStringVal = remainingQueryStringVal.replaceAll("\\" + NOT.getSymbol() + "{2}", "");
+
+                if (remainingQueryStringVal.startsWith(NOT.getSymbol())) {
+                    unaryOperator = NOT;
+                    remainingQueryStringVal = remainingQueryStringVal.replace(NOT.getSymbol(), "");
+                    assert !remainingQueryStringVal.contains(NOT.getSymbol());
+                }
+
+                remainingQueryString.set(remainingQueryStringVal);
+            }
 
             return alreadyFoundExpressions.size() == 0
-                    ? new UnaryExpression(
-                    new Expression.Value(remainingQueryString.getAndRemove()),
-                    BooleanExpression.UNARY_OPERATOR.IDENTITY)
+                    ? new UnaryExpression(new Expression.Value(remainingQueryString.getAndRemove()), unaryOperator)
                     : BinaryExpression.createFromList(alreadyFoundExpressions, binaryOperator);
         }
     }
@@ -221,9 +244,19 @@ class QueryParsing {
                 @NotNull final BooleanExpression.UNARY_OPERATOR operator,
                 @Nullable final Value expressionValue,
                 @Nullable final Expression innerExpression) {
-            this.operator = Objects.requireNonNull(operator);
-            this.value = expressionValue;
-            this.innerExpression = innerExpression;
+
+            if (innerExpression instanceof UnaryExpression unaryExpression) {
+                this.innerExpression = unaryExpression.innerExpression;
+                this.value = unaryExpression.value;
+                this.operator = operator.equals(IDENTITY)
+                        ? unaryExpression.operator
+                        : /*negation*/ unaryExpression.operator.equals(NOT) ? /*NOT * NOT = IDENTITY*/ IDENTITY : NOT;
+            } else {
+                this.innerExpression = innerExpression;
+                this.operator = Objects.requireNonNull(operator);
+                this.value = expressionValue;
+            }
+
             assert isComplementaryConditionHolding();
         }
 
@@ -267,7 +300,7 @@ class QueryParsing {
                 assert value != null;
                 innerToString = value.value();
             }
-            return operator.equals(BooleanExpression.UNARY_OPERATOR.NOT)
+            return operator.equals(NOT)
                     ? "NOT( " + innerToString + " )"
                     : innerToString;
         }
@@ -279,6 +312,14 @@ class QueryParsing {
         public String getValue() {
             assert isComplementaryConditionHolding();
             return value != null ? value.value() : null;
+        }
+
+        /**
+         * Getter for the operator of this expression.
+         */
+        @NotNull
+        public BooleanExpression.UNARY_OPERATOR getOperator() {
+            return operator;
         }
     }
 

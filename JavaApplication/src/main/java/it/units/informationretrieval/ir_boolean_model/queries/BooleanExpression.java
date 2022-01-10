@@ -13,7 +13,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -896,15 +899,14 @@ public class BooleanExpression {
         return queryString;
     }
 
-
     /**
      * Enumeration for possible unary operators to apply on a {@link BooleanExpression}.
      */
-    public enum UNARY_OPERATOR {
+    public enum UNARY_OPERATOR implements BOOLEAN_OPERATOR {
         /**
          * IDENTITY. No operator is applied.
          */
-        IDENTITY,
+        IDENTITY(""),
 
         /**
          * NOT operator. If it is applied on a non-aggregated {@link BooleanExpression},
@@ -912,23 +914,65 @@ public class BooleanExpression {
          * BooleanExpression}; if it is applied to an aggregated {@link BooleanExpression},
          * it search for documents which do <strong>not</strong> match the given expression.
          */
-        NOT
+        NOT("!");
+
+        /**
+         * The symbol for the operator.
+         */
+        private final String SYMBOL;
+
+        /**
+         * @param symbol The symbol for the operator.
+         */
+        UNARY_OPERATOR(@NotNull String symbol) {
+            this.SYMBOL = Objects.requireNonNull(symbol);
+        }
+
+        @Override
+        public String getSymbol() {
+            return SYMBOL;
+        }
     }
 
     /**
      * Enumeration for possible binary operators to apply on two {@link BooleanExpression}s,
      * which are the operands.
      */
-    public enum BINARY_OPERATOR {
+    public enum BINARY_OPERATOR implements BOOLEAN_OPERATOR {
         /**
          * AND operator. Both the {@link BooleanExpression}s (operands) must hold.
          */
-        AND,
+        AND("&"),
 
         /**
          * OR operator. At least one of the {@link BooleanExpression}s (operands) must hold.
          */
-        OR
+        OR("|");
+
+        /**
+         * The symbol for the operator.
+         */
+        private final String SYMBOL;
+
+        /**
+         * @param symbol The symbol for the operator.
+         */
+        BINARY_OPERATOR(@NotNull String symbol) {
+            this.SYMBOL = Objects.requireNonNull(symbol);
+        }
+
+        @Override
+        public String getSymbol() {
+            return SYMBOL;
+        }
+    }
+
+    public interface BOOLEAN_OPERATOR {
+
+        /**
+         * @return the symbol for the operator.
+         */
+        String getSymbol();
     }
 
     /**
