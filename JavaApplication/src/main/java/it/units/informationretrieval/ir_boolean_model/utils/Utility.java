@@ -497,7 +497,9 @@ public class Utility {
      * @return the list of lists which is the cartesian product of the input list.
      */
     public static <T> List<List<T>> getCartesianProduct(List<List<T>> lists) {
-        final int CARTESIAN_PRODUCT_SIZE = lists.stream().mapToInt(List::size).reduce((a, b) -> a * b).orElse(0);
+        lists = lists.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        final int CARTESIAN_PRODUCT_SIZE = lists
+                .stream().mapToInt(List::size).reduce((a, b) -> a * b).orElse(0);
         List<List<T>> resultLists = new ArrayList<>(CARTESIAN_PRODUCT_SIZE);
         if (lists.size() == 0) {
             resultLists.add(new ArrayList<>());

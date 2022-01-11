@@ -373,6 +373,11 @@ public class BooleanExpression {
      *                           it is set to false, all possible phonetic corrections
      *                           will be considered, independently of how far the resulting
      *                           correction is from the initial query.
+     *                           <strong>NOTICE</strong>: it can be <strong>dangerous</strong>
+     *                           to set this parameter to <code>false</code>, due to the high level
+     *                           number of combinations in which the correction can take place
+     *                           (very high computational cost) and it might leads to
+     *                           {@link StackOverflowError}.
      * @return a new instance of this class with the spelling correction, ready
      * to invoke {@link #evaluate()} for a new evaluation of the instance on the
      * spelling-corrected query.
@@ -423,6 +428,7 @@ public class BooleanExpression {
                         if (isMatchingValueSet()) {
                             booleanExpressionWithCorrection =
                                     corrections.stream()
+                                            .filter(phrase -> phrase.size() > 0)
                                             .map(phrase -> phrase.getWordAt(0)/*single word query, so take the first word in the phrase*/)
                                             .map(correctedWord -> new BooleanExpression(this, true)
                                                     .setMatchingValueWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(correctedWord))
@@ -1020,13 +1026,15 @@ public class BooleanExpression {
      * @return true if a spelling correction was applied on this instance.
      */
     public boolean isSpellingCorrectionApplied() {
-        if (isAggregated) {
+        if (spellingCorrector != null) {
+            return true;
+        } else if (isAggregated) {
             assert leftChildOperand != null;
             assert rightChildOperand != null;
             return leftChildOperand.isSpellingCorrectionApplied()
                     || rightChildOperand.isSpellingCorrectionApplied();
         } else {
-            return spellingCorrector != null;
+            return false;
         }
     }
 
@@ -1036,20 +1044,18 @@ public class BooleanExpression {
      * and the actual query to the IR system.
      *
      * @return the distance between words in this query (if it was spelling-corrected)
-     * respect to the query inserted by the user.
+     * respect to the query inserted by the user or {@link Integer#MAX_VALUE} if
+     * the user specified to use the maximum possible edit distance.
      */
     public int getEditDistanceForSpellingCorrection() {
-        if (isSpellingCorrectionApplied()) {
-            if (isAggregated) {
-                assert leftChildOperand != null;
-                assert rightChildOperand != null;
-                return Math.max(
-                        leftChildOperand.getEditDistanceForSpellingCorrection(),
-                        rightChildOperand.getEditDistanceForSpellingCorrection());
-            } else {
-                assert spellingCorrector != null;
-                return spellingCorrector.getOverallEditDistance();
-            }
+        if (spellingCorrector != null) {
+            return spellingCorrector.getOverallEditDistance();
+        } else if (isAggregated) {
+            assert leftChildOperand != null;
+            assert rightChildOperand != null;
+            assert leftChildOperand.getEditDistanceForSpellingCorrection()
+                    == rightChildOperand.getEditDistanceForSpellingCorrection();
+            return leftChildOperand.getEditDistanceForSpellingCorrection();
         } else {
             return 0;
         }
