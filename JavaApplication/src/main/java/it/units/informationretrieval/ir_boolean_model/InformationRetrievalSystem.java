@@ -81,9 +81,21 @@ public class InformationRetrievalSystem implements Serializable {
         return invertedIndex.getDictionaryTermsContainingSubstring(substring);
     }
 
+    /**
+     * @return a new instance of {@link BooleanExpression} for this instance.
+     */
     @NotNull
     public BooleanExpression createNewBooleanExpression() {
         return new BooleanExpression(this);
+    }
+
+    /**
+     * @param queryString The query string.
+     * @return the results for the given query string.
+     */
+    @NotNull
+    public List<Document> retrieve(@NotNull String queryString) {
+        return createNewBooleanExpression().parseQuery(queryString).evaluate();
     }
 
     /**
