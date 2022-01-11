@@ -1,3 +1,5 @@
+package it.units.informationretrieval.ir_boolean_model.evaluation;
+
 import benchmark.BenchmarkRunner;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 

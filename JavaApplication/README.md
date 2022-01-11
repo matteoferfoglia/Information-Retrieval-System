@@ -35,8 +35,11 @@ distributed to the users, who can execute it from the terminal (assuming they ha
 
    java -jar *jarFileName.jar* *inputParameters*
 
-## Benchmark
+## Evaluation
+
+### Benchmark
 
 This project use the Java-Benchmark framework (see dependencies in *pom.xml*)
-for benchmarking methods. The Benchmark tests can be run by the main method of class test/Benchmarking and everything
-works according to the documentation of the used framework.
+for benchmarking methods. The Benchmark tests can be run by the main method of test class
+it.units.informationretrieval.ir_boolean_model.evaluation.Benchmarking and everything works according to the
+documentation of the used framework.
