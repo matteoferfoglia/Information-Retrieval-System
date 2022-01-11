@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  */
 class ExampleOfUseOfTheIRSystem {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) {    // TODO: refactor
 
         try {
 

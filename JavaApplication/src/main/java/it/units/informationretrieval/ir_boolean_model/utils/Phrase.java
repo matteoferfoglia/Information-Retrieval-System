@@ -1,15 +1,18 @@
-package it.units.informationretrieval.ir_boolean_model.queries;
+package it.units.informationretrieval.ir_boolean_model.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 /**
  * Representation of a phrase.
+ *
+ * @author Matteo Ferfoglia
  */
-public class Phrase {
+public class Phrase implements Serializable {
     /**
      * The phrase as list of words.
      */

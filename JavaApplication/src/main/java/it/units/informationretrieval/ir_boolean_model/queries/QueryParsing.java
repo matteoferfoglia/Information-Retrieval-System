@@ -3,16 +3,16 @@ package it.units.informationretrieval.ir_boolean_model.queries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression.BINARY_OPERATOR.AND;
-import static it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression.BINARY_OPERATOR.OR;
-import static it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression.UNARY_OPERATOR.IDENTITY;
-import static it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression.UNARY_OPERATOR.NOT;
+import static it.units.informationretrieval.ir_boolean_model.queries.BINARY_OPERATOR.AND;
+import static it.units.informationretrieval.ir_boolean_model.queries.BINARY_OPERATOR.OR;
+import static it.units.informationretrieval.ir_boolean_model.queries.UNARY_OPERATOR.IDENTITY;
+import static it.units.informationretrieval.ir_boolean_model.queries.UNARY_OPERATOR.NOT;
 
 /**
  * This class provides the functionalities to parseBinaryExpression an input
@@ -53,7 +53,7 @@ class QueryParsing {
     private static final Pattern REGEX_BRACKETS = Pattern.compile("[(][^()]*[)]");
 
     /**
-     * @param binaryOperator The {@link BooleanExpression.BINARY_OPERATOR} of the expression
+     * @param binaryOperator The {@link BINARY_OPERATOR} of the expression
      *                       to match.
      * @return a {@link String} which is a regex that either matches a binary expression
      * in a text or matches a binary "OR" expressions, whose operands can contain one or
@@ -61,7 +61,7 @@ class QueryParsing {
      * the OR operations. The returned regex ignores unary expressions.
      */
     private static String getRegexMatchingBinaryExpressionIgnoringUnaryExpressions(
-            @NotNull final BooleanExpression.BINARY_OPERATOR binaryOperator) {
+            @NotNull final BINARY_OPERATOR binaryOperator) {
         boolean andOperatorMustBeCaptured = binaryOperator.equals(OR);
         String otherThingsToCapture = andOperatorMustBeCaptured
                 ? "([^\\|]+\\&[^\\|]+)+"    // OR has lower precedence than AND, so AND expressions can be present inside OR expressions (as inner expressions)
@@ -76,19 +76,29 @@ class QueryParsing {
      * Parses the input textual query string.
      *
      * @param queryString The input query string to be parsed.
-     * @return the expression for the input query string.
+     * @return the expression for the input query string or null if
+     * the input is invalid.
      */
+    @Nullable
     static Expression parse(@NotNull String queryString) {
-
-        // remove the special character not allowed in query strings because used in intermediate operations
-        Wrapper<String> wrappedQueryString = new Wrapper<>(
-                queryString.replaceAll(REPLACED_EXPRESSION_PLACEHOLDER, ""));
-
-        return parseWithBracketsPriority(new Stack<>(), wrappedQueryString);
+        try {
+            // remove the special character not allowed in query strings because used in intermediate operations
+            Wrapper<String> wrappedQueryString = new Wrapper<>(
+                    queryString.replaceAll(REPLACED_EXPRESSION_PLACEHOLDER, ""));
+            return parseWithBracketsPriority(new Stack<>(), wrappedQueryString);
+        } catch (Exception e) {
+            // catch any exception due to parsing to avoid the program to crash
+            Logger.getLogger(QueryParsing.class.getCanonicalName())
+                    .log(
+                            Level.WARNING,
+                            "Exception thrown while parsing the query string (\"" + queryString + "\")",
+                            e);
+            return null;
+        }
     }
 
     /**
-     * The idea of this method is similar to {@link #parseBinaryExpression(Stack, Wrapper, BooleanExpression.BINARY_OPERATOR)}
+     * The idea of this method is similar to {@link #parseBinaryExpression(Stack, Wrapper, BINARY_OPERATOR)}
      * and is used to handle the priority of the expressions thanks to brackets.
      *
      * @param alreadyFoundExpressions The {@link Stack} of already detected higher-priority expressions.
@@ -175,7 +185,7 @@ class QueryParsing {
     private static Expression parseBinaryExpression(
             @NotNull Stack<Expression> alreadyFoundExpressions,
             @NotNull Wrapper<String> remainingQueryString,
-            @NotNull BooleanExpression.BINARY_OPERATOR binaryOperator) {
+            @NotNull BINARY_OPERATOR binaryOperator) {
 
         Pattern compiledRegex = binaryOperator.equals(AND) ? REGEX_AND : REGEX_OR;
         assert remainingQueryString.get() != null;
@@ -217,7 +227,7 @@ class QueryParsing {
         } else {
             // no more match, the remaining query string might be nothing (i.e., everything already parsed) or a unary expression
 
-            BooleanExpression.UNARY_OPERATOR unaryOperator = IDENTITY;  // default;
+            UNARY_OPERATOR unaryOperator = IDENTITY;  // default;
 
             String remainingQueryStringVal = remainingQueryString.get().strip();
             int indexOfNotOperator = remainingQueryStringVal.indexOf(NOT.getSymbol());
@@ -243,250 +253,6 @@ class QueryParsing {
                 case 1 -> new UnaryExpression(alreadyFoundExpressions.pop(), unaryOperator);
                 default -> BinaryExpression.createFromList(alreadyFoundExpressions, binaryOperator);
             };
-        }
-    }
-
-    /**
-     * Represents a logic expression.
-     */
-    private interface Expression {
-        /**
-         * Class representing the value of an {@link Expression}.
-         */
-        record Value(String value) {
-            @Override
-            public String toString() {
-                return value;
-            }
-        }
-    }
-
-    /**
-     * Class representing a unary expression.
-     * Example: if "e" is an expression, then "NOT e" is
-     * the unary expression which is the negation of "e".
-     */
-    private static class UnaryExpression implements Expression {
-        /**
-         * The {@link BooleanExpression.UNARY_OPERATOR} for this instance.
-         */
-        @NotNull
-        private final BooleanExpression.UNARY_OPERATOR operator;
-
-        /**
-         * The {@link Expression.Value} for this instance, if this instance
-         * is NOT an aggregated expression.
-         */
-        @Nullable
-        private final Expression.Value value;
-
-        /**
-         * The {@link Expression} contained inside this instance.
-         */
-        @Nullable
-        private final Expression innerExpression;
-
-        /**
-         * Constructor.
-         *
-         * @param expressionValue The value contained in this instance.
-         * @param operator        The {@link BooleanExpression.UNARY_OPERATOR} for this instance.
-         */
-        public UnaryExpression(
-                @NotNull final Value expressionValue,
-                @NotNull final BooleanExpression.UNARY_OPERATOR operator) {
-            this(operator, Objects.requireNonNull(expressionValue), null);
-        }
-
-        /**
-         * Constructor.
-         */
-        private UnaryExpression(
-                @NotNull final BooleanExpression.UNARY_OPERATOR operator,
-                @Nullable final Value expressionValue,
-                @Nullable final Expression innerExpression) {
-
-            if (innerExpression instanceof UnaryExpression unaryExpression) {
-                this.innerExpression = unaryExpression.innerExpression;
-                this.value = unaryExpression.value;
-                this.operator = operator.equals(IDENTITY)
-                        ? unaryExpression.operator
-                        : /*negation*/ unaryExpression.operator.equals(NOT) ? /*NOT * NOT = IDENTITY*/ IDENTITY : NOT;
-            } else {
-                this.innerExpression = innerExpression;
-                this.operator = Objects.requireNonNull(operator);
-                this.value = expressionValue;
-            }
-
-            assert isComplementaryConditionHolding();
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param innerExpression The {@link Expression} contained inside this instance.
-         * @param operator        The {@link BooleanExpression.UNARY_OPERATOR} for this instance.
-         */
-        public UnaryExpression(
-                @NotNull final Expression innerExpression,
-                @NotNull final BooleanExpression.UNARY_OPERATOR operator) {
-            this(operator, null, Objects.requireNonNull(innerExpression));
-        }
-
-        /**
-         * @return true if the complementary conditions (which states that either
-         * the {@link #value} or the {@link #innerExpression} must be not null
-         * but not both of them) holds, false otherwise.
-         */
-        private boolean isComplementaryConditionHolding() {
-            return value == null && innerExpression != null
-                    || value != null && innerExpression == null;
-        }
-
-        /**
-         * @return true if this instance contains an inner {@link Expression}.
-         */
-        public boolean isAggregated() {
-            assert isComplementaryConditionHolding();
-            return innerExpression != null;
-        }
-
-        @Override
-        public String toString() {
-            String innerToString;
-            if (isAggregated()) {
-                assert innerExpression != null;
-                innerToString = innerExpression.toString();
-            } else {
-                assert value != null;
-                innerToString = value.value();
-            }
-            return operator.equals(NOT)
-                    ? "NOT " + (innerExpression == null ? "(" : "") + innerToString + " " + (innerExpression == null ? ")" : "")
-                    : innerToString;
-        }
-
-        /**
-         * @return the value of this instance or null if it is an aggregated expression.
-         */
-        @Nullable
-        public String getValue() {
-            assert isComplementaryConditionHolding();
-            return value != null ? value.value() : null;
-        }
-
-        /**
-         * Getter for the operator of this expression.
-         */
-        @NotNull
-        public BooleanExpression.UNARY_OPERATOR getOperator() {
-            return operator;
-        }
-    }
-
-    /**
-     * Class representing a binary expression.
-     * Example: "a AND b" is a binary expression.
-     */
-    private static class BinaryExpression implements Expression {
-
-        /**
-         * The {@link BooleanExpression.BINARY_OPERATOR} for this instance.
-         */
-        @NotNull
-        private final BooleanExpression.BINARY_OPERATOR operator;
-
-        /**
-         * The left-operand for this instance.
-         */
-        @NotNull
-        private final Expression leftOperand;
-
-        /**
-         * The right-operand for this instance.
-         */
-        @NotNull
-        private final Expression rightOperand;
-
-        /**
-         * Constructor.
-         *
-         * @param leftOperand    The left-operand of this binary expression.
-         * @param binaryOperator The binary operator of this binary expression.
-         * @param rightOperand   The right-operand of this binary expression.
-         */
-        public BinaryExpression(
-                @NotNull final Expression leftOperand,
-                @NotNull final BooleanExpression.BINARY_OPERATOR binaryOperator,
-                @NotNull final Expression rightOperand) {
-            this.leftOperand = Objects.requireNonNull(leftOperand);
-            this.operator = Objects.requireNonNull(binaryOperator);
-            this.rightOperand = Objects.requireNonNull(rightOperand);
-        }
-
-        /**
-         * Creates an aggregated instance, having as children the elements from
-         * the input list.
-         *
-         * @param expressions  The list of expressions.
-         * @param concatenator The {@link BooleanExpression.BINARY_OPERATOR} to use
-         *                     to concatenate the input list of expressions.
-         */
-        public static BinaryExpression createFromList(
-                @NotNull Stack<Expression> expressions,
-                @NotNull BooleanExpression.BINARY_OPERATOR concatenator) {
-
-            return switch (expressions.size()) {
-                case 0 -> throw new IllegalArgumentException(
-                        "At least one expression must be present in the input list");
-                case 1 -> {
-                    Expression e = expressions.pop();
-                    if (e instanceof BinaryExpression binaryExpression) {
-                        yield binaryExpression;
-                    } else {
-                        throw new IllegalArgumentException(BinaryExpression.class.getCanonicalName() + " expected, but "
-                                + e.getClass().getCanonicalName() + " found");
-                    }
-                }
-                default -> {
-                    List<UnaryExpression> unaryExpressions = expressions.stream()
-                            .filter(expression -> expression instanceof UnaryExpression)
-                            .map(expression -> (UnaryExpression) expression)
-                            .toList();
-                    expressions.removeAll(unaryExpressions);
-                    if (unaryExpressions.size() > 0) {
-                        if (unaryExpressions.size() % 2 == 0) {
-                            for (int i = 0; i < unaryExpressions.size(); ) {
-                                expressions.push(new BinaryExpression(
-                                        unaryExpressions.get(i++), concatenator, unaryExpressions.get(i++)));
-                            }
-                        } else {
-                            BinaryExpression be = (BinaryExpression) expressions.stream()
-                                    .filter(expression -> expression instanceof BinaryExpression)
-                                    .findAny()
-                                    .orElseThrow(); // if here: expressions.size()>=2 && unaryExpressions.size() is odd, hence a Binary expression MUST be present
-                            expressions.remove(be);
-                            expressions.push(new BinaryExpression(be, concatenator, unaryExpressions.get(0)));
-                            unaryExpressions.remove(0);
-                            assert unaryExpressions.size() == 0 || unaryExpressions.size() % 2 == 1;
-                            for (int i = 0; i < unaryExpressions.size(); ) {
-                                expressions.push(new BinaryExpression(
-                                        unaryExpressions.get(i++), concatenator, unaryExpressions.get(i++)));
-                            }
-                        }
-                    }
-
-                    yield new BinaryExpression( // more than one boolean expression are present
-                            expressions.pop(),
-                            concatenator,
-                            createFromList(expressions, concatenator));
-                }
-            };
-        }
-
-        @Override
-        public String toString() {
-            return "( " + leftOperand + " " + operator + " " + rightOperand + " )";
         }
     }
 

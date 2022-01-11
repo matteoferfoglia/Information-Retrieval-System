@@ -13,10 +13,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
-import java.util.function.Function;
 import java.util.function.IntFunction;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -221,6 +218,35 @@ public class BooleanExpression {
     }
 
     /**
+     * Parses the input {@link String} representing a query and
+     * returns the corresponding {@link BooleanExpression}.
+     * The input query must respect the following rules:
+     * <ul>
+     *     <li>the character &amp; is the AND operator</li>
+     *     <li>the character | is the OR operator</li>
+     *     <li>parenthesis ( ) can be used for prioritization</li>
+     * </ul>
+     * <p/>
+     * Examples:
+     * // TODO: add examples
+     *
+     * @param queryString The query string.
+     * @return the {@link BooleanExpression} for the input query string.
+     * @throws IllegalArgumentException if the input does not represent a valid query
+     */
+    public BooleanExpression parseQuery(@NotNull String queryString) throws IllegalArgumentException {
+        Objects.requireNonNull(queryString);
+        throwIfAggregatedOrMatchingValueAlreadySetOrMatchingPhraseAlreadySet();
+
+        Expression e = QueryParsing.parse(queryString);
+
+
+        // TODO: method not completed
+        throw new UnsupportedOperationException();
+
+    }
+
+    /**
      * This method tries to perform a spelling correction on the query inserted
      * by the user and returns the instance, ready for a new evaluation.
      *
@@ -263,12 +289,12 @@ public class BooleanExpression {
 
                         if (isMatchingValueSet()) {
                             spellingCorrector = new SpellingCorrector(
-                                    new it.units.informationretrieval.ir_boolean_model.queries.Phrase(matchingValue),
+                                    new it.units.informationretrieval.ir_boolean_model.utils.Phrase(matchingValue),
                                     phoneticCorrection, useEditDistance,
                                     informationRetrievalSystem, spellingCorrectedQueryWordsComparator);
                         } else if (isMatchingPhraseSet()) {
                             spellingCorrector = new SpellingCorrector(
-                                    new it.units.informationretrieval.ir_boolean_model.queries.Phrase(matchingPhrase.words),
+                                    new it.units.informationretrieval.ir_boolean_model.utils.Phrase(matchingPhrase.words),
                                     phoneticCorrection, useEditDistance,
                                     informationRetrievalSystem, spellingCorrectedQueryWordsComparator);
                         } else {
@@ -291,7 +317,7 @@ public class BooleanExpression {
                         } else if (isMatchingPhraseSet()) {
                             booleanExpressionWithCorrection =
                                     corrections.stream()
-                                            .map(it.units.informationretrieval.ir_boolean_model.queries.Phrase::getArrayOfWords)
+                                            .map(it.units.informationretrieval.ir_boolean_model.utils.Phrase::getArrayOfWords)
                                             .map(correctedPhrase -> new BooleanExpression(this, true)
                                                     .setMatchingPhraseWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(
                                                             correctedPhrase, matchingPhrase.distanceFromFirstWord))
@@ -332,13 +358,7 @@ public class BooleanExpression {
      * @return This instance after the execution of this method.
      */
     public BooleanExpression setMatchingValue(@NotNull String matchingValue) {
-        throwIfIsAggregated();
-        if (isMatchingPhraseSet()) {
-            throw new IllegalStateException("Matching phrase already set, cannot set matching value too.");
-        } else if (isMatchingValueSet()) {
-            throw new IllegalStateException("Matching value already set, cannot re-set");
-        }
-
+        throwIfAggregatedOrMatchingValueAlreadySetOrMatchingPhraseAlreadySet();
         return setMatchingValueWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(matchingValue);
     }
 
@@ -377,16 +397,31 @@ public class BooleanExpression {
      * @return This instance after the execution of this method.
      */
     public BooleanExpression setMatchingPhrase(@NotNull String[] matchingPhrase, int[] matchingPhraseDistances) {
-        throwIfIsAggregated();
-        if (isMatchingValueSet()) {
-            throw new IllegalStateException("Matching value already set, cannot set matching value too.");
-        } else if (isMatchingPhraseSet()) {
-            throw new IllegalStateException("Matching phrase already set, cannot re-set");
-        }
-
+        throwIfAggregatedOrMatchingValueAlreadySetOrMatchingPhraseAlreadySet();
         return setMatchingPhraseWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(
                 matchingPhrase, matchingPhraseDistances);
 
+    }
+
+    /**
+     * @throws IllegalStateException if at least one of the following conditions holds:
+     *                               <ul>
+     *                                   <li>this instance is an aggregated expression</li>
+     *                                   <li>the {@link #matchingValue} for this instance was already set</li>
+     *                                   <li>the {@link #matchingPhrase} for this instance was already set</li>
+     *                               </ul>
+     */
+    private void throwIfAggregatedOrMatchingValueAlreadySetOrMatchingPhraseAlreadySet() throws IllegalStateException {
+        throwIfIsAggregated();
+        StringBuilder errorMsg = new StringBuilder();
+        if (isMatchingValueSet()) {
+            errorMsg.append("Matching value");
+        } else if (isMatchingPhraseSet()) {
+            errorMsg.append("Matching phrase");
+        }
+        if (!errorMsg.isEmpty()) {
+            throw new IllegalStateException(errorMsg.append(" already set, cannot re-set.").toString());
+        }
     }
 
     /**
@@ -897,82 +932,6 @@ public class BooleanExpression {
      */
     public String getInitialQueryString() {
         return queryString;
-    }
-
-    /**
-     * Enumeration for possible unary operators to apply on a {@link BooleanExpression}.
-     */
-    public enum UNARY_OPERATOR implements BOOLEAN_OPERATOR {
-        /**
-         * IDENTITY. No operator is applied.
-         */
-        IDENTITY(""),
-
-        /**
-         * NOT operator. If it is applied on a non-aggregated {@link BooleanExpression},
-         * it search for documents which do not have the matching value of that {@link
-         * BooleanExpression}; if it is applied to an aggregated {@link BooleanExpression},
-         * it search for documents which do <strong>not</strong> match the given expression.
-         */
-        NOT("!");
-
-        /**
-         * The symbol for the operator.
-         */
-        private final String SYMBOL;
-
-        /**
-         * @param symbol The symbol for the operator.
-         */
-        UNARY_OPERATOR(@NotNull String symbol) {
-            this.SYMBOL = Objects.requireNonNull(symbol);
-        }
-
-        @Override
-        public String getSymbol() {
-            return SYMBOL;
-        }
-    }
-
-    /**
-     * Enumeration for possible binary operators to apply on two {@link BooleanExpression}s,
-     * which are the operands.
-     */
-    public enum BINARY_OPERATOR implements BOOLEAN_OPERATOR {
-        /**
-         * AND operator. Both the {@link BooleanExpression}s (operands) must hold.
-         */
-        AND("&"),
-
-        /**
-         * OR operator. At least one of the {@link BooleanExpression}s (operands) must hold.
-         */
-        OR("|");
-
-        /**
-         * The symbol for the operator.
-         */
-        private final String SYMBOL;
-
-        /**
-         * @param symbol The symbol for the operator.
-         */
-        BINARY_OPERATOR(@NotNull String symbol) {
-            this.SYMBOL = Objects.requireNonNull(symbol);
-        }
-
-        @Override
-        public String getSymbol() {
-            return SYMBOL;
-        }
-    }
-
-    public interface BOOLEAN_OPERATOR {
-
-        /**
-         * @return the symbol for the operator.
-         */
-        String getSymbol();
     }
 
     /**
