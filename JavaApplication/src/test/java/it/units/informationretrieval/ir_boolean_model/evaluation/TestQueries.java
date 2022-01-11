@@ -3,6 +3,7 @@ package it.units.informationretrieval.ir_boolean_model.evaluation;
 import it.units.informationretrieval.ir_boolean_model.document_descriptors.Movie;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -20,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * and this class is <strong>not</strong> intended for test purposes,
  * but most for demonstration use.
  */
-public class TestQueries {
+@Disabled   // illustrative tests
+class TestQueries {
 
     @Test
     void illustrativeExample() {

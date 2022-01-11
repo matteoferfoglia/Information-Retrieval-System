@@ -8,6 +8,7 @@ import it.units.informationretrieval.ir_boolean_model.entities.Language;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -19,9 +20,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This class tests the system on a set of test queries.
@@ -32,7 +36,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * and this class is <strong>not</strong> intended for test purposes,
  * but most for demonstration use.
  */
-public class TestQueriesWithQueryStringParsing {
+@Disabled   // illustrative tests
+class TestQueriesWithQueryStringParsing {
 
     // documents randomly chosen for tests
     static Document doc1, doc2;
@@ -84,7 +89,8 @@ public class TestQueriesWithQueryStringParsing {
                         removeAll(((WordSupplier) wordsContainedBothInFirstAndSecondDocumentSupplier).getAllWords());
                     }});
         } catch (NoMoreDocIdsAvailable | URISyntaxException e) {
-            fail(e);
+            Logger.getLogger(TestQueriesWithQueryStringParsing.class.getCanonicalName())
+                    .log(Level.SEVERE, "Error during class initialization", e);
         }
     }
 
