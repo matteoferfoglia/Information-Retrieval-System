@@ -1020,7 +1020,14 @@ public class BooleanExpression {
      * @return true if a spelling correction was applied on this instance.
      */
     public boolean isSpellingCorrectionApplied() {
-        return spellingCorrector != null;
+        if (isAggregated) {
+            assert leftChildOperand != null;
+            assert rightChildOperand != null;
+            return leftChildOperand.isSpellingCorrectionApplied()
+                    || rightChildOperand.isSpellingCorrectionApplied();
+        } else {
+            return spellingCorrector != null;
+        }
     }
 
     /**
@@ -1033,8 +1040,16 @@ public class BooleanExpression {
      */
     public int getEditDistanceForSpellingCorrection() {
         if (isSpellingCorrectionApplied()) {
-            assert spellingCorrector != null;
-            return spellingCorrector.getOverallEditDistance();
+            if (isAggregated) {
+                assert leftChildOperand != null;
+                assert rightChildOperand != null;
+                return Math.max(
+                        leftChildOperand.getEditDistanceForSpellingCorrection(),
+                        rightChildOperand.getEditDistanceForSpellingCorrection());
+            } else {
+                assert spellingCorrector != null;
+                return spellingCorrector.getOverallEditDistance();
+            }
         } else {
             return 0;
         }
