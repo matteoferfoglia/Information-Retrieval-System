@@ -221,7 +221,9 @@ class QueryParsing {
         } else if (// Check if the remaining query string is boxed by the phrase delimiter
                 remainingQueryStringTmp.length() >= 2 * BooleanExpression.PHRASE_DELIMITER.length()
                         && remainingQueryStringTmp.startsWith(BooleanExpression.PHRASE_DELIMITER)
-                        && remainingQueryStringTmp.endsWith(BooleanExpression.PHRASE_DELIMITER)) {
+                        && remainingQueryStringTmp.endsWith(BooleanExpression.PHRASE_DELIMITER)
+                        && !remainingQueryStringTmp.substring(1, remainingQueryStringTmp.length() - 1)
+                        .contains(BooleanExpression.PHRASE_DELIMITER)) {
             return finalizerWhenNoMoreMatch(alreadyFoundExpressions, remainingQueryString, binaryOperator);
         } else {
 
