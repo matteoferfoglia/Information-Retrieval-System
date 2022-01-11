@@ -2,6 +2,7 @@ package it.units.informationretrieval.ir_boolean_model;
 
 import it.units.informationretrieval.ir_boolean_model.document_descriptors.Movie;
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
+import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
 import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
@@ -31,7 +32,7 @@ class ExampleOfUseOfTheIRSystem {
             File file_irSystem = new File(fileName_irSystem);
 
             // Load the IR System if already exists
-            InformationRetrievalSystem ir;
+            InformationRetrievalSystem irs;
 
             switch (file_irSystem.isFile() ? 1 : 0) {
                 case 1:    // file exists
@@ -42,7 +43,7 @@ class ExampleOfUseOfTheIRSystem {
                     try {
                         Object irSystem_object = ois.readObject();
                         if (irSystem_object instanceof InformationRetrievalSystem) {
-                            ir = (InformationRetrievalSystem) irSystem_object;
+                            irs = (InformationRetrievalSystem) irSystem_object;
                             System.out.println("IRSystem loaded from the file system.");
                             break;
                         }   // else create the IRSystem
@@ -61,7 +62,7 @@ class ExampleOfUseOfTheIRSystem {
 
                     // Create the IR System
                     System.out.println("Creating the IR System");
-                    ir = new InformationRetrievalSystem(corpus);
+                    irs = new InformationRetrievalSystem(corpus);
 
                     // Serialize and save the IR System to the file system
                     if (file_irSystem.createNewFile()) {    // if file already exists will do nothing
@@ -74,7 +75,7 @@ class ExampleOfUseOfTheIRSystem {
                                     new FileOutputStream(fileName_irSystem, false)
                             )
                     );
-                    oos.writeObject(ir);
+                    oos.writeObject(irs);
                     System.out.println("IR System saved to file " + fileName_irSystem);
                     oos.flush();
                     oos.close();
@@ -82,27 +83,51 @@ class ExampleOfUseOfTheIRSystem {
 
             // Use the information retrieval system
             final int MAX_N_RESULTS = 10;
-            System.out.println(andQueryAndReturnResultsAsString(ir, Arrays.asList("Vidya", "Bagchi", "Kolkata"), MAX_N_RESULTS));
-            System.out.println(andQueryAndReturnResultsAsString(ir, Arrays.asList("Space", "jam"), MAX_N_RESULTS));
-            System.out.println(andQueryAndReturnResultsAsString(ir, Collections.singletonList("hand"), MAX_N_RESULTS));
+            System.out.println(andQueryAndReturnResultsAsString(irs, Arrays.asList("Vidya", "Bagchi", "Kolkata"), MAX_N_RESULTS));
+            System.out.println(andQueryAndReturnResultsAsString(irs, Arrays.asList("Space", "jam"), MAX_N_RESULTS));
+            System.out.println(andQueryAndReturnResultsAsString(irs, Collections.singletonList("hand"), MAX_N_RESULTS));
 
             // Using Boolean expressions
             System.out.println(queryAndReturnResultsAsString(
-                    ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" ")), MAX_N_RESULTS));
+                    irs.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" ")), MAX_N_RESULTS));
             System.out.println(queryAndReturnResultsAsString(
-                    ir.createNewBooleanExpression()
+                    irs.createNewBooleanExpression()
                             .setMatchingPhrase("Space jam".split(" "))
-                            .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bagchi")), MAX_N_RESULTS));
+                            .or(irs.createNewBooleanExpression().setMatchingValue("Vidya").or("Bagchi")), MAX_N_RESULTS));
 
             // Wildcards queries
             System.out.println(queryAndReturnResultsAsString(
-                    ir.createNewBooleanExpression()
+                    irs.createNewBooleanExpression()
                             .setMatchingPhrase("Space *am".split(" ")), MAX_N_RESULTS));
             System.out.println(queryAndReturnResultsAsString(
-                    ir.createNewBooleanExpression()
+                    irs.createNewBooleanExpression()
                             .setMatchingPhrase("Space *am".split(" "))
-                            .or(ir.createNewBooleanExpression().setMatchingValue("Vidya").or("Bag*")), MAX_N_RESULTS));
+                            .or(irs.createNewBooleanExpression().setMatchingValue("Vidya").or("Bag*")), MAX_N_RESULTS));
 
+            // QueryString
+            String[] queryStrings = new String[]{
+                    "\"monster\"|\"space\"", "moon", "asterix & obelix", "love !story", "love&!story", "\"Space jam\""};
+            System.out.println(System.lineSeparator() + "Query strings");
+            for (String queryString : queryStrings) {
+                System.out.println("Query string: " + queryString);
+                int maxNumOfResultsToShow = 5;
+                System.out.println(irs.retrieve(queryString).stream().limit(maxNumOfResultsToShow).toList());
+            }
+            System.out.println(System.lineSeparator() + "Query strings (with more output)");
+            for (String queryString : queryStrings) {
+                System.out.println("Query string: " + queryString);
+                int maxNumOfResultsToShow = 5;
+                long start, stop;
+                start = System.nanoTime();
+                BooleanExpression be = irs.createNewBooleanExpression().parseQuery(queryString);
+                List<Document> results = be.evaluate();
+                stop = System.nanoTime();
+                System.out.println("Results for query \"" + queryString + "\"  {" + be.getQueryString() + "} "
+                        + "found in " + (stop - start) / 1e6 + " ms:"
+                        + System.lineSeparator()
+                        + results.stream().limit(maxNumOfResultsToShow)
+                        .map(aResult -> "\t - " + aResult).collect(Collectors.joining(System.lineSeparator())));
+            }
 
             // Spelling correction
             for (var phoneticCorrection : new boolean[]{true, false}) {
@@ -114,13 +139,13 @@ class ExampleOfUseOfTheIRSystem {
                     System.out.println("### " + (useEditDistance ? "with" : "without") + " edit distance ###");
                     System.out.println("### Note: edit-distance can be ignored only with phonetic correction");
 
-                    BooleanExpression wrongQueryBE = ir.createNewBooleanExpression().setMatchingValue("Spack");
+                    BooleanExpression wrongQueryBE = irs.createNewBooleanExpression().setMatchingValue("Spack");
                     System.out.println(queryAndReturnResultsAsString(wrongQueryBE, MAX_N_RESULTS));
                     System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(phoneticCorrection, useEditDistance), MAX_N_RESULTS));
                     System.out.println(queryAndReturnResultsAsString(wrongQueryBE.spellingCorrection(phoneticCorrection, useEditDistance), MAX_N_RESULTS));// edit distance increases each time
 
                     // Spelling correction with phrase
-                    BooleanExpression wrongPhraseQueryBE = ir.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" "));
+                    BooleanExpression wrongPhraseQueryBE = irs.createNewBooleanExpression().setMatchingPhrase("Space jam".split(" "));
                     System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE, MAX_N_RESULTS));
                     System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection, useEditDistance), MAX_N_RESULTS));
                     System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection, useEditDistance), MAX_N_RESULTS));// edit distance increases each time
