@@ -9,11 +9,16 @@ import org.jetbrains.annotations.Nullable;
 import skiplist.SkipList;
 
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.IntFunction;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -39,10 +44,23 @@ public class BooleanExpression {
     // TODO: try to solve StackOverflow errors
 
     /**
+     * The delimiter for a phrase (if matched from an input textual query string.)
+     */
+    public static final String PHRASE_DELIMITER = "\"";
+    /**
+     * If setting a phrase query, this character to specify that the following
+     * <strong>number</strong> is the number of words that must be present
+     * between the two words, e.g. <pre>"The§0cat§1on"</pre> means that between
+     * <pre>"The"</pre> and <pre>"cat"</pre> exactly 0 words are present, while
+     * between <pre>"cat"</pre> and <pre>"on"</pre> exactly 1 word is present
+     * (The entire phrase might be <pre>"The cat is on"</pre>, but we do not
+     * know it).
+     */
+    public static final char NUM_OF_WORDS_FOLLOWS_CHARACTER = '/';
+    /**
      * Flag which is set to true if results of queries must be ranked.
      */
     private static boolean RANK_RESULTS;
-
     /**
      * Flag which is set to true if, for ranking query results, the
      * wf-idf value must be used, otherwise (if it is false) the tf-idf
@@ -144,7 +162,7 @@ public class BooleanExpression {
      *
      * @param informationRetrievalSystem The {@link InformationRetrievalSystem} on which the query must be performed.
      */
-    protected BooleanExpression(@NotNull final InformationRetrievalSystem informationRetrievalSystem) {
+    public BooleanExpression(@NotNull final InformationRetrievalSystem informationRetrievalSystem) {
         this.isAggregated = false;
         this.createdForSpellingCorrection = false;
         this.leftChildOperand = null;
@@ -233,17 +251,113 @@ public class BooleanExpression {
      * @param queryString The query string.
      * @return the {@link BooleanExpression} for the input query string.
      * @throws IllegalArgumentException if the input does not represent a valid query
+     * @throws IllegalStateException    if matching value or phrase were already set for this instance.
      */
-    public BooleanExpression parseQuery(@NotNull String queryString) throws IllegalArgumentException {
+    public BooleanExpression parseQuery(@NotNull String queryString)
+            throws IllegalArgumentException, IllegalStateException {    // TODO: benchmark
         Objects.requireNonNull(queryString);
         throwIfAggregatedOrMatchingValueAlreadySetOrMatchingPhraseAlreadySet();
+        return set(parseExpression(QueryParsing.parse(queryString)));
+    }
 
-        Expression e = QueryParsing.parse(queryString);
+    /**
+     * Sets all non-static and non-final fields of the given instance to this one.
+     * This method makes use of reflections.
+     *
+     * @param parsedBooleanExpression The input instance from which fields must be copied.
+     * @return this instance after the method execution.
+     */
+    private BooleanExpression set(BooleanExpression parsedBooleanExpression) {
+        Arrays.stream(parsedBooleanExpression.getClass().getDeclaredFields())
+                .peek(field -> field.setAccessible(true))
+                .filter(field -> !Modifier.isStatic(field.getModifiers())
+                        && !Modifier.isFinal(field.getModifiers()))
+                .forEach(field -> {
+                    try {
+                        field.set(this, field.get(parsedBooleanExpression));
+                    } catch (IllegalAccessException e) {
+                        Logger.getLogger(getClass().getCanonicalName())
+                                .log(Level.SEVERE, "Impossible to copy field value of field " + field, e);
+                    }
+                });
+        return this;
+    }
 
-
-        // TODO: method not completed
-        throw new UnsupportedOperationException();
-
+    /**
+     * This method translates an instance of {@link Expression} to an instance of
+     * this class.
+     *
+     * @param expression The {@link Expression} to be translated.
+     * @return The resulting instance of this class obtained from the input parameter.
+     */
+    @NotNull
+    private BooleanExpression parseExpression(@Nullable final Expression expression) {
+        if (expression == null) {   // invalid query string
+            return this;
+        } else {
+            if (expression instanceof UnaryExpression unaryExpression) {
+                var innerExpression = unaryExpression.getInnerExpression();
+                var innerValue = unaryExpression.getValue();
+                BooleanExpression be;
+                if (innerExpression.isPresent()) {
+                    be = new BooleanExpression(parseExpression(innerExpression.get()));
+                } else if (innerValue.isPresent()) {
+                    be = this;
+                    String queryString = innerValue.get();
+                    final String REGEX_MATCHING_DELIMITED_PHRASE =
+                            "[" + PHRASE_DELIMITER + "][^" + PHRASE_DELIMITER + "]*[" + PHRASE_DELIMITER + "]";
+                    Matcher phraseMatcher = Pattern.compile(REGEX_MATCHING_DELIMITED_PHRASE).matcher(queryString);
+                    if (phraseMatcher.matches()) {
+                        // phrase is present
+                        String phrase = phraseMatcher.group().replaceAll(PHRASE_DELIMITER, "").strip();
+                        final String REGEX_SEARCHING_INTERMEDIATE_NUM_OF_WORDS =
+                                "\\" + NUM_OF_WORDS_FOLLOWS_CHARACTER + "\\d+";
+                        if (Pattern.compile(REGEX_SEARCHING_INTERMEDIATE_NUM_OF_WORDS).matcher(phrase).find()) {
+                            phrase = phrase.replaceAll("\\s+(?!\\d+)", NUM_OF_WORDS_FOLLOWS_CHARACTER + "0");  // replace spaces with number of (0) intermediate words if not specified
+                            Matcher intermediateNumOfWordsMatcher =
+                                    Pattern.compile(REGEX_SEARCHING_INTERMEDIATE_NUM_OF_WORDS).matcher(phrase);
+                            String[] words = phrase.split(REGEX_SEARCHING_INTERMEDIATE_NUM_OF_WORDS);
+                            int[] intermediateNumOfWords = new int[words.length - 1];
+                            for (int i = 0; i < intermediateNumOfWords.length && intermediateNumOfWordsMatcher.find(); i++) {
+                                intermediateNumOfWords[i] = Integer.parseInt(
+                                        intermediateNumOfWordsMatcher.group()
+                                                .replaceAll("\\" + NUM_OF_WORDS_FOLLOWS_CHARACTER, ""));  // TODO: test
+                            }
+                            int[] distancesOfIthWordFromTheFirstWord = new int[intermediateNumOfWords.length];
+                            int cumulativeDistance = 0;
+                            for (int i = 0; i < distancesOfIthWordFromTheFirstWord.length; i++) {
+                                cumulativeDistance += intermediateNumOfWords[i] + 1; // each word is at least one (+1) word ahead than the previous one
+                                distancesOfIthWordFromTheFirstWord[i] = cumulativeDistance;
+                            }
+                            setMatchingPhrase(words, distancesOfIthWordFromTheFirstWord);
+                        } else {
+                            // phrase does not specify the number of words which must be present between words composing the phrase itself
+                            setMatchingPhrase(Utility.split(phrase));
+                        }
+                    } else {
+                        be = Arrays.stream(Utility.split(queryString))
+                                .filter(s -> !s.isBlank())
+                                .map(aValueToBePresent -> informationRetrievalSystem.createNewBooleanExpression()
+                                        .setMatchingValue(aValueToBePresent))
+                                .reduce(BooleanExpression::and)
+                                .orElse(informationRetrievalSystem.createNewBooleanExpression());
+                    }
+                } else {
+                    throw new IllegalStateException(
+                            "Unexpected that neither expression value nor inner expression are set.");
+                }
+                return be.setUnaryOperator(unaryExpression.getOperator());
+            } else if (expression instanceof BinaryExpression binaryExpression) {
+                assert binaryExpression.getOperator() instanceof BINARY_OPERATOR;
+                return new BooleanExpression(
+                        (BINARY_OPERATOR) binaryExpression.getOperator(),
+                        parseExpression(binaryExpression.getLeftOperand()),
+                        parseExpression(binaryExpression.getRightOperand()));
+            } else {
+                throw new IllegalStateException("Unexpected type for expression: "
+                        + expression.getClass().getCanonicalName());
+            }
+        }
     }
 
     /**
@@ -594,7 +708,7 @@ public class BooleanExpression {
      */
     public BooleanExpression and(@NotNull BooleanExpression other) {
         throwIfNotAggregatedButNeitherValueNorPhraseToMatchIsSet();
-        return new BooleanExpression(BINARY_OPERATOR.AND, this, other);
+        return set(new BooleanExpression(BINARY_OPERATOR.AND, new BooleanExpression(this), other));
     }
 
     /**
@@ -615,9 +729,8 @@ public class BooleanExpression {
      * Like {@link #and(BooleanExpression)}, but accepts a phrase directly.
      */
     public BooleanExpression and(@NotNull String[] matchingPhrase, int[] matchingPhraseMaxDistance) {
-        return and(
-                new BooleanExpression(informationRetrievalSystem)
-                        .setMatchingPhrase(matchingPhrase, matchingPhraseMaxDistance));
+        return and(new BooleanExpression(informationRetrievalSystem)
+                .setMatchingPhrase(matchingPhrase, matchingPhraseMaxDistance));
     }
     //endregion
 
@@ -632,7 +745,7 @@ public class BooleanExpression {
      */
     public BooleanExpression or(@NotNull BooleanExpression other) {
         throwIfNotAggregatedButNeitherValueNorPhraseToMatchIsSet();
-        return new BooleanExpression(BINARY_OPERATOR.OR, this, other);
+        return set(new BooleanExpression(BINARY_OPERATOR.OR, new BooleanExpression(this), other));
     }
 
     /**
@@ -653,9 +766,8 @@ public class BooleanExpression {
      * Like {@link #or(BooleanExpression)}, but accepts a phrase directly.
      */
     public BooleanExpression or(String[] matchingPhrase, int[] matchingPhraseMaxDistance) {
-        return or(
-                new BooleanExpression(informationRetrievalSystem)
-                        .setMatchingPhrase(matchingPhrase, matchingPhraseMaxDistance));
+        return or(new BooleanExpression(informationRetrievalSystem)
+                .setMatchingPhrase(matchingPhrase, matchingPhraseMaxDistance));
     }
     //endregion
 
@@ -876,7 +988,8 @@ public class BooleanExpression {
     @NotNull
     private String getQueryWords(boolean withOperator, boolean normalize) {
         return switch (unaryOperator) {
-            case NOT -> (withOperator ? "NOT " : "") + new BooleanExpression(this).setUnaryOperator(UNARY_OPERATOR.IDENTITY);
+            case NOT -> (withOperator ? "NOT " : "") +
+                    new BooleanExpression(this).setUnaryOperator(UNARY_OPERATOR.IDENTITY).getQueryWords(withOperator, normalize);
             case IDENTITY -> {
                 if (isAggregated) {
                     assert leftChildOperand != null;

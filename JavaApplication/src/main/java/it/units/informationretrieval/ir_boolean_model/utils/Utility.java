@@ -49,7 +49,7 @@ public class Utility {
     /**
      * Regex used in {@link #normalize(String, boolean, Language)}.
      */
-    private static final String REGEX_MULTIPLE_SPACES = " +";
+    private static final String REGEX_MULTIPLE_SPACES = "\\s+";
 
     /**
      * Tokenize a {@link Document} and return the {@link java.util.List} of tokens as
@@ -524,8 +524,7 @@ public class Utility {
      * @return the array obtained by splitting the input {@link String}.
      */
     public static String[] split(@NotNull String toSplit) {
-        final String REGEX = " ";   //  the delimiting regular expression when split
-        return toSplit.split(REGEX);
+        return toSplit.split(REGEX_MULTIPLE_SPACES);
     }
 
     /**

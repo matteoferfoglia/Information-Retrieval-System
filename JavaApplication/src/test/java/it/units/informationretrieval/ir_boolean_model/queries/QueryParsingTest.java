@@ -11,6 +11,14 @@ class QueryParsingTest {
 
     @ParameterizedTest
     @CsvSource({
+            "a, a",
+            "a b, (a AND b)",
+            "a !b, (a AND NOT(b))",
+            "\"a b\", \"a b\"",
+            "\"a & b\", \"a & b\"",
+            "a | b, (a OR b)",
+            "a    b, (a AND b)",
+            "a     b|c, ((a AND b) OR c )",
             "a&b|c||d&&&&f|, (((a AND b)OR c) OR (d AND f))",
             "d&&&&e, (d AND e)",
             "!a, NOT(a)",

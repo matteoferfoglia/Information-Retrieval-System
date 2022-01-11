@@ -1,6 +1,7 @@
 package it.units.informationretrieval.ir_boolean_model.utils.stemmers;
 
 import it.units.informationretrieval.ir_boolean_model.entities.Language;
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import it.units.informationretrieval.ir_boolean_model.utils.stemmers.org.tartarus.snowball.SnowballProgram;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,7 +66,7 @@ class SnowballStemmer implements Stemmer {
                 Our own brains, and the opinion that we bring,
                 To make that only true we now intend,
                 Will leave us never an understanding friend.""";
-        for (String word : input.split(" ")) {
+        for (String word : Utility.split(input)) {
             String stemmed = snowballStemmer.stem(word, Language.ENGLISH);
             System.out.print(stemmed + " ");
         }

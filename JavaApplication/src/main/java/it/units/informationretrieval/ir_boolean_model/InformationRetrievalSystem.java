@@ -83,8 +83,7 @@ public class InformationRetrievalSystem implements Serializable {
 
     @NotNull
     public BooleanExpression createNewBooleanExpression() {
-        return new BooleanExpression(this) {
-        };
+        return new BooleanExpression(this);
     }
 
     /**

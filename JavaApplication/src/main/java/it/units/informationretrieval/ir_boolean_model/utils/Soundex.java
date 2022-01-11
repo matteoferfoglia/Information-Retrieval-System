@@ -68,7 +68,7 @@ public abstract class Soundex {
     private static String padWith0IfNeededAndGetFirst4LettersOf(String inputString) {
         final int TARGET_WORD_LENGTH = 4;
         inputString = inputString.length() > TARGET_WORD_LENGTH ? inputString.substring(0, TARGET_WORD_LENGTH) : inputString;
-        return String.format("%-" + TARGET_WORD_LENGTH + "s", inputString).replaceAll(" ", "0");
+        return String.format("%-" + TARGET_WORD_LENGTH + "s", inputString).replaceAll("\\s+", "0");
     }
 
 }

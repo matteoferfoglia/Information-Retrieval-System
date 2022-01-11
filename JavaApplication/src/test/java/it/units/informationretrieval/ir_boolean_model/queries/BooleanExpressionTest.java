@@ -5,10 +5,12 @@ import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndexTest;
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -524,5 +526,97 @@ class BooleanExpressionTest {
         final int NUM_OF_RESULTS = splitDocIdIntoList(expectedResultingPostingList).size();
         final int LIMITED_NUM_OF_RESULTS = NUM_OF_RESULTS > 0 ? NUM_OF_RESULTS - 1 : NUM_OF_RESULTS;
         assertEquals(LIMITED_NUM_OF_RESULTS, booleanExpression.limit(LIMITED_NUM_OF_RESULTS).evaluate().size());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"The cat", "a  ", "The   cate"})
+    void parseQuery(String inputQueryString) {
+        String[] words = Utility.split(inputQueryString);
+        assert words.length > 0;
+        BooleanExpression expected = irsForTests.createNewBooleanExpression().setMatchingValue(words[0]);
+        for (int i = 1; i < words.length; i++) {
+            expected.and(words[i]);
+        }
+
+        booleanExpression.parseQuery(inputQueryString);
+        assertEquals(expected.getQueryString(), booleanExpression.getQueryString());
+    }
+
+    @Test
+    void parseQueryWithNot() {
+        String inputQueryString = "Foo !bar";
+        BooleanExpression expected = irsForTests.createNewBooleanExpression()
+                .setMatchingValue("Foo")
+                .and(irsForTests.createNewBooleanExpression().setMatchingValue("bar").not());
+        booleanExpression.parseQuery(inputQueryString);
+        assertEquals(expected.getQueryString(), booleanExpression.getQueryString());
+    }
+
+    @Test
+    void parseQueryWithPrecedence() {
+        String inputQueryString = "!(Foo & (!bar| foo))";
+        BooleanExpression be1 = irsForTests.createNewBooleanExpression().setMatchingValue("bar").not();
+        BooleanExpression expected = irsForTests.createNewBooleanExpression()
+                .setMatchingValue("Foo")
+                .and(be1.or("foo"))
+                .not();
+        booleanExpression.parseQuery(inputQueryString);
+        assertEquals(expected.getQueryString(), booleanExpression.getQueryString());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"\"The cat\"", "\"The cat is on  the table\""})
+    void parsePhraseQuery(String inputPhraseQueryString) {
+        BooleanExpression expected = irsForTests.createNewBooleanExpression()
+                .setMatchingPhrase(
+                        Arrays.stream(Utility.split(inputPhraseQueryString.replaceAll("\"", "")))
+                                .filter(s -> !s.isBlank()).toArray(String[]::new));
+        booleanExpression.parseQuery(inputPhraseQueryString);
+        assertEquals(expected.getQueryString(), booleanExpression.getQueryString());
+    }
+
+    @Test
+    void parsePhraseQueryWithIntermediateWords() {
+        String inputPhraseQueryString = BooleanExpression.PHRASE_DELIMITER
+                + "The" + BooleanExpression.NUM_OF_WORDS_FOLLOWS_CHARACTER + "0cat"
+                + BooleanExpression.PHRASE_DELIMITER;
+        BooleanExpression expected = irsForTests.createNewBooleanExpression()
+                .setMatchingPhrase(new String[]{"The", "cat"}, new int[]{1});
+        booleanExpression.parseQuery(inputPhraseQueryString);
+        assertEquals(expected.getQueryString(), booleanExpression.getQueryString());
+    }
+
+    @Test
+    void parsePhraseQueryWithIntermediateWords2() {
+        String inputPhraseQueryString = BooleanExpression.PHRASE_DELIMITER
+                + "The" + BooleanExpression.NUM_OF_WORDS_FOLLOWS_CHARACTER + "1is"
+                + BooleanExpression.PHRASE_DELIMITER;
+        BooleanExpression expected = irsForTests.createNewBooleanExpression()
+                .setMatchingPhrase(new String[]{"The", "is"}, new int[]{2});
+        booleanExpression.parseQuery(inputPhraseQueryString);
+        assertEquals(expected.getQueryString(), booleanExpression.getQueryString());
+    }
+
+    @Test
+    void parsePhraseQueryWithIntermediateWords3() {
+        String inputPhraseQueryString = BooleanExpression.PHRASE_DELIMITER
+                + "The" + BooleanExpression.NUM_OF_WORDS_FOLLOWS_CHARACTER + "1is"
+                + BooleanExpression.NUM_OF_WORDS_FOLLOWS_CHARACTER + "2table"
+                + BooleanExpression.PHRASE_DELIMITER;
+        BooleanExpression expected = irsForTests.createNewBooleanExpression()
+                .setMatchingPhrase(new String[]{"The", "is", "table"}, new int[]{2, 5});
+        booleanExpression.parseQuery(inputPhraseQueryString);
+        assertEquals(expected.getQueryString(), booleanExpression.getQueryString());
+    }
+
+    @Test
+    void throwIfTryToParseQueryOnAnAlreadySetExpression() {
+        String whatever = "whatever";
+        booleanExpression.setMatchingValue(whatever);
+        try {
+            booleanExpression.parseQuery(whatever);
+            fail("Should have thrown exception but did not.");
+        } catch (IllegalStateException ignored) {
+        }
     }
 }

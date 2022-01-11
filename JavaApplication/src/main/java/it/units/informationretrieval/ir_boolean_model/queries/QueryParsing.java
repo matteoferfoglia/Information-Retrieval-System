@@ -3,6 +3,7 @@ package it.units.informationretrieval.ir_boolean_model.queries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -66,9 +67,11 @@ class QueryParsing {
         String otherThingsToCapture = andOperatorMustBeCaptured
                 ? "([^\\|]+\\&[^\\|]+)+"    // OR has lower precedence than AND, so AND expressions can be present inside OR expressions (as inner expressions)
                 : "";
+        otherThingsToCapture += "\\" + BooleanExpression.PHRASE_DELIMITER // TODO: test
+                + "\\" + BooleanExpression.NUM_OF_WORDS_FOLLOWS_CHARACTER;
         String escapedNotSymbol = "\\" + NOT.getSymbol();
-        return "([" + REPLACED_EXPRESSION_PLACEHOLDER + escapedNotSymbol + otherThingsToCapture + "\\w]+\\s*\\"
-                + binaryOperator.getSymbol() + "+"  // "+" to handle the case if the use erroneously insert multiple time the operator in he query string
+        return "([" + REPLACED_EXPRESSION_PLACEHOLDER + escapedNotSymbol + otherThingsToCapture + "\\w]+\\s*"
+                + "\\" + binaryOperator.getSymbol() + "+"  // "+" to handle the case if the use erroneously insert multiple time the operator in he query string
                 + "\\s*[" + REPLACED_EXPRESSION_PLACEHOLDER + escapedNotSymbol + otherThingsToCapture + "\\w]+)";
     }
 
@@ -80,11 +83,33 @@ class QueryParsing {
      * the input is invalid.
      */
     @Nullable
-    static Expression parse(@NotNull String queryString) {
+    static Expression parse(@NotNull String queryString) {    // TODO: benchmark
+
+        // Create copy of query string abd remove the special character not allowed
+        // in query strings because used in intermediate operations
+        String queryStringWorkingCopy = queryString.replaceAll(REPLACED_EXPRESSION_PLACEHOLDER, "");
+
+        {
+            // Replace all spaces between words with AND operator
+            final Pattern REGEX_REPLACE_QUOTES_WITH_AND_OPERATOR = Pattern.compile(
+                    "(\\s*(\\" + NOT.getSymbol() + "*\\w+\\s+)+\\" + NOT.getSymbol() + "*\\w+\\s*(?=("
+                            + "[^\\" + BooleanExpression.PHRASE_DELIMITER + "]*\\" + BooleanExpression.PHRASE_DELIMITER
+                            + "[^\\" + BooleanExpression.PHRASE_DELIMITER + "]*\\" + BooleanExpression.PHRASE_DELIMITER + ")*"
+                            + "[^\\" + BooleanExpression.PHRASE_DELIMITER + "]*$))"
+                            + "|\\w+\\" + BooleanExpression.PHRASE_DELIMITER + "\\s+\\" + NOT.getSymbol() + "*\\w+"
+                            + "|\\w+\\s+\\" + BooleanExpression.PHRASE_DELIMITER + "\\" + NOT.getSymbol() + "*\\w+");
+            for (int i = 0; i < 2; i++) {   // need to pass 2 times over the string to do all replacements
+                Matcher m = REGEX_REPLACE_QUOTES_WITH_AND_OPERATOR.matcher(queryStringWorkingCopy);
+                while (m.find()) {
+                    queryStringWorkingCopy = queryStringWorkingCopy
+                            .replaceAll(m.group(), m.group().replaceAll("\\s+", AND.getSymbol()));
+                }
+            }
+        }
+
+        final Wrapper<String> wrappedQueryString = new Wrapper<>(queryStringWorkingCopy);
+
         try {
-            // remove the special character not allowed in query strings because used in intermediate operations
-            Wrapper<String> wrappedQueryString = new Wrapper<>(
-                    queryString.replaceAll(REPLACED_EXPRESSION_PLACEHOLDER, ""));
             return parseWithBracketsPriority(new Stack<>(), wrappedQueryString);
         } catch (Exception e) {
             // catch any exception due to parsing to avoid the program to crash
@@ -137,12 +162,12 @@ class QueryParsing {
             Expression topLevelORExpression = parseBinaryExpression(alreadyFoundExpressions, remainingQueryString, OR);
 
             // Match high priority binary expressions (AND)
-            String queryString;
-            if (topLevelORExpression instanceof UnaryExpression unaryExpression
-                    && (queryString = unaryExpression.getValue()) != null) {
+            Optional<String> valueOfUnaryExpression;
+            if (topLevelORExpression instanceof UnaryExpression unaryExpression &&
+                    (valueOfUnaryExpression = unaryExpression.getValue()).isPresent()) {
                 // here if no OR expressions were present and the expression was evaluated as a unary expression
                 return new UnaryExpression(
-                        parseBinaryExpression(new Stack<>(), new Wrapper<>(queryString), AND),
+                        parseBinaryExpression(new Stack<>(), new Wrapper<>(valueOfUnaryExpression.get()), AND),
                         unaryExpression.getOperator());
             } else if (remainingQueryString.get() != null) {
                 return parseBinaryExpression(new Stack<>() {{
@@ -187,73 +212,108 @@ class QueryParsing {
             @NotNull Wrapper<String> remainingQueryString,
             @NotNull BINARY_OPERATOR binaryOperator) {
 
-        Pattern compiledRegex = binaryOperator.equals(AND) ? REGEX_AND : REGEX_OR;
         assert remainingQueryString.get() != null;
-        Matcher matcher = compiledRegex.matcher(remainingQueryString.get());
-        if (matcher.find()) {    // .matches() gives wrong result, hence .find() + .reset() is used
-            matcher.reset();
-            while (matcher.find()) {
-                // binary expression found in text (match found)
+        String remainingQueryStringTmp = remainingQueryString.get().strip();
 
-                String[] split = matcher.group()
-                        .replaceAll("\\" + binaryOperator.getSymbol() + "+", binaryOperator.getSymbol()) // remove duplicates of the operator (if the user wrongly inserted it multiple times)
-                        .split("\\" + binaryOperator.getSymbol());
-                assert split.length == 2;   // two operands in binary expressions
-
-                // When we discover a binary expression in the text, each of its two children can be:
-                //   1) a unary expression
-                //   2) an AND binary expression only if we are now looking for OR binary expressions (OR expressions have low priority)
-
-                Expression leftChild = split[0].equals(REPLACED_EXPRESSION_PLACEHOLDER)
-                        ? alreadyFoundExpressions.pop() // expression previously matched
-                        : parseBinaryExpression(new Stack<>(), new Wrapper<>(split[0]), AND);
-                Expression rightChild = split[1].equals(REPLACED_EXPRESSION_PLACEHOLDER)
-                        ? alreadyFoundExpressions.pop() // expression previously matched
-                        : parseBinaryExpression(new Stack<>(), new Wrapper<>(split[1]), AND);
-
-                BinaryExpression be = new BinaryExpression(leftChild, binaryOperator, rightChild);
-                alreadyFoundExpressions.add(be);
-            }
-
-            remainingQueryString.set(
-                    remainingQueryString.get()
-                            .replaceAll(compiledRegex.pattern(), REPLACED_EXPRESSION_PLACEHOLDER)     // remove the already matched expression
-                            .replaceAll("\\s*", ""));                                 // remove extra spaces
-
-            return parseBinaryExpression(alreadyFoundExpressions, remainingQueryString, binaryOperator);
-        } else if (binaryOperator.equals(OR)) {
-            // let the work to AND operations
-            return parseBinaryExpression(alreadyFoundExpressions, remainingQueryString, AND);
+        if (remainingQueryStringTmp.isBlank()) {
+            // this check is just to avoid useless computations
+            return finalizerWhenNoMoreMatch(alreadyFoundExpressions, remainingQueryString, binaryOperator);
+        } else if (// Check if the remaining query string is boxed by the phrase delimiter
+                remainingQueryStringTmp.length() >= 2 * BooleanExpression.PHRASE_DELIMITER.length()
+                        && remainingQueryStringTmp.startsWith(BooleanExpression.PHRASE_DELIMITER)
+                        && remainingQueryStringTmp.endsWith(BooleanExpression.PHRASE_DELIMITER)) {
+            return finalizerWhenNoMoreMatch(alreadyFoundExpressions, remainingQueryString, binaryOperator);
         } else {
-            // no more match, the remaining query string might be nothing (i.e., everything already parsed) or a unary expression
 
-            UNARY_OPERATOR unaryOperator = IDENTITY;  // default;
+            Pattern compiledRegex = binaryOperator.equals(AND) ? REGEX_AND : REGEX_OR;
+            assert remainingQueryString.get() != null;
+            Matcher matcher = compiledRegex.matcher(remainingQueryString.get());
+            if (matcher.find()) {    // .matches() gives wrong result, hence .find() + .reset() is used
+                matcher.reset();
+                while (matcher.find()) {
+                    // binary expression found in text (match found)
 
-            String remainingQueryStringVal = remainingQueryString.get().strip();
-            int indexOfNotOperator = remainingQueryStringVal.indexOf(NOT.getSymbol());
-            if (indexOfNotOperator > 0) {
-                // NOT operator is present, but it is not at the beginning
-                throw new IllegalArgumentException("Invalid expression (" + remainingQueryStringVal + ")");
-            } else if (indexOfNotOperator == 0) {
+                    String[] split = matcher.group()
+                            .replaceAll("\\" + binaryOperator.getSymbol() + "+", binaryOperator.getSymbol()) // remove duplicates of the operator (if the user wrongly inserted it multiple times)
+                            .split("\\" + binaryOperator.getSymbol());
+                    assert split.length == 2;   // two operands in binary expressions
 
-                // remove all duplicated negations (which results in an identity)
-                remainingQueryStringVal = remainingQueryStringVal.replaceAll("\\" + NOT.getSymbol() + "{2}", "");
+                    // When we discover a binary expression in the text, each of its two children can be:
+                    //   1) a unary expression
+                    //   2) an AND binary expression only if we are now looking for OR binary expressions (OR expressions have low priority)
 
-                if (remainingQueryStringVal.startsWith(NOT.getSymbol())) {
-                    unaryOperator = NOT;
-                    remainingQueryStringVal = remainingQueryStringVal.replace(NOT.getSymbol(), "");
-                    assert !remainingQueryStringVal.contains(NOT.getSymbol());
+                    Expression leftChild = split[0].equals(REPLACED_EXPRESSION_PLACEHOLDER)
+                            ? alreadyFoundExpressions.pop() // expression previously matched
+                            : parseBinaryExpression(new Stack<>(), new Wrapper<>(split[0]), AND);
+                    Expression rightChild = split[1].equals(REPLACED_EXPRESSION_PLACEHOLDER)
+                            ? alreadyFoundExpressions.pop() // expression previously matched
+                            : parseBinaryExpression(new Stack<>(), new Wrapper<>(split[1]), AND);
+
+                    BinaryExpression be = new BinaryExpression(leftChild, binaryOperator, rightChild);
+                    alreadyFoundExpressions.add(be);
                 }
 
-                remainingQueryString.set(remainingQueryStringVal);
+                remainingQueryString.set(
+                        remainingQueryString.get()
+                                .replaceAll(compiledRegex.pattern(), REPLACED_EXPRESSION_PLACEHOLDER)     // remove the already matched expression
+                                .replaceAll("\\s*", ""));                                 // remove extra spaces
+
+                return parseBinaryExpression(alreadyFoundExpressions, remainingQueryString, binaryOperator);
+            } else if (binaryOperator.equals(OR)) {
+                // let the work to AND operations
+                return parseBinaryExpression(alreadyFoundExpressions, remainingQueryString, AND);
+            } else {
+                return finalizerWhenNoMoreMatch(alreadyFoundExpressions, remainingQueryString, binaryOperator);
+            }
+        }
+    }
+
+    /**
+     * This method is invoked by {@link #parseBinaryExpression(Stack, Wrapper, BINARY_OPERATOR)}
+     * when no more match are found, hence an {@link Expression} must be returned,
+     * i.e.: this is a terminal operation.
+     *
+     * @param foundExpression      The expressions found.
+     * @param remainingQueryString The remaining unexamined query string.
+     * @param binaryOperator       The binary operator for the binary expressions to match.
+     * @return the (eventually aggregated) {@link Expression} obtained from parsing.
+     */
+    private static Expression finalizerWhenNoMoreMatch(
+            @NotNull Stack<Expression> foundExpression,
+            @NotNull Wrapper<String> remainingQueryString,
+            @NotNull BINARY_OPERATOR binaryOperator) {
+
+        // no more match, the remaining query string might be nothing (i.e., everything already parsed) or a unary expression
+
+        UNARY_OPERATOR unaryOperator = IDENTITY;  // default unary operation
+
+        assert remainingQueryString.get() != null;
+        String remainingQueryStringVal = remainingQueryString.get().strip();
+        int indexOfNotOperator = remainingQueryStringVal.indexOf(NOT.getSymbol());
+        if (indexOfNotOperator > 0) {
+            // NOT operator is present, but it is not at the beginning
+            throw new IllegalArgumentException("Invalid expression (" + remainingQueryStringVal + ")");
+        } else if (indexOfNotOperator == 0) {
+
+            // remove all duplicated negations (which results in an identity if present in even numbers)
+            remainingQueryStringVal = remainingQueryStringVal.replaceAll("\\" + NOT.getSymbol() + "{2}", "");
+
+            if (remainingQueryStringVal.startsWith(NOT.getSymbol())) {
+                unaryOperator = NOT;
+                remainingQueryStringVal = remainingQueryStringVal.replace(NOT.getSymbol(), "");
+                assert !remainingQueryStringVal.contains(NOT.getSymbol());
             }
 
-            return switch (alreadyFoundExpressions.size()) {
-                case 0 -> new UnaryExpression(new Expression.Value(remainingQueryString.getAndRemove()), unaryOperator);
-                case 1 -> new UnaryExpression(alreadyFoundExpressions.pop(), unaryOperator);
-                default -> BinaryExpression.createFromList(alreadyFoundExpressions, binaryOperator);
-            };
+            remainingQueryString.set(remainingQueryStringVal);
         }
+
+        return switch (foundExpression.size()) {
+            case 0 -> new UnaryExpression(new Expression.Value(remainingQueryString.getAndRemove()), unaryOperator);
+            case 1 -> unaryOperator.equals(IDENTITY)
+                    ? foundExpression.pop()
+                    : new UnaryExpression(foundExpression.pop(), unaryOperator);
+            default -> BinaryExpression.createFromList(foundExpression, binaryOperator);
+        };
     }
 
     /**

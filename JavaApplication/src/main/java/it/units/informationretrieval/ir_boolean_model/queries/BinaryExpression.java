@@ -112,4 +112,26 @@ class BinaryExpression implements Expression {
     public String toString() {
         return "( " + leftOperand + " " + operator + " " + rightOperand + " )";
     }
+
+    @Override
+    @NotNull
+    public BOOLEAN_OPERATOR getOperator() {
+        return operator;
+    }
+
+    /**
+     * Getter for the left-hand operand of this instance.
+     */
+    @NotNull
+    public Expression getLeftOperand() {
+        return leftOperand;
+    }
+
+    /**
+     * Getter for the left-hand operand of this instance.
+     */
+    @NotNull
+    public Expression getRightOperand() {
+        return rightOperand;
+    }
 }

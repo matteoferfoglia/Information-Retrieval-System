@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import static it.units.informationretrieval.ir_boolean_model.queries.UNARY_OPERATOR.IDENTITY;
 import static it.units.informationretrieval.ir_boolean_model.queries.UNARY_OPERATOR.NOT;
@@ -100,6 +101,14 @@ class UnaryExpression implements Expression {
         return innerExpression != null;
     }
 
+    /**
+     * @return the inner expression of this instance if present.
+     */
+    @NotNull
+    public Optional<Expression> getInnerExpression() {
+        return Optional.ofNullable(innerExpression);
+    }
+
     @Override
     public String toString() {
         String innerToString;
@@ -111,22 +120,25 @@ class UnaryExpression implements Expression {
             innerToString = value.value();
         }
         return operator.equals(NOT)
-                ? "NOT " + (innerExpression == null ? "(" : "") + innerToString + " " + (innerExpression == null ? ")" : "")
+                ? "NOT " + (innerExpression == null ? "(" : "") + innerToString + (innerExpression == null ? ")" : "")
                 : innerToString;
     }
 
     /**
-     * @return the value of this instance or null if it is an aggregated expression.
+     * @return the value of this instance if present.
      */
-    @Nullable
-    public String getValue() {
+    @NotNull
+    public Optional<String> getValue() {
         assert isComplementaryConditionHolding();
-        return value != null ? value.value() : null;
+        if (value != null) {
+            assert value.value() != null;
+            return Optional.of(value.value());
+        } else {
+            return Optional.empty();
+        }
     }
 
-    /**
-     * Getter for the operator of this expression.
-     */
+    @Override
     @NotNull
     public UNARY_OPERATOR getOperator() {
         return operator;
