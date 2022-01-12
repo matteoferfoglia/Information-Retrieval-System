@@ -67,22 +67,30 @@ public class BooleanExpression {
      * Valid character for the {@link QueryParsing}, which is used
      * for escaping reasons.
      */
-    private static final String WILDCARD_FOR_PARSER = "_";
+    private static final String VALID_CHAR_FOR_PARSER = "_";
     /**
      * {@link QueryParsing} might not accept the wildcard symbol,
      * so all occurrences of the wildcard symbol in any query strings should
-     * be replaced with {@link #WILDCARD_FOR_PARSER}, repeated for
+     * be replaced with {@link #VALID_CHAR_FOR_PARSER}, repeated for
      * the number of times specified by this field.
      */
     private final static int VALID_PARSING_CHAR_REPETITIONS_FOR_WILDCARD = 3;
 
     /**
      * {@link QueryParsing} might not accept the {@link #NUM_OF_WORDS_FOLLOWS_CHARACTER},
-     * so all occurrences of the wildcard symbol in any query strings should
-     * be replaced with {@link #WILDCARD_FOR_PARSER}, repeated for the number
+     * so all of its occurrences in any query strings should
+     * be replaced with {@link #VALID_CHAR_FOR_PARSER}, repeated for the number
      * of times specified by this field.
      */
     private final static int VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW = 5;
+
+    /**
+     * {@link QueryParsing} might not accept the {@link #PHRASE_DELIMITER},
+     * so all of its occurrences in any query strings should
+     * be replaced with {@link #VALID_CHAR_FOR_PARSER}, repeated for the number
+     * of times specified by this field.
+     */
+    private final static int VALID_PARSING_CHAR_REPETITIONS_FOR_PHRASE_DELIMITER = 7;
     /**
      * Flag which is set to true if results of queries must be ranked.
      */
@@ -120,6 +128,17 @@ public class BooleanExpression {
      */
     @NotNull
     private final Comparator<String> spellingCorrectedQueryWordsComparator;
+    /**
+     * When parsing an input query string, this field is used to handle
+     * the content between quotes (it must not be modified).
+     * For this map:
+     * <ol>
+     *     <li>key: the replacement</li>
+     *     <li>value: the initial value before replacing</li>
+     * </ol>
+     */
+    @NotNull
+    private final Map<String, String> mapReplacedContentInQueryParsing = new HashMap<>(10);
     /**
      * This field save the results retrieved at the previous invocation of
      * {@link #evaluate()} (if it was invoked), for caching reasons.
@@ -252,46 +271,46 @@ public class BooleanExpression {
 
     /**
      * Parser might not accept wildcards, so this method escapes the wildcard
-     * symbol in an invertible way (by invoking {@link #escapeWildcardCharacterReverse(String)}).
-     * <strong>Notice</strong>: duplicates of {@link #WILDCARD_FOR_PARSER} (if present in the
-     * initial query string) will be lost, also after invoking {@link #escapeWildcardCharacterReverse(String)}.
+     * symbol in an invertible way (by invoking {@link #escapeSpecialCharactersReverse(String)}).
+     * <strong>Notice</strong>: duplicates of {@link #VALID_CHAR_FOR_PARSER} (if present in the
+     * initial query string) will be lost, also after invoking {@link #escapeSpecialCharactersReverse(String)}.
      *
      * @param queryString The query string to be escaped.
      * @return the escaped query string.
      */
     @NotNull
-    private static String escapeWildcardCharacter(@NotNull String queryString) {
+    private static String escapeSpecialCharacters(@NotNull String queryString) {
         // escaping is done my replicating a valid char for the parser
 
         return queryString
-                .replaceAll(WILDCARD_FOR_PARSER + "+", WILDCARD_FOR_PARSER) // remove duplicates
+                .replaceAll(VALID_CHAR_FOR_PARSER + "+", VALID_CHAR_FOR_PARSER) // remove duplicates
                 .replaceAll(    // escape wildcard
                         ESCAPED_WILDCARD_FOR_REGEX,
-                        Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_WILDCARD, WILDCARD_FOR_PARSER))
+                        Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_WILDCARD, VALID_CHAR_FOR_PARSER))
 
                 // escape other used special characters
                 .replaceAll(
                         NUM_OF_WORDS_FOLLOWS_CHARACTER,
-                        Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW, WILDCARD_FOR_PARSER));
+                        Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW, VALID_CHAR_FOR_PARSER));
 
     }
 
     /**
-     * This method is the inverse function of {@link #escapeWildcardCharacter(String)}.
-     * No duplicates for the symbol {@link #WILDCARD_FOR_PARSER} will be present.
+     * This method is the inverse function of {@link #escapeSpecialCharacters(String)}.
+     * No duplicates for the symbol {@link #VALID_CHAR_FOR_PARSER} will be present.
      *
      * @param queryString The escaped query string.
      * @return the unescaped query string.
      */
     @NotNull
-    private static String escapeWildcardCharacterReverse(@NotNull String queryString) {
+    private static String escapeSpecialCharactersReverse(@NotNull String queryString) {
 
         //noinspection ConstantConditions // order in which replacement operations are made matters and this assertion checks if the value is changed for some reasons
         assert VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW > VALID_PARSING_CHAR_REPETITIONS_FOR_WILDCARD;
         return queryString
                 // replacements must be done in order: longest escaping sequence first
-                .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW, WILDCARD_FOR_PARSER), NUM_OF_WORDS_FOLLOWS_CHARACTER)
-                .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_WILDCARD, WILDCARD_FOR_PARSER), WILDCARD);
+                .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW, VALID_CHAR_FOR_PARSER), NUM_OF_WORDS_FOLLOWS_CHARACTER)
+                .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_WILDCARD, VALID_CHAR_FOR_PARSER), WILDCARD);
     }
 
     private Comparator<String> spellingCorrectedQueryWordsComparatorFactory() {
@@ -326,12 +345,25 @@ public class BooleanExpression {
     public BooleanExpression parseQuery(@NotNull String queryString)
             throws IllegalArgumentException, IllegalStateException {    // TODO: benchmark
 
-        //noinspection ConstantConditions   // assert the symbol if in the future someone try to change its value
-        assert PHRASE_DELIMITER.equals("\"");   // the parser use double quotes for the same purpose for which we use PHRASE_DELIMITER
-
         Objects.requireNonNull(queryString);
         throwIfAggregatedOrMatchingValueAlreadySetOrMatchingPhraseAlreadySet();
-        return set(parseExpression(QueryParsing.parse(escapeWildcardCharacter(queryString))));
+
+        queryString = escapeSpecialCharacters(queryString);
+
+        // Handle content between quotes in query string (must not be modified)
+        int counter = 0;
+        final Pattern BETWEEN_QUOTES_REGEX = Pattern.compile("[\"][^\"]*[\"]");
+        Matcher betweenQuotesMatcher = BETWEEN_QUOTES_REGEX.matcher(queryString);
+        while (betweenQuotesMatcher.find()) {
+            String match = betweenQuotesMatcher.group();
+            final String replacementDelimiter = Utility.getNReplicationsOfString(
+                    VALID_PARSING_CHAR_REPETITIONS_FOR_PHRASE_DELIMITER, VALID_CHAR_FOR_PARSER);
+            String replacement = replacementDelimiter + (counter++) + replacementDelimiter;
+            mapReplacedContentInQueryParsing.put(replacement, match);
+            queryString = queryString.replaceAll(match, replacement);
+        }
+
+        return set(parseExpression(QueryParsing.parse(queryString)));
     }
 
     /**
@@ -371,7 +403,18 @@ public class BooleanExpression {
         } else {
 
             if (expression instanceof Variable variable) {
-                String queryString = escapeWildcardCharacterReverse((String) variable.getValue());
+
+                String queryString = (String) variable.getValue();
+                {
+                    // Handle the inverse operations for the escaping done for the parser
+                    for (Map.Entry<String, String> entry : mapReplacedContentInQueryParsing.entrySet()) {
+                        String replacement = entry.getKey();
+                        String initialValue = entry.getValue();
+                        queryString = queryString.replaceAll(replacement, initialValue);
+                    }
+                    queryString = escapeSpecialCharactersReverse(queryString);
+                }
+
                 final String REGEX_MATCHING_DELIMITED_PHRASE =
                         "[" + PHRASE_DELIMITER + "][^" + PHRASE_DELIMITER + "]*[" + PHRASE_DELIMITER + "]";
                 Matcher phraseMatcher = Pattern.compile(REGEX_MATCHING_DELIMITED_PHRASE).matcher(queryString);
@@ -437,7 +480,7 @@ public class BooleanExpression {
                         .stream()
                         .map(this::parseExpression)
                         .reduce(accumulator)
-                        .orElse(informationRetrievalSystem.createNewBooleanExpression());
+                        .orElseThrow();
             }
         }
     }
@@ -970,7 +1013,7 @@ public class BooleanExpression {
                                 // posting list for the term was not cached
                                 correspondingPostingList = new SkipList<>(
                                         informationRetrievalSystem.getListOfPostingForToken(
-                                                word.replaceAll(WILDCARD_FOR_PARSER, WILDCARD)),
+                                                word.replaceAll(VALID_CHAR_FOR_PARSER, WILDCARD)),
                                         Posting.DOC_ID_COMPARATOR);
                                 cachedPostings.put(word, correspondingPostingList);
                             }

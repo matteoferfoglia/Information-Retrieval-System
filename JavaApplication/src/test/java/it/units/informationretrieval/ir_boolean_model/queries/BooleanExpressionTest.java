@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static it.units.informationretrieval.ir_boolean_model.entities.InvertedIndexTest.randomPhraseFromDictionaryOfMovieInvertedIndex;
 import static it.units.informationretrieval.ir_boolean_model.entities.InvertedIndexTest.randomTokenFromDictionaryOfMovieInvertedIndex;
@@ -561,7 +562,15 @@ class BooleanExpressionTest {
                 .and(be1.or("foo"))
                 .not();
         booleanExpression.parseQuery(inputQueryString);
-        assertEquals(expected.getQueryString(), booleanExpression.getQueryString());
+
+        Function<BooleanExpression, String> simplifyQueryString = be ->
+                QueryParsing.toString(
+                        QueryParsing.parse(be.getQueryString()
+                                .replaceAll(BINARY_OPERATOR.AND.toString(), BINARY_OPERATOR.AND.getSymbol())
+                                .replaceAll(BINARY_OPERATOR.OR.toString(), BINARY_OPERATOR.OR.getSymbol())
+                                .replaceAll(UNARY_OPERATOR.NOT.toString(), UNARY_OPERATOR.NOT.getSymbol())));
+
+        assertEquals(simplifyQueryString.apply(expected), simplifyQueryString.apply(booleanExpression));
     }
 
     @ParameterizedTest
@@ -618,5 +627,25 @@ class BooleanExpressionTest {
             fail("Should have thrown exception but did not.");
         } catch (IllegalStateException ignored) {
         }
+    }
+
+    @Test
+    void numOfRepetitionsForHandlingSpecialCharactersAreAlwaysDifferent() {
+        List<Integer> usedValues = Arrays.stream(BooleanExpression.class.getDeclaredFields())
+                .peek(f -> f.setAccessible(true))
+                .filter(f -> f.getName().startsWith("VALID_PARSING_CHAR_REPETITIONS_FOR_"))
+                .map(f -> {
+                    try {
+                        return (int) f.get(null/*static fields*/);
+                    } catch (IllegalAccessException e) {
+                        fail(e);
+                        return 0;
+                    }
+                })
+                .toList();
+        assertEquals(usedValues.size(), usedValues.stream().distinct().toList().size());
+        // If any of that values is duplicated, it would not be possible to distinguish
+        //  two special characters that at beginning were different
+        // This is done to handle the parsing of special characters
     }
 }
