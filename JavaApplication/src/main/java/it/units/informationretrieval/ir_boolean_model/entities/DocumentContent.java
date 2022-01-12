@@ -9,7 +9,10 @@ import java.util.stream.Collectors;
 
 /**
  * Class representing the content of a {@link Document}.
+ * The content of a {@link Document} is <strong>anything</strong>
+ * concerning the {@link Document}, including the title.
  * Different part of the document may have different ranks.
+ * Ranking is not implemented by this class.
  *
  * @param content The list of {@link String}s present in this instance
  *                of {@link Document}. The list should be sorted according to the

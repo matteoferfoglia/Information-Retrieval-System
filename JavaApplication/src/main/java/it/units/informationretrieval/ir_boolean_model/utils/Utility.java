@@ -62,7 +62,7 @@ public class Utility {
     public static String[] tokenize(@NotNull Document document, @NotNull Language language) {
         assert document.getContent() != null;
         return Arrays.stream(
-                        split(document.getTitle() + " " + document.getContent().getEntireTextContent()))
+                        split(/*title is included in the content*/document.getContent().getEntireTextContent()))
                 .filter(text -> !text.isBlank())
                 .map(token -> Utility.normalize(token, false, language))
                 .filter(Objects::nonNull)
