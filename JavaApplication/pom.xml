@@ -234,6 +234,13 @@
             <version>2.13.0</version>
         </dependency>
 
+
+        <dependency><!-- Expression parsing -->
+            <groupId>com.bpodgursky</groupId>
+            <artifactId>jbool_expressions</artifactId>
+            <version>1.23</version>
+        </dependency>
+
         <dependency><!-- JUnit -->
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

@@ -104,7 +104,7 @@ class ExampleOfUseOfTheIRSystem {
                             .setMatchingPhrase("Space *am".split(" "))
                             .or(irs.createNewBooleanExpression().setMatchingValue("Vidya").or("Bag*")), MAX_N_RESULTS));
 
-            // QueryString
+            // Query strings
             String[] queryStrings = new String[]{
                     "\"monster\"|\"space\"", "moon", "asterix & obelix", "love !story", "love&!story", "\"Space jam\""};
             System.out.println(System.lineSeparator() + "Query strings");

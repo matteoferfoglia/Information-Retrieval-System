@@ -1,5 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.queries;
 
+import com.bpodgursky.jbool_expressions.*;
 import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem;
 import it.units.informationretrieval.ir_boolean_model.entities.*;
 import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
@@ -14,6 +15,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.IntFunction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +23,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex.ESCAPED_WILDCARD_FOR_REGEX;
+import static it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex.WILDCARD;
 
 /**
  * An instance of this class is a boolean expression to be evaluated
@@ -57,6 +62,13 @@ public class BooleanExpression {
      * know it).
      */
     public static final char NUM_OF_WORDS_FOLLOWS_CHARACTER = '/';
+    /**
+     * {@link QueryParsing} might not accept the wildcard symbol and
+     * this field saves a symbol that is accepted by the {@link QueryParsing},
+     * so all occurrences of the wildcard symbol in any query strings should
+     * be replaced with this field value before using the {@link QueryParsing}.
+     */
+    private final static String WILDCARD_FOR_PARSER = "_";
     /**
      * Flag which is set to true if results of queries must be ranked.
      */
@@ -224,6 +236,35 @@ public class BooleanExpression {
         this.spellingCorrectedQueryWordsComparator = spellingCorrectedQueryWordsComparatorFactory();
     }
 
+    /**
+     * Parser might not accept wildcards, so this method escapes the wildcard
+     * symbol in an invertible way (by invoking {@link #escapeWildcardCharacterReverse(String)}).
+     * <strong>Notice</strong>: duplicates of {@link #WILDCARD_FOR_PARSER} (if present in the
+     * initial query string) will be lost, also after invoking {@link #escapeWildcardCharacterReverse(String)}.
+     *
+     * @param queryString The query string to be escaped.
+     * @return the escaped query string.
+     */
+    @NotNull
+    private static String escapeWildcardCharacter(@NotNull String queryString) {
+        return queryString
+                .replaceAll(WILDCARD_FOR_PARSER + "+", WILDCARD_FOR_PARSER) // remove duplicates
+                .replaceAll(ESCAPED_WILDCARD_FOR_REGEX, WILDCARD_FOR_PARSER + WILDCARD_FOR_PARSER + WILDCARD_FOR_PARSER);   // the triplicate will be the escaped wildcard
+    }
+
+    /**
+     * This method is the inverse function of {@link #escapeWildcardCharacter(String)}.
+     * No duplicates for the symbol {@link #WILDCARD_FOR_PARSER} will be present.
+     *
+     * @param queryString The escaped query string.
+     * @return the unescaped query string.
+     */
+    @NotNull
+    private static String escapeWildcardCharacterReverse(@NotNull String queryString) {
+        return queryString
+                .replaceAll(WILDCARD_FOR_PARSER + WILDCARD_FOR_PARSER + WILDCARD_FOR_PARSER, WILDCARD);
+    }
+
     private Comparator<String> spellingCorrectedQueryWordsComparatorFactory() {
         return (s1, s2) -> {
             // TODO: rethink about ranking
@@ -257,7 +298,7 @@ public class BooleanExpression {
             throws IllegalArgumentException, IllegalStateException {    // TODO: benchmark
         Objects.requireNonNull(queryString);
         throwIfAggregatedOrMatchingValueAlreadySetOrMatchingPhraseAlreadySet();
-        return set(parseExpression(QueryParsing.parse(queryString)));
+        return set(parseExpression(QueryParsing.parse(escapeWildcardCharacter(queryString))));
     }
 
     /**
@@ -291,71 +332,79 @@ public class BooleanExpression {
      * @return The resulting instance of this class obtained from the input parameter.
      */
     @NotNull
-    private BooleanExpression parseExpression(@Nullable final Expression expression) {
+    private BooleanExpression parseExpression(@Nullable final Expression<String> expression) {
         if (expression == null) {   // invalid query string
             return this;
         } else {
-            if (expression instanceof UnaryExpression unaryExpression) {
-                var innerExpression = unaryExpression.getInnerExpression();
-                var innerValue = unaryExpression.getValue();
-                BooleanExpression be;
-                if (innerExpression.isPresent()) {
-                    be = new BooleanExpression(parseExpression(innerExpression.get()));
-                } else if (innerValue.isPresent()) {
-                    be = this;
-                    String queryString = innerValue.get();
-                    final String REGEX_MATCHING_DELIMITED_PHRASE =
-                            "[" + PHRASE_DELIMITER + "][^" + PHRASE_DELIMITER + "]*[" + PHRASE_DELIMITER + "]";
-                    Matcher phraseMatcher = Pattern.compile(REGEX_MATCHING_DELIMITED_PHRASE).matcher(queryString);
-                    if (phraseMatcher.matches()) {
-                        // phrase is present
-                        String phrase = phraseMatcher.group().replaceAll(PHRASE_DELIMITER, "").strip();
-                        final String REGEX_SEARCHING_INTERMEDIATE_NUM_OF_WORDS =
-                                "\\" + NUM_OF_WORDS_FOLLOWS_CHARACTER + "\\d+";
-                        if (Pattern.compile(REGEX_SEARCHING_INTERMEDIATE_NUM_OF_WORDS).matcher(phrase).find()) {
-                            phrase = phrase.replaceAll("\\s+(?!\\d+)", NUM_OF_WORDS_FOLLOWS_CHARACTER + "0");  // replace spaces with number of (0) intermediate words if not specified
-                            Matcher intermediateNumOfWordsMatcher =
-                                    Pattern.compile(REGEX_SEARCHING_INTERMEDIATE_NUM_OF_WORDS).matcher(phrase);
-                            String[] words = phrase.split(REGEX_SEARCHING_INTERMEDIATE_NUM_OF_WORDS);
-                            int[] intermediateNumOfWords = new int[words.length - 1];
-                            for (int i = 0; i < intermediateNumOfWords.length && intermediateNumOfWordsMatcher.find(); i++) {
-                                intermediateNumOfWords[i] = Integer.parseInt(
-                                        intermediateNumOfWordsMatcher.group()
-                                                .replaceAll("\\" + NUM_OF_WORDS_FOLLOWS_CHARACTER, ""));  // TODO: test
-                            }
-                            int[] distancesOfIthWordFromTheFirstWord = new int[intermediateNumOfWords.length];
-                            int cumulativeDistance = 0;
-                            for (int i = 0; i < distancesOfIthWordFromTheFirstWord.length; i++) {
-                                cumulativeDistance += intermediateNumOfWords[i] + 1; // each word is at least one (+1) word ahead than the previous one
-                                distancesOfIthWordFromTheFirstWord[i] = cumulativeDistance;
-                            }
-                            setMatchingPhrase(words, distancesOfIthWordFromTheFirstWord);
-                        } else {
-                            // phrase does not specify the number of words which must be present between words composing the phrase itself
-                            setMatchingPhrase(Utility.split(phrase));
+
+            if (expression instanceof Variable variable) {
+                String queryString = (String) variable.getValue();
+                final String REGEX_MATCHING_DELIMITED_PHRASE =
+                        "[" + PHRASE_DELIMITER + "][^" + PHRASE_DELIMITER + "]*[" + PHRASE_DELIMITER + "]";
+                Matcher phraseMatcher = Pattern.compile(REGEX_MATCHING_DELIMITED_PHRASE).matcher(queryString);
+
+                // new instance needed
+                BooleanExpression be = new BooleanExpression(informationRetrievalSystem);
+
+                if (phraseMatcher.matches()) {
+                    // phrase is present
+                    String phrase = phraseMatcher.group().replaceAll(PHRASE_DELIMITER, "").strip();
+                    String[] words;
+                    int[] distancesOfIthWordFromTheFirstWord = null;
+                    final String REGEX_SEARCHING_INTERMEDIATE_NUM_OF_WORDS =
+                            "\\" + NUM_OF_WORDS_FOLLOWS_CHARACTER + "\\d+";
+                    if (Pattern.compile(REGEX_SEARCHING_INTERMEDIATE_NUM_OF_WORDS).matcher(phrase).find()) {
+                        phrase = phrase.replaceAll("\\s+(?!\\d+)", NUM_OF_WORDS_FOLLOWS_CHARACTER + "0");  // replace spaces with number of (0) intermediate words if not specified
+                        Matcher intermediateNumOfWordsMatcher =
+                                Pattern.compile(REGEX_SEARCHING_INTERMEDIATE_NUM_OF_WORDS).matcher(phrase);
+                        words = phrase.split(REGEX_SEARCHING_INTERMEDIATE_NUM_OF_WORDS);
+                        int[] intermediateNumOfWords = new int[words.length - 1];
+                        for (int i = 0; i < intermediateNumOfWords.length && intermediateNumOfWordsMatcher.find(); i++) {
+                            intermediateNumOfWords[i] = Integer.parseInt(
+                                    intermediateNumOfWordsMatcher.group()
+                                            .replaceAll("\\" + NUM_OF_WORDS_FOLLOWS_CHARACTER, ""));
+                        }
+                        distancesOfIthWordFromTheFirstWord = new int[intermediateNumOfWords.length];
+                        int cumulativeDistance = 0;
+                        for (int i = 0; i < distancesOfIthWordFromTheFirstWord.length; i++) {
+                            cumulativeDistance += intermediateNumOfWords[i] + 1; // each word is at least one (+1) word ahead than the previous one
+                            distancesOfIthWordFromTheFirstWord[i] = cumulativeDistance;
                         }
                     } else {
-                        be = Arrays.stream(Utility.split(queryString))
-                                .filter(s -> !s.isBlank())
-                                .map(aValueToBePresent -> informationRetrievalSystem.createNewBooleanExpression()
-                                        .setMatchingValue(aValueToBePresent))
-                                .reduce(BooleanExpression::and)
-                                .orElse(informationRetrievalSystem.createNewBooleanExpression());
+                        // phrase does not specify the number of words which must be present between words composing the phrase itself
+                        words = Utility.split(phrase);
+                    }
+                    words = Arrays.stream(words).map(BooleanExpression::escapeWildcardCharacterReverse).toArray(String[]::new);
+                    if (distancesOfIthWordFromTheFirstWord == null) {
+                        be.setMatchingPhrase(words);
+                    } else {
+                        be.setMatchingPhrase(words, distancesOfIthWordFromTheFirstWord);
                     }
                 } else {
-                    throw new IllegalStateException(
-                            "Unexpected that neither expression value nor inner expression are set.");
+                    be.setMatchingValue(escapeWildcardCharacterReverse(queryString));
                 }
-                return be.setUnaryOperator(unaryExpression.getOperator());
-            } else if (expression instanceof BinaryExpression binaryExpression) {
-                assert binaryExpression.getOperator() instanceof BINARY_OPERATOR;
-                return new BooleanExpression(
-                        (BINARY_OPERATOR) binaryExpression.getOperator(),
-                        parseExpression(binaryExpression.getLeftOperand()),
-                        parseExpression(binaryExpression.getRightOperand()));
+
+                return be;
+            } else if (expression instanceof Not negation) {
+
+                //noinspection unchecked
+                return parseExpression(negation.getE()).setUnaryOperator(UNARY_OPERATOR.NOT);
             } else {
-                throw new IllegalStateException("Unexpected type for expression: "
-                        + expression.getClass().getCanonicalName());
+                // binary expression
+
+                BinaryOperator<BooleanExpression> accumulator;
+                if (expression instanceof And) {
+                    accumulator = BooleanExpression::and;
+                } else if (expression instanceof Or) {
+                    accumulator = BooleanExpression::or;
+                } else {
+                    throw new IllegalStateException("Unknown binary operation");
+                }
+                return expression.getChildren()
+                        .stream()
+                        .map(this::parseExpression)
+                        .reduce(accumulator)
+                        .orElse(informationRetrievalSystem.createNewBooleanExpression());
             }
         }
     }
@@ -887,7 +936,8 @@ public class BooleanExpression {
                             if (correspondingPostingList == null) {
                                 // posting list for the term was not cached
                                 correspondingPostingList = new SkipList<>(
-                                        informationRetrievalSystem.getListOfPostingForToken(word),
+                                        informationRetrievalSystem.getListOfPostingForToken(
+                                                word.replaceAll(WILDCARD_FOR_PARSER, WILDCARD)),
                                         Posting.DOC_ID_COMPARATOR);
                                 cachedPostings.put(word, correspondingPostingList);
                             }
