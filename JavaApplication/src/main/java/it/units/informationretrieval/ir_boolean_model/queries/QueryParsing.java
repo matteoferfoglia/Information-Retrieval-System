@@ -1,18 +1,13 @@
 package it.units.informationretrieval.ir_boolean_model.queries;
 
 import com.bpodgursky.jbool_expressions.Expression;
-import com.bpodgursky.jbool_expressions.Variable;
 import com.bpodgursky.jbool_expressions.parsers.BooleanExprLexer;
 import com.bpodgursky.jbool_expressions.parsers.ExprParser;
 import com.bpodgursky.jbool_expressions.rules.RuleSet;
-import com.bpodgursky.jbool_expressions.util.ExprFactory;
-import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,13 +38,14 @@ class QueryParsing {
      *                    Only valid tokens must be present (see implementation of
      *                    {@link BooleanExprLexer#mTokens()}).
      * @return the expression for the input query string or null if the input is
-     * blanck or invalid.
+     * blank or invalid.
      */
     @Nullable
     static Expression<String> parse(@NotNull String queryString) {
 
         queryString = removeInvalidCharacters(queryString);
         queryString = replaceSpacesWithAndOperator(queryString);
+        queryString = removeDuplicatedAdjacentBinaryOperators(queryString);
 
         if (queryString.isBlank()) {
             System.err.println("The query string is blank.");
@@ -69,6 +65,21 @@ class QueryParsing {
             // invalid input
             return null;
         }
+    }
+
+    /**
+     * Removes duplicated adjacent operators, that might be wrongly inserted,
+     * e.g. <code>a &&& c</code> becomes <code>a & c</code>
+     *
+     * @param queryString The input query string.
+     * @return The query string without duplicated adjacent operators.
+     */
+    private static String removeDuplicatedAdjacentBinaryOperators(String queryString) {
+        for (var bo : BINARY_OPERATOR.values()) {
+            queryString = queryString
+                    .replaceAll("\\" + bo.getSymbol() + "{2,}", "\\" + bo.getSymbol());
+        }
+        return queryString;
     }
 
     /**

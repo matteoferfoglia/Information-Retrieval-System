@@ -12,38 +12,37 @@ class QueryParsingTest {
     @ParameterizedTest
     @CsvSource({
             "a, a",
+            "!!a, a",
+            "!!! a, NOT a",
             "a b, (a AND b)",
-            "a !b, (a AND NOT(b))",
-            "\"a b\", \"a b\"",
-            "\"a & b\", \"a & b\"",
+            "a !b, (a AND NOTb)",
             "a | b, (a OR b)",
-            "\"a\" | \"b\", (\"a\" OR \"b\")",
             "a    b, (a AND b)",
-            "a     b|c, ((a AND b) OR c )",
-            "a&b|c||d&&&&f|, (((a AND b)OR c) OR (d AND f))",
+            "a     b|c, (c OR (a AND b))",
+            "a&b|c||d&&&&f, ( c OR (a AND b) OR (d AND f))",
             "d&&&&e, (d AND e)",
-            "!a, NOT(a)",
+            "!a, NOTa",
             "a&b, (a AND b)",
-            "!a&b, (NOT(a)AND b)",
-            "!(a&b), NOT(a AND b)",
-            "a&!b|c, ((a AND NOT(b)) OR c)",
-            "a&b&c, ((a AND b) AND c)",
-            "(a&b)&c, ((a AND b) AND c)",
-            "a&(b&c), (a AND (b AND c))",
+            "!a&b, (b AND NOT a)",
+            "!(a&b), (NOT a OR NOT b)",
+            "a&!b|c, (c OR (a AND NOT b))",
+            "a&b&c, (a AND b AND c)",
+            "(a&b)&c, (a AND b AND c)",
+            "a&(b&c), (a AND b AND c)",
             "a|(b&c), (a OR (b AND c))",
-            "a|(b|c), (a OR (b OR c))",
-            "(a|b)&c, ((a OR b) AND c)",
-            "(a|b)&!c, ((a OR b) AND NOT(c))",
-            "(a|b)|!c, ((a OR b) OR NOT(c))",
-            "(a|b&d)|!c, ((a OR (b AND d)) OR NOT(c))",
-            "(a|b&!d)|!c, ((a OR (b AND NOT(d))) OR NOT(c))",
-            "((a|b)&!d)|!c, (((a OR b) AND NOT(d)) OR NOT(c))",
-            "((a|b)|!d)|!c, (((a OR b) OR NOT(d)) OR NOT(c))",
-            "((a|b)|!d)&!c, (((a OR b) OR NOT(d)) AND NOT(c))"
+            "a|(b|c), (a OR b OR c)",
+            "(a|b)&c, ((a AND c)OR(b AND c))",
+            "(a|b)&!c, ((a AND NOT c ) OR (b AND NOT c))",
+            "(a|b)|!c, (a OR b OR NOT c)",
+            "(a|b&d)|!c, (a OR NOT c OR (b AND d))",
+            "(a|b&!d)|!c, (a OR NOT c OR (b AND NOT d ))",
+            "((a|b)&!d)|!c, (NOT c OR (a AND NOT d) OR (b AND NOT d))",
+            "((a|b)|!d)|!c, (a OR b OR NOT c OR NOT d)",
+            "((a|b)|!d)&!c, ((a AND NOT c) OR (b AND NOT c) OR ( NOT c AND NOT d))"
     })
     void parse(String inputQueryString, String expectedParsedQueryString) {
         Function<String, String> whiteSpacesRemover = input -> input.replaceAll(" ", "");
-        String actual = whiteSpacesRemover.apply(String.valueOf(QueryParsing.parse(inputQueryString)));
+        String actual = whiteSpacesRemover.apply(QueryParsing.toString(QueryParsing.parse(inputQueryString)));
         String expected = whiteSpacesRemover.apply(expectedParsedQueryString);
         assertEquals(expected, actual);
     }
