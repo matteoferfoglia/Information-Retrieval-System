@@ -2,6 +2,7 @@ package it.units.informationretrieval.ir_boolean_model.evaluation;
 
 import benchmark.BenchmarkRunner;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +14,9 @@ class Benchmarking {
 
     private static final String FOLDER_NAME_TO_SAVE_RESULTS = "benchmarks";
 
-    public static void main(String[] args) throws IOException {    // TODO: create a Maven plugin to run this automatically
-        // TODO: this method may be invoked from production code (e.g., a flag as command line arg to main)
+    @Test
+        // this method will be executed with the test suite if annotated with @Test
+    void benchmarkAll() throws IOException {
         final boolean printBenchmarkProgress = true;
         BenchmarkRunner benchmarkRunner = new BenchmarkRunner(printBenchmarkProgress);
         benchmarkRunner.benchmarkAllAnnotatedMethodsAndGetListOfResults();
