@@ -1,13 +1,18 @@
 package it.units.informationretrieval.ir_boolean_model.queries;
 
 import com.bpodgursky.jbool_expressions.Expression;
+import com.bpodgursky.jbool_expressions.Variable;
 import com.bpodgursky.jbool_expressions.parsers.BooleanExprLexer;
 import com.bpodgursky.jbool_expressions.parsers.ExprParser;
 import com.bpodgursky.jbool_expressions.rules.RuleSet;
+import com.bpodgursky.jbool_expressions.util.ExprFactory;
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -125,6 +130,25 @@ class QueryParsing {
         }
 
         return queryString;
+    }
+
+    /**
+     * This method works like "toString" and can be used to print {@link Expression}s.
+     *
+     * @param expression The expression that is desired to print.
+     * @return the {@link String} representation of the given {@link Expression}.
+     */
+    @NotNull
+    public static String toString(@Nullable Expression<?> expression) {
+        if (expression == null) {
+            return "";
+        } else {
+            String toString = expression.toString();
+            for (var bo : BINARY_OPERATOR.values()) {
+                toString = toString.replaceAll("\\" + bo.getSymbol(), bo.toString());
+            }
+            return toString.replaceAll("\\" + NOT.getSymbol(), "  " + NOT + " ");
+        }
     }
 
 }

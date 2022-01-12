@@ -55,20 +55,34 @@ public class BooleanExpression {
     /**
      * If setting a phrase query, this character to specify that the following
      * <strong>number</strong> is the number of words that must be present
-     * between the two words, e.g. <pre>"The§0cat§1on"</pre> means that between
+     * between the two words, e.g. <pre>"The/0cat/1on"</pre> means that between
      * <pre>"The"</pre> and <pre>"cat"</pre> exactly 0 words are present, while
      * between <pre>"cat"</pre> and <pre>"on"</pre> exactly 1 word is present
      * (The entire phrase might be <pre>"The cat is on"</pre>, but we do not
      * know it).
      */
-    public static final char NUM_OF_WORDS_FOLLOWS_CHARACTER = '/';
+    public static final String NUM_OF_WORDS_FOLLOWS_CHARACTER = "/";
+
     /**
-     * {@link QueryParsing} might not accept the wildcard symbol and
-     * this field saves a symbol that is accepted by the {@link QueryParsing},
-     * so all occurrences of the wildcard symbol in any query strings should
-     * be replaced with this field value before using the {@link QueryParsing}.
+     * Valid character for the {@link QueryParsing}, which is used
+     * for escaping reasons.
      */
-    private final static String WILDCARD_FOR_PARSER = "_";
+    private static final String WILDCARD_FOR_PARSER = "_";
+    /**
+     * {@link QueryParsing} might not accept the wildcard symbol,
+     * so all occurrences of the wildcard symbol in any query strings should
+     * be replaced with {@link #WILDCARD_FOR_PARSER}, repeated for
+     * the number of times specified by this field.
+     */
+    private final static int VALID_PARSING_CHAR_REPETITIONS_FOR_WILDCARD = 3;
+
+    /**
+     * {@link QueryParsing} might not accept the {@link #NUM_OF_WORDS_FOLLOWS_CHARACTER},
+     * so all occurrences of the wildcard symbol in any query strings should
+     * be replaced with {@link #WILDCARD_FOR_PARSER}, repeated for the number
+     * of times specified by this field.
+     */
+    private final static int VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW = 5;
     /**
      * Flag which is set to true if results of queries must be ranked.
      */
@@ -247,9 +261,19 @@ public class BooleanExpression {
      */
     @NotNull
     private static String escapeWildcardCharacter(@NotNull String queryString) {
+        // escaping is done my replicating a valid char for the parser
+
         return queryString
                 .replaceAll(WILDCARD_FOR_PARSER + "+", WILDCARD_FOR_PARSER) // remove duplicates
-                .replaceAll(ESCAPED_WILDCARD_FOR_REGEX, WILDCARD_FOR_PARSER + WILDCARD_FOR_PARSER + WILDCARD_FOR_PARSER);   // the triplicate will be the escaped wildcard
+                .replaceAll(    // escape wildcard
+                        ESCAPED_WILDCARD_FOR_REGEX,
+                        Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_WILDCARD, WILDCARD_FOR_PARSER))
+
+                // escape other used special characters
+                .replaceAll(
+                        NUM_OF_WORDS_FOLLOWS_CHARACTER,
+                        Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW, WILDCARD_FOR_PARSER));
+
     }
 
     /**
@@ -261,8 +285,13 @@ public class BooleanExpression {
      */
     @NotNull
     private static String escapeWildcardCharacterReverse(@NotNull String queryString) {
+
+        //noinspection ConstantConditions // order in which replacement operations are made matters and this assertion checks if the value is changed for some reasons
+        assert VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW > VALID_PARSING_CHAR_REPETITIONS_FOR_WILDCARD;
         return queryString
-                .replaceAll(WILDCARD_FOR_PARSER + WILDCARD_FOR_PARSER + WILDCARD_FOR_PARSER, WILDCARD);
+                // replacements must be done in order: longest escaping sequence first
+                .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW, WILDCARD_FOR_PARSER), NUM_OF_WORDS_FOLLOWS_CHARACTER)
+                .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_WILDCARD, WILDCARD_FOR_PARSER), WILDCARD);
     }
 
     private Comparator<String> spellingCorrectedQueryWordsComparatorFactory() {
@@ -296,6 +325,10 @@ public class BooleanExpression {
      */
     public BooleanExpression parseQuery(@NotNull String queryString)
             throws IllegalArgumentException, IllegalStateException {    // TODO: benchmark
+
+        //noinspection ConstantConditions   // assert the symbol if in the future someone try to change its value
+        assert PHRASE_DELIMITER.equals("\"");   // the parser use double quotes for the same purpose for which we use PHRASE_DELIMITER
+
         Objects.requireNonNull(queryString);
         throwIfAggregatedOrMatchingValueAlreadySetOrMatchingPhraseAlreadySet();
         return set(parseExpression(QueryParsing.parse(escapeWildcardCharacter(queryString))));
@@ -338,7 +371,7 @@ public class BooleanExpression {
         } else {
 
             if (expression instanceof Variable variable) {
-                String queryString = (String) variable.getValue();
+                String queryString = escapeWildcardCharacterReverse((String) variable.getValue());
                 final String REGEX_MATCHING_DELIMITED_PHRASE =
                         "[" + PHRASE_DELIMITER + "][^" + PHRASE_DELIMITER + "]*[" + PHRASE_DELIMITER + "]";
                 Matcher phraseMatcher = Pattern.compile(REGEX_MATCHING_DELIMITED_PHRASE).matcher(queryString);
@@ -348,7 +381,8 @@ public class BooleanExpression {
 
                 if (phraseMatcher.matches()) {
                     // phrase is present
-                    String phrase = phraseMatcher.group().replaceAll(PHRASE_DELIMITER, "").strip();
+                    String phrase = phraseMatcher.group()
+                            .replaceAll(PHRASE_DELIMITER, "").strip();
                     String[] words;
                     int[] distancesOfIthWordFromTheFirstWord = null;
                     final String REGEX_SEARCHING_INTERMEDIATE_NUM_OF_WORDS =
@@ -374,14 +408,13 @@ public class BooleanExpression {
                         // phrase does not specify the number of words which must be present between words composing the phrase itself
                         words = Utility.split(phrase);
                     }
-                    words = Arrays.stream(words).map(BooleanExpression::escapeWildcardCharacterReverse).toArray(String[]::new);
                     if (distancesOfIthWordFromTheFirstWord == null) {
                         be.setMatchingPhrase(words);
                     } else {
                         be.setMatchingPhrase(words, distancesOfIthWordFromTheFirstWord);
                     }
                 } else {
-                    be.setMatchingValue(escapeWildcardCharacterReverse(queryString));
+                    be.setMatchingValue(queryString);
                 }
 
                 return be;

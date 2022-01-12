@@ -530,6 +530,18 @@ public class Utility {
     }
 
     /**
+     * Replicates the given {@link String} for the specified number of times.
+     *
+     * @param N                 The desired number of replications
+     * @param stringToReplicate the {@link String} to replicate.
+     * @return the input string replicated for the desired number of times.
+     */
+    @NotNull
+    public static String getNReplicationsOfString(int N, String stringToReplicate) {
+        return new String(new char[N]).replace("\0", stringToReplicate);
+    }
+
+    /**
      * Generalization of {@link java.util.function.BiFunction} to take
      * three input arguments and produce one output argument.
      * From <a href="https://stackoverflow.com/a/19649473">Stackoverflow</a>.
