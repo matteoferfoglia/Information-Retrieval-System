@@ -41,7 +41,8 @@ public abstract class Document implements Serializable, Comparable<Document> {
     @Nullable
     private List<String> normalizedTokensComposingTitle;
     /**
-     * The content of this instance.
+     * The content of this instance (including the title).
+     * The content is anything concerning the document.
      */
     @Nullable
     private DocumentContent content;
@@ -50,7 +51,7 @@ public abstract class Document implements Serializable, Comparable<Document> {
      * Constructor.
      *
      * @param title    The title of this instance.
-     * @param content  The content of this instance.
+     * @param content  The content of this instance (including the title).
      * @param language The language of this instance.
      */
     public Document(@NotNull String title, @NotNull DocumentContent content, @NotNull Language language) {
@@ -81,7 +82,7 @@ public abstract class Document implements Serializable, Comparable<Document> {
     /**
      * Setter for {@link #title}.
      *
-     * @param title The content.
+     * @param title The title.
      */
     protected void setTitle(@NotNull String title) {
         this.title = Objects.requireNonNull(title);

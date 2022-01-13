@@ -21,6 +21,11 @@ import java.util.stream.Collectors;
 public record DocumentContent(@NotNull List<String> content) implements Serializable {
 
     /**
+     * The delimiter for the content.
+     */
+    public static final String CONTENT_DELIMITER = System.lineSeparator();
+
+    /**
      * Constructor.
      *
      * @param content The list of {@link String}s present in this instance
@@ -36,8 +41,7 @@ public record DocumentContent(@NotNull List<String> content) implements Serializ
      */
     @NotNull
     public String getEntireTextContent() {
-        return content.stream().sequential()
-                .collect(Collectors.joining(System.lineSeparator()));
+        return content.stream().sequential().collect(Collectors.joining(CONTENT_DELIMITER));
     }
 
     @Override

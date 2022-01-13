@@ -226,6 +226,8 @@ public class Utility {
 
     /**
      * Convert a given object to JSON format.
+     * <strong>Notice:</strong> special characters eventually present
+     * (like "\n", "\r", ...) are escaped.
      *
      * @param object The object to convert to JSON.
      * @return The string representing the given object in JSON format.

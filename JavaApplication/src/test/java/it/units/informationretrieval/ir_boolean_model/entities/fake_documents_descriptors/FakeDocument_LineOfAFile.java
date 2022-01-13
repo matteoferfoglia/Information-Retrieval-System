@@ -22,6 +22,7 @@ public class FakeDocument_LineOfAFile extends Document {
      */
     public FakeDocument_LineOfAFile(@NotNull final String title, @NotNull final String content) {
         this(title, new ArrayList<>() {{
+            add(title);
             add(content);
         }});
     }

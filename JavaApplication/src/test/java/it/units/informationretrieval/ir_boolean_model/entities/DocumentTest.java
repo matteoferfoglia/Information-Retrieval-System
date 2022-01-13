@@ -18,6 +18,10 @@ class DocumentTest {
 
     @Test
     void toJson() {
-        assertEquals("{\"Content\":\"" + SAMPLE_CONTENT + "\"}", SAMPLE_DOCUMENT.toJson().replaceAll("\s*", ""));
+        assertEquals(
+                "{\"Content\":\"" + SAMPLE_TITLE + SAMPLE_CONTENT + "\"}",
+                SAMPLE_DOCUMENT.toJson()
+                        .replaceAll("(\\\\r)*\\\\n", System.lineSeparator()) //special chars were escaped
+                        .replaceAll("\\s*", ""));
     }
 }
