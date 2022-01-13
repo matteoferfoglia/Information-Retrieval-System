@@ -1072,7 +1072,7 @@ public class BooleanExpression {
         if (RANK_RESULTS) {
             return results.stream()
                     .collect(Collectors.toMap(
-                            posting -> corpus.getDocument(posting.getDocId()),
+                            posting -> corpus.getDocumentByDocId(posting.getDocId()),
                             posting -> USE_WF_IDF ? posting.wfIdf(entireCorpusSize) : posting.tfIdf(entireCorpusSize),         // score
                             Double::sum,    // sum scores if more query terms are present in the same document
                             LinkedHashMap::new))
@@ -1097,7 +1097,7 @@ public class BooleanExpression {
         } else {
             return results.stream()
                     .map(Posting::getDocId)
-                    .map(corpus::getDocument)
+                    .map(corpus::getDocumentByDocId)
                     .limit(maxNumberOfResults)
                     .toList();
         }

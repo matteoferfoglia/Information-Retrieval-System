@@ -111,7 +111,7 @@ public class Corpus implements Serializable {
      * matching the input parameter.
      */
     @NotNull
-    public List<Document> getDocuments(@NotNull List<DocumentIdentifier> docIds) {
+    public List<Document> getDocumentsByDocIds(@NotNull List<DocumentIdentifier> docIds) {
         return docIds
                 .stream()
                 .distinct()
@@ -126,7 +126,7 @@ public class Corpus implements Serializable {
      * input {@link DocumentIdentifier} or null if it is not present.
      */
     @Nullable
-    public Document getDocument(@NotNull DocumentIdentifier docId) {
+    public Document getDocumentByDocId(@NotNull DocumentIdentifier docId) {
         return corpus.get(docId);
     }
 

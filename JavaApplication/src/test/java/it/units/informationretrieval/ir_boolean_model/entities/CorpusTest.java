@@ -52,7 +52,7 @@ class CorpusTest {
 
     @Benchmark(commentToReport = "First " + HOW_MANY_DOCS_TO_RETRIEVE + " documents are retrieved")
     static void getFirstDocumentsFromDocId() {
-        corpus.getDocuments(docIdsOfFirstDocumentsInCorpus);
+        corpus.getDocumentsByDocIds(docIdsOfFirstDocumentsInCorpus);
     }
 
     @Benchmark(commentToReport = "First " + HOW_MANY_DOCS_TO_RETRIEVE + " documents are retrieved")
@@ -61,7 +61,7 @@ class CorpusTest {
     }
 
     public static void main(String[] args) {
-        System.out.println(corpus.getDocuments(docIdsOfFirstDocumentsInCorpus));
+        System.out.println(corpus.getDocumentsByDocIds(docIdsOfFirstDocumentsInCorpus));
     }
 
     @BeforeEach
@@ -106,7 +106,7 @@ class CorpusTest {
     @Test
     void getDocuments() {
         var docIdsInCorpus = corpus.getCorpus().keySet().stream().toList();
-        assertEquals(new HashSet<>(documents), new HashSet<>(corpus.getDocuments(docIdsInCorpus)));
+        assertEquals(new HashSet<>(documents), new HashSet<>(corpus.getDocumentsByDocIds(docIdsInCorpus)));
     }
 
     @Test
