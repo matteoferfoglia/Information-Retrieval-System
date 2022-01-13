@@ -110,6 +110,17 @@ public abstract class Document implements Serializable, Comparable<Document> {
         this.content = Objects.requireNonNull(content);
     }
 
+    /**
+     * Getter for {@link #content}.
+     *
+     * @return The content of this instance as {@link String} or
+     * an empty string if the content is null.
+     */
+    @NotNull
+    public String getContentAsString() {
+        return content == null ? "" : content.getEntireTextContent();
+    }
+
     @NotNull
     public String toString() {
         return "{\"" +
