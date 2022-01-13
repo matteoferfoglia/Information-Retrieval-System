@@ -1,4 +1,4 @@
-package it.units.informationretrieval.ir_boolean_model.evaluation.cranfield_collection;
+package it.units.informationretrieval.ir_boolean_model.document_descriptors;
 
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
@@ -20,6 +20,12 @@ import java.util.regex.Pattern;
  * Class representing a document taken from the Cranfield collection.
  */
 public class CranfieldDocument extends Document {
+
+    /**
+     * The folder name in the resources where files about this collection
+     * are available.
+     */
+    private static final String RESOURCE_FOLDER_NAME_CRANFIELD = "cranfield_collection";
 
     /**
      * When using regexes to extract data from each document,
@@ -89,7 +95,7 @@ public class CranfieldDocument extends Document {
     @NotNull
     private static List<String> getDocuments() throws IOException, URISyntaxException {
 
-        final String PATH_TO_FILE_WITH_DOCS = "cran.all.1400";
+        final String PATH_TO_FILE_WITH_DOCS = RESOURCE_FOLDER_NAME_CRANFIELD + "/cran.all.1400";
         String allLinesFromFile = Files.readString(Path.of(Objects.requireNonNull(
                 CranfieldDocument.class.getResource(PATH_TO_FILE_WITH_DOCS)).toURI()));
 
