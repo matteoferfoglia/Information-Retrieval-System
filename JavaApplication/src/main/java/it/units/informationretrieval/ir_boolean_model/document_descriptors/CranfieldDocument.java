@@ -5,7 +5,6 @@ import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.DocumentContent;
 import it.units.informationretrieval.ir_boolean_model.entities.Language;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
-import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -15,7 +14,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiFunction;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -33,46 +32,47 @@ public class CranfieldDocument extends Document {
     // -----------------------------------------------------------------------------------------------------------------
 
     // Regex are used to extract data from the text composing the collection.
-    // For each region of the text to be extracted, a static Pair instance is
-    // provided: the key is the regex pattern for the region and the value is
-    // the number of the capturing group in which the text to be extracted  is
-    // present.
+    // Each region of a document (docNumber, title, ...) can be extracted from
+    // the i-th capturing group of the regex given for the entire document.
+    // Capturing group numbers are saved in fields in this region.
 
     /**
-     * The regex and the corresponding capturing group to extract the {@link #docNumber}
-     * from a Cranfield's collection document given as string.
+     * The number of the capturing group of the {@link #docNumber} of a Cranfield's
+     * collection document, extracted with {@link #REGEX_ENTIRE_DOCUMENT}.
      */
-    @NotNull
-    private static final Pair<Pattern, Integer> REGEX_DOC_NUMBER =
-            new Pair<>(Pattern.compile("(?s)^\\.I (\\d+)\\s+.*?\\.T\\s+"), 1);
+    private static final int CAPTURING_GROUP_REGEX_DOC_NUMBER = 1;
     /**
-     * The regex and the corresponding capturing group to extract the title from a
-     * Cranfield's collection document given as string.
+     * The number of the capturing group of the title of a Cranfield's
+     * collection document, extracted with {@link #REGEX_ENTIRE_DOCUMENT}.
      */
-    @NotNull
-    private static final Pair<Pattern, Integer> REGEX_TITLE =
-            new Pair<>(Pattern.compile(REGEX_DOC_NUMBER.getKey().pattern() + "(.*?)\\s+\\.A\\s+"), 2);
+    private static final int CAPTURING_GROUP_REGEX_TITLE = 2;
     /**
-     * The regex and the corresponding capturing group to extract the {@link #authors} from a
-     * Cranfield's collection document given as string.
+     * The number of the capturing group of the {@link #authors} of a Cranfield's
+     * collection document, extracted with {@link #REGEX_ENTIRE_DOCUMENT}.
      */
-    @NotNull
-    private static final Pair<Pattern, Integer> REGEX_AUTHORS =
-            new Pair<>(Pattern.compile(REGEX_TITLE.getKey().pattern() + "(.*?)\\s+\\.B\\s+"), 3);
+    private static final int CAPTURING_GROUP_REGEX_AUTHORS = 3;
     /**
-     * The regex and the corresponding capturing group to extract the {@link #source} from a
-     * Cranfield's collection document given as string.
+     * The number of the capturing group of the {@link #source} of a Cranfield's
+     * collection document, extracted with {@link #REGEX_ENTIRE_DOCUMENT}.
      */
-    @NotNull
-    private static final Pair<Pattern, Integer> REGEX_SOURCE =
-            new Pair<>(Pattern.compile(REGEX_AUTHORS.getKey().pattern() + "(.*?)\\s+\\.W\\s+"), 4);
+    private static final int CAPTURING_GROUP_REGEX_SOURCE = 4;
     /**
-     * The regex and the corresponding capturing group to extract the actual content from a
-     * Cranfield's collection document given as string.
+     * The number of the capturing group of the actual content of a Cranfield's
+     * collection document, extracted with {@link #REGEX_ENTIRE_DOCUMENT}.
+     */
+    private static final int CAPTURING_GROUP_REGEX_ACTUAL_CONTENT = 5;
+
+    /**
+     * The regex for a Cranfield's collection document.
      */
     @NotNull
-    private static final Pair<Pattern, Integer> REGEX_ACTUAL_CONTENT =
-            new Pair<>(Pattern.compile(REGEX_SOURCE.getKey().pattern() + "(.*?)\\s+((\\.I\\s+)|\\z)"), 5);
+    private final static Pattern REGEX_ENTIRE_DOCUMENT = Pattern.compile(
+            "(?s)"     // multiline matching, you can use Pattern.DOTALL flag instead
+                    + "^\\.I (\\d+)\\s+.*?\\.T\\s*" // (\d+)  matches the doc number    (group 1 of the overall regex)
+                    + "(.*?)\\s+\\.A\\s*"           // (.*?)  matches the doc title     (group 2 of the overall regex)
+                    + "(.*?)\\s+\\.B\\s*"           // (.*?)  matches the doc authors   (group 3 of the overall regex)
+                    + "(.*?)\\s+\\.W\\s*"           // (.*?)  matches the doc source    (group 4 of the overall regex)
+                    + "(.*?)\\s+((\\.I\\s*)|\\z)"); // (.*?)  matches the doc actual content (group 5 of the overall regex), matching goes on until either the next doc beginning or the end of file
 
     // -----------------------------------------------------------------------------------------------------------------
     // endregion regex
@@ -111,28 +111,25 @@ public class CranfieldDocument extends Document {
     }
 
     public static Corpus createCorpus() throws URISyntaxException, IOException, NoMoreDocIdsAvailable {
-        var docs = getDocuments();
-        BiFunction<Pair<Pattern, Integer>, String, String> dataExtractor =
-                (patternToExtractAndCapturingGroup, inputText) -> {
-                    final var pattern = patternToExtractAndCapturingGroup.getKey();
-                    final var capturingGroup = patternToExtractAndCapturingGroup.getValue();
-                    var matcher = pattern.matcher(inputText);
-                    if (matcher.find()) {
-                        return matcher.group(capturingGroup);
-                    } else {
-                        return "";  // pattern not present
-                    }
-                };
         return new Corpus(
-                docs.stream()   // extract and print doc numbers (just to show)
+                getDocuments()
+                        .parallelStream()
                         .map(docAsStr -> {
-                            int docNumber = Integer.parseInt(dataExtractor.apply(REGEX_DOC_NUMBER, docAsStr));
-                            String title = dataExtractor.apply(REGEX_TITLE, docAsStr);
-                            String authors = dataExtractor.apply(REGEX_AUTHORS, docAsStr);
-                            String source = dataExtractor.apply(REGEX_SOURCE, docAsStr);
-                            String actualContent = dataExtractor.apply(REGEX_ACTUAL_CONTENT, docAsStr);
-                            return (Document)
-                                    new CranfieldDocument(docNumber, title, authors, source, actualContent);
+                            var matcher = REGEX_ENTIRE_DOCUMENT.matcher(docAsStr);
+                            if (matcher.find()) {
+                                int docNumber = Integer.parseInt(matcher.group(CAPTURING_GROUP_REGEX_DOC_NUMBER));
+                                String title = matcher.group(CAPTURING_GROUP_REGEX_TITLE);
+                                String authors = matcher.group(CAPTURING_GROUP_REGEX_AUTHORS);
+                                String source = matcher.group(CAPTURING_GROUP_REGEX_SOURCE);
+                                String actualContent = matcher.group(CAPTURING_GROUP_REGEX_ACTUAL_CONTENT);
+                                return (Document)
+                                        new CranfieldDocument(docNumber, title, authors, source, actualContent);
+                            } else {
+                                throw new IllegalArgumentException("Not matching the pattern for documents:"
+                                        + System.lineSeparator() + "\tPattern: " + REGEX_ENTIRE_DOCUMENT
+                                        + System.lineSeparator() + "\tDocument: "
+                                        + System.lineSeparator() + docAsStr.replaceAll("\\n", "\t\n")/*only for printing*/);
+                            }
                         })
                         .toList());
 
@@ -164,8 +161,9 @@ public class CranfieldDocument extends Document {
         final int EXPECTED_CORPUS_SIZE = 1400;
         assert corpusAsListOfDocs.size() == EXPECTED_CORPUS_SIZE;
         assert corpusAsListOfDocs.stream()
-                .filter(s -> Pattern.matches(REGEX_DOC_NUMBER.getKey().pattern() + ".*", s))  // each doc must start following this regex
-                .count() == EXPECTED_CORPUS_SIZE;
+                .map(REGEX_ENTIRE_DOCUMENT::matcher)
+                .filter(Matcher::matches)
+                .count() == EXPECTED_CORPUS_SIZE;   // assert that each document follows the correct pattern
 
         return corpusAsListOfDocs;
     }
