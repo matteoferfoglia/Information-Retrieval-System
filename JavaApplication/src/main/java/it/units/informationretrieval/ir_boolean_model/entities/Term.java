@@ -39,15 +39,21 @@ public class Term implements Comparable<Term>, Serializable {
     }
 
     /**
+     * @return the Document-Frequency for this {@link Term}.
+     */
+    public double df() {
+        return postingList.size();
+    }
+
+    /**
      * Returns the Inverse-Document-Frequency for this {@link Term}.
      *
      * @param numberOfDocsInCorpus The total number of documents in the Corpus.
      * @return the Inverse-Document-Frequency for this {@link Term}.
      */
     public double idf(int numberOfDocsInCorpus) {
-        int df = postingList.size();    // document frequency
-        assert df > 0;
-        return Math.log((double) numberOfDocsInCorpus / df);
+        assert df() > 0;
+        return Math.log((double) numberOfDocsInCorpus / df());
     }
 
     /**
