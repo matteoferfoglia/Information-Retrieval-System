@@ -20,6 +20,11 @@ import java.util.stream.Collectors;
  */
 class ExampleOfUseOfTheIRSystem {
 
+    /**
+     * Flag: set to true if result contents must be printed.
+     */
+    private final static boolean PRINT_RESULT_CONTENTS = false;
+
     public static void main(String[] args) {    // TODO: refactor
 
         try {
@@ -107,13 +112,15 @@ class ExampleOfUseOfTheIRSystem {
             // Query strings
             String[] queryStrings = new String[]{
                     "\"monster\"|\"space\"", "moon", "asterix & obelix", "love !story", "love&!story", "\"Space jam\""};
-            System.out.println(System.lineSeparator() + "Query strings");
-            for (String queryString : queryStrings) {
-                System.out.println("Query string: " + queryString);
-                int maxNumOfResultsToShow = 5;
-                System.out.println(irs.retrieve(queryString).stream().limit(maxNumOfResultsToShow).toList());
+            if (PRINT_RESULT_CONTENTS) {
+                System.out.println(System.lineSeparator() + "Query strings");
+                for (String queryString : queryStrings) {
+                    System.out.println("Query string: " + queryString);
+                    int maxNumOfResultsToShow = 5;
+                    System.out.println(irs.retrieve(queryString).stream().limit(maxNumOfResultsToShow).toList());
+                }
             }
-            System.out.println(System.lineSeparator() + "Query strings (with more output)");
+            System.out.println(System.lineSeparator() + "Query strings");
             for (String queryString : queryStrings) {
                 System.out.println("Query string: " + queryString);
                 int maxNumOfResultsToShow = 5;
@@ -122,11 +129,15 @@ class ExampleOfUseOfTheIRSystem {
                 BooleanExpression be = irs.createNewBooleanExpression().parseQuery(queryString);
                 List<Document> results = be.evaluate();
                 stop = System.nanoTime();
-                System.out.println("Results for query \"" + queryString + "\"  {" + be.getQueryString() + "} "
-                        + "found in " + (stop - start) / 1e6 + " ms:"
-                        + System.lineSeparator()
-                        + results.stream().limit(maxNumOfResultsToShow)
-                        .map(aResult -> "\t - " + aResult).collect(Collectors.joining(System.lineSeparator())));
+                System.out.print("Results for query \"" + queryString + "\"  " + be.getQueryString()
+                        + "found in " + (stop - start) / 1e6 + " ms");
+                if (PRINT_RESULT_CONTENTS) {
+                    System.out.println(":" + System.lineSeparator()
+                            + results.stream().limit(maxNumOfResultsToShow)
+                            .map(aResult -> "\t - " + aResult).collect(Collectors.joining(System.lineSeparator())));
+                } else {
+                    System.out.println();
+                }
             }
 
             // Spelling correction
@@ -199,25 +210,28 @@ class ExampleOfUseOfTheIRSystem {
                     .append(be.getInitialQueryString())
                     .append("}");
         }
-        if (results.size() > 1) {
-            sb.append(System.lineSeparator());
-            if (results.size() > maxNumberOfResultsToReturn) {
-                sb.append("First ")
-                        .append(maxNumberOfResultsToReturn)
-                        .append(" results");
-            } else {
-                sb.append("Results");
+
+        if (PRINT_RESULT_CONTENTS) {
+            if (results.size() > 1) {
+                sb.append(System.lineSeparator());
+                if (results.size() > maxNumberOfResultsToReturn) {
+                    sb.append("First ")
+                            .append(maxNumberOfResultsToReturn)
+                            .append(" results");
+                } else {
+                    sb.append("Results");
+                }
             }
-        }
-        if (results.size() > 0) {
-            sb.append(":")
-                    .append(System.lineSeparator())
-                    .append("-\t")
-                    .append(
-                            results.stream()
-                                    .limit(maxNumberOfResultsToReturn)
-                                    .map(Object::toString)
-                                    .collect(Collectors.joining("\n-\t")));
+            if (results.size() > 0) {
+                sb.append(":")
+                        .append(System.lineSeparator())
+                        .append("-\t")
+                        .append(
+                                results.stream()
+                                        .limit(maxNumberOfResultsToReturn)
+                                        .map(Object::toString)
+                                        .collect(Collectors.joining("\n-\t")));
+            }
         }
 
         return sb.toString();
