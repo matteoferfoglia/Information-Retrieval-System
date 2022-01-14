@@ -138,8 +138,9 @@ public class Evaluation {
 
     @Test
     void precision() {
-        String queryString = parseQueryToKeepOnlyTermsKnownByTheIRSystem(CRANFIELD_QUERIES.get(0));
-        System.out.println(queryString);
+        // TODO: test not written
+//        String queryString = parseQueryToKeepOnlyTermsKnownByTheIRSystem(CRANFIELD_QUERIES.get(0));
+//        System.out.println(queryString);
     }
 
 }
@@ -156,7 +157,7 @@ class CranfieldQuery {
      * to evaluate the system) are.
      */
     @NotNull
-    private final static String PATH_TO_CRANFIELD_RESOURCE_FOLDER = "./../document_descriptors/cranfield_collection/";
+    private final static String PATH_TO_CRANFIELD_RESOURCE_FOLDER = "cranfield_collection/";
 
     /**
      * The name of the file containing the queries.
@@ -240,7 +241,7 @@ class CranfieldQuery {
         var docsAnsweringQueriesAssociationTmp = "";
         try {
             var pathToQueries = Path.of(Objects.requireNonNull(
-                            Evaluation.class.getResource(
+                            CranfieldDocument.class.getResource(
                                     PATH_TO_CRANFIELD_RESOURCE_FOLDER + RELATIVE_PATH_TO_DOCS_ANSWERING_QUERIES))
                     .toURI());
             docsAnsweringQueriesAssociationTmp = Files.readString(pathToQueries);
@@ -306,7 +307,7 @@ class CranfieldQuery {
     @NotNull
     public static List<CranfieldQuery> readQueries() throws URISyntaxException, IOException {
         var pathToQueries = Path.of(Objects.requireNonNull(
-                        Evaluation.class.getResource(PATH_TO_CRANFIELD_RESOURCE_FOLDER + RELATIVE_PATH_TO_QUERIES))
+                        CranfieldDocument.class.getResource(PATH_TO_CRANFIELD_RESOURCE_FOLDER + RELATIVE_PATH_TO_QUERIES))
                 .toURI());
         String allQueriesInAString = Files.readString(pathToQueries);
         List<CranfieldQuery> queries = Arrays.stream(allQueriesInAString.split(TEXT_START_OF_QUERY))
