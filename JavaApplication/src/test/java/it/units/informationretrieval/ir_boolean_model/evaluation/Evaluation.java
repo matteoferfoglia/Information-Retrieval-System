@@ -1,16 +1,79 @@
 package it.units.informationretrieval.ir_boolean_model.evaluation;
 
+import it.units.informationretrieval.ir_boolean_model.document_descriptors.CranfieldDocument;
+import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+/**
+ * Enumeration of possible value of relevance assigned to documents
+ * from the Cranfield's collection.
+ * Each enum value has its own value (used for classification in
+ * input documents) and the corresponding description for the value.
+ */
+enum CranfieldRelevance {
+    COMPLETE_ANSWER(1, "References which are a complete answer to the question."),
+    HIGH_RELEVANCE(2, "References of a high degree of relevance, the lack of which"
+            + " either would have made the research impracticable or would"
+            + "  have resulted in a considerable amount of extra work."),
+    USEFUL(3, "References which were useful, either as general background"
+            + " to the work or as suggesting methods of tackling certain aspects"
+            + " of the work."),
+    LOW_INTEREST(4, "References of minimum interest, for example, those that have been"
+            + " included from an historical viewpoint."),
+    NO_INTEREST(5, "References of no interest.");
+
+
+    /**
+     * Minimum value for {@link #relevance}.
+     */
+    private final static int MIN_RELEVANCE_VALUE = 1;
+    /**
+     * Maximum value for {@link #relevance}.
+     */
+    private final static int MAX_RELEVANCE_VALUE = 5;
+    /**
+     * Relevance numeric value.
+     */
+    @Range(from = MIN_RELEVANCE_VALUE, to = MAX_RELEVANCE_VALUE)
+    private final int relevance;
+    /**
+     * Description for the enum value.
+     */
+    @NotNull
+    private final String description;
+
+    /**
+     * Constructor.
+     */
+    CranfieldRelevance(int relevance, @NotNull String description) {
+        this.relevance = relevance;
+        this.description = Objects.requireNonNull(description);
+        assert MIN_RELEVANCE_VALUE <= relevance && relevance <= MAX_RELEVANCE_VALUE;
+    }
+
+    /**
+     * @param relevance The relevance, provided as numeric value.
+     * @return the enum instance for the provided relevance value.
+     */
+    @NotNull
+    public static CranfieldRelevance getEnumValueFromNumericRelevance(int relevance) {
+        return Arrays.stream(values())
+                .filter(enumVal -> enumVal.relevance == relevance)
+                .findAny()
+                .orElseThrow();
+    }
+}
 
 /**
  * This class evaluates the system.
@@ -37,28 +100,40 @@ class CranfieldQuery {
     private final static String PATH_TO_CRANFIELD_RESOURCE_FOLDER = "./../document_descriptors/cranfield_collection/";
 
     /**
-     * The file containing queries.
+     * The name of the file containing the queries.
      */
     @NotNull
     private final static String RELATIVE_PATH_TO_QUERIES = "cran.qry";
 
     /**
+     * The name of the file containing the association between a query (the
+     * query number is provided) and the {@link CranfieldDocument} (the doc
+     * number is provided) which is an answer (with a specified degree of
+     * relevance) to the given query.
+     */
+    @NotNull
+    private final static String RELATIVE_PATH_TO_DOCS_ANSWERING_QUERIES = "cranqrel";
+
+    /**
+     * The content saved as {@link String} of the file whose name is specified
+     * in {@link #RELATIVE_PATH_TO_DOCS_ANSWERING_QUERIES}.
+     */
+    @NotNull
+    private final static String DOCS_ANSWERING_QUERIES_ASSOCIATION;
+    /**
      * Expected total number of queries.
      */
     private final static int EXPECTED_TOTAL_NUM_OF_QUERIES = 225;
-
     /**
      * The text with which each new query starts.
      */
     @NotNull
     private final static String TEXT_START_OF_QUERY = ".I ";
-
     /**
      * The regex to match the start of a new query.
      */
     @NotNull
     private final static Pattern REGEX_START_OF_QUERY = Pattern.compile("^\\" + TEXT_START_OF_QUERY);
-
     /**
      * The regex to match an entire query.
      * The {@link #queryNumber} can be captured from the first capturing group
@@ -70,17 +145,53 @@ class CranfieldQuery {
                     "(\\d+)\\s+" +        // matches the query number       in the 1st capturing group
                     "\\.W\\s+(.*?)\\s+" + // matches the text of a query    in the 2nd capturing group
                     "((" + REGEX_START_OF_QUERY + ")|\\z)");// goes on until the start of a new query or the end of file
-
     /**
      * The capturing group matching the query number according to {@link #REGEX_ENTIRE_QUERY}.
      */
-    @NotNull
     private final static int CAPTURING_GROUP_QUERY_NUMBER = 1;
     /**
      * The capturing group matching the query text according to {@link #REGEX_ENTIRE_QUERY}.
      */
-    @NotNull
     private final static int CAPTURING_GROUP_QUERY_TEXT = 2;
+
+    /**
+     * The Cranfield's collection saved as {@link Map} (the key is the document
+     * number, the value is the entire {@link CranfieldDocument}.
+     */
+    @NotNull
+    private static final Map<Integer, CranfieldDocument> CRANFIELD_DOCUMENTS_MAP;
+
+    static {
+
+        // Get documents
+        Map<Integer, CranfieldDocument> cranfieldDocumentsMapTmp = new HashMap<>();
+        try {
+            cranfieldDocumentsMapTmp = CranfieldDocument.createCorpus().getCorpus().values()
+                    .stream()
+                    .map(doc -> (CranfieldDocument) doc)
+                    .collect(Collectors.toMap(CranfieldDocument::getDocNumber, Function.identity()));
+        } catch (URISyntaxException | IOException | NoMoreDocIdsAvailable e) {
+            System.err.println("Error reading documents");
+            e.printStackTrace();
+        } finally {
+            CRANFIELD_DOCUMENTS_MAP = cranfieldDocumentsMapTmp;
+        }
+
+        // Get answers to queries
+        var docsAnsweringQueriesAssociationTmp = "";
+        try {
+            var pathToQueries = Path.of(Objects.requireNonNull(
+                            Evaluation.class.getResource(
+                                    PATH_TO_CRANFIELD_RESOURCE_FOLDER + RELATIVE_PATH_TO_DOCS_ANSWERING_QUERIES))
+                    .toURI());
+            docsAnsweringQueriesAssociationTmp = Files.readString(pathToQueries);
+        } catch (URISyntaxException | IOException e) {
+            System.err.println("Error reading queries answers association.");
+            e.printStackTrace();
+        } finally {
+            DOCS_ANSWERING_QUERIES_ASSOCIATION = docsAnsweringQueriesAssociationTmp;
+        }
+    }
 
     /**
      * The query number. It identifies the query.
@@ -93,11 +204,39 @@ class CranfieldQuery {
     private final String queryText;
 
     /**
+     * Maps a {@link CranfieldDocument} (key), which must be present among the results
+     * of this query, to its relevance (value)
+     */
+    @NotNull
+    private final Map<CranfieldDocument, CranfieldRelevance> mapDocToRelevance = new HashMap<>();
+
+    /**
      * Constructor.
      */
     public CranfieldQuery(int queryNumber, @NotNull String queryText) {
         this.queryNumber = queryNumber;
         this.queryText = Objects.requireNonNull(queryText);
+
+        // associate the query with its answers
+        final Pattern REGEX_ANSWERS_EXTRACTION = Pattern.compile(
+                "^" + queryNumber + "\\s"       // extract data for this query (according to queryNumber)
+                        + "(\\d+)\\s"           // extract the docNumber matching the results                   (1st capturing group)
+                        + "(\\d+)");            // extract the degree of relevance for the doc to this query    (2nd capturing group)
+        final int CAPTURING_GROUP_FOR_DOC_NUMBER_ANSWERING_THE_QUERY = 1;
+        final int CAPTURING_GROUP_FOR_RELEVANCE_DEGREE = 2;
+        Matcher answersMatcher = REGEX_ANSWERS_EXTRACTION.matcher(DOCS_ANSWERING_QUERIES_ASSOCIATION);
+        while (answersMatcher.find()) {
+            int answerDocNumber = Integer.parseInt(
+                    answersMatcher.group(CAPTURING_GROUP_FOR_DOC_NUMBER_ANSWERING_THE_QUERY));
+            int relevanceOfAnswerDocToThisQuery = Integer.parseInt(
+                    answersMatcher.group(CAPTURING_GROUP_FOR_RELEVANCE_DEGREE));
+            var document = Objects.requireNonNull(
+                    CRANFIELD_DOCUMENTS_MAP.get(answerDocNumber),
+                    "No documents found for docNumber " + answerDocNumber);
+            mapDocToRelevance.put(
+                    document,
+                    CranfieldRelevance.getEnumValueFromNumericRelevance(relevanceOfAnswerDocToThisQuery));
+        }
     }
 
     /**

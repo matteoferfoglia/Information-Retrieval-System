@@ -135,12 +135,6 @@ public class CranfieldDocument extends Document {
 
     }
 
-    public static void main(String[] args) throws URISyntaxException, IOException, NoMoreDocIdsAvailable {
-        var corpus = createCorpus();
-        var m = corpus.getCorpus();
-        m.values().stream().map(Document::getContentAsString).forEach(System.out::println);
-    }
-
     /**
      * @return a {@link List} in which each element is a document from
      * the collection, represented as string.
@@ -166,6 +160,13 @@ public class CranfieldDocument extends Document {
                 .count() == EXPECTED_CORPUS_SIZE;   // assert that each document follows the correct pattern
 
         return corpusAsListOfDocs;
+    }
+
+    /**
+     * @return the document number of this instance, as assigned by the input Cranfield's collection.
+     */
+    public int getDocNumber() {
+        return docNumber;
     }
 
     @Override
