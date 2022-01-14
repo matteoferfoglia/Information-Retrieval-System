@@ -2,6 +2,7 @@ package it.units.informationretrieval.ir_boolean_model.evaluation;
 
 import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem;
 import it.units.informationretrieval.ir_boolean_model.document_descriptors.CranfieldDocument;
+import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  * input documents) and the corresponding description for the value.
  */
 enum CranfieldRelevance {
+
+    // enum values sorted by relevance
     COMPLETE_ANSWER(1, "References which are a complete answer to the question."),
     HIGH_RELEVANCE(2, "References of a high degree of relevance, the lack of which"
             + " either would have made the research impracticable or would"
@@ -72,9 +75,12 @@ enum CranfieldRelevance {
     /**
      * @param relevance The relevance, provided as numeric value.
      * @return the enum instance for the provided relevance value.
+     * @throws NoSuchElementException if the input parameter is not a valid
+     *                                value for {@link CranfieldRelevance}.
      */
     @NotNull
-    public static CranfieldRelevance getEnumValueFromNumericRelevance(int relevance) {
+    public static CranfieldRelevance getEnumValueFromNumericRelevance(int relevance)
+            throws NoSuchElementException {
         return Arrays.stream(values())
                 .filter(enumVal -> enumVal.relevance == relevance)
                 .findAny()
@@ -123,24 +129,54 @@ public class Evaluation {
     /**
      * @param query A {@link CranfieldQuery} instance.
      * @return the query string obtained from the input instance
-     * but keeping only terms which are in the IR system dictionary.
+     * but keeping only terms which are in the IR system dictionary
+     * and whose wf-idf value is higher than a specified threshold
+     * (that depends on the implementation).
      */
-    private static String parseQueryToKeepOnlyTermsKnownByTheIRSystem(@NotNull CranfieldQuery query) {
+    private static String parseQueryToKeepOnlyTermsKnownByTheIRSystemOverWfIdfThreshold(@NotNull CranfieldQuery query) {
+        final double DF_THRESHOLD = 0.3 * CRANFIELD_IRS.size();  // term must compare at least in 10% of docs   // TODO: better to use stemming and avoid stop words
+        var termsToKeep = CRANFIELD_IRS.getDictionary(DF_THRESHOLD);    // TODO: use .getListOfPostings(..) instead
         return Arrays.stream(Utility.split(query.getQueryText()))
                 .map(tokenFromQuery -> Utility.normalize(
                         tokenFromQuery,
                         false, // parse like if it was a term of the IR System dictionary
                         CranfieldDocument.LANGUAGE))
                 .filter(Objects::nonNull)
-                .filter(CRANFIELD_IRS.getDictionary()::contains)
+                .filter(termsToKeep::contains)
                 .collect(Collectors.joining(" "));
     }
 
     @Test
     void precision() {
-        // TODO: test not written
-//        String queryString = parseQueryToKeepOnlyTermsKnownByTheIRSystem(CRANFIELD_QUERIES.get(0));
-//        System.out.println(queryString);
+        var precisions = CRANFIELD_QUERIES.stream()
+                .map(query -> {
+                    String queryString = parseQueryToKeepOnlyTermsKnownByTheIRSystemOverWfIdfThreshold(query);
+                    Set<Document> retrievedDocuments = new HashSet<>(CRANFIELD_IRS.retrieve(queryString));
+                    Set<Document> relevantDocuments = query.getRelevantDocs().keySet()
+                            .stream().map(doc -> (Document) doc).collect(Collectors.toSet());
+                    Set<Document> relevantAndRetrieved = relevantDocuments.stream()
+                            .filter(retrievedDocuments::contains).collect(Collectors.toSet());
+                    return (double) relevantAndRetrieved.size() / retrievedDocuments.size();
+
+//                    // TODO: sorting for ranking retrieval
+//                    List<Document> sortedRetrievedDocuments = CRANFIELD_IRS.retrieve(queryString.replaceAll(" ", "|") /*OR query*/);
+//                    List<Document> sortedRelevantDocuments =
+//                            query.getRelevantDocs().entrySet()
+//                                    .stream()
+//                                    .sorted(Map.Entry.comparingByValue())
+//                                    .map(Map.Entry::getKey)
+//                                    .map(doc -> (Document) doc)
+//                                    .toList();
+//                    List<Document> sortedRelevantAndRetrieved =
+//                            Utility.intersectionOfSortedLists(sortedRelevantDocuments, sortedRetrievedDocuments);
+//                    return (double) sortedRelevantAndRetrieved.size() / sortedRetrievedDocuments.size();
+                })
+                .toList();
+
+        System.out.println("Average precision: " + precisions.stream().mapToDouble(d -> d).average().orElseThrow());
+        System.out.println("Best precision:    " + precisions.stream().mapToDouble(d -> d).max().orElseThrow());
+        System.out.println("Worst precision:   " + precisions.stream().mapToDouble(d -> d).min().orElseThrow());
+
     }
 
 }
@@ -279,9 +315,12 @@ class CranfieldQuery {
 
         // associate the query with its answers
         final Pattern REGEX_ANSWERS_EXTRACTION = Pattern.compile(
-                "^" + queryNumber + "\\s"       // extract data for this query (according to queryNumber)
-                        + "(\\d+)\\s"           // extract the docNumber matching the results                   (1st capturing group)
-                        + "(\\d+)");            // extract the degree of relevance for the doc to this query    (2nd capturing group)
+                "(?m)"                // accept the anchors ^ and $ to match at the start and end of each line (like to use the flag Pattern.MULTILINE)
+                        + "^"         // start of line
+                        + queryNumber // extract data for this query (according to queryNumber)
+                        + "\\s"       // exactly one space after the query number
+                        + "(\\d+)\\s" // extract the docNumber matching the results                (1st capturing group)
+                        + "(\\d+)");  // extract the degree of relevance for the doc to this query (2nd capturing group)
         final int CAPTURING_GROUP_FOR_DOC_NUMBER_ANSWERING_THE_QUERY = 1;
         final int CAPTURING_GROUP_FOR_RELEVANCE_DEGREE = 2;
         Matcher answersMatcher = REGEX_ANSWERS_EXTRACTION.matcher(DOCS_ANSWERING_QUERIES_ASSOCIATION);
@@ -293,9 +332,14 @@ class CranfieldQuery {
             var document = Objects.requireNonNull(
                     CRANFIELD_DOCUMENTS_MAP.get(answerDocNumber),
                     "No documents found for docNumber " + answerDocNumber);
-            mapDocToRelevance.put(
-                    document,
-                    CranfieldRelevance.getEnumValueFromNumericRelevance(relevanceOfAnswerDocToThisQuery));
+            CranfieldRelevance relevance;
+            try {
+                relevance = CranfieldRelevance.getEnumValueFromNumericRelevance(relevanceOfAnswerDocToThisQuery);
+            } catch (NoSuchElementException e) {
+                System.err.println("No enum values for " + relevanceOfAnswerDocToThisQuery);
+                relevance = null;
+            }
+            mapDocToRelevance.put(document, relevance);
         }
     }
 
@@ -328,6 +372,14 @@ class CranfieldQuery {
                 .toList();
         assert queries.size() == EXPECTED_TOTAL_NUM_OF_QUERIES;
         return queries;
+    }
+
+    /**
+     * @return a {@link Map} with the relevant documents for this query, having
+     * documents as key and the relevance as corresponding value.
+     */
+    public Map<CranfieldDocument, CranfieldRelevance> getRelevantDocs() {
+        return mapDocToRelevance;
     }
 
     /**
