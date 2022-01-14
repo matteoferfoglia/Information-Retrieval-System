@@ -91,6 +91,22 @@ public class BooleanExpression {
      * of times specified by this field.
      */
     private final static int VALID_PARSING_CHAR_REPETITIONS_FOR_PHRASE_DELIMITER = 7;
+
+    /**
+     * {@link QueryParsing} might not accept the literal "true",
+     * so all of its occurrences in any query strings should
+     * be replaced with {@link #VALID_CHAR_FOR_PARSER}, repeated for the number
+     * of times specified by this field.
+     */
+    private final static int VALID_PARSING_CHAR_REPETITIONS_FOR_TRUE_LITERAL = 9;
+
+    /**
+     * {@link QueryParsing} might not accept the literal "false",
+     * so all of its occurrences in any query strings should
+     * be replaced with {@link #VALID_CHAR_FOR_PARSER}, repeated for the number
+     * of times specified by this field.
+     */
+    private final static int VALID_PARSING_CHAR_REPETITIONS_FOR_FALSE_LITERAL = 11;
     /**
      * Flag which is set to true if results of queries must be ranked.
      */
@@ -291,7 +307,15 @@ public class BooleanExpression {
                 // escape other used special characters
                 .replaceAll(
                         NUM_OF_WORDS_FOLLOWS_CHARACTER,
-                        Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW, VALID_CHAR_FOR_PARSER));
+                        Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW, VALID_CHAR_FOR_PARSER))
+
+                // words with logical meaning are evaluated like literal expression by the parse, hence they need kind of escaping
+                .replaceAll(
+                        "true",
+                        Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_TRUE_LITERAL, VALID_CHAR_FOR_PARSER))
+                .replaceAll(
+                        "false",
+                        Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_FALSE_LITERAL, VALID_CHAR_FOR_PARSER));
 
     }
 
@@ -309,6 +333,8 @@ public class BooleanExpression {
         assert VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW > VALID_PARSING_CHAR_REPETITIONS_FOR_WILDCARD;
         return queryString
                 // replacements must be done in order: longest escaping sequence first
+                .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_FALSE_LITERAL, VALID_CHAR_FOR_PARSER), "false")
+                .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_TRUE_LITERAL, VALID_CHAR_FOR_PARSER), "true")
                 .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW, VALID_CHAR_FOR_PARSER), NUM_OF_WORDS_FOLLOWS_CHARACTER)
                 .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_WILDCARD, VALID_CHAR_FOR_PARSER), WILDCARD);
     }
@@ -474,7 +500,7 @@ public class BooleanExpression {
                 } else if (expression instanceof Or) {
                     accumulator = BooleanExpression::or;
                 } else {
-                    throw new IllegalStateException("Unknown binary operation");
+                    throw new IllegalStateException("Unknown binary operation in expression " + expression);
                 }
                 return expression.getChildren()
                         .stream()
@@ -1049,7 +1075,8 @@ public class BooleanExpression {
     /**
      * Evaluate this expression on the given {@link InvertedIndex}.
      *
-     * @return the {@link Document}s matching this {@link BooleanExpression}.
+     * @return the {@link Document}s matching this {@link BooleanExpression},
+     * opportunely sorted according to their relevance to the query.
      * @throws UnsupportedOperationException If the operator for the expression is unknown.
      */
     @NotNull
@@ -1069,7 +1096,7 @@ public class BooleanExpression {
 
         final var corpus = informationRetrievalSystem.getCorpus();
         final var entireCorpusSize = corpus.size();
-        if (RANK_RESULTS) {
+        if (RANK_RESULTS) { // TODO: for OR expression: retrieved docs with higher numbers of matches first
             return results.stream()
                     .collect(Collectors.toMap(
                             posting -> corpus.getDocumentByDocId(posting.getDocId()),
