@@ -414,4 +414,29 @@ public class InvertedIndex implements Serializable {
                 ? new ArrayList<>(0)
                 : phoneticHashes.stream().map(Term::getTermString).toList();
     }
+
+    /**
+     * @return the average document-frequency value.
+     */
+    public double avgDf() {
+        return invertedIndex.values().stream()
+                .mapToInt(Term::df)
+                .average()
+                .orElseThrow();
+    }
+
+    /**
+     * @param tfThreshold A threshold value for the term-frequency value.
+     * @return all terms (as strings) present in the dictionary and
+     * having a term-frequency value strictly higher than the
+     * specified threshold.
+     */
+    @NotNull
+    public Collection<String> getDictionaryOverTf(int tfThreshold) {
+        return invertedIndex.keySet()
+                .stream().sequential()
+                .filter(term -> getTotalNumberOfOccurrencesOfTerm(term) > tfThreshold)
+                .sorted()
+                .toList();
+    }
 }

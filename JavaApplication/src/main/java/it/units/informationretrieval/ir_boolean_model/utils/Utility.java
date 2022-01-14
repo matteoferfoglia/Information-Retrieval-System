@@ -179,7 +179,7 @@ public class Utility {
      * @param language The language of the word.
      * @return true if the given word is a stop word for the given language.
      */
-    private static boolean isStopWord(String word, @NotNull Language language) {
+    public static boolean isStopWord(String word, @NotNull Language language) {
         return Arrays.asList(language.getStopWords()).contains(word);
     }
 

@@ -41,7 +41,7 @@ public class Term implements Comparable<Term>, Serializable {
     /**
      * @return the Document-Frequency for this {@link Term}.
      */
-    public double df() {
+    public int df() {
         return postingList.size();
     }
 

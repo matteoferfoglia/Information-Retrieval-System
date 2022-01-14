@@ -6,10 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import skiplist.SkipList;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class represents an Information Retrieval System.
@@ -165,9 +162,67 @@ public class InformationRetrievalSystem implements Serializable {
     }
 
     /**
+     * @param tfThreshold A threshold value for the term-frequency value.
+     * @return all terms (as strings) present in the dictionary and
+     * having a term-frequency value strictly higher than the
+     * specified threshold.
+     */
+    @NotNull
+    public Collection<String> getDictionaryOverTf(int tfThreshold) {
+        return invertedIndex.getDictionaryOverTf(tfThreshold);
+    }
+
+    /**
+     * @return the average document-frequency value.
+     */
+    public double avgDf() {
+        return invertedIndex.avgDf();
+    }
+
+    /**
      * @return the number of documents in the {@link Corpus}.
      */
     public int size() {
         return corpus.size();
     }
+
+    /**
+     * @return the average Wf-Idf value for the given string.
+     * @throws NoSuchElementException if no value is present.
+     */
+    public double avgWfIdf(String str) throws NoSuchElementException {
+        return getListOfPostingForToken(str)
+                .stream().mapToDouble(posting -> posting.wfIdf(size())).average().orElseThrow();
+    }
+
+    /**
+     * @param str The term for which the term-frequency is desired.
+     * @return the term frequency (total number of occurrences) for the string given as parameter.
+     */
+    public int tf(String str) {
+        return invertedIndex.getTotalNumberOfOccurrencesOfTerm(str);
+    }
+
+    /**
+     * @return the average term frequency over the dictionary.
+     * @throws NoSuchElementException if no value is present.
+     */
+    public double avgTf() throws NoSuchElementException {
+        return getDictionary().stream()
+                .mapToInt(invertedIndex::getTotalNumberOfOccurrencesOfTerm)
+                .average()
+                .orElseThrow();
+    }
+
+    /**
+     * @return the average value of Wf-Idf over the dictionary.
+     * @throws NoSuchElementException if no value is present.
+     */
+    public double avgWfIdf() throws NoSuchElementException {
+        return getDictionary().stream()
+                .mapToDouble(this::avgWfIdf)
+                .average()
+                .orElseThrow();
+    }
+
 }
