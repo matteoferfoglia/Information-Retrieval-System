@@ -78,6 +78,11 @@ public class CranfieldDocument extends Document {
     // endregion regex
 
     /**
+     * The {@link Language}.
+     */
+    public static final Language LANGUAGE = Language.ENGLISH;
+
+    /**
      * The number of the document in the collection.
      */
     private final int docNumber;
@@ -104,7 +109,7 @@ public class CranfieldDocument extends Document {
     public CranfieldDocument(
             int docNumber, @NotNull String title, @NotNull String authors,
             @NotNull String source, @NotNull String actualContent) {
-        super(title, new DocumentContent(Arrays.asList(title, authors, source, actualContent)), Language.ENGLISH);
+        super(title, new DocumentContent(Arrays.asList(title, authors, source, actualContent)), LANGUAGE);
         this.docNumber = docNumber;
         this.authors = authors;
         this.source = source;
