@@ -1,11 +1,16 @@
 package it.units.informationretrieval.ir_boolean_model.evaluation;
 
+import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem;
 import it.units.informationretrieval.ir_boolean_model.document_descriptors.CranfieldDocument;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
+import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +19,8 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Enumeration of possible value of relevance assigned to documents
@@ -82,6 +89,58 @@ enum CranfieldRelevance {
  */
 public class Evaluation {
 
+    /**
+     * The {@link InformationRetrievalSystem} for the Cranfield's collection.
+     */
+    @NotNull
+    private static final InformationRetrievalSystem CRANFIELD_IRS;
+
+    /**
+     * Queries for the Cranfield's collection.
+     */
+    @NotNull
+    private static final List<CranfieldQuery> CRANFIELD_QUERIES;
+
+    static {
+        InformationRetrievalSystem irsTmp = null;
+        List<CranfieldQuery> queriesTmp = null;
+        try {
+            PrintStream realStdOut = System.out;
+            System.setOut(new PrintStream(new ByteArrayOutputStream()));  // avoid to print useless output during tests
+            irsTmp = new InformationRetrievalSystem(CranfieldDocument.createCorpus());
+            System.setOut(realStdOut);
+            queriesTmp = CranfieldQuery.readQueries();
+        } catch (URISyntaxException | IOException | NoMoreDocIdsAvailable e) {
+            fail(e);
+        } finally {
+            assert irsTmp != null; // test should fail if null (errors while creating it)
+            assert queriesTmp != null;
+            CRANFIELD_IRS = irsTmp;
+            CRANFIELD_QUERIES = queriesTmp;
+        }
+    }
+
+    /**
+     * @param query A {@link CranfieldQuery} instance.
+     * @return the query string obtained from the input instance
+     * but keeping only terms which are in the IR system dictionary.
+     */
+    private static String parseQueryToKeepOnlyTermsKnownByTheIRSystem(@NotNull CranfieldQuery query) {
+        return Arrays.stream(Utility.split(query.getQueryText()))
+                .map(tokenFromQuery -> Utility.normalize(
+                        tokenFromQuery,
+                        false, // parse like if it was a term of the IR System dictionary
+                        CranfieldDocument.LANGUAGE))
+                .filter(Objects::nonNull)
+                .filter(CRANFIELD_IRS.getDictionary()::contains)
+                .collect(Collectors.joining(" "));
+    }
+
+    @Test
+    void precision() {
+        String queryString = parseQueryToKeepOnlyTermsKnownByTheIRSystem(CRANFIELD_QUERIES.get(0));
+        System.out.println(queryString);
+    }
 
 }
 
@@ -270,10 +329,12 @@ class CranfieldQuery {
         return queries;
     }
 
-    public static void main(String[] args) throws URISyntaxException, IOException {
-        var queries = readQueries();
-        System.out.println(queries.size() + " queries read:");
-        System.out.println(readQueries());
+    /**
+     * @return the text of this query.
+     */
+    @NotNull
+    public String getQueryText() {
+        return queryText;
     }
 
     @Override
