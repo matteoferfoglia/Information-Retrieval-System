@@ -91,7 +91,7 @@ public class InformationRetrievalSystem implements Serializable {
 
     /**
      * @param queryString The query string.
-     * @return the results for the given query string.
+     * @return the sorted (according to the relevance) results for the given query string.
      */
     @NotNull
     public List<Document> retrieve(@NotNull String queryString) {
@@ -151,5 +151,23 @@ public class InformationRetrievalSystem implements Serializable {
     @NotNull
     public Collection<String> getDictionary() {
         return invertedIndex.getDictionary();
+    }
+
+    /**
+     * @param dfThreshold A threshold value for the document-frequency value.
+     * @return all terms (as strings) present in the dictionary and
+     * having a document-frequency value strictly higher than the
+     * specified threshold.
+     */
+    @NotNull
+    public Collection<String> getDictionary(double dfThreshold) {
+        return invertedIndex.getDictionary(dfThreshold);
+    }
+
+    /**
+     * @return the number of documents in the {@link Corpus}.
+     */
+    public int size() {
+        return corpus.size();
     }
 }
