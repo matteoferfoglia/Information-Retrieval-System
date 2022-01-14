@@ -8,6 +8,9 @@ import it.units.informationretrieval.ir_boolean_model.entities.Language;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -21,7 +24,6 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,6 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <strong>Notice</strong>: the system was already opportunely tested
  * and this class is <strong>not</strong> intended for test purposes,
  * but most for demonstration use.
+ * <p/>
+ * The difference between this test class and {@link TestQueries} is
+ * that in this class is showed how query can be constructed from
+ * a string (query string parsing).
  */
 class TestQueriesWithQueryStringParsing {
 
@@ -92,38 +98,58 @@ class TestQueriesWithQueryStringParsing {
         }
     }
 
+    @BeforeAll
+    static void noticeIfQueryResultsWillBePrinted() {
+        TestQueries.noticeIfQueryResultsWillBePrinted();
+    }
+
+    @AfterAll
+    static void printEndOfTests() {
+        TestQueries.printEndOfTests();
+    }
+
+    /**
+     * Method to print and return query results.
+     * See {@link TestQueries#evaluatePrintAndGetResultsOf(BooleanExpression)}.
+     *
+     * @param inputUnparsedQueryString The input (un-parsed) query string.
+     * @return the {@link List} of results.
+     */
+    static List<Document> evaluatePrintAndGetResultsOf(String inputUnparsedQueryString) {
+        System.out.println("Input query string: " + inputUnparsedQueryString);
+        BooleanExpression be = irs.createNewBooleanExpression().parseQuery(inputUnparsedQueryString);
+        return TestQueries.evaluatePrintAndGetResultsOf(be);
+    }
+
+    @BeforeEach
+    void printSpaceBeforeQuery() {
+        TestQueries.printSpaceBeforeQuery_();
+    }
+
     @Test
     void illustrativeExample() {
         String queryString = "space & jam";
-
-        List<Document> results = irs.retrieve(queryString);
-        int maxNumOfResultsToShow = 5;
-        System.out.println(results.stream().limit(maxNumOfResultsToShow).toList());
+//        List<Document> results = irs.retrieve(queryString);   // can be used to obtain results directly
+        evaluatePrintAndGetResultsOf(queryString);
     }
 
     @Test
     void illustrativeExample2() {
         String queryString = "space & !jam";
-
-        BooleanExpression be = irs.createNewBooleanExpression().parseQuery(queryString);
-        List<Document> results = be.evaluate();
-        int maxNumOfResultsToShow = 5;
-        System.out.println("Results for query \"" + queryString + "\"  {" + be.getQueryString() + "}:"
-                + System.lineSeparator()
-                + results.stream().limit(maxNumOfResultsToShow)
-                .map(aResult -> "\t - " + aResult).collect(Collectors.joining(System.lineSeparator())));
+        evaluatePrintAndGetResultsOf(queryString);
     }
 
     @Test
     void singleWordQuery() {
-        assertTrue(irs.retrieve(wordsContainedInFirstButNotInSecondDocumentSupplier.get()).contains(doc1));
+        assertTrue(evaluatePrintAndGetResultsOf(wordsContainedInFirstButNotInSecondDocumentSupplier.get())
+                .contains(doc1));
     }
 
     @Test
     void AND_query_containedInBoth() {
         String queryString = wordsContainedBothInFirstAndSecondDocumentSupplier.get()
                 + "&" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
-        var results = irs.retrieve(queryString);
+        var results = evaluatePrintAndGetResultsOf(queryString);
         assertTrue(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
@@ -132,7 +158,7 @@ class TestQueriesWithQueryStringParsing {
     void AND_query2containedIn1stButNotIn2nd() {
         String queryString = wordsContainedInFirstButNotInSecondDocumentSupplier.get()
                 + "&" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
-        var results = irs.retrieve(queryString);
+        var results = evaluatePrintAndGetResultsOf(queryString);
         assertTrue(results.contains(doc1));
         assertFalse(results.contains(doc2));
     }
@@ -141,7 +167,7 @@ class TestQueriesWithQueryStringParsing {
     void AND_query_containedIn2ndButNotIn1st() {
         String queryString = wordsContainedInSecondButNotInFirstDocumentSupplier.get()
                 + "&" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
-        var results = irs.retrieve(queryString);
+        var results = evaluatePrintAndGetResultsOf(queryString);
         assertFalse(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
@@ -150,7 +176,7 @@ class TestQueriesWithQueryStringParsing {
     void AND_query_containedNeitherIn1stNorIn2nd() {
         String queryString = wordsContainedNeitherInFirstNorInSecondDocumentSupplier.get()
                 + "&" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
-        var results = irs.retrieve(queryString);
+        var results = evaluatePrintAndGetResultsOf(queryString);
         assertFalse(results.contains(doc1));
         assertFalse(results.contains(doc2));
     }
@@ -159,7 +185,7 @@ class TestQueriesWithQueryStringParsing {
     void AND_query2_containedNeitherIn1stNorIn2nd() {
         String queryString = wordsContainedInFirstButNotInSecondDocumentSupplier.get()
                 + "&" + wordsContainedInSecondButNotInFirstDocumentSupplier.get();
-        var results = irs.retrieve(queryString);
+        var results = evaluatePrintAndGetResultsOf(queryString);
         assertFalse(results.contains(doc1));
         assertFalse(results.contains(doc2));
     }
@@ -168,7 +194,7 @@ class TestQueriesWithQueryStringParsing {
     void OR_query_containedInBoth() {
         String queryString = wordsContainedBothInFirstAndSecondDocumentSupplier.get()
                 + "|" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
-        var results = irs.retrieve(queryString);
+        var results = evaluatePrintAndGetResultsOf(queryString);
         assertTrue(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
@@ -177,7 +203,7 @@ class TestQueriesWithQueryStringParsing {
     void OR_query2containedIn1stButNotIn2nd() {
         String queryString = wordsContainedInFirstButNotInSecondDocumentSupplier.get()
                 + "|" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
-        var results = irs.retrieve(queryString);
+        var results = evaluatePrintAndGetResultsOf(queryString);
         assertTrue(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
@@ -186,7 +212,7 @@ class TestQueriesWithQueryStringParsing {
     void OR_query_containedIn2ndButNotIn1st() {
         String queryString = wordsContainedInSecondButNotInFirstDocumentSupplier.get()
                 + "|" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
-        var results = irs.retrieve(queryString);
+        var results = evaluatePrintAndGetResultsOf(queryString);
         assertTrue(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
@@ -195,7 +221,7 @@ class TestQueriesWithQueryStringParsing {
     void OR_query_containedNeitherIn1stNorIn2nd() {
         String queryString = wordsContainedNeitherInFirstNorInSecondDocumentSupplier.get()
                 + "|" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
-        var results = irs.retrieve(queryString);
+        var results = evaluatePrintAndGetResultsOf(queryString);
         assertTrue(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
@@ -204,7 +230,7 @@ class TestQueriesWithQueryStringParsing {
     void OR_query2_containedNeitherIn1stNorIn2nd() {
         String queryString = wordsContainedInFirstButNotInSecondDocumentSupplier.get()
                 + "|" + wordsContainedInSecondButNotInFirstDocumentSupplier.get();
-        var results = irs.retrieve(queryString);
+        var results = evaluatePrintAndGetResultsOf(queryString);
         assertTrue(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
@@ -212,7 +238,7 @@ class TestQueriesWithQueryStringParsing {
     @Test
     void NOT_query() {
         String queryString = "!" + wordsContainedInFirstButNotInSecondDocumentSupplier.get();
-        var results = irs.retrieve(queryString);
+        var results = evaluatePrintAndGetResultsOf(queryString);
         assertFalse(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
@@ -220,7 +246,7 @@ class TestQueriesWithQueryStringParsing {
     @Test
     void NOT_query2() {
         String queryString = "!" + wordsContainedInSecondButNotInFirstDocumentSupplier.get();
-        var results = irs.retrieve(queryString);
+        var results = evaluatePrintAndGetResultsOf(queryString);
         assertTrue(results.contains(doc1));
         assertFalse(results.contains(doc2));
     }
@@ -228,7 +254,7 @@ class TestQueriesWithQueryStringParsing {
     @Test
     void phraseQuery() {
         String queryString = "\"Space jam\"";
-        var results = irs.retrieve(queryString);
+        var results = evaluatePrintAndGetResultsOf(queryString);
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
         assertTrue(results.contains(doc1));
     }
@@ -236,7 +262,7 @@ class TestQueriesWithQueryStringParsing {
     @Test
     void wildcardQuery() {
         String queryString = "Space *am";
-        var results = irs.retrieve(queryString);
+        var results = evaluatePrintAndGetResultsOf(queryString);
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
         assertTrue(results.contains(doc1));
     }
@@ -244,7 +270,7 @@ class TestQueriesWithQueryStringParsing {
     @Test
     void wildcardQuery2() {
         String queryString = "Sp*ce *am";
-        var results = irs.retrieve(queryString);
+        var results = evaluatePrintAndGetResultsOf(queryString);
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
         assertTrue(results.contains(doc1));
     }
@@ -261,7 +287,7 @@ class TestQueriesWithQueryStringParsing {
         assert be.getQueryString().toLowerCase().contains("jam");
 
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
-        var results = be.evaluate();
+        var results = TestQueries.evaluatePrintAndGetResultsOf(be);
         assertTrue(results.contains(doc1));
     }
 
@@ -276,7 +302,7 @@ class TestQueriesWithQueryStringParsing {
         assert be.getQueryString().toLowerCase().contains("jam");
 
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
-        var results = be.evaluate();
+        var results = TestQueries.evaluatePrintAndGetResultsOf(be);
         assertTrue(results.contains(doc1));
     }
 

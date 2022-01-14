@@ -3,6 +3,9 @@ package it.units.informationretrieval.ir_boolean_model.evaluation;
 import it.units.informationretrieval.ir_boolean_model.document_descriptors.Movie;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -22,13 +25,78 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class TestQueries {
 
+    /**
+     * Flag: if set to true, results will be printed to {@link System#out}.
+     */
+    final static boolean PRINT_RESULTS = true;
+
+    /**
+     * Max number of results to print.
+     */
+    private final static int MAX_NUM_OF_RESULTS_TO_PRINT = 10;
+
+    @BeforeAll
+    static void noticeIfQueryResultsWillBePrinted() {
+        if (PRINT_RESULTS) {
+            System.out.println();
+            System.out.println("====================================================================================");
+            System.out.println("======                              TEST QUERIES                              ======");
+            System.out.println("====================================================================================");
+            System.out.println("Notice: At most " + MAX_NUM_OF_RESULTS_TO_PRINT
+                    + " results will be printed for each query.");
+        }
+    }
+
+    @AfterAll
+    static void printEndOfTests() {
+        if (PRINT_RESULTS) {
+            System.out.println();
+            System.out.println("====================================================================================");
+            System.out.println("======                           TEST QUERIES - END                           ======");
+            System.out.println("====================================================================================");
+            System.out.println(System.lineSeparator());
+        }
+    }
+
+    /**
+     * Method to print and return query results, according
+     * to the flag {@link #PRINT_RESULTS}.
+     *
+     * @param be The {@link BooleanExpression} to print.
+     * @return the {@link List} of results.
+     */
+    static List<Document> evaluatePrintAndGetResultsOf(BooleanExpression be) {
+        long start, end;
+        start = System.nanoTime();
+        var results = be.evaluate();
+        end = System.nanoTime();
+        if (PRINT_RESULTS) {
+            System.out.println("Results for query " + be.getQueryString()
+                    + " found in " + ((end - start) / 1e6) + " ms :"
+                    + System.lineSeparator()
+                    + results.stream().limit(MAX_NUM_OF_RESULTS_TO_PRINT)
+                    .map(aResult -> "\t - " + aResult)
+                    .collect(Collectors.joining(System.lineSeparator()))
+                    + System.lineSeparator());
+        }
+        return results;
+    }
+
+    static void printSpaceBeforeQuery_() {
+        if (PRINT_RESULTS) {
+            System.out.println();
+        }
+    }
+
+    @BeforeEach
+    void printSpaceBeforeQuery() {
+        printSpaceBeforeQuery_();
+    }
+
     @Test
     void illustrativeExample() {
-        // space AND jam
-        List<Document> results = irs.createNewBooleanExpression()
-                .setMatchingValue("space").and("jam").evaluate();
-        int maxNumOfResultsToShow = 5;
-        System.out.println(results.stream().limit(maxNumOfResultsToShow).toList());
+        var be = irs.createNewBooleanExpression().setMatchingValue("space").and("jam");
+        evaluatePrintAndGetResultsOf(be);
     }
 
     @Test
@@ -36,164 +104,159 @@ class TestQueries {
         // space AND (NOT jam)
         BooleanExpression be = irs.createNewBooleanExpression().setMatchingValue("space")
                 .and(irs.createNewBooleanExpression().setMatchingValue("jam").not());
-        List<Document> results = be.evaluate();
-        int maxNumOfResultsToShow = 5;
-        System.out.println("Results for query " + be.getQueryString() + ":"
-                + System.lineSeparator()
-                + results.stream().limit(maxNumOfResultsToShow)
-                .map(aResult -> "\t - " + aResult).collect(Collectors.joining(System.lineSeparator())));
+        evaluatePrintAndGetResultsOf(be);
     }
 
     @Test
     void singleWordQuery() {
-        assertTrue(irs.createNewBooleanExpression()
-                .setMatchingValue(wordsContainedInFirstButNotInSecondDocumentSupplier.get())
-                .evaluate().contains(doc1));
+        BooleanExpression be = irs.createNewBooleanExpression()
+                .setMatchingValue(wordsContainedInFirstButNotInSecondDocumentSupplier.get());
+        assertTrue(evaluatePrintAndGetResultsOf(be).contains(doc1));
     }
 
     @Test
     void AND_query_containedInBoth() {
-        var results = irs.createNewBooleanExpression()
+        var be = irs.createNewBooleanExpression()
                 .setMatchingValue(wordsContainedBothInFirstAndSecondDocumentSupplier.get())
-                .and(wordsContainedBothInFirstAndSecondDocumentSupplier.get())
-                .evaluate();
+                .and(wordsContainedBothInFirstAndSecondDocumentSupplier.get());
+        var results = evaluatePrintAndGetResultsOf(be);
         assertTrue(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
 
     @Test
     void AND_query2containedIn1stButNotIn2nd() {
-        var results = irs.createNewBooleanExpression()
+        var be = irs.createNewBooleanExpression()
                 .setMatchingValue(wordsContainedInFirstButNotInSecondDocumentSupplier.get())
-                .and(wordsContainedBothInFirstAndSecondDocumentSupplier.get())
-                .evaluate();
+                .and(wordsContainedBothInFirstAndSecondDocumentSupplier.get());
+        var results = evaluatePrintAndGetResultsOf(be);
         assertTrue(results.contains(doc1));
         assertFalse(results.contains(doc2));
     }
 
     @Test
     void AND_query_containedIn2ndButNotIn1st() {
-        var results = irs.createNewBooleanExpression()
+        var be = irs.createNewBooleanExpression()
                 .setMatchingValue(wordsContainedInSecondButNotInFirstDocumentSupplier.get())
-                .and(wordsContainedBothInFirstAndSecondDocumentSupplier.get())
-                .evaluate();
+                .and(wordsContainedBothInFirstAndSecondDocumentSupplier.get());
+        var results = evaluatePrintAndGetResultsOf(be);
         assertFalse(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
 
     @Test
     void AND_query_containedNeitherIn1stNorIn2nd() {
-        var results = irs.createNewBooleanExpression()
+        var be = irs.createNewBooleanExpression()
                 .setMatchingValue(wordsContainedNeitherInFirstNorInSecondDocumentSupplier.get())
-                .and(wordsContainedBothInFirstAndSecondDocumentSupplier.get())
-                .evaluate();
+                .and(wordsContainedBothInFirstAndSecondDocumentSupplier.get());
+        var results = evaluatePrintAndGetResultsOf(be);
         assertFalse(results.contains(doc1));
         assertFalse(results.contains(doc2));
     }
 
     @Test
     void AND_query2_containedNeitherIn1stNorIn2nd() {
-        var results = irs.createNewBooleanExpression()
+        var be = irs.createNewBooleanExpression()
                 .setMatchingValue(wordsContainedInFirstButNotInSecondDocumentSupplier.get())
-                .and(wordsContainedInSecondButNotInFirstDocumentSupplier.get())
-                .evaluate();
+                .and(wordsContainedInSecondButNotInFirstDocumentSupplier.get());
+        var results = evaluatePrintAndGetResultsOf(be);
         assertFalse(results.contains(doc1));
         assertFalse(results.contains(doc2));
     }
 
     @Test
     void OR_query_containedInBoth() {
-        var results = irs.createNewBooleanExpression()
+        var be = irs.createNewBooleanExpression()
                 .setMatchingValue(wordsContainedBothInFirstAndSecondDocumentSupplier.get())
-                .or(wordsContainedBothInFirstAndSecondDocumentSupplier.get())
-                .evaluate();
+                .or(wordsContainedBothInFirstAndSecondDocumentSupplier.get());
+        var results = evaluatePrintAndGetResultsOf(be);
         assertTrue(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
 
     @Test
     void OR_query2containedIn1stButNotIn2nd() {
-        var results = irs.createNewBooleanExpression()
+        var be = irs.createNewBooleanExpression()
                 .setMatchingValue(wordsContainedInFirstButNotInSecondDocumentSupplier.get())
-                .or(wordsContainedBothInFirstAndSecondDocumentSupplier.get())
-                .evaluate();
+                .or(wordsContainedBothInFirstAndSecondDocumentSupplier.get());
+        var results = evaluatePrintAndGetResultsOf(be);
         assertTrue(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
 
     @Test
     void OR_query_containedIn2ndButNotIn1st() {
-        var results = irs.createNewBooleanExpression()
+        var be = irs.createNewBooleanExpression()
                 .setMatchingValue(wordsContainedInSecondButNotInFirstDocumentSupplier.get())
-                .or(wordsContainedBothInFirstAndSecondDocumentSupplier.get())
-                .evaluate();
+                .or(wordsContainedBothInFirstAndSecondDocumentSupplier.get());
+        var results = evaluatePrintAndGetResultsOf(be);
         assertTrue(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
 
     @Test
     void OR_query_containedNeitherIn1stNorIn2nd() {
-        var results = irs.createNewBooleanExpression()
+        var be = irs.createNewBooleanExpression()
                 .setMatchingValue(wordsContainedNeitherInFirstNorInSecondDocumentSupplier.get())
-                .or(wordsContainedBothInFirstAndSecondDocumentSupplier.get())
-                .evaluate();
+                .or(wordsContainedBothInFirstAndSecondDocumentSupplier.get());
+        var results = evaluatePrintAndGetResultsOf(be);
         assertTrue(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
 
     @Test
     void OR_query2_containedNeitherIn1stNorIn2nd() {
-        var results = irs.createNewBooleanExpression()
+        var be = irs.createNewBooleanExpression()
                 .setMatchingValue(wordsContainedInFirstButNotInSecondDocumentSupplier.get())
-                .or(wordsContainedInSecondButNotInFirstDocumentSupplier.get())
-                .evaluate();
+                .or(wordsContainedInSecondButNotInFirstDocumentSupplier.get());
+        var results = evaluatePrintAndGetResultsOf(be);
         assertTrue(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
 
     @Test
     void NOT_query() {
-        var results = irs.createNewBooleanExpression()
+        var be = irs.createNewBooleanExpression()
                 .setMatchingValue(wordsContainedInFirstButNotInSecondDocumentSupplier.get())
-                .not()
-                .evaluate();
+                .not();
+        var results = evaluatePrintAndGetResultsOf(be);
         assertFalse(results.contains(doc1));
         assertTrue(results.contains(doc2));
     }
 
     @Test
     void NOT_query2() {
-        var results = irs.createNewBooleanExpression()
+        var be = irs.createNewBooleanExpression()
                 .setMatchingValue(wordsContainedInSecondButNotInFirstDocumentSupplier.get())
-                .not()
-                .evaluate();
+                .not();
+        var results = evaluatePrintAndGetResultsOf(be);
         assertTrue(results.contains(doc1));
         assertFalse(results.contains(doc2));
     }
 
     @Test
     void phraseQuery() {
-        var results = irs.createNewBooleanExpression()
-                .setMatchingPhrase(new String[]{"Space", "jam"})
-                .evaluate();
+        var be = irs.createNewBooleanExpression()
+                .setMatchingPhrase(new String[]{"Space", "jam"});
+        var results = evaluatePrintAndGetResultsOf(be);
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
         assertTrue(results.contains(doc1));
     }
 
     @Test
     void wildcardQuery() {
-        var results = irs.createNewBooleanExpression()
-                .setMatchingPhrase("Space *am".split(" "))
-                .evaluate();
+        var be = irs.createNewBooleanExpression()
+                .setMatchingPhrase("Space *am".split(" "));
+        var results = evaluatePrintAndGetResultsOf(be);
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
         assertTrue(results.contains(doc1));
     }
 
     @Test
     void wildcardQuery2() {
-        var results = irs.createNewBooleanExpression()
-                .setMatchingPhrase("Sp*ce *am".split(" "))
-                .evaluate();
+        var be = irs.createNewBooleanExpression()
+                .setMatchingPhrase("Sp*ce *am".split(" "));
+        var results = evaluatePrintAndGetResultsOf(be);
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
         assertTrue(results.contains(doc1));
     }
@@ -210,7 +273,7 @@ class TestQueries {
         assert be.getQueryString().toLowerCase().contains("jam");
 
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
-        var results = be.evaluate();
+        var results = evaluatePrintAndGetResultsOf(be);
         assertTrue(results.contains(doc1));
     }
 
@@ -228,7 +291,7 @@ class TestQueries {
         assert be.getQueryString().toLowerCase().contains("jam");
 
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
-        var results = be.evaluate();
+        var results = evaluatePrintAndGetResultsOf(be);
         assertTrue(results.contains(doc1));
     }
 
