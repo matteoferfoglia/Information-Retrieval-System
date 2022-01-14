@@ -294,6 +294,22 @@ public class InvertedIndex implements Serializable {
     }
 
     /**
+     * @param dfThreshold A threshold value for the document-frequency value.
+     * @return all terms (as strings) present in the dictionary and
+     * having a document-frequency value strictly higher than the
+     * specified threshold.
+     */
+    @NotNull
+    public Collection<String> getDictionary(double dfThreshold) {
+        return invertedIndex.entrySet()
+                .stream().sequential()
+                .filter(entryTerm -> entryTerm.getValue().df() > dfThreshold)
+                .map(Map.Entry::getKey)
+                .sorted()
+                .toList();
+    }
+
+    /**
      * Getter for {@link #corpus}.
      *
      * @return The {@link Corpus} on which indexing was done for this instance.
