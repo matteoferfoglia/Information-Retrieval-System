@@ -5,6 +5,7 @@ import it.units.informationretrieval.ir_boolean_model.document_descriptors.Cranf
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import it.units.informationretrieval.ir_boolean_model.utils.stemmers.Stemmer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 import org.junit.jupiter.api.Test;
@@ -129,47 +130,62 @@ public class Evaluation {
     /**
      * @param query A {@link CranfieldQuery} instance.
      * @return the query string obtained from the input instance
-     * but keeping only terms which are in the IR system dictionary
-     * and whose wf-idf value is higher than a specified threshold
-     * (that depends on the implementation).
+     * but keeping only some of its terms (according to some heuristics)
+     * in order to test the Boolean Model IR-System.
      */
-    private static String parseQueryToKeepOnlyTermsKnownByTheIRSystemOverWfIdfThreshold(@NotNull CranfieldQuery query) {
-        final double DF_THRESHOLD = 0.3 * CRANFIELD_IRS.size();  // term must compare at least in 10% of docs   // TODO: better to use stemming and avoid stop words
-        var termsToKeep = CRANFIELD_IRS.getDictionary(DF_THRESHOLD);    // TODO: use .getListOfPostings(..) instead
-        return Arrays.stream(Utility.split(query.getQueryText()))
-                .map(tokenFromQuery -> Utility.normalize(
+    private static String filterQueryString(@NotNull CranfieldQuery query) {
+
+        // In this method, a series of operations (more or less licit) are performed
+        // to help the IR system (which implements the Boolean model) to find
+        // better results.
+
+        final double WF_IDF_THRESHOLD = 0.5 * CRANFIELD_IRS.avgWfIdf();
+        final double DF_THRESHOLD = 0.5 * CRANFIELD_IRS.avgDf();
+
+        final int NUM_OF_WORDS_TO_KEEP = 4;
+
+        String[] queryWordsToKeep = Arrays.stream(Utility.split(query.getQueryText()))                  // beginning of "not too licit" operations
+                .map(tokenFromQuery -> Utility.normalize(                                               // query word normalization
                         tokenFromQuery,
                         false, // parse like if it was a term of the IR System dictionary
                         CranfieldDocument.LANGUAGE))
                 .filter(Objects::nonNull)
-                .filter(termsToKeep::contains)
-                .collect(Collectors.joining(" "));
+                .filter(token -> !Utility.isStopWord(token, CranfieldDocument.LANGUAGE))                // remove stop words
+                .filter(token -> CRANFIELD_IRS.getDictionary((int) DF_THRESHOLD)                        // keep only words which appear in enough document
+                        .stream().anyMatch(fromDictionary -> fromDictionary
+                                .startsWith(Stemmer.getStemmer(Stemmer.AvailableStemmer.PORTER)         // the dictionary must contain the stemmed query word
+                                        .stem(token, CranfieldDocument.LANGUAGE))))
+                .filter(token -> CRANFIELD_IRS.getListOfPostingForToken(token).stream()
+                        .anyMatch(posting -> posting.wfIdf(CRANFIELD_IRS.size()) > WF_IDF_THRESHOLD))   // keep only words over the given wf-idf value
+                .sorted(Comparator.comparingInt(CRANFIELD_IRS::tf).reversed())                          // make the most frequent words first
+                .limit(NUM_OF_WORDS_TO_KEEP)                                                            // only the most relevant words are kept
+                .toArray(String[]::new);
+
+        return switch (queryWordsToKeep.length) {     // re-formulate the query string (not too licit)
+            case 4 -> queryWordsToKeep[0] + " " + queryWordsToKeep[1]
+                    + "|" + queryWordsToKeep[0] + " " + queryWordsToKeep[2]
+                    + "|" + queryWordsToKeep[0] + " " + queryWordsToKeep[3]
+                    + "|" + queryWordsToKeep[1] + " " + queryWordsToKeep[2]
+                    + "|" + queryWordsToKeep[1] + " " + queryWordsToKeep[3]
+                    + "|" + queryWordsToKeep[2] + " " + queryWordsToKeep[3];
+            case 3 -> queryWordsToKeep[0] + " " + queryWordsToKeep[1]
+                    + "|" + queryWordsToKeep[0] + " " + queryWordsToKeep[2]
+                    + "|" + queryWordsToKeep[1] + " " + queryWordsToKeep[2];
+            default -> String.join(" ", queryWordsToKeep);
+        };
     }
 
     @Test
     void precision() {
         var precisions = CRANFIELD_QUERIES.stream()
                 .map(query -> {
-                    String queryString = parseQueryToKeepOnlyTermsKnownByTheIRSystemOverWfIdfThreshold(query);
-                    Set<Document> retrievedDocuments = new HashSet<>(CRANFIELD_IRS.retrieve(queryString));
+                    String queryString = filterQueryString(query);
                     Set<Document> relevantDocuments = query.getRelevantDocs().keySet()
                             .stream().map(doc -> (Document) doc).collect(Collectors.toSet());
+                    Set<Document> retrievedDocuments = new HashSet<>(CRANFIELD_IRS.retrieve(queryString));
                     Set<Document> relevantAndRetrieved = relevantDocuments.stream()
                             .filter(retrievedDocuments::contains).collect(Collectors.toSet());
-                    return (double) relevantAndRetrieved.size() / retrievedDocuments.size();
-
-//                    // TODO: sorting for ranking retrieval
-//                    List<Document> sortedRetrievedDocuments = CRANFIELD_IRS.retrieve(queryString.replaceAll(" ", "|") /*OR query*/);
-//                    List<Document> sortedRelevantDocuments =
-//                            query.getRelevantDocs().entrySet()
-//                                    .stream()
-//                                    .sorted(Map.Entry.comparingByValue())
-//                                    .map(Map.Entry::getKey)
-//                                    .map(doc -> (Document) doc)
-//                                    .toList();
-//                    List<Document> sortedRelevantAndRetrieved =
-//                            Utility.intersectionOfSortedLists(sortedRelevantDocuments, sortedRetrievedDocuments);
-//                    return (double) sortedRelevantAndRetrieved.size() / sortedRetrievedDocuments.size();
+                    return retrievedDocuments.size() > 0 ? (double) relevantAndRetrieved.size() / retrievedDocuments.size() : 0;
                 })
                 .toList();
 
