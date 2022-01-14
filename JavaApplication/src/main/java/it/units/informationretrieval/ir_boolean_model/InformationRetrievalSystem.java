@@ -144,4 +144,12 @@ public class InformationRetrievalSystem implements Serializable {
     public Collection<String> getDictionaryTermsFromSoundexCorrectionOf(@NotNull String word) {
         return invertedIndex.getDictionaryTermsFromSoundexCorrectionOf(word);
     }
+
+    /**
+     * @return all terms (as strings) present in the dictionary.
+     */
+    @NotNull
+    public Collection<String> getDictionary() {
+        return invertedIndex.getDictionary();
+    }
 }
