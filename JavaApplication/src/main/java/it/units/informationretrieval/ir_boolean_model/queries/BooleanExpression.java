@@ -117,6 +117,11 @@ public class BooleanExpression {
      */
     private final static int VALID_PARSING_CHAR_REPETITIONS_FOR_FALSE_LITERAL = 11;
     /**
+     * Flag that enables some more output, useful for debugging, for method
+     * {@link #evaluateNotQuery()}, in particular to try to improve performances.
+     */
+    private final static boolean DEBUG_NOT_QUERY;
+    /**
      * Flag which is set to true if results of queries must be ranked.
      */
     private static boolean RANK_RESULTS;
@@ -133,6 +138,18 @@ public class BooleanExpression {
             USE_WF_IDF = Boolean.parseBoolean(AppProperties.getInstance().get("app.rank_query_results"));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    static {
+        boolean DEBUG_NOT_QUERYdebugNotQueryTmp = false;    // tmp variable to defer the assignment of final constant
+        try {
+            DEBUG_NOT_QUERYdebugNotQueryTmp = Boolean.parseBoolean(
+                    AppProperties.getInstance().get("app.debug.NOTQueries"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            DEBUG_NOT_QUERY = DEBUG_NOT_QUERYdebugNotQueryTmp;
         }
     }
 
@@ -1106,23 +1123,20 @@ public class BooleanExpression {
      * @return The postings resulting from the evaluation of the
      * {@link UNARY_OPERATOR#NOT} query (for this instance of {@link BooleanExpression}).
      */
-    @SuppressWarnings("ConstantConditions") // suppress warning about flag for debugging
     @NotNull
     private SkipList<Posting> evaluateNotQuery() {
         // First: solve the direct query (create a new query without the NOT operator),
         // then take the difference to get the results for the NOT query.
 
-        final boolean DEBUG = true; // enables some more output, useful for debugging,
-        //                             in particular to try to improve performance of this method
-
         assert unaryOperator.equals(UNARY_OPERATOR.NOT);
 
-        if (DEBUG) {
-            System.out.println("Evaluation of NOT query. DEBUG flag is enabled, statistics are shown.");
+        if (DEBUG_NOT_QUERY) {
+            System.out.println("Evaluation of NOT query. DEBUG_NOT_QUERY flag is enabled, statistics are shown." +
+                    " It can be disabled by app properties.");
         }
 
-        long start, stop;
-        if (DEBUG) {
+        long start = 0, stop = 0;
+        if (DEBUG_NOT_QUERY) {
             start = System.nanoTime();
         }
         List<DocumentIdentifier> listOfDocIdToBeExcluded =
@@ -1130,62 +1144,62 @@ public class BooleanExpression {
                         .setUnaryOperator(UNARY_OPERATOR.IDENTITY)
                         .evaluateBothSimpleAndAggregatedExpressionRecursively()
                         .stream().sequential().map(Posting::getDocId).distinct().toList();
-        if (DEBUG) {
+        if (DEBUG_NOT_QUERY) {
             stop = System.nanoTime();
             System.out.println("List of docIds to exclude computed in          " + (stop - start) / 1e6 + " ms.");
         }
         assert listOfDocIdToBeExcluded.stream().sorted().toList().equals(listOfDocIdToBeExcluded);
 
-        if (DEBUG) {
+        if (DEBUG_NOT_QUERY) {
             start = System.nanoTime();
         }
         var allDocIds = new SkipList<>(informationRetrievalSystem.getAllDocIds());  // TODO: try to get an already sorted list and create skiplist from sorted collection
-        if (DEBUG) {
+        if (DEBUG_NOT_QUERY) {
             stop = System.nanoTime();
             System.out.println("SkipList of all docIds in the index created in " + (stop - start) / 1e6 + " ms.");
         }
 
-        if (DEBUG) {
+        if (DEBUG_NOT_QUERY) {
             start = System.nanoTime();
         }
         var docIdsToExclude = SkipList.createNewInstanceFromSortedCollection(
                 listOfDocIdToBeExcluded, null);
-        if (DEBUG) {
+        if (DEBUG_NOT_QUERY) {
             stop = System.nanoTime();
             System.out.println("SkipList of docIds to exclude created in       " + (stop - start) / 1e6 + " ms.");
         }
 
-        if (DEBUG) {
+        if (DEBUG_NOT_QUERY) {
             start = System.nanoTime();
         }
         var difference = SkipList.difference(
                 allDocIds, docIdsToExclude,
                 (BiPredicate<DocumentIdentifier, DocumentIdentifier>) (a, b) -> true);
-        if (DEBUG) {
+        if (DEBUG_NOT_QUERY) {
             stop = System.nanoTime();
             System.out.println("SkipList of difference computed in             " + (stop - start) / 1e6 + " ms.");
         }
 
-        if (DEBUG) {
+        if (DEBUG_NOT_QUERY) {
             start = System.nanoTime();
         }
         var resultListOfPosting = difference
                 .stream().sequential()
                 .flatMap(docId -> informationRetrievalSystem.getPostingList(docId).stream().sequential())
                 .toList();
-        if (DEBUG) {
+        if (DEBUG_NOT_QUERY) {
             stop = System.nanoTime();
             System.out.println("List of posting (via stream) computed in       " + (stop - start) / 1e6 + " ms.");
         }
         assert resultListOfPosting.stream().sorted(Posting.DOC_ID_COMPARATOR).toList().equals(resultListOfPosting);
         assert resultListOfPosting.stream().sorted(Posting.DOC_ID_COMPARATOR).distinct().toList().equals(resultListOfPosting);
 
-        if (DEBUG) {
+        if (DEBUG_NOT_QUERY) {
             start = System.nanoTime();
         }
         var result = SkipList.createNewInstanceFromSortedCollection(
                 resultListOfPosting, Posting.DOC_ID_COMPARATOR);
-        if (DEBUG) {
+        if (DEBUG_NOT_QUERY) {
             stop = System.nanoTime();
             System.out.println("SkipList of results created in                 " + (stop - start) / 1e6 + " ms.");
             // IMPORTANT: high computation time might be due to all assertions (here and in SkipList)
