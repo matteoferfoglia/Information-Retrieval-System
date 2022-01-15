@@ -35,6 +35,12 @@ class TestQueries {
      */
     private final static int MAX_NUM_OF_RESULTS_TO_PRINT = 10;
 
+
+    /**
+     * Max number of characters to print for each result (to avoid printing too many things).
+     */
+    private final static int MAX_NUM_OF_CHARS_TO_PRINT = 84 - 3 - 7;   // nothing special, only for prettier output format
+
     @BeforeAll
     static void noticeIfQueryResultsWillBePrinted() {
         if (PRINT_RESULTS) {
@@ -71,11 +77,15 @@ class TestQueries {
         var results = be.evaluate();
         end = System.nanoTime();
         if (PRINT_RESULTS) {
-            System.out.println("Results for query " + be.getQueryString()
+            System.out.println(results.size() + " result" + (results.size() != 1 ? "s" : "")
+                    + " for query " + be.getQueryString()
                     + " found in " + ((end - start) / 1e6) + " ms :"
                     + System.lineSeparator()
                     + results.stream().limit(MAX_NUM_OF_RESULTS_TO_PRINT)
-                    .map(aResult -> "\t - " + aResult)
+                    .map(aResult -> "     - " + aResult)
+                    .map(aResult -> // cut the string (avoid printing too much)
+                            aResult.substring(0, Math.min(aResult.length(), MAX_NUM_OF_CHARS_TO_PRINT))
+                                    + (aResult.length() > MAX_NUM_OF_CHARS_TO_PRINT ? "..." : ""))
                     .collect(Collectors.joining(System.lineSeparator()))
                     + System.lineSeparator());
         }
