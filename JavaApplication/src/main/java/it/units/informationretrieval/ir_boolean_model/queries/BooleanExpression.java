@@ -966,22 +966,7 @@ public class BooleanExpression {
             throws UnsupportedOperationException {  // TODO: benchmark wildcard queries
 
         results = switch (unaryOperator) {
-            case NOT -> {
-                // First: solve the direct query (create a new query without the NOT operator),
-                // then take the difference to get the results for the NOT query.
-                List<DocumentIdentifier> listOfDocIdToBeExcluded =
-                        new BooleanExpression(this)
-                                .setUnaryOperator(UNARY_OPERATOR.IDENTITY)
-                                .evaluateBothSimpleAndAggregatedExpressionRecursively()
-                                .stream().map(Posting::getDocId).distinct().toList();
-                yield new SkipList<>(SkipList.difference(
-                                new SkipList<>(informationRetrievalSystem.getAllDocIds()), // TODO: save all doc ids as skiplist directly (use skiplistMap)
-                                new SkipList<>(listOfDocIdToBeExcluded), (BiPredicate<DocumentIdentifier, DocumentIdentifier>) (a, b) -> true)
-                        .parallelStream()
-                        .flatMap(docId -> informationRetrievalSystem.getPostingList(docId).stream())
-                        .sorted()
-                        .toList(), Posting.DOC_ID_COMPARATOR);
-            }
+            case NOT -> evaluateNotQuery();
             case IDENTITY -> {
                 if (isAggregated) {
 
@@ -1108,6 +1093,94 @@ public class BooleanExpression {
         };
         return results;
 
+    }
+
+    /**
+     * This method was created from a refactoring of method
+     * {@link #evaluateBothSimpleAndAggregatedExpressionRecursively()}
+     * and has the only responsibility to solve a {@link UNARY_OPERATOR#NOT}
+     * query, i.e., it does <strong>NOT</strong> check if this instance
+     * is aggregated nor anything like that: it just solves the
+     * {@link UNARY_OPERATOR#NOT} query!
+     *
+     * @return The postings resulting from the evaluation of the
+     * {@link UNARY_OPERATOR#NOT} query (for this instance of {@link BooleanExpression}).
+     */
+    @SuppressWarnings("ConstantConditions") // suppress warning about flag for debugging
+    @NotNull
+    private SkipList<Posting> evaluateNotQuery() {
+        // First: solve the direct query (create a new query without the NOT operator),
+        // then take the difference to get the results for the NOT query.
+
+        final boolean DEBUG = true; // enables some more output, useful for debugging,
+        //                             in particular to try to improve performance of this method
+
+        assert unaryOperator.equals(UNARY_OPERATOR.NOT);
+
+        long start, stop;
+        if (DEBUG) {
+            start = System.nanoTime();
+        }
+        List<DocumentIdentifier> listOfDocIdToBeExcluded =
+                new BooleanExpression(this)
+                        .setUnaryOperator(UNARY_OPERATOR.IDENTITY)
+                        .evaluateBothSimpleAndAggregatedExpressionRecursively()
+                        .stream().map(Posting::getDocId).distinct().toList();
+        if (DEBUG) {
+            stop = System.nanoTime();
+            System.out.println("List of docIds to exclude computed in          " + (stop - start) / 1e6 + " ms.");
+        }
+
+        if (DEBUG) {
+            start = System.nanoTime();
+        }
+        var allDocIds = new SkipList<>(informationRetrievalSystem.getAllDocIds());
+        if (DEBUG) {
+            stop = System.nanoTime();
+            System.out.println("SkipList of all docIds in the index created in " + (stop - start) / 1e6 + " ms.");
+        }
+
+        if (DEBUG) {
+            start = System.nanoTime();
+        }
+        var docIdsToExclude = new SkipList<>(listOfDocIdToBeExcluded);
+        if (DEBUG) {
+            stop = System.nanoTime();
+            System.out.println("SkipList of docIds to exclude created in       " + (stop - start) / 1e6 + " ms.");
+        }
+
+        if (DEBUG) {
+            start = System.nanoTime();
+        }
+        var difference = SkipList.difference(
+                allDocIds, docIdsToExclude,
+                (BiPredicate<DocumentIdentifier, DocumentIdentifier>) (a, b) -> true);
+        if (DEBUG) {
+            stop = System.nanoTime();
+            System.out.println("SkipList of difference computed in             " + (stop - start) / 1e6 + " ms.");
+        }
+
+        if (DEBUG) {
+            start = System.nanoTime();
+        }
+        var resultListOfPosting = difference
+                .stream().sequential()
+                .flatMap(docId -> informationRetrievalSystem.getPostingList(docId).stream())
+                .toList();
+        if (DEBUG) {
+            stop = System.nanoTime();
+            System.out.println("List of posting (via stream) computed in       " + (stop - start) / 1e6 + " ms.");
+        }
+
+        if (DEBUG) {
+            start = System.nanoTime();
+        }
+        var result = new SkipList<>(resultListOfPosting, Posting.DOC_ID_COMPARATOR);
+        if (DEBUG) {
+            stop = System.nanoTime();
+            System.out.println("SkipList of results created in                 " + (stop - start) / 1e6 + " ms.");
+        }
+        return result;
     }
 
     /**
