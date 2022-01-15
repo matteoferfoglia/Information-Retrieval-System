@@ -41,12 +41,21 @@ import static it.units.informationretrieval.ir_boolean_model.entities.InvertedIn
  * represented by the instance is contained in the sentence to which it
  * is applied". If the instance is not aggregated, it cannot have a
  * binary operator.
+ * <p/>
+ * When a query must be constructed, I (the author of this class) suggest
+ * solving AND queries first (intersection of posting lists might reduce the
+ * size of operands and allows faster operations) or to use the method
+ * {@link #parseExpression(Expression)} which create an instance of this
+ * class by parsing an input query string and try to simplify the query.
+ * Furthermore, for performance reasons, I suggest avoiding general NOT
+ * queries as much as possible; if the user needs to perform a NOT query,
+ * I suggest doing it inside an AND query (e.g., avoid "NOT foo", and
+ * prefer "bar AND NOT foo": the AND query is exploited by the system
+ * for optimization reasons).
  *
  * @author Matteo Ferfoglia
  */
 public class BooleanExpression {
-
-    // TODO: try to solve StackOverflow errors
 
     /**
      * The delimiter for a phrase (if matched from an input textual query string.)
@@ -978,12 +987,41 @@ public class BooleanExpression {
 
                     assert leftChildOperand != null;
                     assert rightChildOperand != null;
-                    SkipList<Posting> fromLeftChild = leftChildOperand.evaluateBothSimpleAndAggregatedExpressionRecursively();
-                    SkipList<Posting> fromRightChild = rightChildOperand.evaluateBothSimpleAndAggregatedExpressionRecursively();
                     assert binaryOperator != null;
-                    yield switch (binaryOperator) {
-                        case AND -> Utility.intersection(fromLeftChild, fromRightChild, Posting.DOC_ID_COMPARATOR);
-                        case OR -> Utility.union(fromLeftChild, fromRightChild, Posting.DOC_ID_COMPARATOR);
+                    yield switch (binaryOperator) { // TODO: refactoring (extract methods to avoid code duplication inside switch)
+                        case AND -> {
+
+                            // Optimization for NOT queries:
+                            //     NOT(A) AND B = B \ A         (more efficient to compute the difference set, instead of the NOT(A) operation, which may involve all items from the "universe" set
+                            //     A AND NOT(B) = A \ B
+
+                            if (leftChildOperand.unaryOperator.equals(UNARY_OPERATOR.NOT)) {         // NOT(A) AND B = B \ A
+                                SkipList<Posting> fromRightChild =
+                                        rightChildOperand.evaluateBothSimpleAndAggregatedExpressionRecursively();
+                                SkipList<Posting> fromLeftChildNotNegated =
+                                        new BooleanExpression(leftChildOperand)
+                                                .setUnaryOperator(UNARY_OPERATOR.IDENTITY)
+                                                .evaluateBothSimpleAndAggregatedExpressionRecursively();
+                                yield SkipList.difference(fromRightChild, fromLeftChildNotNegated, Posting.DOC_ID_COMPARATOR);
+                            } else if (rightChildOperand.unaryOperator.equals(UNARY_OPERATOR.NOT)) { // A AND NOT(B) = A \ B
+                                SkipList<Posting> fromLeftChild =
+                                        leftChildOperand.evaluateBothSimpleAndAggregatedExpressionRecursively();
+                                SkipList<Posting> fromRightChildNotNegated =
+                                        new BooleanExpression(rightChildOperand)
+                                                .setUnaryOperator(UNARY_OPERATOR.IDENTITY)
+                                                .evaluateBothSimpleAndAggregatedExpressionRecursively();
+                                yield SkipList.difference(fromLeftChild, fromRightChildNotNegated, Posting.DOC_ID_COMPARATOR);
+                            } else {
+                                SkipList<Posting> fromLeftChild = leftChildOperand.evaluateBothSimpleAndAggregatedExpressionRecursively();
+                                SkipList<Posting> fromRightChild = rightChildOperand.evaluateBothSimpleAndAggregatedExpressionRecursively();
+                                yield Utility.intersection(fromLeftChild, fromRightChild, Posting.DOC_ID_COMPARATOR);
+                            }
+                        }
+                        case OR -> {
+                            SkipList<Posting> fromLeftChild = leftChildOperand.evaluateBothSimpleAndAggregatedExpressionRecursively();
+                            SkipList<Posting> fromRightChild = rightChildOperand.evaluateBothSimpleAndAggregatedExpressionRecursively();
+                            yield Utility.union(fromLeftChild, fromRightChild, Posting.DOC_ID_COMPARATOR);
+                        }
                         //noinspection UnnecessaryDefault
                         default -> throw new UnsupportedOperationException("Unknown operator");
                     };
@@ -1309,6 +1347,4 @@ public class BooleanExpression {
         }
     }
 
-// TODO: query optimization
-// TODO: query expansion and reformulation
 }
