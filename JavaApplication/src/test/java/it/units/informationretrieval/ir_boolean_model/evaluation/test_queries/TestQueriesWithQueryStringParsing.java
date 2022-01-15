@@ -1,4 +1,4 @@
-package it.units.informationretrieval.ir_boolean_model.evaluation;
+package it.units.informationretrieval.ir_boolean_model.evaluation.test_queries;
 
 import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem;
 import it.units.informationretrieval.ir_boolean_model.document_descriptors.Movie;

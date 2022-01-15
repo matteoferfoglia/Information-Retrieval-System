@@ -1117,6 +1117,10 @@ public class BooleanExpression {
 
         assert unaryOperator.equals(UNARY_OPERATOR.NOT);
 
+        if (DEBUG) {
+            System.out.println("Evaluation of NOT query. DEBUG flag is enabled, statistics are shown.");
+        }
+
         long start, stop;
         if (DEBUG) {
             start = System.nanoTime();
@@ -1125,16 +1129,17 @@ public class BooleanExpression {
                 new BooleanExpression(this)
                         .setUnaryOperator(UNARY_OPERATOR.IDENTITY)
                         .evaluateBothSimpleAndAggregatedExpressionRecursively()
-                        .stream().map(Posting::getDocId).distinct().toList();
+                        .stream().sequential().map(Posting::getDocId).distinct().toList();
         if (DEBUG) {
             stop = System.nanoTime();
             System.out.println("List of docIds to exclude computed in          " + (stop - start) / 1e6 + " ms.");
         }
+        assert listOfDocIdToBeExcluded.stream().sorted().toList().equals(listOfDocIdToBeExcluded);
 
         if (DEBUG) {
             start = System.nanoTime();
         }
-        var allDocIds = new SkipList<>(informationRetrievalSystem.getAllDocIds());
+        var allDocIds = new SkipList<>(informationRetrievalSystem.getAllDocIds());  // TODO: try to get an already sorted list and create skiplist from sorted collection
         if (DEBUG) {
             stop = System.nanoTime();
             System.out.println("SkipList of all docIds in the index created in " + (stop - start) / 1e6 + " ms.");
@@ -1143,7 +1148,8 @@ public class BooleanExpression {
         if (DEBUG) {
             start = System.nanoTime();
         }
-        var docIdsToExclude = new SkipList<>(listOfDocIdToBeExcluded);
+        var docIdsToExclude = SkipList.createNewInstanceFromSortedCollection(
+                listOfDocIdToBeExcluded, null);
         if (DEBUG) {
             stop = System.nanoTime();
             System.out.println("SkipList of docIds to exclude created in       " + (stop - start) / 1e6 + " ms.");
@@ -1165,20 +1171,25 @@ public class BooleanExpression {
         }
         var resultListOfPosting = difference
                 .stream().sequential()
-                .flatMap(docId -> informationRetrievalSystem.getPostingList(docId).stream())
+                .flatMap(docId -> informationRetrievalSystem.getPostingList(docId).stream().sequential())
                 .toList();
         if (DEBUG) {
             stop = System.nanoTime();
             System.out.println("List of posting (via stream) computed in       " + (stop - start) / 1e6 + " ms.");
         }
+        assert resultListOfPosting.stream().sorted(Posting.DOC_ID_COMPARATOR).toList().equals(resultListOfPosting);
+        assert resultListOfPosting.stream().sorted(Posting.DOC_ID_COMPARATOR).distinct().toList().equals(resultListOfPosting);
 
         if (DEBUG) {
             start = System.nanoTime();
         }
-        var result = new SkipList<>(resultListOfPosting, Posting.DOC_ID_COMPARATOR);
+        var result = SkipList.createNewInstanceFromSortedCollection(
+                resultListOfPosting, Posting.DOC_ID_COMPARATOR);
         if (DEBUG) {
             stop = System.nanoTime();
             System.out.println("SkipList of results created in                 " + (stop - start) / 1e6 + " ms.");
+            // IMPORTANT: high computation time might be due to all assertions (here and in SkipList)
+            //            When try to improve speed, disable assertions
         }
         return result;
     }

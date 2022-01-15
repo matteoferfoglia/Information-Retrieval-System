@@ -32,7 +32,8 @@
         <maven.compiler.target>16</maven.compiler.target>
         <maven.required.version>3.5</maven.required.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.main.class>it.units.informationretrieval.ir_boolean_model.Main</project.main.class>
+        <project.main.package>it.units.informationretrieval.ir_boolean_model</project.main.package>
+        <project.main.class>${project.main.package}.Main</project.main.class>
     </properties>
 
     <url/><!-- Avoid warning "No project URL defined - decoration links will not be relativized!" -->
@@ -257,7 +258,7 @@
         <dependency><!-- SkipList -->
             <groupId>com.github.matteoferfoglia</groupId>
             <artifactId>skiplist</artifactId>
-            <version>1.6.1</version>
+            <version>1.7.1</version>
         </dependency>
 
         <dependency><!-- Edit distance -->

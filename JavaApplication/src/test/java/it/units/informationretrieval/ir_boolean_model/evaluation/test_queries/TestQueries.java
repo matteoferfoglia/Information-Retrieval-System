@@ -1,4 +1,4 @@
-package it.units.informationretrieval.ir_boolean_model.evaluation;
+package it.units.informationretrieval.ir_boolean_model.evaluation.test_queries;
 
 import it.units.informationretrieval.ir_boolean_model.document_descriptors.Movie;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static it.units.informationretrieval.ir_boolean_model.evaluation.TestQueriesWithQueryStringParsing.*;
+import static it.units.informationretrieval.ir_boolean_model.evaluation.test_queries.TestQueriesWithQueryStringParsing.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -50,6 +50,7 @@ class TestQueries {
             System.out.println("====================================================================================");
             System.out.println("Notice: At most " + MAX_NUM_OF_RESULTS_TO_PRINT
                     + " results will be printed for each query.");
+            System.out.println("Notice: if assertions are enabled, timing values are unreliable.");
         }
     }
 
