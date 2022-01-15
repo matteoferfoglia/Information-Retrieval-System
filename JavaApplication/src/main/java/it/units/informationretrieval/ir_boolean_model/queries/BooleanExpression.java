@@ -965,13 +965,13 @@ public class BooleanExpression {
                                 .setUnaryOperator(UNARY_OPERATOR.IDENTITY)
                                 .evaluateBothSimpleAndAggregatedExpressionRecursively()
                                 .stream().map(Posting::getDocId).distinct().toList();
-                yield new SkipList<>(
-                        informationRetrievalSystem.getAllDocIds()// TODO: to improve performance, try to use skip list to save all postings, and implement the difference between skiplists, which might return both (two methods) the new skiplist as difference of the input ones and an HashSet with the results (this because inserting elements in a skiplist may be harder than in a set)
-                                .stream()
-                                .filter(docId -> !listOfDocIdToBeExcluded.contains(docId))                      // TODO: maybe too slow, try with skip lists
-                                .flatMap(docId -> informationRetrievalSystem.getPostingList(docId).stream())    // TODO: maybe creating a stream each time slows down performance?
-                                .sorted()
-                                .toList(), Posting.DOC_ID_COMPARATOR);
+                yield new SkipList<>(SkipList.difference(
+                                new SkipList<>(informationRetrievalSystem.getAllDocIds()), // TODO: save all doc ids as skiplist directly (use skiplistMap)
+                                new SkipList<>(listOfDocIdToBeExcluded), (BiPredicate<DocumentIdentifier, DocumentIdentifier>) (a, b) -> true)
+                        .parallelStream()
+                        .flatMap(docId -> informationRetrievalSystem.getPostingList(docId).stream())
+                        .sorted()
+                        .toList(), Posting.DOC_ID_COMPARATOR);
             }
             case IDENTITY -> {
                 if (isAggregated) {
