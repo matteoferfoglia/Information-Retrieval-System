@@ -287,7 +287,10 @@ class TestQueriesWithQueryStringParsing {
         assert be.getQueryString().toLowerCase().contains("jam");
 
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
+
+        System.out.println("Input query string: " + queryString);
         var results = TestQueries.evaluatePrintAndGetResultsOf(be);
+
         assertTrue(results.contains(doc1));
     }
 
@@ -302,7 +305,10 @@ class TestQueriesWithQueryStringParsing {
         assert be.getQueryString().toLowerCase().contains("jam");
 
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
+
+        System.out.println("Input query string: " + queryString);
         var results = TestQueries.evaluatePrintAndGetResultsOf(be);
+
         assertTrue(results.contains(doc1));
     }
 
