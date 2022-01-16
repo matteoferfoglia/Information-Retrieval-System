@@ -1,6 +1,6 @@
 .idea/
 target/
 workingDirectory/
-benchmarks/
+system_evaluation/
 *.iml
 properties.userSpecific.env

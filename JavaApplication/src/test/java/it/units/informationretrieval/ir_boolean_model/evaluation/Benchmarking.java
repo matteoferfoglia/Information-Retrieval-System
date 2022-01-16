@@ -12,7 +12,10 @@ import java.time.format.DateTimeFormatter;
 
 class Benchmarking {
 
-    private static final String FOLDER_NAME_TO_SAVE_RESULTS = "benchmarks";
+    /**
+     * The folder name where to save results.
+     */
+    private static final String FOLDER_NAME_TO_SAVE_RESULTS = "system_evaluation" + File.separator + "benchmarks";
 
     @Test
         // this method will be executed with the test suite if annotated with @Test

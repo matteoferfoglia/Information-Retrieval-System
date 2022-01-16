@@ -9,10 +9,11 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.net.URISyntaxException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -22,36 +23,71 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This class evaluates the system.
+ * Results are also saved to file in directory
+ * {@link #FOLDER_NAME_TO_SAVE_RESULTS}.
  *
  * @author Matteo Ferfoglia
  */
 public class Evaluation {
 
     /**
+     * The folder name where to save results.
+     */
+    private static final String FOLDER_NAME_TO_SAVE_RESULTS = "system_evaluation" + File.separator + "statistics";
+
+    /**
+     * The {@link java.io.BufferedWriter} to print results to file.
+     */
+    private static final Writer WRITER_TO_FILE;
+    /**
      * The {@link InformationRetrievalSystem} for the Cranfield's collection.
      */
     @NotNull
     private static final InformationRetrievalSystem CRANFIELD_IRS;
-
     /**
      * Queries for the Cranfield's collection.
      */
     @NotNull
     private static final List<CranfieldQuery> CRANFIELD_QUERIES;
-
     /**
      * Saves the precision for each query in {@link #CRANFIELD_QUERIES}
      * and in the same order.
      */
     @NotNull
     private final static List<Double> precisions = new ArrayList<>();
-
     /**
      * Saves the recall for each query in {@link #CRANFIELD_QUERIES}
      * and in the same order.
      */
     @NotNull
     private final static List<Double> recalls = new ArrayList<>();
+
+    static {
+        BufferedWriter bwToFile1;   // tmp variable to defer the assignment to a final variable
+        try {
+            File directory = new File(FOLDER_NAME_TO_SAVE_RESULTS);
+            if (!directory.exists()) {
+                if (!directory.mkdirs()) {
+                    throw new IOException("Output file not created.");
+                }
+            }
+            var currentDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
+                    .withZone(ZoneId.systemDefault())
+                    .format(Instant.now());
+            File f = new File(FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + ".txt");
+            if (!f.createNewFile()) {
+                throw new IOException("Output file not created.");
+            }
+            bwToFile1 = new BufferedWriter(new FileWriter(f));
+            bwToFile1.write("EVALUATION OF THE INFORMATION RETRIEVAL SYSTEM" + System.lineSeparator() + System.lineSeparator());
+            bwToFile1.write("             " + currentDateTime.replace("_", " ") + System.lineSeparator());
+            bwToFile1.write("===============================================" + System.lineSeparator() + System.lineSeparator());
+        } catch (IOException e) {
+            bwToFile1 = new BufferedWriter(new CharArrayWriter());
+            e.printStackTrace();
+        }
+        WRITER_TO_FILE = bwToFile1;
+    }
 
     static {
         InformationRetrievalSystem irsTmp = null;
@@ -103,6 +139,8 @@ public class Evaluation {
     private static void printStatistics(
             @NotNull String dimensionName, @NotNull Collection<? extends Number> whatToComputeStatisticsAbout) {
 
+        StringBuilder sb = new StringBuilder();
+
         AtomicReference<Double> max = new AtomicReference<>();
         AtomicReference<Double> min = new AtomicReference<>();
 
@@ -119,20 +157,29 @@ public class Evaluation {
             long occurrencesOfMax = whatToComputeStatisticsAbout_.stream().filter(d -> Math.abs((double) d - max_) < EPSILON).count();
             long occurrencesOfMin = whatToComputeStatisticsAbout_.stream().filter(d -> Math.abs((double) d - min_) < EPSILON).count();
 
-            System.out.println("\tNumber of available measures:  " + whatToComputeStatisticsAbout_.size());
-            System.out.println("\tAverage: " + avg_);
-            System.out.println("\tMax:     " + max_ + "\t observed in " + occurrencesOfMax + " samples");
-            System.out.println("\tMin:     " + min_ + "\t observed in " + occurrencesOfMin + " samples");
+            sb.append("\tNumber of available measures:  ").append(whatToComputeStatisticsAbout_.size()).append(System.lineSeparator());
+            sb.append("\tAverage: ").append(avg_).append(System.lineSeparator());
+            sb.append("\tMax:     ").append(max_).append("\t observed in ").append(occurrencesOfMax).append(" samples").append(System.lineSeparator());
+            sb.append("\tMin:     ").append(min_).append("\t observed in ").append(occurrencesOfMin).append(" samples").append(System.lineSeparator());
         };
 
-        System.out.println(System.lineSeparator() + "Statistics about " + dimensionName);
+        sb.append(System.lineSeparator()).append("Statistics about ").append(dimensionName).append(System.lineSeparator());
         statisticsMaker.accept(whatToComputeStatisticsAbout);
-        System.out.println("Excluding max and min:");
+        sb.append("Excluding max and min:").append(System.lineSeparator());
         statisticsMaker.accept(whatToComputeStatisticsAbout.stream()
                 .filter(number -> (double) number < max.get() - EPSILON)
                 .filter(number -> (double) number > min.get() + EPSILON)
                 .toList());
-        System.out.println();
+        sb.append(System.lineSeparator());
+
+        String toString = sb.toString();
+        System.out.println(toString);
+        try {
+            WRITER_TO_FILE.write(toString);
+            WRITER_TO_FILE.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
