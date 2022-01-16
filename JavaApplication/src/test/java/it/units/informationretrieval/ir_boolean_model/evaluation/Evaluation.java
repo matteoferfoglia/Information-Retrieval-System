@@ -195,7 +195,10 @@ class CranfieldQuery {
     private final static Pattern REGEX_ENTIRE_QUERY = Pattern.compile(
             "(?s)" +                      // multiline capturing (for ".*")
                     "(\\d+)\\s+" +        // matches the query number       in the 1st capturing group
-                    "\\.W\\s+(.*)\\s+");   // matches the text of a query    in the 2nd capturing group
+                    "\\.W\\s+(.*)" +      // matches the text of a query    in the 2nd capturing group
+                    "(\\s+|\\z)");        // goes on until either a space or the end of file
+    //                                          (2nd capturing group should capture as many characters as possible)
+
     /**
      * The capturing group matching the query number according to {@link #REGEX_ENTIRE_QUERY}.
      */
