@@ -8,6 +8,7 @@ open module it.units.informationretrieval.ir_boolean_model {
     requires skiplist;
     requires edit_distance;
     requires jbool.expressions;
+    requires benchmark;
 
     exports it.units.informationretrieval.ir_boolean_model.document_descriptors;
     exports it.units.informationretrieval.ir_boolean_model.entities;
