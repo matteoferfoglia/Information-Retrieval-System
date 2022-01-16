@@ -200,4 +200,11 @@ public class Corpus implements Serializable {
     public List<Document> findByTitle(@Nullable String documentTitle) {
         return corpus.values().stream().filter(document -> Objects.equals(document.getTitle(), documentTitle)).toList();
     }
+
+    /**
+     * @return the documents contained in this instance.
+     */
+    public Collection<Document> getListOfDocuments() {
+        return corpus.values();
+    }
 }

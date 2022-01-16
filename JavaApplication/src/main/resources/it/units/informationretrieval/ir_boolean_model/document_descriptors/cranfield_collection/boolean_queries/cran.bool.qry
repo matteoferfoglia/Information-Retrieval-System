@@ -1,0 +1,2010 @@
+.I 1 
+.W
+! body
+.I 2 
+.W
+(concept & transfer) | (giese | lab) | (! body) | ("moderate cooling")
+.I 3 
+.W
+(concept & transfer) | (pulses | bodies) | (! heat) | ("moderate cooling")
+.I 4 
+.W
+(concept & transfer) | (compressive | creep) | (! body) | ("moderate cooling")
+.I 5 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! body) | ("decrease in")
+.I 6 
+.W
+(tunnel & estimation) | (sources | mixing) | (! flow) | ("a supersonic")
+.I 7 
+.W
+(function & dynamically) | (compressive | creep) | (! flow) | ("decrease in")
+.I 8 
+.W
+(pulses & bodies) | (pulses | bodies) | (! heat) | ("moderate cooling")
+.I 9 
+.W
+(relations & peaks) | (giese | lab) | (! heat) | ("layer increases")
+.I 10 
+.W
+(tunnel & estimation) | (compressive | creep) | (! flight) | ("moderate cooling")
+.I 11 
+.W
+(pulses & bodies) | (compressive | creep) | (! heat) | ("layer increases")
+.I 12 
+.W
+(relations & peaks) | (tunnel | estimation) | (! flow) | ("moderate cooling")
+.I 13 
+.W
+(function & dynamically) | (sources | mixing) | (! heat) | ("decrease in")
+.I 14 
+.W
+(function & dynamically) | (tunnel | estimation) | (! flow) | ("a supersonic")
+.I 15 
+.W
+(function & dynamically) | (pulses | bodies) | (! heat) | ("same range")
+.I 16 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! heat) | ("moderate cooling")
+.I 17 
+.W
+(function & dynamically) | (compressive | creep) | (! flight) | ("same range")
+.I 18 
+.W
+(concept & transfer) | (compressive | creep) | (! mach) | ("layer increases")
+.I 19 
+.W
+(tunnel & estimation) | (compressive | creep) | (! heat) | ("moderate cooling")
+.I 20 
+.W
+(relations & peaks) | (giese | lab) | (! flight) | ("layer increases")
+.I 21 
+.W
+(pulses & bodies) | (compressive | creep) | (! heat) | ("a supersonic")
+.I 22 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! heat) | ("layer increases")
+.I 23 
+.W
+(tunnel & estimation) | (sources | mixing) | (! body) | ("layer increases")
+.I 24 
+.W
+(relations & peaks) | (giese | lab) | (! heat) | ("decrease in")
+.I 25 
+.W
+(pulses & bodies) | (pulses | bodies) | (! heat) | ("a supersonic")
+.I 26 
+.W
+(concept & transfer) | (tunnel | estimation) | (! body) | ("moderate cooling")
+.I 27 
+.W
+function | dynamically
+.I 28 
+.W
+(concept & transfer) | (pulses | bodies) | (! flow) | ("same range")
+.I 29 
+.W
+(concept & transfer) | (sources | mixing) | (! body) | ("moderate cooling")
+.I 30 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! mach) | ("a supersonic")
+.I 31 
+.W
+(concept & transfer) | (pulses | bodies) | (! body) | ("a supersonic")
+.I 32 
+.W
+(relations & peaks) | (compressive | creep) | (! flow) | ("moderate cooling")
+.I 33 
+.W
+(tunnel & estimation) | (compressive | creep) | (! mach) | ("moderate cooling")
+.I 34 
+.W
+(relations & peaks) | (compressive | creep) | (! body) | ("moderate cooling")
+.I 35 
+.W
+(pulses & bodies) | (compressive | creep) | (! flow) | ("decrease in")
+.I 36 
+.W
+(tunnel & estimation) | (sources | mixing) | (! heat) | ("same range")
+.I 37 
+.W
+(pulses & bodies) | (pulses | bodies) | (! flow) | ("a supersonic")
+.I 38 
+.W
+(relations & peaks) | (tunnel | estimation) | (! heat) | ("decrease in")
+.I 39 
+.W
+(relations & peaks) | (pulses | bodies) | (! flight) | ("same range")
+.I 40 
+.W
+(concept & transfer) | (compressive | creep) | (! heat) | ("a supersonic")
+.I 41 
+.W
+(concept & transfer) | (pulses | bodies) | (! body) | ("decrease in")
+.I 42 
+.W
+(relations & peaks) | (compressive | creep) | (! flight) | ("a supersonic")
+.I 43 
+.W
+(relations & peaks) | (tunnel | estimation) | (! mach) | ("layer increases")
+.I 44 
+.W
+(pulses & bodies) | (pulses | bodies) | (! mach) | ("moderate cooling")
+.I 45 
+.W
+"flow an"
+.I 46 
+.W
+(concept & transfer) | (compressive | creep) | (! mach) | ("same range")
+.I 47 
+.W
+(pulses & bodies) | (sources | mixing) | (! flight) | ("moderate cooling")
+.I 48 
+.W
+(function & dynamically) | (giese | lab) | (! heat) | ("a supersonic")
+.I 49 
+.W
+(function & dynamically) | (giese | lab) | (! mach) | ("decrease in")
+.I 50 
+.W
+(concept & transfer) | (compressive | creep) | (! body) | ("same range")
+.I 51 
+.W
+(function & dynamically) | (sources | mixing) | (! heat) | ("a supersonic")
+.I 52 
+.W
+(function & dynamically) | (tunnel | estimation) | (! mach) | ("layer increases")
+.I 53 
+.W
+(function & dynamically) | (pulses | bodies) | (! flow) | ("layer increases")
+.I 54 
+.W
+(tunnel & estimation) | (giese | lab) | (! heat) | ("a supersonic")
+.I 55 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! mach) | ("moderate cooling")
+.I 56 
+.W
+(pulses & bodies) | (compressive | creep) | (! body) | ("decrease in")
+.I 57 
+.W
+(function & dynamically) | (giese | lab) | (! flight) | ("a supersonic")
+.I 58 
+.W
+(concept & transfer) | (pulses | bodies) | (! mach) | ("moderate cooling")
+.I 59 
+.W
+(pulses & bodies) | (pulses | bodies) | (! flight) | ("decrease in")
+.I 60 
+.W
+(pulses & bodies) | (compressive | creep) | (! flight) | ("layer increases")
+.I 61 
+.W
+(tunnel & estimation) | (sources | mixing) | (! flight) | ("layer increases")
+.I 62 
+.W
+(pulses & bodies) | (sources | mixing) | (! body) | ("decrease in")
+.I 63 
+.W
+(function & dynamically) | (pulses | bodies) | (! flight) | ("a supersonic")
+.I 64 
+.W
+(relations & peaks) | (compressive | creep) | (! flow) | ("same range")
+.I 65 
+.W
+(function & dynamically) | (giese | lab) | (! heat) | ("decrease in")
+.I 66 
+.W
+(relations & peaks) | (compressive | creep) | (! flow) | ("layer increases")
+.I 67 
+.W
+(function & dynamically) | (tunnel | estimation) | (! flow) | ("same range")
+.I 68 
+.W
+(concept & transfer) | (sources | mixing) | (! flight) | ("a supersonic")
+.I 69 
+.W
+(relations & peaks) | (sources | mixing) | (! flight) | ("layer increases")
+.I 70 
+.W
+(pulses & bodies) | (pulses | bodies) | (! heat) | ("same range")
+.I 71 
+.W
+(function & dynamically) | (compressive | creep) | (! mach) | ("decrease in")
+.I 72 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! flow) | ("decrease in")
+.I 73 
+.W
+(relations & peaks) | (giese | lab) | (! mach) | ("decrease in")
+.I 74 
+.W
+(tunnel & estimation) | (compressive | creep) | (! flight) | ("a supersonic")
+.I 75 
+.W
+(function & dynamically) | (sources | mixing) | (! flow) | ("a supersonic")
+.I 76 
+.W
+(relations & peaks) | (sources | mixing) | (! heat) | ("decrease in")
+.I 77 
+.W
+(concept & transfer) | (giese | lab) | (! body) | ("decrease in")
+.I 78 
+.W
+(relations & peaks) | (pulses | bodies) | (! heat) | ("layer increases")
+.I 79 
+.W
+(function & dynamically) | (giese | lab) | (! mach) | ("same range")
+.I 80 
+.W
+(relations & peaks) | (giese | lab) | (! heat) | ("a supersonic")
+.I 81 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! flow) | ("same range")
+.I 82 
+.W
+(concept & transfer) | (giese | lab) | (! flight) | ("moderate cooling")
+.I 83 
+.W
+(relations & peaks) | (sources | mixing) | (! body) | ("layer increases")
+.I 84 
+.W
+(function & dynamically) | (tunnel | estimation) | (! mach) | ("a supersonic")
+.I 85 
+.W
+(function & dynamically) | (giese | lab) | (! body) | ("same range")
+.I 86 
+.W
+(function & dynamically) | (tunnel | estimation) | (! flight) | ("a supersonic")
+.I 87 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! flow) | ("a supersonic")
+.I 88 
+.W
+(relations & peaks) | (compressive | creep) | (! flight) | ("layer increases")
+.I 89 
+.W
+(concept & transfer) & (pulses | bodies) & (! flight) & ("layer increases")
+.I 90 
+.W
+(tunnel & estimation) | (compressive | creep) | (! heat) | ("a supersonic")
+.I 91 
+.W
+(pulses & bodies) | (giese | lab) | (! heat) | ("moderate cooling")
+.I 92 
+.W
+(pulses & bodies) | (giese | lab) | (! flight) | ("same range")
+.I 93 
+.W
+(concept & transfer) | (sources | mixing) | (! flight) | ("same range")
+.I 94 
+.W
+"moderate cooling"
+.I 95 
+.W
+(function & dynamically) & (compressive | creep) & (! heat) & ("a supersonic")
+.I 96 
+.W
+(concept & transfer) | (pulses | bodies) | (! body) | ("layer increases")
+.I 97 
+.W
+(relations & peaks) | (compressive | creep) | (! flow) | ("a supersonic")
+.I 98 
+.W
+(concept & transfer) | (giese | lab) | (! flow) | ("layer increases")
+.I 99 
+.W
+(relations & peaks) | (compressive | creep) | (! heat) | ("same range")
+.I 100 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! flow) | ("decrease in")
+.I 101 
+.W
+(pulses & bodies) | (sources | mixing) | (! heat) | ("layer increases")
+.I 102 
+.W
+(concept & transfer) | (sources | mixing) | (! body) | ("layer increases")
+.I 103 
+.W
+(concept & transfer) | (sources | mixing) | (! heat) | ("layer increases")
+.I 104 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! body) | ("layer increases")
+.I 105 
+.W
+(concept & transfer) | (tunnel | estimation) | (! flight) | ("moderate cooling")
+.I 106 
+.W
+(concept & transfer) | (sources | mixing) | (! heat) | ("a supersonic")
+.I 107 
+.W
+(concept & transfer) | (giese | lab) | (! flow) | ("decrease in")
+.I 108 
+.W
+(function & dynamically) | (tunnel | estimation) | (! body) | ("same range")
+.I 109 
+.W
+(pulses & bodies) | (compressive | creep) | (! mach) | ("decrease in")
+.I 110 
+.W
+(function & dynamically) | (sources | mixing) | (! flight) | ("layer increases")
+.I 111 
+.W
+heating & transformation
+.I 112 
+.W
+(pulses & bodies) | (giese | lab) | (! flight) | ("moderate cooling")
+.I 113 
+.W
+(pulses & bodies) | (sources | mixing) | (! mach) | ("decrease in")
+.I 114 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! body) | ("a supersonic")
+.I 115 
+.W
+(relations & peaks) | (giese | lab) | (! flight) | ("a supersonic")
+.I 116 
+.W
+(concept & transfer) | (pulses | bodies) | (! flight) | ("layer increases")
+.I 117 
+.W
+(concept & transfer) | (compressive | creep) | (! flow) | ("same range")
+.I 118 
+.W
+(concept & transfer) | (pulses | bodies) | (! flow) | ("decrease in")
+.I 119 
+.W
+(tunnel & estimation) | (sources | mixing) | (! mach) | ("a supersonic")
+.I 120 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! mach) | ("moderate cooling")
+.I 121 
+.W
+(pulses & bodies) | (compressive | creep) | (! mach) | ("a supersonic")
+.I 122 
+.W
+(function & dynamically) | (compressive | creep) | (! body) | ("decrease in")
+.I 123 
+.W
+(tunnel & estimation) | (compressive | creep) | (! mach) | ("layer increases")
+.I 124 
+.W
+"solution of"
+.I 125 
+.W
+relations | peaks
+.I 126 
+.W
+! flutter
+.I 127 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! body) | ("moderate cooling")
+.I 128 
+.W
+(function & dynamically) | (sources | mixing) | (! body) | ("layer increases")
+.I 129 
+.W
+(function & dynamically) | (sources | mixing) | (! flow) | ("decrease in")
+.I 130 
+.W
+(concept & transfer) | (compressive | creep) | (! flight) | ("decrease in")
+.I 131 
+.W
+(tunnel & estimation) | (compressive | creep) | (! flight) | ("same range")
+.I 132 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! heat) | ("same range")
+.I 133 
+.W
+(pulses & bodies) | (sources | mixing) | (! flow) | ("decrease in")
+.I 134 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! flight) | ("a supersonic")
+.I 135 
+.W
+(tunnel & estimation) | (giese | lab) | (! mach) | ("same range")
+.I 136 
+.W
+(pulses & bodies) | (compressive | creep) | (! body) | ("moderate cooling")
+.I 137 
+.W
+(concept & transfer) | (tunnel | estimation) | (! mach) | ("moderate cooling")
+.I 138 
+.W
+(relations & peaks) | (compressive | creep) | (! mach) | ("same range")
+.I 139 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! flight) | ("layer increases")
+.I 140 
+.W
+(relations & peaks) | (tunnel | estimation) | (! mach) | ("a supersonic")
+.I 141 
+.W
+! heat
+.I 142 
+.W
+(tunnel & estimation) | (compressive | creep) | (! flow) | ("layer increases")
+.I 143 
+.W
+compressive | creep
+.I 144 
+.W
+(concept & transfer) | (compressive | creep) | (! flight) | ("a supersonic")
+.I 145 
+.W
+(concept & transfer) | (compressive | creep) | (! heat) | ("layer increases")
+.I 146 
+.W
+(concept & transfer) | (sources | mixing) | (! flight) | ("moderate cooling")
+.I 147 
+.W
+(relations & peaks) | (giese | lab) | (! mach) | ("a supersonic")
+.I 148 
+.W
+(pulses & bodies) | (compressive | creep) | (! body) | ("same range")
+.I 149 
+.W
+(tunnel & estimation) | (sources | mixing) | (! flow) | ("moderate cooling")
+.I 150 
+.W
+(concept & transfer) | (giese | lab) | (! flight) | ("same range")
+.I 151 
+.W
+(tunnel & estimation) | (sources | mixing) | (! heat) | ("layer increases")
+.I 152 
+.W
+(pulses & bodies) | (giese | lab) | (! flow) | ("same range")
+.I 153 
+.W
+(function & dynamically) | (tunnel | estimation) | (! heat) | ("a supersonic")
+.I 154 
+.W
+(concept & transfer) | (pulses | bodies) | (! heat) | ("same range")
+.I 155 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! heat) | ("same range")
+.I 156 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! heat) | ("moderate cooling")
+.I 157 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! heat) | ("decrease in")
+.I 158 
+.W
+(concept & transfer) | (tunnel | estimation) | (! flow) | ("a supersonic")
+.I 159 
+.W
+"a supersonic"
+.I 160 
+.W
+(function & dynamically) | (sources | mixing) | (! mach) | ("decrease in")
+.I 161 
+.W
+(tunnel & estimation) | (compressive | creep) | (! heat) | ("decrease in")
+.I 162 
+.W
+(function & dynamically) | (pulses | bodies) | (! body) | ("layer increases")
+.I 163 
+.W
+(concept & transfer) | (sources | mixing) | (! heat) | ("same range")
+.I 164 
+.W
+(tunnel & estimation) | (sources | mixing) | (! heat) | ("a supersonic")
+.I 165 
+.W
+(concept & transfer) | (compressive | creep) | (! mach) | ("a supersonic")
+.I 166 
+.W
+(function & dynamically) | (giese | lab) | (! flight) | ("decrease in")
+.I 167 
+.W
+(function & dynamically) | (pulses | bodies) | (! flow) | ("same range")
+.I 168 
+.W
+(relations & peaks) | (giese | lab) | (! flight) | ("decrease in")
+.I 169 
+.W
+"the relative"
+.I 170 
+.W
+(function & dynamically) | (giese | lab) | (! flow) | ("a supersonic")
+.I 171 
+.W
+(tunnel & estimation) | (giese | lab) | (! flow) | ("a supersonic")
+.I 172 
+.W
+(concept & transfer) | (compressive | creep) | (! flight) | ("same range")
+.I 173 
+.W
+(concept & transfer) | (tunnel | estimation) | (! heat) | ("layer increases")
+.I 174 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! flow) | ("layer increases")
+.I 175 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! mach) | ("same range")
+.I 176 
+.W
+(pulses & bodies) | (giese | lab) | (! heat) | ("a supersonic")
+.I 177 
+.W
+(function & dynamically) | (pulses | bodies) | (! flow) | ("a supersonic")
+.I 178 
+.W
+(function & dynamically) | (giese | lab) | (! flow) | ("same range")
+.I 179 
+.W
+(pulses & bodies) | (compressive | creep) | (! flow) | ("moderate cooling")
+.I 180 
+.W
+(concept & transfer) | (pulses | bodies) | (! mach) | ("layer increases")
+.I 181 
+.W
+(relations & peaks) | (sources | mixing) | (! flight) | ("a supersonic")
+.I 182 
+.W
+(relations & peaks) | (compressive | creep) | (! body) | ("layer increases")
+.I 183 
+.W
+(concept & transfer) | (compressive | creep) | (! body) | ("decrease in")
+.I 184 
+.W
+(concept & transfer) | (pulses | bodies) | (! mach) | ("a supersonic")
+.I 185 
+.W
+(function & dynamically) | (compressive | creep) | (! flight) | ("moderate cooling")
+.I 186 
+.W
+(relations & peaks) | (giese | lab) | (! flight) | ("moderate cooling")
+.I 187 
+.W
+(concept & transfer) | (giese | lab) | (! flow) | ("a supersonic")
+.I 188 
+.W
+(pulses & bodies) | (pulses | bodies) | (! body) | ("moderate cooling")
+.I 189 
+.W
+(pulses & bodies) | (sources | mixing) | (! flight) | ("a supersonic")
+.I 190 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! body) | ("decrease in")
+.I 191 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! body) | ("a supersonic")
+.I 192 
+.W
+(concept & transfer) | (giese | lab) | (! heat) | ("decrease in")
+.I 193 
+.W
+(pulses & bodies) | (pulses | bodies) | (! flow) | ("decrease in")
+.I 194 
+.W
+(pulses & bodies) | (sources | mixing) | (! flow) | ("moderate cooling")
+.I 195 
+.W
+(function & dynamically) | (sources | mixing) | (! flight) | ("same range")
+.I 196 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! heat) | ("decrease in")
+.I 197 
+.W
+(function & dynamically) | (tunnel | estimation) | (! body) | ("decrease in")
+.I 198 
+.W
+sources | mixing
+.I 199 
+.W
+(tunnel & estimation) | (giese | lab) | (! body) | ("decrease in")
+.I 200 
+.W
+(relations & peaks) | (tunnel | estimation) | (! flight) | ("moderate cooling")
+.I 201 
+.W
+(function & dynamically) | (compressive | creep) | (! flow) | ("a supersonic")
+.I 202 
+.W
+(tunnel & estimation) | (sources | mixing) | (! heat) | ("decrease in")
+.I 203 
+.W
+(concept & transfer) | (tunnel | estimation) | (! heat) | ("a supersonic")
+.I 204 
+.W
+(relations & peaks) | (pulses | bodies) | (! heat) | ("same range")
+.I 205 
+.W
+(concept & transfer) | (giese | lab) | (! mach) | ("moderate cooling")
+.I 206 
+.W
+(concept & transfer) | (compressive | creep) | (! mach) | ("moderate cooling")
+.I 207 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! flight) | ("moderate cooling")
+.I 208 
+.W
+(pulses & bodies) | (giese | lab) | (! mach) | ("a supersonic")
+.I 209 
+.W
+(relations & peaks) | (pulses | bodies) | (! body) | ("a supersonic")
+.I 210 
+.W
+(relations & peaks) | (tunnel | estimation) | (! body) | ("a supersonic")
+.I 211 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! flow) | ("moderate cooling")
+.I 212 
+.W
+(relations & peaks) | (giese | lab) | (! body) | ("decrease in")
+.I 213 
+.W
+(function & dynamically) | (giese | lab) | (! heat) | ("same range")
+.I 214 
+.W
+(function & dynamically) | (sources | mixing) | (! body) | ("decrease in")
+.I 215 
+.W
+(tunnel & estimation) | (giese | lab) | (! flow) | ("moderate cooling")
+.I 216 
+.W
+(function & dynamically) | (sources | mixing) | (! body) | ("same range")
+.I 217 
+.W
+(function & dynamically) | (compressive | creep) | (! heat) | ("same range")
+.I 218 
+.W
+(concept & transfer) | (sources | mixing) | (! heat) | ("moderate cooling")
+.I 219 
+.W
+(pulses & bodies) | (pulses | bodies) | (! flight) | ("same range")
+.I 220 
+.W
+(relations & peaks) | (tunnel | estimation) | (! body) | ("decrease in")
+.I 221 
+.W
+(tunnel & estimation) | (compressive | creep) | (! mach) | ("a supersonic")
+.I 222 
+.W
+(relations & peaks) | (compressive | creep) | (! heat) | ("decrease in")
+.I 223 
+.W
+(pulses & bodies) | (giese | lab) | (! flight) | ("decrease in")
+.I 224 
+.W
+(function & dynamically) | (tunnel | estimation) | (! body) | ("layer increases")
+.I 225 
+.W
+(tunnel & estimation) | (giese | lab) | (! flow) | ("same range")
+.I 226 
+.W
+(pulses & bodies) | (giese | lab) | (! flow) | ("a supersonic")
+.I 227 
+.W
+(concept & transfer) | (pulses | bodies) | (! flow) | ("moderate cooling")
+.I 228 
+.W
+(tunnel & estimation) | (compressive | creep) | (! mach) | ("same range")
+.I 229 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! heat) | ("layer increases")
+.I 230 
+.W
+(concept & transfer) | (tunnel | estimation) | (! body) | ("a supersonic")
+.I 231 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! mach) | ("layer increases")
+.I 232 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! flow) | ("layer increases")
+.I 233 
+.W
+(concept & transfer) | (pulses | bodies) | (! mach) | ("same range")
+.I 234 
+.W
+(pulses & bodies) | (giese | lab) | (! mach) | ("moderate cooling")
+.I 235 
+.W
+(function & dynamically) | (tunnel | estimation) | (! mach) | ("moderate cooling")
+.I 236 
+.W
+(concept & transfer) | (tunnel | estimation) | (! mach) | ("same range")
+.I 237 
+.W
+(pulses & bodies) | (sources | mixing) | (! heat) | ("same range")
+.I 238 
+.W
+(relations & peaks) | (sources | mixing) | (! body) | ("decrease in")
+.I 239 
+.W
+(relations & peaks) | (giese | lab) | (! flow) | ("same range")
+.I 240 
+.W
+(concept & transfer) | (giese | lab) | (! body) | ("layer increases")
+.I 241 
+.W
+(pulses & bodies) | (giese | lab) | (! body) | ("same range")
+.I 242 
+.W
+(function & dynamically) | (sources | mixing) | (! flight) | ("decrease in")
+.I 243 
+.W
+(tunnel & estimation) | (compressive | creep) | (! flow) | ("decrease in")
+.I 244 
+.W
+(relations & peaks) | (giese | lab) | (! body) | ("layer increases")
+.I 245 
+.W
+(relations & peaks) | (compressive | creep) | (! mach) | ("decrease in")
+.I 246 
+.W
+(function & dynamically) | (pulses | bodies) | (! body) | ("same range")
+.I 247 
+.W
+(relations & peaks) | (tunnel | estimation) | (! heat) | ("moderate cooling")
+.I 248 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! flight) | ("moderate cooling")
+.I 249 
+.W
+(concept & transfer) | (compressive | creep) | (! heat) | ("moderate cooling")
+.I 250 
+.W
+(relations & peaks) | (tunnel | estimation) | (! body) | ("same range")
+.I 251 
+.W
+(concept & transfer) | (giese | lab) | (! heat) | ("a supersonic")
+.I 252 
+.W
+(function & dynamically) | (pulses | bodies) | (! mach) | ("decrease in")
+.I 253 
+.W
+(concept & transfer) | (giese | lab) | (! flight) | ("layer increases")
+.I 254 
+.W
+(relations & peaks) | (sources | mixing) | (! flow) | ("same range")
+.I 255 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! body) | ("moderate cooling")
+.I 256 
+.W
+(pulses & bodies) | (sources | mixing) | (! mach) | ("layer increases")
+.I 257 
+.W
+! laminar
+.I 258 
+.W
+(function & dynamically) | (tunnel | estimation) | (! body) | ("a supersonic")
+.I 259 
+.W
+(concept & transfer) | (pulses | bodies) | (! body) | ("same range")
+.I 260 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! mach) | ("a supersonic")
+.I 261 
+.W
+(concept & transfer) | (sources | mixing) | (! body) | ("same range")
+.I 262 
+.W
+(relations & peaks) | (sources | mixing) | (! body) | ("a supersonic")
+.I 263 
+.W
+(pulses & bodies) | (pulses | bodies) | (! mach) | ("decrease in")
+.I 264 
+.W
+(pulses & bodies) | (sources | mixing) | (! body) | ("layer increases")
+.I 265 
+.W
+(pulses & bodies) | (pulses | bodies) | (! mach) | ("same range")
+.I 266 
+.W
+(function & dynamically) | (sources | mixing) | (! mach) | ("a supersonic")
+.I 267 
+.W
+(tunnel & estimation) | (compressive | creep) | (! mach) | ("decrease in")
+.I 268 
+.W
+(relations & peaks) | (sources | mixing) | (! flow) | ("layer increases")
+.I 269 
+.W
+sources & mixing
+.I 270 
+.W
+(concept & transfer) | (pulses | bodies) | (! flight) | ("same range")
+.I 271 
+.W
+(relations & peaks) | (tunnel | estimation) | (! mach) | ("moderate cooling")
+.I 272 
+.W
+(function & dynamically) | (tunnel | estimation) | (! heat) | ("layer increases")
+.I 273 
+.W
+(function & dynamically) | (pulses | bodies) | (! flight) | ("decrease in")
+.I 274 
+.W
+(pulses & bodies) | (giese | lab) | (! body) | ("moderate cooling")
+.I 275 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! flow) | ("same range")
+.I 276 
+.W
+! flight
+.I 277 
+.W
+(tunnel & estimation) | (compressive | creep) | (! flow) | ("a supersonic")
+.I 278 
+.W
+(tunnel & estimation) | (sources | mixing) | (! body) | ("a supersonic")
+.I 279 
+.W
+(relations & peaks) | (compressive | creep) | (! heat) | ("a supersonic")
+.I 280 
+.W
+(function & dynamically) | (tunnel | estimation) | (! flow) | ("layer increases")
+.I 281 
+.W
+(function & dynamically) | (pulses | bodies) | (! heat) | ("a supersonic")
+.I 282 
+.W
+(relations & peaks) | (sources | mixing) | (! heat) | ("layer increases")
+.I 283 
+.W
+(pulses & bodies) | (compressive | creep) | (! heat) | ("decrease in")
+.I 284 
+.W
+(pulses & bodies) | (pulses | bodies) | (! mach) | ("a supersonic")
+.I 285 
+.W
+(function & dynamically) | (compressive | creep) | (! heat) | ("decrease in")
+.I 286 
+.W
+(function & dynamically) | (giese | lab) | (! mach) | ("layer increases")
+.I 287 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! mach) | ("decrease in")
+.I 288 
+.W
+(function & dynamically) | (pulses | bodies) | (! flight) | ("moderate cooling")
+.I 289 
+.W
+(tunnel & estimation) | (compressive | creep) | (! flow) | ("moderate cooling")
+.I 290 
+.W
+(concept & transfer) | (compressive | creep) | (! flow) | ("moderate cooling")
+.I 291 
+.W
+(function & dynamically) | (sources | mixing) | (! flow) | ("layer increases")
+.I 292 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! body) | ("same range")
+.I 293 
+.W
+(relations & peaks) | (pulses | bodies) | (! mach) | ("layer increases")
+.I 294 
+.W
+(relations & peaks) | (pulses | bodies) | (! flight) | ("a supersonic")
+.I 295 
+.W
+(function & dynamically) | (sources | mixing) | (! mach) | ("same range")
+.I 296 
+.W
+(tunnel & estimation) | (giese | lab) | (! flight) | ("same range")
+.I 297 
+.W
+(pulses & bodies) | (giese | lab) | (! body) | ("decrease in")
+.I 298 
+.W
+(concept & transfer) & (pulses | bodies) & (! mach) & ("layer increases")
+.I 299 
+.W
+(relations & peaks) | (giese | lab) | (! flow) | ("a supersonic")
+.I 300 
+.W
+(relations & peaks) | (compressive | creep) | (! flow) | ("decrease in")
+.I 301 
+.W
+(tunnel & estimation) | (sources | mixing) | (! mach) | ("same range")
+.I 302 
+.W
+(function & dynamically) | (tunnel | estimation) | (! heat) | ("moderate cooling")
+.I 303 
+.W
+(relations & peaks) | (pulses | bodies) | (! body) | ("decrease in")
+.I 304 
+.W
+(concept & transfer) | (tunnel | estimation) | (! heat) | ("same range")
+.I 305 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! body) | ("a supersonic")
+.I 306 
+.W
+(function & dynamically) | (giese | lab) | (! flow) | ("decrease in")
+.I 307 
+.W
+(tunnel & estimation) | (giese | lab) | (! mach) | ("a supersonic")
+.I 308 
+.W
+(pulses & bodies) | (compressive | creep) | (! mach) | ("same range")
+.I 309 
+.W
+(function & dynamically) | (giese | lab) | (! mach) | ("a supersonic")
+.I 310 
+.W
+(concept & transfer) | (sources | mixing) | (! flow) | ("moderate cooling")
+.I 311 
+.W
+(function & dynamically) | (giese | lab) | (! flight) | ("same range")
+.I 312 
+.W
+(function & dynamically) | (compressive | creep) | (! heat) | ("layer increases")
+.I 313 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! flow) | ("same range")
+.I 314 
+.W
+(function & dynamically) | (pulses | bodies) | (! mach) | ("layer increases")
+.I 315 
+.W
+(relations & peaks) | (sources | mixing) | (! flight) | ("decrease in")
+.I 316 
+.W
+(function & dynamically) | (compressive | creep) | (! heat) | ("a supersonic")
+.I 317 
+.W
+(function & dynamically) | (compressive | creep) | (! flight) | ("a supersonic")
+.I 318 
+.W
+(function & dynamically) | (sources | mixing) | (! heat) | ("layer increases")
+.I 319 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! heat) | ("a supersonic")
+.I 320 
+.W
+(relations & peaks) | (compressive | creep) | (! mach) | ("layer increases")
+.I 321 
+.W
+(function & dynamically) | (sources | mixing) | (! flight) | ("a supersonic")
+.I 322 
+.W
+(function & dynamically) | (compressive | creep) | (! flow) | ("layer increases")
+.I 323 
+.W
+(relations & peaks) | (tunnel | estimation) | (! body) | ("moderate cooling")
+.I 324 
+.W
+(concept & transfer) | (compressive | creep) | (! flow) | ("a supersonic")
+.I 325 
+.W
+(relations & peaks) | (sources | mixing) | (! flight) | ("moderate cooling")
+.I 326 
+.W
+(pulses & bodies) | (sources | mixing) | (! mach) | ("a supersonic")
+.I 327 
+.W
+(pulses & bodies) | (sources | mixing) | (! flight) | ("same range")
+.I 328 
+.W
+(relations & peaks) | (tunnel | estimation) | (! flight) | ("layer increases")
+.I 329 
+.W
+(relations & peaks) | (sources | mixing) | (! flow) | ("a supersonic")
+.I 330 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! heat) | ("decrease in")
+.I 331 
+.W
+(function & dynamically) | (sources | mixing) | (! body) | ("moderate cooling")
+.I 332 
+.W
+(concept & transfer) | (pulses | bodies) | (! flight) | ("moderate cooling")
+.I 333 
+.W
+(concept & transfer) | (compressive | creep) | (! heat) | ("decrease in")
+.I 334 
+.W
+(function & dynamically) | (giese | lab) | (! flow) | ("moderate cooling")
+.I 335 
+.W
+(relations & peaks) | (pulses | bodies) | (! body) | ("same range")
+.I 336 
+.W
+(function & dynamically) | (compressive | creep) | (! body) | ("same range")
+.I 337 
+.W
+(tunnel & estimation) | (giese | lab) | (! heat) | ("same range")
+.I 338 
+.W
+(tunnel & estimation) | (giese | lab) | (! body) | ("a supersonic")
+.I 339 
+.W
+(pulses & bodies) | (compressive | creep) | (! flow) | ("layer increases")
+.I 340 
+.W
+(function & dynamically) | (sources | mixing) | (! mach) | ("layer increases")
+.I 341 
+.W
+concept & transfer
+.I 342 
+.W
+(tunnel & estimation) | (giese | lab) | (! flight) | ("layer increases")
+.I 343 
+.W
+relations & peaks
+.I 344 
+.W
+(relations & peaks) | (compressive | creep) | (! body) | ("a supersonic")
+.I 345 
+.W
+(pulses & bodies) | (sources | mixing) | (! mach) | ("same range")
+.I 346 
+.W
+(pulses & bodies) | (compressive | creep) | (! heat) | ("same range")
+.I 347 
+.W
+(concept & transfer) | (tunnel | estimation) | (! flight) | ("same range")
+.I 348 
+.W
+(relations & peaks) | (giese | lab) | (! flow) | ("layer increases")
+.I 349 
+.W
+(function & dynamically) | (giese | lab) | (! flight) | ("layer increases")
+.I 350 
+.W
+(pulses & bodies) | (sources | mixing) | (! body) | ("same range")
+.I 351 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! flow) | ("layer increases")
+.I 352 
+.W
+(relations & peaks) | (compressive | creep) | (! heat) | ("layer increases")
+.I 353 
+.W
+(relations & peaks) | (tunnel | estimation) | (! flight) | ("same range")
+.I 354 
+.W
+(concept & transfer) | (giese | lab) | (! mach) | ("layer increases")
+.I 355 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! flight) | ("same range")
+.I 356 
+.W
+(tunnel & estimation) | (sources | mixing) | (! flight) | ("a supersonic")
+.I 357 
+.W
+(relations & peaks) | (giese | lab) | (! mach) | ("moderate cooling")
+.I 358 
+.W
+(relations & peaks) | (sources | mixing) | (! mach) | ("moderate cooling")
+.I 359 
+.W
+(pulses & bodies) | (compressive | creep) | (! body) | ("a supersonic")
+.I 360 
+.W
+(function & dynamically) | (tunnel | estimation) | (! heat) | ("decrease in")
+.I 361 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! mach) | ("decrease in")
+.I 362 
+.W
+(tunnel & estimation) | (giese | lab) | (! heat) | ("decrease in")
+.I 363 
+.W
+(concept & transfer) | (tunnel | estimation) | (! flow) | ("same range")
+.I 364 
+.W
+(tunnel & estimation) | (compressive | creep) | (! body) | ("layer increases")
+.I 365 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! body) | ("layer increases")
+.I 366 
+.W
+(relations & peaks) | (tunnel | estimation) | (! heat) | ("same range")
+.I 367 
+.W
+(tunnel & estimation) | (sources | mixing) | (! body) | ("decrease in")
+.I 368 
+.W
+(relations & peaks) | (sources | mixing) | (! heat) | ("same range")
+.I 369 
+.W
+(function & dynamically) | (pulses | bodies) | (! body) | ("moderate cooling")
+.I 370 
+.W
+concept | transfer
+.I 371 
+.W
+(function & dynamically) | (pulses | bodies) | (! flow) | ("decrease in")
+.I 372 
+.W
+(function & dynamically) | (pulses | bodies) | (! flight) | ("layer increases")
+.I 373 
+.W
+(function & dynamically) | (compressive | creep) | (! flight) | ("decrease in")
+.I 374 
+.W
+(relations & peaks) | (compressive | creep) | (! body) | ("decrease in")
+.I 375 
+.W
+(concept & transfer) | (sources | mixing) | (! body) | ("a supersonic")
+.I 376 
+.W
+(tunnel & estimation) | (compressive | creep) | (! flight) | ("layer increases")
+.I 377 
+.W
+(pulses & bodies) | (pulses | bodies) | (! mach) | ("layer increases")
+.I 378 
+.W
+(relations & peaks) | (pulses | bodies) | (! mach) | ("a supersonic")
+.I 379 
+.W
+(relations & peaks) | (sources | mixing) | (! heat) | ("a supersonic")
+.I 380 
+.W
+(function & dynamically) | (pulses | bodies) | (! heat) | ("layer increases")
+.I 381 
+.W
+(function & dynamically) | (compressive | creep) | (! mach) | ("same range")
+.I 382 
+.W
+(relations & peaks) | (giese | lab) | (! heat) | ("moderate cooling")
+.I 383 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! mach) | ("a supersonic")
+.I 384 
+.W
+(concept & transfer) | (giese | lab) | (! flow) | ("same range")
+.I 385 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! flight) | ("same range")
+.I 386 
+.W
+(pulses & bodies) | (compressive | creep) | (! flight) | ("a supersonic")
+.I 387 
+.W
+(relations & peaks) | (giese | lab) | (! body) | ("a supersonic")
+.I 388 
+.W
+(function & dynamically) | (sources | mixing) | (! flight) | ("moderate cooling")
+.I 389 
+.W
+(pulses & bodies) | (sources | mixing) | (! heat) | ("moderate cooling")
+.I 390 
+.W
+(function & dynamically) | (sources | mixing) | (! flow) | ("moderate cooling")
+.I 391 
+.W
+(pulses & bodies) | (compressive | creep) | (! heat) | ("moderate cooling")
+.I 392 
+.W
+(concept & transfer) | (pulses | bodies) | (! flight) | ("a supersonic")
+.I 393 
+.W
+(concept & transfer) | (sources | mixing) | (! flow) | ("decrease in")
+.I 394 
+.W
+(relations & peaks) | (pulses | bodies) | (! mach) | ("same range")
+.I 395 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! mach) | ("same range")
+.I 396 
+.W
+(tunnel & estimation) | (giese | lab) | (! mach) | ("layer increases")
+.I 397 
+.W
+(concept & transfer) | (compressive | creep) | (! body) | ("a supersonic")
+.I 398 
+.W
+(pulses & bodies) | (pulses | bodies) | (! heat) | ("decrease in")
+.I 399 
+.W
+(function & dynamically) | (giese | lab) | (! body) | ("a supersonic")
+.I 400 
+.W
+(relations & peaks) | (pulses | bodies) | (! flow) | ("decrease in")
+.I 401 
+.W
+(function & dynamically) | (tunnel | estimation) | (! body) | ("moderate cooling")
+.I 402 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! body) | ("same range")
+.I 403 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! flow) | ("a supersonic")
+.I 404 
+.W
+(function & dynamically) | (pulses | bodies) | (! body) | ("a supersonic")
+.I 405 
+.W
+(function & dynamically) | (sources | mixing) | (! heat) | ("same range")
+.I 406 
+.W
+(function & dynamically) & (compressive | creep) & (! body) & ("a supersonic")
+.I 407 
+.W
+(pulses & bodies) | (sources | mixing) | (! flight) | ("layer increases")
+.I 408 
+.W
+(tunnel & estimation) | (giese | lab) | (! heat) | ("moderate cooling")
+.I 409 
+.W
+(function & dynamically) | (giese | lab) | (! body) | ("moderate cooling")
+.I 410 
+.W
+(concept & transfer) | (tunnel | estimation) | (! body) | ("same range")
+.I 411 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! mach) | ("moderate cooling")
+.I 412 
+.W
+(concept & transfer) | (giese | lab) | (! heat) | ("layer increases")
+.I 413 
+.W
+(relations & peaks) | (sources | mixing) | (! flow) | ("moderate cooling")
+.I 414 
+.W
+(function & dynamically) | (giese | lab) | (! mach) | ("moderate cooling")
+.I 415 
+.W
+(tunnel & estimation) | (sources | mixing) | (! mach) | ("layer increases")
+.I 416 
+.W
+(pulses & bodies) | (compressive | creep) | (! mach) | ("moderate cooling")
+.I 417 
+.W
+(concept & transfer) | (giese | lab) | (! mach) | ("a supersonic")
+.I 418 
+.W
+(concept & transfer) | (giese | lab) | (! body) | ("same range")
+.I 419 
+.W
+(pulses & bodies) | (sources | mixing) | (! flow) | ("same range")
+.I 420 
+.W
+(function & dynamically) | (giese | lab) | (! flight) | ("moderate cooling")
+.I 421 
+.W
+(concept & transfer) | (pulses | bodies) | (! flow) | ("a supersonic")
+.I 422 
+.W
+(tunnel & estimation) | (compressive | creep) | (! body) | ("same range")
+.I 423 
+.W
+(tunnel & estimation) | (compressive | creep) | (! heat) | ("same range")
+.I 424 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! body) | ("moderate cooling")
+.I 425 
+.W
+(concept & transfer) | (compressive | creep) | (! flow) | ("decrease in")
+.I 426 
+.W
+(function & dynamically) | (tunnel | estimation) | (! flow) | ("moderate cooling")
+.I 427 
+.W
+(concept & transfer) | (giese | lab) | (! body) | ("a supersonic")
+.I 428 
+.W
+(tunnel & estimation) | (sources | mixing) | (! flow) | ("decrease in")
+.I 429 
+.W
+(concept & transfer) | (sources | mixing) | (! mach) | ("same range")
+.I 430 
+.W
+(pulses & bodies) | (pulses | bodies) | (! flight) | ("a supersonic")
+.I 431 
+.W
+(pulses & bodies) | (sources | mixing) | (! flow) | ("layer increases")
+.I 432 
+.W
+(concept & transfer) | (sources | mixing) | (! body) | ("decrease in")
+.I 433 
+.W
+(concept & transfer) | (sources | mixing) | (! flow) | ("layer increases")
+.I 434 
+.W
+(function & dynamically) | (compressive | creep) | (! flow) | ("moderate cooling")
+.I 435 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! flight) | ("moderate cooling")
+.I 436 
+.W
+(function & dynamically) | (compressive | creep) | (! body) | ("layer increases")
+.I 437 
+.W
+(tunnel & estimation) | (giese | lab) | (! flow) | ("decrease in")
+.I 438 
+.W
+(tunnel & estimation) | (sources | mixing) | (! flight) | ("moderate cooling")
+.I 439 
+.W
+heating | transformation
+.I 440 
+.W
+(concept & transfer) | (tunnel | estimation) | (! body) | ("decrease in")
+.I 441 
+.W
+! boundary
+.I 442 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! heat) | ("a supersonic")
+.I 443 
+.W
+(relations & peaks) | (giese | lab) | (! body) | ("moderate cooling")
+.I 444 
+.W
+(relations & peaks) | (giese | lab) | (! body) | ("same range")
+.I 445 
+.W
+giese | lab
+.I 446 
+.W
+(concept & transfer) | (compressive | creep) | (! flight) | ("moderate cooling")
+.I 447 
+.W
+(concept & transfer) | (tunnel | estimation) | (! flight) | ("decrease in")
+.I 448 
+.W
+(concept & transfer) | (compressive | creep) | (! flow) | ("layer increases")
+.I 449 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! flight) | ("layer increases")
+.I 450 
+.W
+(function & dynamically) | (giese | lab) | (! heat) | ("moderate cooling")
+.I 451 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! flight) | ("a supersonic")
+.I 452 
+.W
+(tunnel & estimation) | (sources | mixing) | (! body) | ("same range")
+.I 453 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! heat) | ("moderate cooling")
+.I 454 
+.W
+(relations & peaks) | (pulses | bodies) | (! body) | ("layer increases")
+.I 455 
+.W
+(pulses & bodies) | (giese | lab) | (! heat) | ("decrease in")
+.I 456 
+.W
+(pulses & bodies) | (pulses | bodies) | (! body) | ("same range")
+.I 457 
+.W
+(tunnel & estimation) | (sources | mixing) | (! flow) | ("layer increases")
+.I 458 
+.W
+(concept & transfer) | (compressive | creep) | (! mach) | ("decrease in")
+.I 459 
+.W
+(concept & transfer) | (sources | mixing) | (! mach) | ("decrease in")
+.I 460 
+.W
+(pulses & bodies) | (giese | lab) | (! mach) | ("layer increases")
+.I 461 
+.W
+(relations & peaks) | (tunnel | estimation) | (! body) | ("layer increases")
+.I 462 
+.W
+pulses | bodies
+.I 463 
+.W
+(function & dynamically) | (compressive | creep) | (! body) | ("a supersonic")
+.I 464 
+.W
+(function & dynamically) | (pulses | bodies) | (! flow) | ("moderate cooling")
+.I 465 
+.W
+(relations & peaks) | (pulses | bodies) | (! flow) | ("same range")
+.I 466 
+.W
+"decrease in"
+.I 467 
+.W
+(concept & transfer) | (tunnel | estimation) | (! flight) | ("layer increases")
+.I 468 
+.W
+(relations & peaks) | (pulses | bodies) | (! heat) | ("decrease in")
+.I 469 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! heat) | ("layer increases")
+.I 470 
+.W
+(pulses & bodies) | (sources | mixing) | (! flight) | ("decrease in")
+.I 471 
+.W
+(relations & peaks) | (tunnel | estimation) | (! flow) | ("same range")
+.I 472 
+.W
+"pibal r"
+.I 473 
+.W
+(tunnel & estimation) | (giese | lab) | (! mach) | ("decrease in")
+.I 474 
+.W
+(tunnel & estimation) | (compressive | creep) | (! heat) | ("layer increases")
+.I 475 
+.W
+(pulses & bodies) | (sources | mixing) | (! flow) | ("a supersonic")
+.I 476 
+.W
+"so that"
+.I 477 
+.W
+! layer
+.I 478 
+.W
+(concept & transfer) | (tunnel | estimation) | (! flow) | ("layer increases")
+.I 479 
+.W
+(relations & peaks) | (sources | mixing) | (! body) | ("same range")
+.I 480 
+.W
+(function & dynamically) | (compressive | creep) | (! flow) | ("same range")
+.I 481 
+.W
+(tunnel & estimation) | (sources | mixing) | (! mach) | ("decrease in")
+.I 482 
+.W
+(function & dynamically) | (giese | lab) | (! body) | ("layer increases")
+.I 483 
+.W
+(concept & transfer) | (pulses | bodies) | (! flight) | ("decrease in")
+.I 484 
+.W
+(pulses & bodies) | (giese | lab) | (! heat) | ("layer increases")
+.I 485 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! body) | ("same range")
+.I 486 
+.W
+(tunnel & estimation) | (compressive | creep) | (! body) | ("moderate cooling")
+.I 487 
+.W
+(concept & transfer) | (pulses | bodies) | (! mach) | ("decrease in")
+.I 488 
+.W
+(function & dynamically) | (tunnel | estimation) | (! flight) | ("layer increases")
+.I 489 
+.W
+(concept & transfer) | (tunnel | estimation) | (! heat) | ("moderate cooling")
+.I 490 
+.W
+(tunnel & estimation) | (sources | mixing) | (! heat) | ("moderate cooling")
+.I 491 
+.W
+(pulses & bodies) | (giese | lab) | (! mach) | ("decrease in")
+.I 492 
+.W
+(concept & transfer) | (sources | mixing) | (! mach) | ("moderate cooling")
+.I 493 
+.W
+(concept & transfer) | (pulses | bodies) | (! body) | ("moderate cooling")
+.I 494 
+.W
+(concept & transfer) | (giese | lab) | (! heat) | ("moderate cooling")
+.I 495 
+.W
+(function & dynamically) | (pulses | bodies) | (! mach) | ("moderate cooling")
+.I 496 
+.W
+(tunnel & estimation) | (giese | lab) | (! flight) | ("moderate cooling")
+.I 497 
+.W
+(function & dynamically) | (sources | mixing) | (! heat) | ("moderate cooling")
+.I 498 
+.W
+(pulses & bodies) | (pulses | bodies) | (! flow) | ("same range")
+.I 499 
+.W
+(concept & transfer) | (sources | mixing) | (! flow) | ("same range")
+.I 500 
+.W
+(function & dynamically) | (compressive | creep) | (! mach) | ("layer increases")
+.I 501 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! flow) | ("moderate cooling")
+.I 502 
+.W
+(relations & peaks) | (giese | lab) | (! flight) | ("same range")
+.I 503 
+.W
+(relations & peaks) | (sources | mixing) | (! flow) | ("decrease in")
+.I 504 
+.W
+(relations & peaks) | (compressive | creep) | (! heat) | ("moderate cooling")
+.I 505 
+.W
+(tunnel & estimation) | (giese | lab) | (! flight) | ("a supersonic")
+.I 506 
+.W
+(relations & peaks) | (pulses | bodies) | (! flow) | ("moderate cooling")
+.I 507 
+.W
+(function & dynamically) & (compressive | creep) & (! flight) & ("a supersonic")
+.I 508 
+.W
+(relations & peaks) | (tunnel | estimation) | (! flow) | ("layer increases")
+.I 509 
+.W
+(concept & transfer) | (sources | mixing) | (! mach) | ("a supersonic")
+.I 510 
+.W
+(tunnel & estimation) | (sources | mixing) | (! flight) | ("decrease in")
+.I 511 
+.W
+(relations & peaks) | (pulses | bodies) | (! heat) | ("a supersonic")
+.I 512 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! heat) | ("same range")
+.I 513 
+.W
+(relations & peaks) | (tunnel | estimation) | (! heat) | ("a supersonic")
+.I 514 
+.W
+(tunnel & estimation) | (giese | lab) | (! flight) | ("decrease in")
+.I 515 
+.W
+(function & dynamically) | (pulses | bodies) | (! heat) | ("moderate cooling")
+.I 516 
+.W
+(pulses & bodies) | (compressive | creep) | (! body) | ("layer increases")
+.I 517 
+.W
+(pulses & bodies) | (pulses | bodies) | (! flight) | ("layer increases")
+.I 518 
+.W
+(concept & transfer) | (sources | mixing) | (! mach) | ("layer increases")
+.I 519 
+.W
+(pulses & bodies) | (compressive | creep) | (! flight) | ("same range")
+.I 520 
+.W
+(concept & transfer) | (giese | lab) | (! mach) | ("decrease in")
+.I 521 
+.W
+(tunnel & estimation) | (sources | mixing) | (! flight) | ("same range")
+.I 522 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! mach) | ("same range")
+.I 523 
+.W
+(pulses & bodies) | (pulses | bodies) | (! flow) | ("moderate cooling")
+.I 524 
+.W
+(pulses & bodies) | (giese | lab) | (! flow) | ("layer increases")
+.I 525 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! flow) | ("a supersonic")
+.I 526 
+.W
+(relations & peaks) | (tunnel | estimation) | (! flight) | ("a supersonic")
+.I 527 
+.W
+(pulses & bodies) | (compressive | creep) | (! flight) | ("moderate cooling")
+.I 528 
+.W
+(function & dynamically) | (tunnel | estimation) | (! flight) | ("same range")
+.I 529 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! mach) | ("layer increases")
+.I 530 
+.W
+tunnel & estimation
+.I 531 
+.W
+(function & dynamically) | (pulses | bodies) | (! mach) | ("same range")
+.I 532 
+.W
+(concept & transfer) | (tunnel | estimation) | (! mach) | ("layer increases")
+.I 533 
+.W
+(relations & peaks) | (pulses | bodies) | (! body) | ("moderate cooling")
+.I 534 
+.W
+(relations & peaks) | (tunnel | estimation) | (! mach) | ("same range")
+.I 535 
+.W
+(function & dynamically) | (pulses | bodies) | (! heat) | ("decrease in")
+.I 536 
+.W
+(function & dynamically) | (tunnel | estimation) | (! flight) | ("moderate cooling")
+.I 537 
+.W
+(relations & peaks) | (sources | mixing) | (! flight) | ("same range")
+.I 538 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! flow) | ("moderate cooling")
+.I 539 
+.W
+(concept & transfer) | (tunnel | estimation) | (! heat) | ("decrease in")
+.I 540 
+.W
+(relations & peaks) | (compressive | creep) | (! mach) | ("moderate cooling")
+.I 541 
+.W
+(relations & peaks) | (sources | mixing) | (! mach) | ("layer increases")
+.I 542 
+.W
+(pulses & bodies) | (giese | lab) | (! mach) | ("same range")
+.I 543 
+.W
+(pulses & bodies) | (sources | mixing) | (! heat) | ("a supersonic")
+.I 544 
+.W
+(pulses & bodies) | (giese | lab) | (! flow) | ("decrease in")
+.I 545 
+.W
+(relations & peaks) | (pulses | bodies) | (! flow) | ("a supersonic")
+.I 546 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! body) | ("layer increases")
+.I 547 
+.W
+(function & dynamically) | (sources | mixing) | (! mach) | ("moderate cooling")
+.I 548 
+.W
+(pulses & bodies) | (compressive | creep) | (! flow) | ("same range")
+.I 549 
+.W
+"layer increases"
+.I 550 
+.W
+(pulses & bodies) | (pulses | bodies) | (! body) | ("decrease in")
+.I 551 
+.W
+(pulses & bodies) | (giese | lab) | (! flow) | ("moderate cooling")
+.I 552 
+.W
+(relations & peaks) | (sources | mixing) | (! body) | ("moderate cooling")
+.I 553 
+.W
+(pulses & bodies) | (pulses | bodies) | (! flight) | ("moderate cooling")
+.I 554 
+.W
+(relations & peaks) | (pulses | bodies) | (! flight) | ("moderate cooling")
+.I 555 
+.W
+(tunnel & estimation) | (giese | lab) | (! body) | ("layer increases")
+.I 556 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! flight) | ("same range")
+.I 557 
+.W
+(concept & transfer) & (pulses | bodies) & (! mach) & ("decrease in")
+.I 558 
+.W
+(concept & transfer) | (tunnel | estimation) | (! flight) | ("a supersonic")
+.I 559 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! mach) | ("decrease in")
+.I 560 
+.W
+(concept & transfer) | (giese | lab) | (! flight) | ("a supersonic")
+.I 561 
+.W
+(concept & transfer) | (tunnel | estimation) | (! mach) | ("decrease in")
+.I 562 
+.W
+(pulses & bodies) | (sources | mixing) | (! body) | ("a supersonic")
+.I 563 
+.W
+(tunnel & estimation) | (sources | mixing) | (! flow) | ("same range")
+.I 564 
+.W
+(pulses & bodies) | (pulses | bodies) | (! body) | ("layer increases")
+.I 565 
+.W
+(pulses & bodies) | (sources | mixing) | (! heat) | ("decrease in")
+.I 566 
+.W
+(function & dynamically) | (tunnel | estimation) | (! flight) | ("decrease in")
+.I 567 
+.W
+(function & dynamically) | (giese | lab) | (! body) | ("decrease in")
+.I 568 
+.W
+(concept & transfer) | (compressive | creep) | (! heat) | ("same range")
+.I 569 
+.W
+(relations & peaks) | (giese | lab) | (! mach) | ("layer increases")
+.I 570 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! flight) | ("a supersonic")
+.I 571 
+.W
+(relations & peaks) | (pulses | bodies) | (! flight) | ("layer increases")
+.I 572 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! flow) | ("decrease in")
+.I 573 
+.W
+(pulses & bodies) | (sources | mixing) | (! mach) | ("moderate cooling")
+.I 574 
+.W
+(concept & transfer) | (tunnel | estimation) | (! mach) | ("a supersonic")
+.I 575 
+.W
+tunnel | estimation
+.I 576 
+.W
+(relations & peaks) | (giese | lab) | (! flow) | ("moderate cooling")
+.I 577 
+.W
+(relations & peaks) | (giese | lab) | (! flow) | ("decrease in")
+.I 578 
+.W
+(relations & peaks) | (pulses | bodies) | (! flow) | ("layer increases")
+.I 579 
+.W
+(function & dynamically) | (compressive | creep) | (! heat) | ("moderate cooling")
+.I 580 
+.W
+! flow
+.I 581 
+.W
+pulses & bodies
+.I 582 
+.W
+(relations & peaks) | (compressive | creep) | (! body) | ("same range")
+.I 583 
+.W
+(relations & peaks) | (pulses | bodies) | (! mach) | ("moderate cooling")
+.I 584 
+.W
+(concept & transfer) | (giese | lab) | (! heat) | ("same range")
+.I 585 
+.W
+function & dynamically
+.I 586 
+.W
+(function & dynamically) | (compressive | creep) | (! flight) | ("layer increases")
+.I 587 
+.W
+(relations & peaks) | (compressive | creep) | (! flight) | ("decrease in")
+.I 588 
+.W
+(function & dynamically) | (tunnel | estimation) | (! heat) | ("same range")
+.I 589 
+.W
+(relations & peaks) | (sources | mixing) | (! mach) | ("a supersonic")
+.I 590 
+.W
+(function & dynamically) | (compressive | creep) | (! mach) | ("a supersonic")
+.I 591 
+.W
+(relations & peaks) | (tunnel | estimation) | (! flight) | ("decrease in")
+.I 592 
+.W
+(pulses & bodies) | (giese | lab) | (! heat) | ("same range")
+.I 593 
+.W
+(relations & peaks) | (sources | mixing) | (! mach) | ("decrease in")
+.I 594 
+.W
+(function & dynamically) | (compressive | creep) | (! body) | ("moderate cooling")
+.I 595 
+.W
+(concept & transfer) | (sources | mixing) | (! flight) | ("decrease in")
+.I 596 
+.W
+(concept & transfer) | (compressive | creep) | (! flight) | ("layer increases")
+.I 597 
+.W
+(tunnel & estimation) | (giese | lab) | (! mach) | ("moderate cooling")
+.I 598 
+.W
+(pulses & bodies) | (pulses | bodies) | (! flow) | ("layer increases")
+.I 599 
+.W
+(relations & peaks) | (giese | lab) | (! mach) | ("same range")
+.I 600 
+.W
+(tunnel & estimation) | (giese | lab) | (! flow) | ("layer increases")
+.I 601 
+.W
+(concept & transfer) | (pulses | bodies) | (! heat) | ("a supersonic")
+.I 602 
+.W
+(pulses & bodies) | (compressive | creep) | (! mach) | ("layer increases")
+.I 603 
+.W
+(relations & peaks) | (pulses | bodies) | (! mach) | ("decrease in")
+.I 604 
+.W
+(relations & peaks) | (tunnel | estimation) | (! flow) | ("decrease in")
+.I 605 
+.W
+(pulses & bodies) | (giese | lab) | (! flight) | ("layer increases")
+.I 606 
+.W
+! tests
+.I 607 
+.W
+(pulses & bodies) | (pulses | bodies) | (! body) | ("a supersonic")
+.I 608 
+.W
+(pulses & bodies) | (pulses | bodies) | (! heat) | ("layer increases")
+.I 609 
+.W
+(concept & transfer) | (tunnel | estimation) | (! body) | ("layer increases")
+.I 610 
+.W
+(function & dynamically) | (sources | mixing) | (! flow) | ("same range")
+.I 611 
+.W
+(tunnel & estimation) | (compressive | creep) | (! body) | ("a supersonic")
+.I 612 
+.W
+(function & dynamically) | (pulses | bodies) | (! body) | ("decrease in")
+.I 613 
+.W
+(concept & transfer) | (sources | mixing) | (! flow) | ("a supersonic")
+.I 614 
+.W
+(function & dynamically) | (compressive | creep) | (! mach) | ("moderate cooling")
+.I 615 
+.W
+(relations & peaks) | (pulses | bodies) | (! flight) | ("decrease in")
+.I 616 
+.W
+(pulses & bodies) | (compressive | creep) | (! flow) | ("a supersonic")
+.I 617 
+.W
+(pulses & bodies) | (giese | lab) | (! body) | ("a supersonic")
+.I 618 
+.W
+(concept & transfer) | (tunnel | estimation) | (! flow) | ("decrease in")
+.I 619 
+.W
+(relations & peaks) | (pulses | bodies) | (! heat) | ("moderate cooling")
+.I 620 
+.W
+(tunnel & estimation) | (giese | lab) | (! heat) | ("layer increases")
+.I 621 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! flight) | ("decrease in")
+.I 622 
+.W
+(concept & transfer) | (giese | lab) | (! flow) | ("moderate cooling")
+.I 623 
+.W
+(function & dynamically) | (tunnel | estimation) | (! mach) | ("same range")
+.I 624 
+.W
+(relations & peaks) | (compressive | creep) | (! flight) | ("same range")
+.I 625 
+.W
+(relations & peaks) | (sources | mixing) | (! heat) | ("moderate cooling")
+.I 626 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! flight) | ("layer increases")
+.I 627 
+.W
+(tunnel & estimation) | (sources | mixing) | (! mach) | ("moderate cooling")
+.I 628 
+.W
+(function & dynamically) | (sources | mixing) | (! body) | ("a supersonic")
+.I 629 
+.W
+(relations & peaks) | (tunnel | estimation) | (! flow) | ("a supersonic")
+.I 630 
+.W
+(function & dynamically) | (giese | lab) | (! flow) | ("layer increases")
+.I 631 
+.W
+(concept & transfer) | (giese | lab) | (! flight) | ("decrease in")
+.I 632 
+.W
+(function & dynamically) | (tunnel | estimation) | (! flow) | ("decrease in")
+.I 633 
+.W
+(concept & transfer) | (giese | lab) | (! mach) | ("same range")
+.I 634 
+.W
+! mach
+.I 635 
+.W
+(function & dynamically) | (tunnel | estimation) | (! mach) | ("decrease in")
+.I 636 
+.W
+(tunnel & estimation) | (compressive | creep) | (! body) | ("decrease in")
+.I 637 
+.W
+(relations & peaks) | (tunnel | estimation) | (! heat) | ("layer increases")
+.I 638 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! flight) | ("decrease in")
+.I 639 
+.W
+(function & dynamically) | (giese | lab) | (! heat) | ("layer increases")
+.I 640 
+.W
+(concept & transfer) | (pulses | bodies) | (! heat) | ("decrease in")
+.I 641 
+.W
+"same range"
+.I 642 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! heat) | ("a supersonic")
+.I 643 
+.W
+(relations & peaks) | (giese | lab) | (! heat) | ("same range")
+.I 644 
+.W
+(pulses & bodies) | (compressive | creep) | (! flight) | ("decrease in")
+.I 645 
+.W
+(pulses & bodies) | (sources | mixing) | (! body) | ("moderate cooling")
+.I 646 
+.W
+(tunnel & estimation) | (compressive | creep) | (! flow) | ("same range")
+.I 647 
+.W
+(concept & transfer) | (sources | mixing) | (! heat) | ("decrease in")
+.I 648 
+.W
+(relations & peaks) | (compressive | creep) | (! mach) | ("a supersonic")
+.I 649 
+.W
+(tunnel & estimation) | (giese | lab) | (! body) | ("same range")
+.I 650 
+.W
+(concept & transfer) | (compressive | creep) | (! body) | ("layer increases")
+.I 651 
+.W
+(concept & transfer) | (pulses | bodies) | (! heat) | ("layer increases")
+.I 652 
+.W
+(concept & transfer) | (sources | mixing) | (! flight) | ("layer increases")
+.I 653 
+.W
+(concept & transfer) | (pulses | bodies) | (! flow) | ("layer increases")
+.I 654 
+.W
+(concept & transfer) | (tunnel | estimation) | (! flow) | ("moderate cooling")
+.I 655 
+.W
+(tunnel & estimation) | (pulses | bodies) | (! body) | ("decrease in")
+.I 656 
+.W
+(relations & peaks) | (sources | mixing) | (! mach) | ("same range")
+.I 657 
+.W
+(tunnel & estimation) | (giese | lab) | (! body) | ("moderate cooling")
+.I 658 
+.W
+(function & dynamically) | (pulses | bodies) | (! flight) | ("same range")
+.I 659 
+.W
+(tunnel & estimation) | (sources | mixing) | (! body) | ("moderate cooling")
+.I 660 
+.W
+(pulses & bodies) | (giese | lab) | (! flight) | ("a supersonic")
+.I 661 
+.W
+(tunnel & estimation) | (compressive | creep) | (! flight) | ("decrease in")
+.I 662 
+.W
+(function & dynamically) | (pulses | bodies) | (! mach) | ("a supersonic")
+.I 663 
+.W
+compressive & creep
+.I 664 
+.W
+laboratory | infite
+.I 665 
+.W
+(tunnel & estimation) | (tunnel | estimation) | (! flight) | ("decrease in")
+.I 666 
+.W
+(pulses & bodies) | (giese | lab) | (! body) | ("layer increases")
+.I 667 
+.W
+(relations & peaks) | (tunnel | estimation) | (! mach) | ("decrease in")
+.I 668 
+.W
+(relations & peaks) | (compressive | creep) | (! flight) | ("moderate cooling")
+.I 669 
+.W
+(pulses & bodies) | (tunnel | estimation) | (! mach) | ("layer increases")
+.I 670 
+.W
+(concept & transfer) & (pulses | bodies) & (! flight) & ("decrease in")
