@@ -156,11 +156,12 @@ public class InvertedIndex implements Serializable {
 
     /**
      * @param term The term to search.
-     * @return the total number of occurrences of the given term in the entire {@link Corpus}.
+     * @return the Collection Frequency, i.e., the total number of
+     * occurrences of the given term in the entire {@link Corpus}.
      */
-    public int getTotalNumberOfOccurrencesOfTerm(@NotNull String term) {
+    public int cf(@NotNull String term) {
         Term termFromIndex = invertedIndex.get(term);
-        return termFromIndex == null ? 0 : termFromIndex.totalNumberOfOccurrencesInCorpus();
+        return termFromIndex == null ? 0 : termFromIndex.cf();
     }
 
     /**
@@ -435,7 +436,7 @@ public class InvertedIndex implements Serializable {
     public Collection<String> getDictionaryOverTf(int tfThreshold) {
         return invertedIndex.keySet()
                 .stream().sequential()
-                .filter(term -> getTotalNumberOfOccurrencesOfTerm(term) > tfThreshold)
+                .filter(term -> cf(term) > tfThreshold)
                 .sorted()
                 .toList();
     }

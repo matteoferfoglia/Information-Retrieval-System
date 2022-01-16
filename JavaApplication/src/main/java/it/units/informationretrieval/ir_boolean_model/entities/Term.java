@@ -57,9 +57,10 @@ public class Term implements Comparable<Term>, Serializable {
     }
 
     /**
-     * @return the total number of occurrences of this {@link Term} in the entire {@link Corpus}.
+     * @return the collection frequency, i.e., the total number of
+     * occurrences of this {@link Term} in the entire {@link Corpus}.
      */
-    public int totalNumberOfOccurrencesInCorpus() {
+    public int cf() {
         return postingList.getSkipList()
                 .stream().unordered().parallel()
                 .mapToInt(Posting::tf)

@@ -63,7 +63,7 @@ public class InformationRetrievalSystem implements Serializable {
      * handled by this instance.
      */
     public int getTotalNumberOfOccurrencesOfTerm(@NotNull String term) {
-        return invertedIndex.getTotalNumberOfOccurrencesOfTerm(term);
+        return invertedIndex.cf(term);
     }
 
     /**
@@ -197,10 +197,11 @@ public class InformationRetrievalSystem implements Serializable {
 
     /**
      * @param str The term for which the term-frequency is desired.
-     * @return the term frequency (total number of occurrences) for the string given as parameter.
+     * @return the collection frequency, i.e., the total number of occurrences
+     * for the string given as parameter in the entire corpus.
      */
-    public int tf(String str) {
-        return invertedIndex.getTotalNumberOfOccurrencesOfTerm(str);
+    public int cf(String str) {
+        return invertedIndex.cf(str);
     }
 
     /**
@@ -209,7 +210,7 @@ public class InformationRetrievalSystem implements Serializable {
      */
     public double avgTf() throws NoSuchElementException {
         return getDictionary().stream()
-                .mapToInt(invertedIndex::getTotalNumberOfOccurrencesOfTerm)
+                .mapToInt(invertedIndex::cf)
                 .average()
                 .orElseThrow();
     }
