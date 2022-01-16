@@ -118,6 +118,7 @@ public class Evaluation {
                     Set<Document> retrievedDocuments = new HashSet<>(CRANFIELD_IRS.retrieve(query.getQueryText()));
                     Set<Document> relevantAndRetrieved = relevantDocuments.stream()
                             .filter(retrievedDocuments::contains).collect(Collectors.toSet());
+                    // TODO : investigate on errors (retrievedDocuments.stream().filter(d -> ! relevantDocuments.contains(d)).toList()) to improve precision and recall
                     precisions.add(retrievedDocuments.size() > 0
                             ? (double) relevantAndRetrieved.size() / retrievedDocuments.size()
                             : relevantDocuments.size() == 0 ? 1 : 0);
