@@ -7,23 +7,26 @@ import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.Language;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
+import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import it.units.informationretrieval.ir_boolean_model.utils.stemmers.Stemmer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import skiplist.SkipList;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,10 +46,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class TestQueriesWithQueryStringParsing {
 
+    final static Language USED_LANGUAGE = Language.ENGLISH;
+
     // documents randomly chosen for tests
     static Document doc1, doc2;
     static InformationRetrievalSystem irs;
-
     static Supplier<String> wordsContainedBothInFirstAndSecondDocumentSupplier;
     static Supplier<String> wordsContainedInFirstButNotInSecondDocumentSupplier;
     static Supplier<String> wordsContainedInSecondButNotInFirstDocumentSupplier;
@@ -77,25 +81,84 @@ class TestQueriesWithQueryStringParsing {
 
             assert doc1.getContent() != null;
             assert doc2.getContent() != null;
-            List<String> fromFirstDoc = Arrays.stream(Utility.split(doc1.getContent().getEntireTextContent())).sorted().toList();
-            List<String> fromSecondDoc = Arrays.stream(Utility.split(doc2.getContent().getEntireTextContent())).sorted().toList();
+
+            List<String> fromFirstDoc = getWordsFromDoc(doc1);
+            List<String> fromSecondDoc = getWordsFromDoc(doc2);
+
+            // Handle stemming (if performed)
+            Method stemmerGetter = Utility.class.getDeclaredMethod("getStemmer");
+            stemmerGetter.setAccessible(true);
+            Stemmer stemmer = (Stemmer) stemmerGetter.invoke(null);
 
             wordsContainedNeitherInFirstNorInSecondDocumentSupplier =
                     new WordSupplier(Arrays.asList("foo", "bar", "pippo", "pluto", "paperino"));
             wordsContainedBothInFirstAndSecondDocumentSupplier =
                     new WordSupplier(Utility.intersectionOfSortedLists(fromFirstDoc, fromSecondDoc));
+            var wordsContainedInFirstButNotInSecondDocumentList =
+                    getWordsContainedInDifferenceOfTwoListsButExcludeWordsWhichStemmingIsPresentInStemmedWordsOfThirdList(
+                            fromFirstDoc, fromSecondDoc, stemmer);
+            var wordsContainedInSecondButNotInFirstDocumentList =
+                    getWordsContainedInDifferenceOfTwoListsButExcludeWordsWhichStemmingIsPresentInStemmedWordsOfThirdList(
+                            fromSecondDoc, fromFirstDoc, stemmer);
             wordsContainedInFirstButNotInSecondDocumentSupplier =
-                    new WordSupplier(new ArrayList<>(fromFirstDoc) {{
-                        removeAll(((WordSupplier) wordsContainedBothInFirstAndSecondDocumentSupplier).getAllWords());
-                    }});
+                    new WordSupplier(wordsContainedInFirstButNotInSecondDocumentList);
             wordsContainedInSecondButNotInFirstDocumentSupplier =
-                    new WordSupplier(new ArrayList<>(fromSecondDoc) {{
-                        removeAll(((WordSupplier) wordsContainedBothInFirstAndSecondDocumentSupplier).getAllWords());
-                    }});
-        } catch (NoMoreDocIdsAvailable | URISyntaxException e) {
+                    new WordSupplier(wordsContainedInSecondButNotInFirstDocumentList);
+        } catch (NoMoreDocIdsAvailable | URISyntaxException
+                | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             Logger.getLogger(TestQueriesWithQueryStringParsing.class.getCanonicalName())
                     .log(Level.SEVERE, "Error during class initialization", e);
         }
+    }
+
+    /**
+     * @param document A {@link Document}
+     * @return the {@link List} of words (normalized but not stemmed) from
+     * the given document. Stop-words are excluded.
+     */
+    private static List<String> getWordsFromDoc(Document document)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        Method invalidCharsRemoverAndToLowerCase = Utility.class.getDeclaredMethod(
+                "removeInvalidCharsAndToLowerCase", String.class, boolean.class);
+        Method stopWordsIdentifier = Utility.class.getDeclaredMethod("isStopWord", String.class, Language.class);
+        Stream.of(invalidCharsRemoverAndToLowerCase, stopWordsIdentifier).forEach(method -> method.setAccessible(true));
+        return Arrays.stream(Utility.split(
+                        (String) invalidCharsRemoverAndToLowerCase.invoke(
+                                null, Objects.requireNonNull(document.getContent()).getEntireTextContent(), true)))
+                .filter(word -> {
+                    try {
+                        return !(boolean) stopWordsIdentifier.invoke(null, word, USED_LANGUAGE);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                })
+                .distinct()
+                .sorted()
+                .toList();
+    }
+
+    /**
+     * Gets the difference between the first and the second input list (non-commutative),
+     * then filters them to exclude words which stemming is present among the stemmed words
+     * of the second list.
+     *
+     * @param firstList  The first input list.
+     * @param secondList The second input list.
+     * @param stemmer    The stemmer to use.
+     */
+    private static List<String>
+    getWordsContainedInDifferenceOfTwoListsButExcludeWordsWhichStemmingIsPresentInStemmedWordsOfThirdList(
+            List<String> firstList, List<String> secondList, Stemmer stemmer) {
+        var stemmedWordsNotToBePresent =
+                secondList.stream().map(word -> stemmer == null ? word : stemmer.stem(word, USED_LANGUAGE)).toList();
+        return SkipList.difference(new SkipList<>(firstList), new SkipList<>(secondList), Comparator.naturalOrder())
+                .stream()
+                .sequential()
+                .map(word -> new Pair<>(stemmer != null ? stemmer.stem(word, USED_LANGUAGE) : word, word))
+                .filter(stemmedToUnstemmedPair -> stemmer == null || !stemmedWordsNotToBePresent.contains(stemmedToUnstemmedPair.getKey()))
+                .map(Map.Entry::getValue)
+                .toList();
     }
 
     @BeforeAll
@@ -325,9 +388,7 @@ class TestQueriesWithQueryStringParsing {
         private long counter = 0;
 
         public WordSupplier(List<String> words) {
-            this.words = Objects.requireNonNull(words).stream()
-                    .map(word -> Utility.normalize(word, false, Language.UNDEFINED))
-                    .filter(Objects::nonNull).toList();
+            this.words = Objects.requireNonNull(words);
         }
 
         public List<String> getAllWords() {

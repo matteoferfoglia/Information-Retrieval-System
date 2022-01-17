@@ -36,15 +36,20 @@ import static java.util.stream.Collectors.toSet;
 public class Utility {
 
     /**
+     * Regex of valid chars (for string normalization purposes).
+     */
+    private static final String REGEX_VALID_CHARACTERS = "a-zA-Z0-9\\s";
+
+    /**
      * Regex used in {@link #normalize(String, boolean, Language)}.
      */
-    private static final String REGEX__NOT__VALID_CHARACTERS_WHEN_INDEXING = "[^a-zA-Z0-9 ]";
+    private static final String REGEX__NOT__VALID_CHARACTERS_WHEN_INDEXING = "[^" + REGEX_VALID_CHARACTERS + "]";
 
     /**
      * Regex used in {@link #normalize(String, boolean, Language)}.
      */
     private static final String REGEX__NOT__VALID_CHARACTERS_WHEN_QUERYING =
-            "[^a-zA-Z0-9 " + InvertedIndex.ESCAPED_WILDCARD_FOR_REGEX + "]";
+            "[^" + REGEX_VALID_CHARACTERS + InvertedIndex.ESCAPED_WILDCARD_FOR_REGEX + "]";
 
     /**
      * Regex used in {@link #normalize(String, boolean, Language)}.
