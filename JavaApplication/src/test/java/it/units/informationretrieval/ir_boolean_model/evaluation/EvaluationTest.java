@@ -1,11 +1,11 @@
 package it.units.informationretrieval.ir_boolean_model.evaluation;
 
 import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem;
-import it.units.informationretrieval.ir_boolean_model.Point;
 import it.units.informationretrieval.ir_boolean_model.document_descriptors.CranfieldDocument;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.evaluation.cranfield_collection.CranfieldQuery;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
+import it.units.informationretrieval.ir_boolean_model.plots.Point;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;

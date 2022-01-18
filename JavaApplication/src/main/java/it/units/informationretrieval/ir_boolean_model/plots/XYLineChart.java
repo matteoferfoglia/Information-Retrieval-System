@@ -1,4 +1,4 @@
-package it.units.informationretrieval.ir_boolean_model;
+package it.units.informationretrieval.ir_boolean_model.plots;
 
 import javafx.application.Application;
 import javafx.application.Platform;

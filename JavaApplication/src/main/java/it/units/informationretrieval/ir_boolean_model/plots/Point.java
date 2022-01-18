@@ -1,4 +1,4 @@
-package it.units.informationretrieval.ir_boolean_model;
+package it.units.informationretrieval.ir_boolean_model.plots;
 
 import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import org.jetbrains.annotations.NotNull;
