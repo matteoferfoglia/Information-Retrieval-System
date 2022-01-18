@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-class Benchmarking {
+class BenchmarkingTest {
 
     /**
      * The folder name where to save results.

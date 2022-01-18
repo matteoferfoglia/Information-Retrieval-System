@@ -1,13 +1,16 @@
 package it.units.informationretrieval.ir_boolean_model.evaluation;
 
 import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem;
+import it.units.informationretrieval.ir_boolean_model.Point;
 import it.units.informationretrieval.ir_boolean_model.document_descriptors.CranfieldDocument;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.evaluation.cranfield_collection.CranfieldQuery;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import skiplist.SkipList;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -28,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  *
  * @author Matteo Ferfoglia
  */
-public class Evaluation {
+public class EvaluationTest {
 
     /**
      * The folder name where to save results.
@@ -193,5 +196,30 @@ public class Evaluation {
         printStatistics("recall", recalls);
     }
 
-}
+    @Test
+    void precisionRecallCurve() {
+        Map<CranfieldQuery, Point.Series> mapQueryToRecallPrecisionPoints =
+                new HashMap<>(CRANFIELD_QUERIES.size());
 
+        List<Point.Series> seriesList = new ArrayList<>();
+        for (var query : CRANFIELD_QUERIES) {   // TODO: parallelstream()
+            SkipList<Document> relevantDocuments = new SkipList<>(
+                    query.getRelevantDocs().keySet().stream().map(doc -> (Document) doc).toList());
+            List<Document> retrievedDocuments = CRANFIELD_IRS.retrieve(query.getQueryText());
+            Point.Series recall_precision_points = new Point.Series(String.valueOf(query.getQueryNumber()));
+            for (int j = 1; j < retrievedDocuments.size(); j++) {
+                var retrievedDocsTillJth = new SkipList<>(retrievedDocuments.subList(0, j));
+                var relevantAndRetrievedTillJth = Utility.intersection(relevantDocuments, retrievedDocsTillJth);
+                double precision = (double) relevantAndRetrievedTillJth.size() / retrievedDocsTillJth.size();
+                double recall = (double) relevantAndRetrievedTillJth.size() / relevantDocuments.size();
+                recall_precision_points.add(new Point<>(recall, precision));
+            }
+            seriesList.add(recall_precision_points);
+        }
+
+        Point.plotAndSavePNG_ofMultipleSeries("Precision-Recall curve", seriesList, "Recall", "Precision", true,
+                FOLDER_NAME_TO_SAVE_RESULTS + File.separator + "precisionRecallCurves.png", 10);
+
+    }
+
+}
