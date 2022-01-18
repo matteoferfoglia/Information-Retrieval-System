@@ -21,6 +21,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -123,6 +124,9 @@ public class XYLineChart extends Application {
     public static void saveAsPng(@NotNull String path, int pixelScale) {
 
         if (isJavaFxAlreadyStarted()) {
+
+            AtomicBoolean hasSaved = new AtomicBoolean(false);  // becomes true when the plot is saved to file
+
             assert currentStage != null;
             Platform.runLater(() -> {
 
@@ -135,10 +139,23 @@ public class XYLineChart extends Application {
                 try {
                     ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
                 } catch (IOException e) {
-                    Logger.getLogger(
-                            XYLineChart.class.getCanonicalName()).log(Level.SEVERE, "Error saving the image to file.", e);
+                    Logger.getLogger(XYLineChart.class.getCanonicalName())
+                            .log(Level.SEVERE, "Error saving the image to file.", e);
+                } finally {
+                    hasSaved.set(true);
                 }
             });
+
+            while (!hasSaved.get()) {
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    Logger.getLogger(XYLineChart.class.getCanonicalName())
+                            .log(Level.SEVERE, "Interrupted thread while saving the image to file.", e);
+                }
+            }
+
+
         } else {
             throw new IllegalStateException("JavaFX not started, nothing plotted, so nothing to save.");
         }
@@ -163,6 +180,8 @@ public class XYLineChart extends Application {
      * Draws the X-Y plot according to {@link #parameters}.
      */
     private void drawChart() {
+
+        AtomicBoolean plotDrawn = new AtomicBoolean(false); // becomes true after the plot has been drawn
 
         Platform.runLater(() -> {   // GUI things must be executed on the thread of JavaFX
 
@@ -205,8 +224,18 @@ public class XYLineChart extends Application {
 
             currentStage.setScene(scene);
             currentStage.show();
+
+            plotDrawn.set(true);
         });
 
+        while (!plotDrawn.get()) {
+            try {
+                Thread.sleep(5);    // Wait for the JavaFX's thread to draw the chart
+            } catch (InterruptedException e) {
+                Logger.getLogger(getClass().getCanonicalName())
+                        .log(Level.SEVERE, "Thread interruption while waiting for drawing plot", e);
+            }
+        }
     }
 
     /**
