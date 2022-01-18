@@ -38,6 +38,8 @@ import java.util.stream.Stream;
  */
 class TestQueriesCreator {
 
+    // TODO: use maven exec to run main method of this class
+
     /**
      * The {@link Language} of the input corpus.
      */
@@ -45,7 +47,7 @@ class TestQueriesCreator {
     /**
      * The number of AND, OR, NOT and PHRASE distinct queries to create.
      */
-    private static final int T = 5;
+    private static final int T = 2;
     /**
      * The number of words in AND, OR and phrase queries.
      */
@@ -276,7 +278,8 @@ class TestQueriesCreator {
             stemmedNotQueryWordListOf1Element = getStemmed(List.of(notQueryWord));
         } while ((stemmedNotQueryWordListOf1Element.size() != 1   // stemming may remove entire words
                 // following condition enforces to have distinct queries:
-                || mapQueryStringsToDocIdsOfAnswers.containsKey(notQueryString = UNARY_OPERATOR.NOT.getSymbol() + " " + notQueryWord))
+                || mapQueryStringsToDocIdsOfAnswers.containsKey(notQueryString = UNARY_OPERATOR.NOT.getSymbol() + " " + notQueryWord)
+                || notQueryWord.equals(singleQueryWord)/*avoid using the same word*/)
                 && iterationsCounter++ < allWordsFromAllDocsWithoutStopWords.size()/*avoid infinity loop*/);
         final String finalStemmedQueryWordNot = stemmedNotQueryWordListOf1Element.get(0);
 
