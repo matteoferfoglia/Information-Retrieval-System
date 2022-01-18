@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -60,6 +61,11 @@ public class XYLineChart extends Application {
     private static Stage currentStage;
 
     /**
+     * Thread on which JavaFX will run.
+     */
+    private static Thread javaFxThread = null;
+
+    /**
      * Creates a plot.
      *
      * @param title                The title for the plot.
@@ -72,7 +78,8 @@ public class XYLineChart extends Application {
                             String xAxisLabel, String yAxisLabel, boolean showLegend) {
 
         if (!isJavaFxAlreadyStarted()) {
-            new Thread(Application::launch).start();
+            javaFxThread = new Thread(Application::launch);
+            javaFxThread.start();
             while (currentInstance == null) {   // wait for the setup of the GUI
                 try {
                     Thread.sleep(5);        // gives time for the setup
@@ -80,6 +87,18 @@ public class XYLineChart extends Application {
                     e.printStackTrace();
                 }
             }
+        } else {
+            Platform.runLater(() -> {
+                try {
+                    Constructor<XYLineChart> appCtor = XYLineChart.class.getConstructor();
+                    Application application = appCtor.newInstance();
+                    application.start(new Stage());
+                } catch (Exception e) {
+                    Logger.getLogger(XYLineChart.class.getCanonicalName())
+                            .log(Level.SEVERE, "Error with JavaFX", e);
+                    e.printStackTrace();
+                }
+            });
         }
         assert currentInstance != null;
 
@@ -125,6 +144,15 @@ public class XYLineChart extends Application {
         }
     }
 
+    /**
+     * Closes JavaFX.
+     */
+    public static void close() {
+        if (isJavaFxAlreadyStarted()) {
+            Platform.runLater(Platform::exit);
+        }
+    }
+
     @Override
     public void start(Stage stage) {
         currentStage = stage;
@@ -135,44 +163,46 @@ public class XYLineChart extends Application {
      * Draws the X-Y plot according to {@link #parameters}.
      */
     private void drawChart() {
-        // Read parameters
-        String title = Objects.requireNonNull(parameters).title;
-        List<Point.Series> listOfSeriesOfXYPoints = parameters.listOfSeriesOfPoints;
-        String xAxisLabel = parameters.xAxisLabel;
-        String yAxisLabel = parameters.yAxisLabel;
-        boolean showLegend = parameters.showLegend;
-
-        // Populate the series with data
-        List<XYChart.Series<Number, Number>> seriesList = new ArrayList<>(listOfSeriesOfXYPoints.size());
-        for (Point.Series aSeries : listOfSeriesOfXYPoints) {
-            XYChart.Series<Number, Number> series = new XYChart.Series<>();
-            series.setName(aSeries.getName());
-            aSeries.forEach(point -> series.getData().add(new XYChart.Data<>(point.getX(), point.getY())));
-            seriesList.add(series);
-        }
-
-        assert currentStage != null;
-        currentStage.setTitle(title);  // title of stage
-
-        // Defining the axes
-        final NumberAxis xAxis = new NumberAxis();
-        final NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel(xAxisLabel);
-        yAxis.setLabel(yAxisLabel);
-
-        // Line-chart creation
-        final LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
-        lineChart.setTitle(title);
-        lineChart.setLegendVisible(showLegend);
-        lineChart.getStyleClass().add("thick-chart");
-
-        Scene scene = new Scene(lineChart, X_SIZE_PX, Y_SIZE_PX);
-        for (var aSeries : seriesList) {
-            lineChart.getData().add(aSeries);
-        }
-        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource(CSS_FILE_NAME)).toExternalForm());
 
         Platform.runLater(() -> {   // GUI things must be executed on the thread of JavaFX
+
+            // Read parameters
+            String title = Objects.requireNonNull(parameters).title;
+            List<Point.Series> listOfSeriesOfXYPoints = parameters.listOfSeriesOfPoints;
+            String xAxisLabel = parameters.xAxisLabel;
+            String yAxisLabel = parameters.yAxisLabel;
+            boolean showLegend = parameters.showLegend;
+
+            // Populate the series with data
+            List<XYChart.Series<Number, Number>> seriesList = new ArrayList<>(listOfSeriesOfXYPoints.size());
+            for (Point.Series aSeries : listOfSeriesOfXYPoints) {
+                XYChart.Series<Number, Number> series = new XYChart.Series<>();
+                series.setName(aSeries.getName());
+                aSeries.forEach(point -> series.getData().add(new XYChart.Data<>(point.getX(), point.getY())));
+                seriesList.add(series);
+            }
+
+            assert currentStage != null;
+            currentStage.setTitle(title);  // title of stage
+
+            // Defining the axes
+            final NumberAxis xAxis = new NumberAxis();
+            final NumberAxis yAxis = new NumberAxis();
+            xAxis.setLabel(xAxisLabel);
+            yAxis.setLabel(yAxisLabel);
+
+            // Line-chart creation
+            final LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
+            lineChart.setTitle(title);
+            lineChart.setLegendVisible(showLegend);
+            lineChart.getStyleClass().add("thick-chart");
+
+            Scene scene = new Scene(lineChart, X_SIZE_PX, Y_SIZE_PX);
+            for (var aSeries : seriesList) {
+                lineChart.getData().add(aSeries);
+            }
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource(CSS_FILE_NAME)).toExternalForm());
+
             currentStage.setScene(scene);
             currentStage.show();
         });
