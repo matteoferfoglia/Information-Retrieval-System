@@ -9,6 +9,18 @@ open module it.units.informationretrieval.ir_boolean_model {
     requires edit_distance;
     requires jbool.expressions;
     requires benchmark;
+    requires java.desktop;
+    requires javafx.controls;
+    requires javafx.graphics;
+    requires javafx.web;
+    requires org.jfree.chart3d;
+    requires org.jfree.chart3d.fx;
+    requires org.jfree.pdf;
+    requires org.jfree.svg;
+    requires org.jfree.jfreechart;
+    requires org.jfree.chart.fx;
+    requires org.jfree.fxgraphics2d;
+    requires javafx.swing;
 
     exports it.units.informationretrieval.ir_boolean_model.document_descriptors;
     exports it.units.informationretrieval.ir_boolean_model.entities;
