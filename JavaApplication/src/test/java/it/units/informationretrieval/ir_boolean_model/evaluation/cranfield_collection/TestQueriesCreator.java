@@ -47,7 +47,7 @@ class TestQueriesCreator {
     /**
      * The number of AND, OR, NOT and PHRASE distinct queries to create.
      */
-    private static final int T = 5;
+    private static final int T = 25;
     /**
      * The number of words in AND, OR and phrase queries.
      */
@@ -132,7 +132,7 @@ class TestQueriesCreator {
 
         // TODO: refactor
 
-        final int MAX_NUMBER_OF_QUERY_PER_TYPE = 5;    // with cartesian product, complexity increases fast
+        final int MAX_NUMBER_OF_QUERY_PER_TYPE = 3;    // with cartesian product, complexity increases fast
 
         Pattern singleWordPattern = Pattern.compile("^\\w+$");
         Pattern notQueriesPattern = Pattern.compile("^\\" + UNARY_OPERATOR.NOT.getSymbol() + " \\w+$");

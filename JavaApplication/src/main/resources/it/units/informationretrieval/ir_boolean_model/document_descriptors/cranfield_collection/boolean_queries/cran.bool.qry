@@ -1,2298 +1,651 @@
 .I 1 
 .W
-(reynolds) | (! hypersonic) | (h*at) | ("without heat")
+(considered) | (! equations) | (angl*s) | ("and yawing")
 .I 2 
 .W
-(blade) | (! hypersonic) | (h*at) | ("with calculations")
+(mixing) | (! equations) | (*ture) | ("careful consideration")
 .I 3 
 .W
-(reynolds) & (! mach) & (h*at) & ("for the")
+"careful consideration"
 .I 4 
 .W
-(wings) | (! boundary) | (surfa*e) | ("without heat")
+(mixing) | (! reynolds) | (angl*s) | ("distribution skin")
 .I 5 
 .W
-(transfer) | (! hypersonic) | (surfa*e) | ("for the")
+mixing
 .I 6 
 .W
-(wings) & (! boundary) & (h*at) & ("with calculations")
+! data
 .I 7 
 .W
-(transfer) | (! region) | (h*at) | ("creep through")
+! equations
 .I 8 
 .W
-(blade) | (! pressure) | (the*ies) | ("for the")
+discussed & flow
 .I 9 
 .W
-(values) | (! hypersonic) | (m*od) | ("the variation")
+(mixing) | (! equations) | (*de) | ("distribution skin")
 .I 10 
 .W
-(reynolds) | (! region) | (surfa*e) | ("creep through")
+theoretical & sinusoidal
 .I 11 
 .W
-(values) | (! region) | (m*od) | ("creep through")
+(mixing) | (! reynolds) | (*de) | ("and yawing")
 .I 12 
 .W
-(transfer) | (! pressure) | (*eeds) | ("with calculations")
+conducting | aircraft
 .I 13 
 .W
-(wings) | (! boundary) | (the*ies) | ("the variation")
+waves
 .I 14 
 .W
-(reynolds) | (! boundary) | (surfa*e) | ("with calculations")
+agreement
 .I 15 
 .W
-(transfer) | (! boundary) | (m*od) | ("the variation")
+shock
 .I 16 
 .W
-(values) | (! boundary) | (h*at) | ("with calculations")
+! spheres
 .I 17 
 .W
-(values) | (! boundary) | (the*ies) | ("with calculations")
+*de
 .I 18 
 .W
-(transfer) & (! boundary) & (m*od) & ("the variation")
+"starts at"
 .I 19 
 .W
-(values) | (! pressure) | (h*at) | ("without heat")
+! knowledge
 .I 20 
 .W
-(reynolds) | (! boundary) | (surfa*e) | ("without heat")
+(considered) | (! data) | (*ture) | ("careful consideration")
 .I 21 
 .W
-(reynolds) | (! mach) | (m*od) | ("for the")
+(considered) | (! equations) | (*de) | ("careful consideration")
 .I 22 
 .W
-(reynolds) | (! pressure) | (surfa*e) | ("creep through")
+(flow) | (! data) | (*ture) | ("careful consideration")
 .I 23 
 .W
-(blade) | (! hypersonic) | (*eeds) | ("without heat")
+! dimensional
 .I 24 
 .W
-(wings) | (! boundary) | (*eeds) | ("with calculations")
+(mixing) | (! reynolds) | (*ture) | ("careful consideration")
 .I 25 
 .W
-(reynolds) | (! pressure) | (h*at) | ("the variation")
+(flow) | (! reynolds) | (*ture) | ("and yawing")
 .I 26 
 .W
-(reynolds) | (! mach) | (the*ies) | ("for the")
+(considered) | (! data) | (*ture) | ("distribution skin")
 .I 27 
 .W
-(transfer) | (! region) | (*eeds) | ("creep through")
+terms | collocation
 .I 28 
 .W
-(transfer) | (! hypersonic) | (h*at) | ("the variation")
+(flow) & (! equations) & (*de) & ("and yawing")
 .I 29 
 .W
-(values) & (! boundary) & (h*at) & ("the variation")
+theoretical | sinusoidal
 .I 30 
 .W
-(blade) | (! boundary) | (m*od) | ("the variation")
+(mixing) | (! reynolds) | (*de) | ("distribution skin")
 .I 31 
 .W
-(reynolds) | (! mach) | (the*ies) | ("without heat")
+(flow) | (! data) | (*de) | ("careful consideration")
 .I 32 
 .W
-(blade) | (! region) | (h*at) | ("the variation")
+failure | modifying
 .I 33 
 .W
-(blade) | (! pressure) | (surfa*e) | ("creep through")
+(mixing) | (! data) | (angl*s) | ("and yawing")
 .I 34 
 .W
-(transfer) & (! pressure) & (h*at) & ("the variation")
+(mixing) | (! reynolds) | (*ture) | ("distribution skin")
 .I 35 
 .W
-(blade) | (! region) | (the*ies) | ("without heat")
+temperature
 .I 36 
 .W
-(transfer) | (! boundary) | (the*ies) | ("without heat")
+! flat
 .I 37 
 .W
-(reynolds) | (! pressure) | (*eeds) | ("with calculations")
+"technique is"
 .I 38 
 .W
-(wings) | (! boundary) | (surfa*e) | ("for the")
+"surface we"
 .I 39 
 .W
-(transfer) | (! hypersonic) | (m*od) | ("creep through")
+boundary & integration
 .I 40 
 .W
-(wings) & (! hypersonic) & (m*od) & ("the variation")
+shells
 .I 41 
 .W
-(reynolds) & (! hypersonic) & (m*od) & ("the variation")
+amounts | tail
 .I 42 
 .W
-(blade) | (! mach) | (h*at) | ("for the")
+(flow) | (! reynolds) | (*de) | ("distribution skin")
 .I 43 
 .W
-(transfer) | (! boundary) | (the*ies) | ("the variation")
+circu*ar
 .I 44 
 .W
-(values) & (! pressure) & (h*at) & ("with calculations")
+"been derived"
 .I 45 
 .W
-(values) | (! boundary) | (h*at) | ("the variation")
+(flow) | (! equations) | (*de) | ("careful consideration")
 .I 46 
 .W
-(reynolds) | (! pressure) | (*eeds) | ("creep through")
+agree | procedure
 .I 47 
 .W
-(reynolds) | (! boundary) | (h*at) | ("for the")
+detection | aero
 .I 48 
 .W
-(transfer) | (! pressure) | (surfa*e) | ("for the")
+mo*ion
 .I 49 
 .W
-(values) | (! mach) | (m*od) | ("the variation")
+"beckett william"
 .I 50 
 .W
-(transfer) & (! region) & (m*od) & ("without heat")
+series
 .I 51 
 .W
-(values) & (! region) & (h*at) & ("the variation")
+introduced & include
 .I 52 
 .W
-(values) & (! boundary) & (m*od) & ("for the")
+stress & density
 .I 53 
 .W
-(reynolds) | (! hypersonic) | (surfa*e) | ("without heat")
+inch
 .I 54 
 .W
-(values) | (! hypersonic) | (surfa*e) | ("with calculations")
+(mixing) | (! equations) | (*de) | ("careful consideration")
 .I 55 
 .W
-(transfer) | (! pressure) | (*eeds) | ("without heat")
+(mixing) | (! data) | (angl*s) | ("distribution skin")
 .I 56 
 .W
-(blade) | (! region) | (surfa*e) | ("with calculations")
+(considered) | (! reynolds) | (angl*s) | ("distribution skin")
 .I 57 
 .W
-(blade) | (! boundary) | (m*od) | ("without heat")
+(flow) | (! data) | (*de) | ("and yawing")
 .I 58 
 .W
-(values) | (! region) | (h*at) | ("the variation")
+(considered) | (! reynolds) | (*ture) | ("distribution skin")
 .I 59 
 .W
-(reynolds) | (! boundary) | (m*od) | ("the variation")
+(mixing) | (! data) | (*ture) | ("distribution skin")
 .I 60 
 .W
-(blade) & (! boundary) & (m*od) & ("the variation")
+(mixing) | (! equations) | (*ture) | ("distribution skin")
 .I 61 
 .W
-(wings) | (! region) | (m*od) | ("with calculations")
+! pressure
 .I 62 
 .W
-(transfer) | (! pressure) | (m*od) | ("with calculations")
+(considered) | (! reynolds) | (angl*s) | ("and yawing")
 .I 63 
 .W
-(blade) | (! boundary) | (surfa*e) | ("with calculations")
+(flow) | (! reynolds) | (angl*s) | ("careful consideration")
 .I 64 
 .W
-exact | considered
+stability
 .I 65 
 .W
-(transfer) & (! boundary) & (h*at) & ("for the")
+experimental | circular
 .I 66 
 .W
-(wings) & (! pressure) & (h*at) & ("the variation")
+(flow) | (! data) | (*de) | ("distribution skin")
 .I 67 
 .W
-(wings) | (! hypersonic) | (m*od) | ("creep through")
+(considered) | (! equations) | (angl*s) | ("careful consideration")
 .I 68 
 .W
-(wings) | (! pressure) | (m*od) | ("creep through")
+references & transformed
 .I 69 
 .W
-(blade) | (! mach) | (*eeds) | ("creep through")
+(flow) | (! data) | (angl*s) | ("careful consideration")
 .I 70 
 .W
-(reynolds) | (! pressure) | (h*at) | ("without heat")
+(considered) | (! data) | (*de) | ("careful consideration")
 .I 71 
 .W
-(wings) | (! mach) | (m*od) | ("without heat")
+(considered) | (! data) | (*de) | ("and yawing")
 .I 72 
 .W
-h*at
+heating & flow
 .I 73 
 .W
-(reynolds) | (! hypersonic) | (the*ies) | ("without heat")
+! boundary
 .I 74 
 .W
-(blade) | (! region) | (m*od) | ("creep through")
+cro*s
 .I 75 
 .W
-(blade) | (! hypersonic) | (surfa*e) | ("the variation")
+(considered) | (! data) | (angl*s) | ("distribution skin")
 .I 76 
 .W
-(blade) | (! pressure) | (h*at) | ("with calculations")
+(mixing) | (! reynolds) | (angl*s) | ("and yawing")
 .I 77 
 .W
-(blade) | (! boundary) | (*eeds) | ("creep through")
+! velocity
 .I 78 
 .W
-(transfer) & (! hypersonic) & (m*od) & ("for the")
+(flow) | (! data) | (*ture) | ("distribution skin")
 .I 79 
 .W
-(blade) | (! hypersonic) | (h*at) | ("for the")
+effects | extends
 .I 80 
 .W
-(reynolds) | (! boundary) | (m*od) | ("without heat")
+! adjacent
 .I 81 
 .W
-(values) | (! region) | (surfa*e) | ("for the")
+! heat
 .I 82 
 .W
-(values) | (! pressure) | (surfa*e) | ("creep through")
+"are related"
 .I 83 
 .W
-(wings) | (! boundary) | (m*od) | ("without heat")
+"either in"
 .I 84 
 .W
-(transfer) | (! mach) | (h*at) | ("without heat")
+(flow) | (! equations) | (angl*s) | ("distribution skin")
 .I 85 
 .W
-(transfer) | (! mach) | (the*ies) | ("for the")
+str*am
 .I 86 
 .W
-(wings) | (! pressure) | (h*at) | ("the variation")
+flows
 .I 87 
 .W
-(blade) | (! pressure) | (h*at) | ("the variation")
+"jnl uniformly"
 .I 88 
 .W
-(values) | (! hypersonic) | (the*ies) | ("creep through")
+require | engineering
 .I 89 
 .W
-(transfer) | (! mach) | (h*at) | ("with calculations")
+fin | slender
 .I 90 
 .W
-(wings) | (! boundary) | (*eeds) | ("creep through")
+(flow) | (! reynolds) | (angl*s) | ("and yawing")
 .I 91 
 .W
-(reynolds) & (! mach) & (m*od) & ("the variation")
+"s birnbaum"
 .I 92 
 .W
-(reynolds) | (! boundary) | (*eeds) | ("creep through")
+(considered) | (! reynolds) | (*ture) | ("and yawing")
 .I 93 
 .W
-(reynolds) | (! boundary) | (*eeds) | ("for the")
+vibration | location
 .I 94 
 .W
-(values) | (! region) | (m*od) | ("with calculations")
+"compressible nonsteady"
 .I 95 
 .W
-"creep through"
+l*yer
 .I 96 
 .W
-(blade) | (! pressure) | (m*od) | ("creep through")
+! constant
 .I 97 
 .W
-(wings) | (! region) | (surfa*e) | ("for the")
+! plate
 .I 98 
 .W
-(transfer) | (! region) | (the*ies) | ("without heat")
+(considered) | (! equations) | (*ture) | ("careful consideration")
 .I 99 
 .W
-(reynolds) | (! region) | (the*ies) | ("without heat")
+fl*w
 .I 100 
 .W
-(values) & (! region) & (m*od) & ("for the")
+*low
 .I 101 
 .W
-(blade) | (! mach) | (*eeds) | ("without heat")
+(flow) | (! reynolds) | (*de) | ("careful consideration")
 .I 102 
 .W
-(values) | (! pressure) | (surfa*e) | ("with calculations")
+"and yawing"
 .I 103 
 .W
-(blade) | (! hypersonic) | (h*at) | ("the variation")
+"distribution skin"
 .I 104 
 .W
-(blade) | (! boundary) | (the*ies) | ("for the")
+considered
 .I 105 
 .W
-(transfer) | (! boundary) | (surfa*e) | ("without heat")
+(considered) | (! equations) | (*ture) | ("distribution skin")
 .I 106 
 .W
-(transfer) | (! mach) | (surfa*e) | ("the variation")
+fin & slender
 .I 107 
 .W
-(blade) | (! boundary) | (the*ies) | ("without heat")
+! reynolds
 .I 108 
 .W
-(blade) | (! hypersonic) | (the*ies) | ("for the")
+external & bending
 .I 109 
 .W
-(wings) | (! region) | (h*at) | ("with calculations")
+(mixing) | (! reynolds) | (angl*s) | ("careful consideration")
 .I 110 
 .W
-(transfer) | (! pressure) | (h*at) | ("with calculations")
+"the production"
 .I 111 
 .W
-(transfer) | (! mach) | (surfa*e) | ("without heat")
+*ture
 .I 112 
 .W
-(reynolds) | (! region) | (m*od) | ("the variation")
+flow
 .I 113 
 .W
-(reynolds) | (! hypersonic) | (h*at) | ("the variation")
+(considered) | (! reynolds) | (angl*s) | ("careful consideration")
 .I 114 
 .W
-(wings) & (! boundary) & (m*od) & ("the variation")
+(flow) | (! equations) | (*de) | ("and yawing")
 .I 115 
 .W
-(reynolds) | (! region) | (*eeds) | ("with calculations")
+experimental & circular
 .I 116 
 .W
-(values) | (! hypersonic) | (*eeds) | ("for the")
+"these equations"
 .I 117 
 .W
-(values) | (! pressure) | (h*at) | ("creep through")
+(mixing) | (! data) | (*de) | ("distribution skin")
 .I 118 
 .W
-(reynolds) | (! hypersonic) | (surfa*e) | ("with calculations")
+! shock
 .I 119 
 .W
-(blade) | (! pressure) | (*eeds) | ("without heat")
+references | transformed
 .I 120 
 .W
-(blade) & (! pressure) & (h*at) & ("for the")
+! surface
 .I 121 
 .W
-(transfer) & (! hypersonic) & (m*od) & ("the variation")
+stress | density
 .I 122 
 .W
-(reynolds) | (! boundary) | (the*ies) | ("without heat")
+(flow) | (! reynolds) | (*ture) | ("careful consideration")
 .I 123 
 .W
-(blade) | (! hypersonic) | (*eeds) | ("with calculations")
+! approximate
 .I 124 
 .W
-(blade) | (! boundary) | (m*od) | ("for the")
+(mixing) | (! reynolds) | (*ture) | ("and yawing")
 .I 125 
 .W
-(transfer) | (! region) | (m*od) | ("for the")
+(flow) & (! reynolds) & (*de) & ("and yawing")
 .I 126 
 .W
-(blade) | (! pressure) | (h*at) | ("without heat")
+"of stokes"
 .I 127 
 .W
-(blade) | (! pressure) | (*eeds) | ("creep through")
+(considered) | (! equations) | (angl*s) | ("distribution skin")
 .I 128 
 .W
-(reynolds) | (! pressure) | (*eeds) | ("without heat")
+(mixing) | (! equations) | (angl*s) | ("and yawing")
 .I 129 
 .W
-(values) | (! region) | (the*ies) | ("the variation")
+study
 .I 130 
 .W
-(reynolds) | (! boundary) | (the*ies) | ("with calculations")
+(considered) | (! data) | (*de) | ("distribution skin")
 .I 131 
 .W
-(values) | (! boundary) | (m*od) | ("creep through")
+"plate stewartson"
 .I 132 
 .W
-(blade) | (! mach) | (h*at) | ("with calculations")
+(flow) | (! reynolds) | (*de) | ("and yawing")
 .I 133 
 .W
-(blade) | (! region) | (*eeds) | ("with calculations")
+(flow) | (! data) | (angl*s) | ("and yawing")
 .I 134 
 .W
-(wings) & (! region) & (m*od) & ("without heat")
+r*ion
 .I 135 
 .W
-(reynolds) | (! region) | (surfa*e) | ("without heat")
+layer
 .I 136 
 .W
-(transfer) | (! pressure) | (the*ies) | ("with calculations")
+(considered) | (! reynolds) | (*ture) | ("careful consideration")
 .I 137 
 .W
-(wings) | (! mach) | (*eeds) | ("the variation")
+! method
 .I 138 
 .W
-(wings) | (! mach) | (the*ies) | ("the variation")
+! transfer
 .I 139 
 .W
-(reynolds) & (! pressure) & (m*od) & ("for the")
+flat
 .I 140 
 .W
-(transfer) | (! region) | (the*ies) | ("the variation")
+mo*el
 .I 141 
 .W
-(wings) | (! mach) | (h*at) | ("the variation")
+response & theory
 .I 142 
 .W
-(values) | (! mach) | (surfa*e) | ("creep through")
+"its derivatives"
 .I 143 
 .W
-(blade) | (! hypersonic) | (h*at) | ("without heat")
+plate | magnitudes
 .I 144 
 .W
-(transfer) | (! region) | (*eeds) | ("without heat")
+magnetic | diameter
 .I 145 
 .W
-(blade) | (! region) | (*eeds) | ("for the")
+(considered) | (! equations) | (*de) | ("distribution skin")
 .I 146 
 .W
-(blade) & (! region) & (m*od) & ("for the")
+(considered) | (! reynolds) | (*de) | ("distribution skin")
 .I 147 
 .W
-(transfer) | (! boundary) | (surfa*e) | ("for the")
+discussed
 .I 148 
 .W
-(wings) | (! region) | (m*od) | ("without heat")
+"high angles"
 .I 149 
 .W
-(blade) | (! mach) | (h*at) | ("the variation")
+discussed | flow
 .I 150 
 .W
-(values) | (! mach) | (h*at) | ("without heat")
+heating | flow
 .I 151 
 .W
-(transfer) | (! mach) | (m*od) | ("creep through")
+"no numerical"
 .I 152 
 .W
-(values) & (! hypersonic) & (h*at) & ("with calculations")
+(flow) | (! data) | (*ture) | ("and yawing")
 .I 153 
 .W
-(blade) & (! boundary) & (m*od) & ("for the")
+laminar
 .I 154 
 .W
-(values) | (! region) | (surfa*e) | ("with calculations")
+"was small"
 .I 155 
 .W
-(transfer) | (! region) | (the*ies) | ("for the")
+theoretical
 .I 156 
 .W
-(values) | (! hypersonic) | (h*at) | ("with calculations")
+*on
 .I 157 
 .W
-(blade) | (! hypersonic) | (the*ies) | ("without heat")
+! hypersonic
 .I 158 
 .W
-(wings) | (! region) | (the*ies) | ("for the")
+terms & collocation
 .I 159 
 .W
-(reynolds) | (! mach) | (m*od) | ("the variation")
+! flow
 .I 160 
 .W
-(transfer) | (! boundary) | (*eeds) | ("the variation")
+! edges
 .I 161 
 .W
-(transfer) | (! hypersonic) | (the*ies) | ("the variation")
+edge
 .I 162 
 .W
-(reynolds) | (! hypersonic) | (the*ies) | ("creep through")
+(flow) | (! equations) | (angl*s) | ("careful consideration")
 .I 163 
 .W
-(reynolds) & (! region) & (m*od) & ("the variation")
+(flow) | (! equations) | (*de) | ("distribution skin")
 .I 164 
 .W
-(transfer) | (! pressure) | (m*od) | ("without heat")
+(mixing) | (! data) | (*de) | ("careful consideration")
 .I 165 
 .W
-(transfer) | (! pressure) | (h*at) | ("the variation")
+vibration & location
 .I 166 
 .W
-(transfer) | (! region) | (*eeds) | ("with calculations")
+effects & extends
 .I 167 
 .W
-(wings) | (! hypersonic) | (*eeds) | ("with calculations")
+"into a"
 .I 168 
 .W
-(reynolds) | (! mach) | (h*at) | ("the variation")
+(mixing) | (! data) | (*de) | ("and yawing")
 .I 169 
 .W
-(values) | (! boundary) | (m*od) | ("with calculations")
+conducting & aircraft
 .I 170 
 .W
-(blade) & (! hypersonic) & (h*at) & ("the variation")
+"distribution with"
 .I 171 
 .W
-(wings) | (! mach) | (*eeds) | ("without heat")
+a*r
 .I 172 
 .W
-(wings) | (! boundary) | (the*ies) | ("without heat")
+mach | procedure
 .I 173 
 .W
-(wings) & (! region) & (m*od) & ("for the")
+pressure
 .I 174 
 .W
-(wings) & (! mach) & (h*at) & ("the variation")
+"the mechanism"
 .I 175 
 .W
-(values) | (! boundary) | (*eeds) | ("the variation")
+(considered) | (! equations) | (*ture) | ("and yawing")
 .I 176 
 .W
-(transfer) | (! pressure) | (the*ies) | ("the variation")
+approximation | dimensionless
 .I 177 
 .W
-(reynolds) | (! hypersonic) | (the*ies) | ("for the")
+(flow) | (! equations) | (*ture) | ("careful consideration")
 .I 178 
 .W
-(blade) | (! boundary) | (the*ies) | ("with calculations")
+approximation & dimensionless
 .I 179 
 .W
-(wings) | (! hypersonic) | (surfa*e) | ("creep through")
+external | bending
 .I 180 
 .W
-(blade) | (! pressure) | (surfa*e) | ("without heat")
+(mixing) | (! equations) | (*ture) | ("and yawing")
 .I 181 
 .W
-(reynolds) | (! mach) | (surfa*e) | ("for the")
+(flow) | (! reynolds) | (angl*s) | ("distribution skin")
 .I 182 
 .W
-(values) | (! pressure) | (m*od) | ("for the")
+(mixing) | (! equations) | (*de) | ("and yawing")
 .I 183 
 .W
-(reynolds) | (! hypersonic) | (*eeds) | ("with calculations")
+(flow) | (! equations) | (angl*s) | ("and yawing")
 .I 184 
 .W
-(wings) & (! mach) & (m*od) & ("for the")
+(mixing) | (! data) | (*ture) | ("and yawing")
 .I 185 
 .W
-(values) | (! mach) | (*eeds) | ("for the")
+require & engineering
 .I 186 
 .W
-(wings) | (! region) | (m*od) | ("creep through")
+boundary | integration
 .I 187 
 .W
-(transfer) & (! hypersonic) & (m*od) & ("without heat")
+boundary
 .I 188 
 .W
-(blade) | (! hypersonic) | (the*ies) | ("with calculations")
+heat
 .I 189 
 .W
-(wings) | (! hypersonic) | (h*at) | ("for the")
+(considered) | (! reynolds) | (*de) | ("and yawing")
 .I 190 
 .W
-(blade) | (! region) | (surfa*e) | ("creep through")
+accuracy | quantitative
 .I 191 
 .W
-(reynolds) | (! hypersonic) | (*eeds) | ("for the")
+(mixing) | (! reynolds) | (*de) | ("careful consideration")
 .I 192 
 .W
-(blade) | (! mach) | (m*od) | ("without heat")
+(considered) | (! data) | (angl*s) | ("careful consideration")
 .I 193 
 .W
-(transfer) | (! mach) | (m*od) | ("with calculations")
+introduced | include
 .I 194 
 .W
-(wings) | (! region) | (h*at) | ("for the")
+(flow) | (! reynolds) | (*ture) | ("distribution skin")
 .I 195 
 .W
-(reynolds) | (! pressure) | (surfa*e) | ("with calculations")
+(flow) | (! data) | (angl*s) | ("distribution skin")
 .I 196 
 .W
-(reynolds) | (! mach) | (m*od) | ("with calculations")
+(flow) | (! equations) | (*ture) | ("and yawing")
 .I 197 
 .W
-(values) | (! boundary) | (h*at) | ("creep through")
+(mixing) | (! data) | (angl*s) | ("careful consideration")
 .I 198 
 .W
-(transfer) | (! mach) | (surfa*e) | ("for the")
+! supersonic
 .I 199 
 .W
-(transfer) | (! region) | (h*at) | ("the variation")
+accuracy & quantitative
 .I 200 
 .W
-(transfer) | (! boundary) | (m*od) | ("for the")
+(considered) | (! data) | (angl*s) | ("and yawing")
 .I 201 
 .W
-(transfer) & (! pressure) & (h*at) & ("for the")
+plate & magnitudes
 .I 202 
 .W
-(values) | (! boundary) | (m*od) | ("for the")
+(flow) | (! equations) | (*ture) | ("distribution skin")
 .I 203 
 .W
-(values) & (! pressure) & (h*at) & ("for the")
+(considered) | (! data) | (*ture) | ("and yawing")
 .I 204 
 .W
-(reynolds) | (! pressure) | (h*at) | ("creep through")
+blunt
 .I 205 
 .W
-(reynolds) | (! mach) | (the*ies) | ("the variation")
+! buckling
 .I 206 
 .W
-(reynolds) | (! region) | (surfa*e) | ("the variation")
+agree & procedure
 .I 207 
 .W
-(reynolds) | (! mach) | (*eeds) | ("for the")
+(considered) | (! reynolds) | (*de) | ("careful consideration")
 .I 208 
 .W
-(transfer) | (! boundary) | (*eeds) | ("for the")
+response | theory
 .I 209 
 .W
-(blade) & (! region) & (h*at) & ("for the")
+(mixing) | (! equations) | (angl*s) | ("careful consideration")
 .I 210 
 .W
-(reynolds) | (! region) | (m*od) | ("for the")
+! ratio
 .I 211 
 .W
-(values) & (! hypersonic) & (h*at) & ("for the")
+wa*e
 .I 212 
 .W
-(wings) & (! hypersonic) & (h*at) & ("without heat")
+(mixing) | (! data) | (*ture) | ("careful consideration")
 .I 213 
 .W
-(values) | (! pressure) | (*eeds) | ("without heat")
+(considered) | (! equations) | (*de) | ("and yawing")
 .I 214 
 .W
-(blade) | (! boundary) | (the*ies) | ("the variation")
+(mixing) | (! equations) | (angl*s) | ("distribution skin")
 .I 215 
 .W
-(values) | (! boundary) | (the*ies) | ("the variation")
+wall
 .I 216 
 .W
-(transfer) | (! mach) | (surfa*e) | ("with calculations")
+mach & procedure
 .I 217 
 .W
-(values) | (! hypersonic) | (*eeds) | ("creep through")
-.I 218 
-.W
-(values) | (! hypersonic) | (*eeds) | ("with calculations")
-.I 219 
-.W
-(transfer) | (! pressure) | (*eeds) | ("for the")
-.I 220 
-.W
-(transfer) | (! hypersonic) | (the*ies) | ("for the")
-.I 221 
-.W
-(blade) | (! pressure) | (surfa*e) | ("the variation")
-.I 222 
-.W
-(transfer) | (! hypersonic) | (the*ies) | ("creep through")
-.I 223 
-.W
-(transfer) | (! pressure) | (surfa*e) | ("with calculations")
-.I 224 
-.W
-(wings) | (! boundary) | (h*at) | ("without heat")
-.I 225 
-.W
-(reynolds) | (! pressure) | (*eeds) | ("the variation")
-.I 226 
-.W
-(reynolds) | (! pressure) | (h*at) | ("for the")
-.I 227 
-.W
-(transfer) | (! region) | (*eeds) | ("for the")
-.I 228 
-.W
-(values) | (! hypersonic) | (m*od) | ("with calculations")
-.I 229 
-.W
-(blade) | (! boundary) | (h*at) | ("for the")
-.I 230 
-.W
-(reynolds) | (! hypersonic) | (m*od) | ("the variation")
-.I 231 
-.W
-(reynolds) | (! hypersonic) | (m*od) | ("with calculations")
-.I 232 
-.W
-(blade) | (! mach) | (h*at) | ("without heat")
-.I 233 
-.W
-(reynolds) | (! pressure) | (the*ies) | ("creep through")
-.I 234 
-.W
-(wings) | (! hypersonic) | (*eeds) | ("the variation")
-.I 235 
-.W
-(reynolds) | (! mach) | (h*at) | ("with calculations")
-.I 236 
-.W
-(reynolds) | (! mach) | (surfa*e) | ("creep through")
-.I 237 
-.W
-(transfer) | (! mach) | (h*at) | ("the variation")
-.I 238 
-.W
-(wings) & (! boundary) & (m*od) & ("without heat")
-.I 239 
-.W
-(reynolds) | (! boundary) | (m*od) | ("creep through")
-.I 240 
-.W
-(wings) | (! mach) | (surfa*e) | ("creep through")
-.I 241 
-.W
-(wings) | (! boundary) | (h*at) | ("creep through")
-.I 242 
-.W
-(reynolds) | (! mach) | (surfa*e) | ("without heat")
-.I 243 
-.W
-(blade) | (! pressure) | (the*ies) | ("with calculations")
-.I 244 
-.W
-(blade) | (! pressure) | (m*od) | ("for the")
-.I 245 
-.W
-(wings) | (! pressure) | (m*od) | ("the variation")
-.I 246 
-.W
-(values) | (! region) | (*eeds) | ("without heat")
-.I 247 
-.W
-(blade) & (! hypersonic) & (h*at) & ("for the")
-.I 248 
-.W
-(blade) | (! hypersonic) | (m*od) | ("creep through")
-.I 249 
-.W
-(values) | (! region) | (h*at) | ("creep through")
-.I 250 
-.W
-(wings) | (! hypersonic) | (the*ies) | ("creep through")
-.I 251 
-.W
-(wings) | (! mach) | (*eeds) | ("with calculations")
-.I 252 
-.W
-(values) | (! boundary) | (surfa*e) | ("creep through")
-.I 253 
-.W
-(blade) | (! region) | (surfa*e) | ("without heat")
-.I 254 
-.W
-(blade) | (! boundary) | (h*at) | ("with calculations")
-.I 255 
-.W
-(transfer) | (! mach) | (m*od) | ("for the")
-.I 256 
-.W
-(values) | (! hypersonic) | (m*od) | ("for the")
-.I 257 
-.W
-(transfer) | (! region) | (surfa*e) | ("for the")
-.I 258 
-.W
-(transfer) | (! boundary) | (h*at) | ("without heat")
-.I 259 
-.W
-(blade) | (! hypersonic) | (surfa*e) | ("without heat")
-.I 260 
-.W
-(wings) | (! region) | (the*ies) | ("with calculations")
-.I 261 
-.W
-(blade) | (! boundary) | (surfa*e) | ("creep through")
-.I 262 
-.W
-(wings) | (! mach) | (h*at) | ("without heat")
-.I 263 
-.W
-(values) | (! pressure) | (surfa*e) | ("the variation")
-.I 264 
-.W
-(blade) | (! region) | (m*od) | ("for the")
-.I 265 
-.W
-(values) | (! boundary) | (h*at) | ("for the")
-.I 266 
-.W
-(blade) | (! region) | (the*ies) | ("the variation")
-.I 267 
-.W
-(reynolds) | (! mach) | (m*od) | ("without heat")
-.I 268 
-.W
-(blade) | (! boundary) | (*eeds) | ("the variation")
-.I 269 
-.W
-(values) | (! hypersonic) | (the*ies) | ("the variation")
-.I 270 
-.W
-(reynolds) | (! region) | (h*at) | ("for the")
-.I 271 
-.W
-(blade) | (! boundary) | (surfa*e) | ("without heat")
-.I 272 
-.W
-(reynolds) | (! boundary) | (*eeds) | ("the variation")
-.I 273 
-.W
-(blade) | (! region) | (*eeds) | ("without heat")
-.I 274 
-.W
-(values) & (! pressure) & (m*od) & ("for the")
-.I 275 
-.W
-(transfer) | (! pressure) | (surfa*e) | ("creep through")
-.I 276 
-.W
-(blade) | (! pressure) | (m*od) | ("the variation")
-.I 277 
-.W
-(wings) | (! pressure) | (h*at) | ("creep through")
-.I 278 
-.W
-(values) | (! region) | (h*at) | ("for the")
-.I 279 
-.W
-(values) & (! hypersonic) & (m*od) & ("for the")
-.I 280 
-.W
-(reynolds) | (! hypersonic) | (surfa*e) | ("the variation")
-.I 281 
-.W
-(blade) & (! pressure) & (m*od) & ("the variation")
-.I 282 
-.W
-(values) | (! boundary) | (*eeds) | ("without heat")
-.I 283 
-.W
-(reynolds) & (! mach) & (h*at) & ("the variation")
-.I 284 
-.W
-(wings) & (! hypersonic) & (m*od) & ("for the")
-.I 285 
-.W
-(transfer) & (! mach) & (h*at) & ("for the")
-.I 286 
-.W
-(blade) | (! hypersonic) | (m*od) | ("without heat")
-.I 287 
-.W
-(transfer) | (! mach) | (surfa*e) | ("creep through")
-.I 288 
-.W
-(blade) | (! pressure) | (*eeds) | ("the variation")
-.I 289 
-.W
-(wings) | (! region) | (*eeds) | ("with calculations")
-.I 290 
-.W
-(values) | (! pressure) | (*eeds) | ("the variation")
-.I 291 
-.W
-(blade) | (! hypersonic) | (h*at) | ("creep through")
-.I 292 
-.W
-(transfer) & (! mach) & (h*at) & ("the variation")
-.I 293 
-.W
-(reynolds) | (! pressure) | (surfa*e) | ("for the")
-.I 294 
-.W
-(blade) | (! hypersonic) | (m*od) | ("for the")
-.I 295 
-.W
-(transfer) | (! boundary) | (the*ies) | ("for the")
-.I 296 
-.W
-blade
-.I 297 
-.W
-(reynolds) | (! hypersonic) | (h*at) | ("creep through")
-.I 298 
-.W
-(reynolds) | (! boundary) | (h*at) | ("without heat")
-.I 299 
-.W
-(blade) | (! region) | (*eeds) | ("the variation")
-.I 300 
-.W
-(transfer) & (! pressure) & (h*at) & ("without heat")
-.I 301 
-.W
-(reynolds) | (! region) | (surfa*e) | ("for the")
-.I 302 
-.W
-(values) | (! region) | (h*at) | ("without heat")
-.I 303 
-.W
-(values) & (! hypersonic) & (m*od) & ("the variation")
-.I 304 
-.W
-(values) | (! hypersonic) | (surfa*e) | ("the variation")
-.I 305 
-.W
-(reynolds) & (! mach) & (m*od) & ("for the")
-.I 306 
-.W
-(wings) | (! hypersonic) | (m*od) | ("for the")
-.I 307 
-.W
-(reynolds) | (! boundary) | (m*od) | ("with calculations")
-.I 308 
-.W
-(reynolds) | (! mach) | (*eeds) | ("creep through")
-.I 309 
-.W
-(transfer) & (! pressure) & (m*od) & ("for the")
-.I 310 
-.W
-(wings) | (! boundary) | (m*od) | ("the variation")
-.I 311 
-.W
-(blade) | (! pressure) | (m*od) | ("without heat")
-.I 312 
-.W
-(blade) | (! hypersonic) | (surfa*e) | ("with calculations")
-.I 313 
-.W
-(values) | (! pressure) | (*eeds) | ("with calculations")
-.I 314 
-.W
-(transfer) | (! mach) | (m*od) | ("the variation")
-.I 315 
-.W
-(reynolds) | (! pressure) | (m*od) | ("for the")
-.I 316 
-.W
-(transfer) | (! mach) | (m*od) | ("without heat")
-.I 317 
-.W
-(transfer) & (! boundary) & (h*at) & ("the variation")
-.I 318 
-.W
-(values) | (! region) | (surfa*e) | ("the variation")
-.I 319 
-.W
-(reynolds) | (! region) | (the*ies) | ("the variation")
-.I 320 
-.W
-(reynolds) | (! mach) | (h*at) | ("without heat")
-.I 321 
-.W
-(wings) | (! boundary) | (surfa*e) | ("with calculations")
-.I 322 
-.W
-(transfer) | (! region) | (the*ies) | ("creep through")
-.I 323 
-.W
-(wings) | (! mach) | (surfa*e) | ("for the")
-.I 324 
-.W
-(transfer) | (! boundary) | (m*od) | ("with calculations")
-.I 325 
-.W
-(blade) | (! pressure) | (h*at) | ("for the")
-.I 326 
-.W
-(wings) | (! mach) | (the*ies) | ("creep through")
-.I 327 
-.W
-(blade) | (! mach) | (surfa*e) | ("without heat")
-.I 328 
-.W
-(wings) | (! region) | (surfa*e) | ("without heat")
-.I 329 
-.W
-(wings) | (! hypersonic) | (surfa*e) | ("with calculations")
-.I 330 
-.W
-(blade) & (! region) & (m*od) & ("the variation")
-.I 331 
-.W
-(transfer) & (! pressure) & (m*od) & ("the variation")
-.I 332 
-.W
-(blade) | (! mach) | (*eeds) | ("with calculations")
-.I 333 
-.W
-(wings) & (! mach) & (m*od) & ("without heat")
-.I 334 
-.W
-(reynolds) | (! boundary) | (h*at) | ("creep through")
-.I 335 
-.W
-(values) | (! hypersonic) | (m*od) | ("without heat")
-.I 336 
-.W
-(values) & (! boundary) & (h*at) & ("with calculations")
-.I 337 
-.W
-(transfer) | (! mach) | (the*ies) | ("creep through")
-.I 338 
-.W
-(blade) | (! mach) | (the*ies) | ("with calculations")
-.I 339 
-.W
-(reynolds) | (! pressure) | (m*od) | ("creep through")
-.I 340 
-.W
-(reynolds) | (! hypersonic) | (m*od) | ("creep through")
-.I 341 
-.W
-(wings) & (! pressure) & (h*at) & ("with calculations")
-.I 342 
-.W
-(wings) & (! region) & (h*at) & ("with calculations")
-.I 343 
-.W
-(values) | (! boundary) | (the*ies) | ("without heat")
-.I 344 
-.W
-"for the"
-.I 345 
-.W
-(blade) | (! hypersonic) | (m*od) | ("with calculations")
-.I 346 
-.W
-(reynolds) | (! hypersonic) | (m*od) | ("without heat")
-.I 347 
-.W
-(transfer) & (! mach) & (m*od) & ("for the")
-.I 348 
-.W
-(values) | (! mach) | (*eeds) | ("creep through")
-.I 349 
-.W
-(transfer) | (! boundary) | (*eeds) | ("creep through")
-.I 350 
-.W
-(blade) | (! region) | (surfa*e) | ("for the")
-.I 351 
-.W
-(wings) | (! hypersonic) | (*eeds) | ("without heat")
-.I 352 
-.W
-(transfer) & (! mach) & (m*od) & ("the variation")
-.I 353 
-.W
-(values) | (! region) | (m*od) | ("for the")
-.I 354 
-.W
-(blade) | (! pressure) | (*eeds) | ("with calculations")
-.I 355 
-.W
-(reynolds) | (! mach) | (h*at) | ("creep through")
-.I 356 
-.W
-(reynolds) | (! mach) | (m*od) | ("creep through")
-.I 357 
-.W
-(reynolds) | (! region) | (m*od) | ("with calculations")
-.I 358 
-.W
-(values) | (! hypersonic) | (the*ies) | ("without heat")
-.I 359 
-.W
-(wings) | (! pressure) | (h*at) | ("for the")
-.I 360 
-.W
-(reynolds) | (! region) | (h*at) | ("without heat")
-.I 361 
-.W
-"without heat"
-.I 362 
-.W
-(values) | (! mach) | (m*od) | ("with calculations")
-.I 363 
-.W
-(wings) | (! hypersonic) | (the*ies) | ("for the")
-.I 364 
-.W
-(values) | (! pressure) | (the*ies) | ("the variation")
-.I 365 
-.W
-(reynolds) | (! hypersonic) | (the*ies) | ("the variation")
-.I 366 
-.W
-(wings) | (! mach) | (h*at) | ("with calculations")
-.I 367 
-.W
-(reynolds) | (! pressure) | (*eeds) | ("for the")
-.I 368 
-.W
-(reynolds) | (! hypersonic) | (the*ies) | ("with calculations")
-.I 369 
-.W
-(wings) | (! region) | (h*at) | ("the variation")
-.I 370 
-.W
-(blade) | (! region) | (m*od) | ("with calculations")
-.I 371 
-.W
-(values) | (! mach) | (*eeds) | ("with calculations")
-.I 372 
-.W
-(blade) & (! hypersonic) & (m*od) & ("for the")
-.I 373 
-.W
-(wings) | (! hypersonic) | (the*ies) | ("without heat")
-.I 374 
-.W
-(transfer) | (! boundary) | (*eeds) | ("with calculations")
-.I 375 
-.W
-(wings) | (! region) | (m*od) | ("the variation")
-.I 376 
-.W
-(values) | (! hypersonic) | (the*ies) | ("for the")
-.I 377 
-.W
-(blade) | (! mach) | (the*ies) | ("for the")
-.I 378 
-.W
-(blade) | (! hypersonic) | (*eeds) | ("creep through")
-.I 379 
-.W
-(transfer) | (! region) | (the*ies) | ("with calculations")
-.I 380 
-.W
-(blade) | (! region) | (surfa*e) | ("the variation")
-.I 381 
-.W
-(transfer) | (! hypersonic) | (*eeds) | ("without heat")
-.I 382 
-.W
-(wings) | (! pressure) | (the*ies) | ("for the")
-.I 383 
-.W
-(transfer) | (! pressure) | (the*ies) | ("creep through")
-.I 384 
-.W
-(values) | (! region) | (h*at) | ("with calculations")
-.I 385 
-.W
-(values) | (! hypersonic) | (h*at) | ("for the")
-.I 386 
-.W
-(blade) | (! boundary) | (*eeds) | ("without heat")
-.I 387 
-.W
-(wings) | (! pressure) | (m*od) | ("without heat")
-.I 388 
-.W
-(reynolds) | (! boundary) | (*eeds) | ("with calculations")
-.I 389 
-.W
-(wings) | (! pressure) | (surfa*e) | ("the variation")
-.I 390 
-.W
-(reynolds) | (! pressure) | (the*ies) | ("without heat")
-.I 391 
-.W
-(values) | (! mach) | (*eeds) | ("without heat")
-.I 392 
-.W
-(reynolds) | (! mach) | (the*ies) | ("creep through")
-.I 393 
-.W
-(reynolds) | (! hypersonic) | (surfa*e) | ("creep through")
-.I 394 
-.W
-(values) | (! boundary) | (the*ies) | ("creep through")
-.I 395 
-.W
-(wings) | (! pressure) | (the*ies) | ("without heat")
-.I 396 
-.W
-(reynolds) | (! boundary) | (the*ies) | ("creep through")
-.I 397 
-.W
-(blade) | (! mach) | (surfa*e) | ("the variation")
-.I 398 
-.W
-(values) | (! pressure) | (surfa*e) | ("for the")
-.I 399 
-.W
-(wings) | (! hypersonic) | (h*at) | ("with calculations")
-.I 400 
-.W
-(values) | (! pressure) | (m*od) | ("creep through")
-.I 401 
-.W
-(wings) | (! region) | (m*od) | ("for the")
-.I 402 
-.W
-(blade) | (! boundary) | (*eeds) | ("for the")
-.I 403 
-.W
-(reynolds) | (! mach) | (surfa*e) | ("with calculations")
-.I 404 
-.W
-(transfer) | (! boundary) | (surfa*e) | ("with calculations")
-.I 405 
-.W
-(blade) | (! pressure) | (*eeds) | ("for the")
-.I 406 
-.W
-(wings) | (! pressure) | (*eeds) | ("for the")
-.I 407 
-.W
-(wings) | (! pressure) | (*eeds) | ("with calculations")
-.I 408 
-.W
-(values) | (! pressure) | (surfa*e) | ("without heat")
-.I 409 
-.W
-(values) & (! boundary) & (h*at) & ("for the")
-.I 410 
-.W
-(wings) & (! boundary) & (h*at) & ("the variation")
-.I 411 
-.W
-(transfer) | (! hypersonic) | (surfa*e) | ("creep through")
-.I 412 
-.W
-(blade) | (! boundary) | (the*ies) | ("creep through")
-.I 413 
-.W
-(wings) & (! hypersonic) & (h*at) & ("with calculations")
-.I 414 
-.W
-(values) | (! hypersonic) | (*eeds) | ("the variation")
-.I 415 
-.W
-(transfer) | (! pressure) | (m*od) | ("for the")
-.I 416 
-.W
-(wings) | (! region) | (the*ies) | ("creep through")
-.I 417 
-.W
-(values) | (! region) | (surfa*e) | ("without heat")
-.I 418 
-.W
-(transfer) | (! region) | (h*at) | ("for the")
-.I 419 
-.W
-(blade) & (! pressure) & (m*od) & ("for the")
-.I 420 
-.W
-(reynolds) & (! hypersonic) & (h*at) & ("for the")
-.I 421 
-.W
-(blade) | (! mach) | (the*ies) | ("creep through")
-.I 422 
-.W
-(values) | (! boundary) | (h*at) | ("without heat")
-.I 423 
-.W
-(transfer) | (! hypersonic) | (h*at) | ("with calculations")
-.I 424 
-.W
-(wings) | (! hypersonic) | (surfa*e) | ("for the")
-.I 425 
-.W
-(values) | (! mach) | (the*ies) | ("creep through")
-.I 426 
-.W
-(wings) | (! boundary) | (*eeds) | ("for the")
-.I 427 
-.W
-(transfer) & (! boundary) & (m*od) & ("for the")
-.I 428 
-.W
-"with calculations"
-.I 429 
-.W
-(transfer) | (! mach) | (h*at) | ("creep through")
-.I 430 
-.W
-(wings) & (! region) & (h*at) & ("for the")
-.I 431 
-.W
-tunnel & compressible
-.I 432 
-.W
-(values) | (! mach) | (surfa*e) | ("with calculations")
-.I 433 
-.W
-(wings) | (! hypersonic) | (*eeds) | ("creep through")
-.I 434 
-.W
-(values) | (! mach) | (surfa*e) | ("without heat")
-.I 435 
-.W
-(wings) | (! boundary) | (h*at) | ("the variation")
-.I 436 
-.W
-longitudinally | supersonic
-.I 437 
-.W
-(reynolds) | (! pressure) | (m*od) | ("with calculations")
-.I 438 
-.W
-(reynolds) & (! boundary) & (h*at) & ("the variation")
-.I 439 
-.W
-(reynolds) & (! pressure) & (h*at) & ("for the")
-.I 440 
-.W
-(values) | (! boundary) | (surfa*e) | ("the variation")
-.I 441 
-.W
-(wings) | (! mach) | (surfa*e) | ("the variation")
-.I 442 
-.W
-(transfer) | (! pressure) | (surfa*e) | ("the variation")
-.I 443 
-.W
-(reynolds) | (! boundary) | (surfa*e) | ("the variation")
-.I 444 
-.W
-(reynolds) | (! region) | (m*od) | ("without heat")
-.I 445 
-.W
-(values) | (! pressure) | (h*at) | ("for the")
-.I 446 
-.W
-(blade) | (! boundary) | (surfa*e) | ("the variation")
-.I 447 
-.W
-(values) | (! boundary) | (*eeds) | ("for the")
-.I 448 
-.W
-(wings) & (! hypersonic) & (m*od) & ("without heat")
-.I 449 
-.W
-(reynolds) | (! pressure) | (the*ies) | ("for the")
-.I 450 
-.W
-(wings) | (! hypersonic) | (the*ies) | ("with calculations")
-.I 451 
-.W
-(reynolds) | (! pressure) | (the*ies) | ("the variation")
-.I 452 
-.W
-(reynolds) | (! mach) | (surfa*e) | ("the variation")
-.I 453 
-.W
-(reynolds) | (! mach) | (*eeds) | ("with calculations")
-.I 454 
-.W
-(transfer) | (! hypersonic) | (*eeds) | ("with calculations")
-.I 455 
-.W
-reynolds
-.I 456 
-.W
-(wings) | (! hypersonic) | (the*ies) | ("the variation")
-.I 457 
-.W
-(reynolds) | (! boundary) | (*eeds) | ("without heat")
-.I 458 
-.W
-(blade) | (! region) | (h*at) | ("with calculations")
-.I 459 
-.W
-(values) | (! mach) | (the*ies) | ("for the")
-.I 460 
-.W
-(wings) | (! pressure) | (the*ies) | ("with calculations")
-.I 461 
-.W
-(blade) | (! region) | (the*ies) | ("creep through")
-.I 462 
-.W
-(wings) | (! hypersonic) | (h*at) | ("creep through")
-.I 463 
-.W
-(transfer) | (! hypersonic) | (*eeds) | ("creep through")
-.I 464 
-.W
-(blade) | (! hypersonic) | (m*od) | ("the variation")
-.I 465 
-.W
-(reynolds) | (! mach) | (h*at) | ("for the")
-.I 466 
-.W
-(wings) | (! region) | (h*at) | ("without heat")
-.I 467 
-.W
-(transfer) | (! boundary) | (*eeds) | ("without heat")
-.I 468 
-.W
-(transfer) | (! pressure) | (the*ies) | ("without heat")
-.I 469 
-.W
-(transfer) | (! region) | (m*od) | ("the variation")
-.I 470 
-.W
-(values) | (! mach) | (the*ies) | ("without heat")
-.I 471 
-.W
-(blade) | (! mach) | (the*ies) | ("without heat")
-.I 472 
-.W
-(values) | (! region) | (the*ies) | ("without heat")
-.I 473 
-.W
-(transfer) | (! hypersonic) | (*eeds) | ("for the")
-.I 474 
-.W
-(reynolds) | (! region) | (h*at) | ("the variation")
-.I 475 
-.W
-(transfer) | (! boundary) | (surfa*e) | ("creep through")
-.I 476 
-.W
-(transfer) & (! region) & (m*od) & ("the variation")
-.I 477 
-.W
-(wings) & (! boundary) & (h*at) & ("without heat")
-.I 478 
-.W
-(transfer) | (! pressure) | (*eeds) | ("creep through")
-.I 479 
-.W
-(values) | (! boundary) | (the*ies) | ("for the")
-.I 480 
-.W
-(blade) | (! region) | (*eeds) | ("creep through")
-.I 481 
-.W
-(values) | (! pressure) | (*eeds) | ("creep through")
-.I 482 
-.W
-(blade) | (! boundary) | (h*at) | ("the variation")
-.I 483 
-.W
-(wings) | (! pressure) | (surfa*e) | ("without heat")
-.I 484 
-.W
-(transfer) | (! region) | (h*at) | ("without heat")
-.I 485 
-.W
-(values) & (! pressure) & (h*at) & ("the variation")
-.I 486 
-.W
-(blade) | (! pressure) | (the*ies) | ("the variation")
-.I 487 
-.W
-(transfer) | (! hypersonic) | (m*od) | ("for the")
-.I 488 
-.W
-(values) | (! hypersonic) | (surfa*e) | ("creep through")
-.I 489 
-.W
-(reynolds) | (! mach) | (*eeds) | ("the variation")
-.I 490 
-.W
-(reynolds) | (! region) | (the*ies) | ("for the")
-.I 491 
-.W
-(wings) | (! region) | (surfa*e) | ("the variation")
-.I 492 
-.W
-! pressure
-.I 493 
-.W
-(values) | (! mach) | (h*at) | ("creep through")
-.I 494 
-.W
-(blade) | (! mach) | (*eeds) | ("for the")
-.I 495 
-.W
-(values) & (! region) & (h*at) & ("for the")
-.I 496 
-.W
-(values) | (! pressure) | (the*ies) | ("creep through")
-.I 497 
-.W
-(wings) | (! region) | (*eeds) | ("for the")
-.I 498 
-.W
-(reynolds) & (! region) & (h*at) & ("the variation")
-.I 499 
-.W
-(transfer) | (! pressure) | (m*od) | ("the variation")
-.I 500 
-.W
-(transfer) | (! region) | (surfa*e) | ("creep through")
-.I 501 
-.W
-(reynolds) | (! boundary) | (h*at) | ("the variation")
-.I 502 
-.W
-(transfer) | (! boundary) | (m*od) | ("without heat")
-.I 503 
-.W
-(blade) | (! hypersonic) | (the*ies) | ("the variation")
-.I 504 
-.W
-(blade) | (! mach) | (m*od) | ("for the")
-.I 505 
-.W
-(blade) | (! mach) | (m*od) | ("the variation")
-.I 506 
-.W
-(values) | (! pressure) | (m*od) | ("with calculations")
-.I 507 
-.W
-(reynolds) | (! region) | (the*ies) | ("creep through")
-.I 508 
-.W
-(transfer) | (! boundary) | (the*ies) | ("with calculations")
-.I 509 
-.W
-(wings) | (! mach) | (the*ies) | ("with calculations")
-.I 510 
-.W
-(values) | (! hypersonic) | (h*at) | ("the variation")
-.I 511 
-.W
-(transfer) | (! hypersonic) | (the*ies) | ("without heat")
-.I 512 
-.W
-(transfer) | (! boundary) | (h*at) | ("with calculations")
-.I 513 
-.W
-(blade) | (! mach) | (surfa*e) | ("with calculations")
-.I 514 
-.W
-(blade) & (! mach) & (h*at) & ("for the")
-.I 515 
-.W
-(blade) | (! hypersonic) | (surfa*e) | ("for the")
-.I 516 
-.W
-(wings) | (! pressure) | (m*od) | ("for the")
-.I 517 
-.W
-(blade) | (! hypersonic) | (*eeds) | ("for the")
-.I 518 
-.W
-! boundary
-.I 519 
-.W
-(reynolds) | (! region) | (*eeds) | ("without heat")
-.I 520 
-.W
-(transfer) | (! boundary) | (h*at) | ("for the")
-.I 521 
-.W
-(values) | (! region) | (surfa*e) | ("creep through")
-.I 522 
-.W
-(reynolds) | (! pressure) | (surfa*e) | ("without heat")
-.I 523 
-.W
-(wings) | (! boundary) | (m*od) | ("creep through")
-.I 524 
-.W
-(wings) | (! pressure) | (*eeds) | ("the variation")
-.I 525 
-.W
-(reynolds) | (! hypersonic) | (surfa*e) | ("for the")
-.I 526 
-.W
-(transfer) | (! hypersonic) | (the*ies) | ("with calculations")
-.I 527 
-.W
-(values) & (! region) & (m*od) & ("the variation")
-.I 528 
-.W
-(reynolds) | (! hypersonic) | (*eeds) | ("the variation")
-.I 529 
-.W
-(transfer) | (! boundary) | (the*ies) | ("creep through")
-.I 530 
-.W
-! region
-.I 531 
-.W
-(blade) | (! region) | (h*at) | ("for the")
-.I 532 
-.W
-(wings) | (! mach) | (m*od) | ("the variation")
-.I 533 
-.W
-(values) | (! pressure) | (m*od) | ("without heat")
-.I 534 
-.W
-(transfer) & (! pressure) & (m*od) & ("without heat")
-.I 535 
-.W
-(values) | (! region) | (*eeds) | ("the variation")
-.I 536 
-.W
-(values) & (! pressure) & (m*od) & ("the variation")
-.I 537 
-.W
-(wings) | (! hypersonic) | (m*od) | ("without heat")
-.I 538 
-.W
-(transfer) | (! mach) | (*eeds) | ("creep through")
-.I 539 
-.W
-(reynolds) | (! pressure) | (m*od) | ("the variation")
-.I 540 
-.W
-(wings) | (! pressure) | (the*ies) | ("creep through")
-.I 541 
-.W
-(wings) & (! boundary) & (m*od) & ("for the")
-.I 542 
-.W
-(wings) | (! pressure) | (m*od) | ("with calculations")
-.I 543 
-.W
-(values) | (! mach) | (the*ies) | ("with calculations")
-.I 544 
-.W
-(wings) | (! boundary) | (h*at) | ("for the")
-.I 545 
-.W
-(transfer) | (! mach) | (the*ies) | ("the variation")
-.I 546 
-.W
-(wings) | (! boundary) | (surfa*e) | ("the variation")
-.I 547 
-.W
-(values) & (! mach) & (m*od) & ("for the")
-.I 548 
-.W
-(values) | (! region) | (m*od) | ("without heat")
-.I 549 
-.W
-(wings) | (! mach) | (surfa*e) | ("without heat")
-.I 550 
-.W
-(reynolds) | (! boundary) | (m*od) | ("for the")
-.I 551 
-.W
-(reynolds) & (! region) & (h*at) & ("for the")
-.I 552 
-.W
-(values) | (! pressure) | (*eeds) | ("for the")
-.I 553 
-.W
-(reynolds) | (! region) | (the*ies) | ("with calculations")
-.I 554 
-.W
-(values) & (! region) & (h*at) & ("with calculations")
-.I 555 
-.W
-(reynolds) | (! boundary) | (the*ies) | ("for the")
-.I 556 
-.W
-(wings) | (! hypersonic) | (m*od) | ("with calculations")
-.I 557 
-.W
-(transfer) & (! region) & (h*at) & ("without heat")
-.I 558 
-.W
-(blade) | (! boundary) | (surfa*e) | ("for the")
-.I 559 
-.W
-(wings) | (! region) | (h*at) | ("creep through")
-.I 560 
-.W
-(wings) | (! boundary) | (m*od) | ("with calculations")
-.I 561 
-.W
-(reynolds) | (! region) | (*eeds) | ("creep through")
-.I 562 
-.W
-(blade) | (! hypersonic) | (*eeds) | ("the variation")
-.I 563 
-.W
-(transfer) | (! hypersonic) | (surfa*e) | ("without heat")
-.I 564 
-.W
-(values) | (! hypersonic) | (h*at) | ("without heat")
-.I 565 
-.W
-(values) | (! mach) | (*eeds) | ("the variation")
-.I 566 
-.W
-(wings) & (! mach) & (h*at) & ("without heat")
-.I 567 
-.W
-(transfer) | (! hypersonic) | (h*at) | ("without heat")
-.I 568 
-.W
-longitudinally & supersonic
-.I 569 
-.W
-(values) | (! hypersonic) | (*eeds) | ("without heat")
-.I 570 
-.W
-(blade) & (! hypersonic) & (m*od) & ("the variation")
-.I 571 
-.W
-(transfer) | (! region) | (h*at) | ("with calculations")
-.I 572 
-.W
-(transfer) | (! mach) | (h*at) | ("for the")
-.I 573 
-.W
-(wings) | (! region) | (surfa*e) | ("with calculations")
-.I 574 
-.W
-(transfer) | (! mach) | (*eeds) | ("for the")
-.I 575 
-.W
-"the variation"
-.I 576 
-.W
-(reynolds) | (! pressure) | (surfa*e) | ("the variation")
-.I 577 
-.W
-(values) | (! hypersonic) | (m*od) | ("creep through")
-.I 578 
-.W
-(values) | (! mach) | (surfa*e) | ("for the")
-.I 579 
-.W
-(reynolds) & (! boundary) & (h*at) & ("for the")
-.I 580 
-.W
-(wings) | (! boundary) | (the*ies) | ("with calculations")
-.I 581 
-.W
-(reynolds) | (! boundary) | (surfa*e) | ("for the")
-.I 582 
-.W
-(transfer) | (! pressure) | (the*ies) | ("for the")
-.I 583 
-.W
-(transfer) | (! pressure) | (h*at) | ("without heat")
-.I 584 
-.W
-(values) | (! mach) | (m*od) | ("for the")
-.I 585 
-.W
-(values) | (! hypersonic) | (surfa*e) | ("for the")
-.I 586 
-.W
-(blade) & (! mach) & (m*od) & ("for the")
-.I 587 
-.W
-(reynolds) | (! boundary) | (the*ies) | ("the variation")
-.I 588 
-.W
-(blade) | (! pressure) | (the*ies) | ("without heat")
-.I 589 
-.W
-(transfer) | (! boundary) | (m*od) | ("creep through")
-.I 590 
-.W
-(blade) | (! pressure) | (h*at) | ("creep through")
-.I 591 
-.W
-(reynolds) | (! hypersonic) | (*eeds) | ("without heat")
-.I 592 
-.W
-(wings) & (! mach) & (m*od) & ("the variation")
-.I 593 
-.W
-(wings) | (! mach) | (the*ies) | ("without heat")
-.I 594 
-.W
-(transfer) | (! pressure) | (surfa*e) | ("without heat")
-.I 595 
-.W
-(values) | (! region) | (*eeds) | ("for the")
-.I 596 
-.W
-(values) | (! pressure) | (the*ies) | ("for the")
-.I 597 
-.W
-(transfer) | (! region) | (surfa*e) | ("with calculations")
-.I 598 
-.W
-(wings) | (! region) | (*eeds) | ("the variation")
-.I 599 
-.W
-(values) & (! mach) & (m*od) & ("the variation")
-.I 600 
-.W
-(transfer) | (! hypersonic) | (surfa*e) | ("the variation")
-.I 601 
-.W
-(wings) & (! pressure) & (m*od) & ("the variation")
-.I 602 
-.W
-(wings) | (! pressure) | (surfa*e) | ("creep through")
-.I 603 
-.W
-(wings) & (! pressure) & (m*od) & ("for the")
-.I 604 
-.W
-(transfer) | (! mach) | (the*ies) | ("without heat")
-.I 605 
-.W
-(values) | (! pressure) | (the*ies) | ("with calculations")
-.I 606 
-.W
-(wings) & (! hypersonic) & (h*at) & ("for the")
-.I 607 
-.W
-(wings) | (! mach) | (surfa*e) | ("with calculations")
-.I 608 
-.W
-(values) & (! mach) & (h*at) & ("for the")
-.I 609 
-.W
-(blade) | (! hypersonic) | (surfa*e) | ("creep through")
-.I 610 
-.W
-(blade) | (! mach) | (m*od) | ("with calculations")
-.I 611 
-.W
-(reynolds) & (! pressure) & (m*od) & ("the variation")
-.I 612 
-.W
-(values) | (! mach) | (m*od) | ("creep through")
-.I 613 
-.W
-(values) | (! region) | (the*ies) | ("with calculations")
-.I 614 
-.W
-(blade) | (! mach) | (surfa*e) | ("creep through")
-.I 615 
-.W
-(wings) | (! hypersonic) | (surfa*e) | ("without heat")
-.I 616 
-.W
-(wings) | (! region) | (the*ies) | ("the variation")
-.I 617 
-.W
-(transfer) | (! region) | (surfa*e) | ("without heat")
-.I 618 
-.W
-(transfer) & (! region) & (h*at) & ("the variation")
-.I 619 
-.W
-(values) | (! pressure) | (m*od) | ("the variation")
-.I 620 
-.W
-(blade) | (! region) | (h*at) | ("creep through")
-.I 621 
-.W
-(blade) & (! mach) & (m*od) & ("the variation")
-.I 622 
-.W
-(transfer) & (! hypersonic) & (h*at) & ("without heat")
-.I 623 
-.W
-vibrations | liable
-.I 624 
-.W
-(reynolds) | (! hypersonic) | (h*at) | ("with calculations")
-.I 625 
-.W
-(wings) | (! mach) | (*eeds) | ("for the")
-.I 626 
-.W
-(wings) | (! boundary) | (the*ies) | ("creep through")
-.I 627 
-.W
-(reynolds) & (! hypersonic) & (h*at) & ("the variation")
-.I 628 
-.W
-(values) | (! mach) | (the*ies) | ("the variation")
-.I 629 
-.W
-(transfer) | (! hypersonic) | (h*at) | ("creep through")
-.I 630 
-.W
-(transfer) & (! hypersonic) & (h*at) & ("the variation")
-.I 631 
-.W
-(transfer) | (! region) | (m*od) | ("with calculations")
-.I 632 
-.W
-(values) | (! pressure) | (the*ies) | ("without heat")
-.I 633 
-.W
-(transfer) & (! region) & (m*od) & ("for the")
-.I 634 
-.W
-(wings) & (! region) & (h*at) & ("the variation")
-.I 635 
-.W
-(transfer) | (! boundary) | (h*at) | ("the variation")
-.I 636 
-.W
-(wings) | (! hypersonic) | (m*od) | ("the variation")
-.I 637 
-.W
-(blade) | (! region) | (m*od) | ("without heat")
-.I 638 
-.W
-(reynolds) | (! mach) | (*eeds) | ("without heat")
-.I 639 
-.W
-(wings) | (! boundary) | (h*at) | ("with calculations")
-.I 640 
-.W
-angle | aero
-.I 641 
-.W
-(blade) | (! region) | (m*od) | ("the variation")
-.I 642 
-.W
-(wings) & (! mach) & (h*at) & ("for the")
-.I 643 
-.W
-(reynolds) | (! boundary) | (surfa*e) | ("creep through")
-.I 644 
-.W
-(values) & (! boundary) & (m*od) & ("the variation")
-.I 645 
-.W
-(wings) | (! pressure) | (h*at) | ("without heat")
-.I 646 
-.W
-(blade) | (! mach) | (*eeds) | ("the variation")
-.I 647 
-.W
-(blade) | (! boundary) | (m*od) | ("creep through")
-.I 648 
-.W
-(wings) | (! mach) | (the*ies) | ("for the")
-.I 649 
-.W
-(wings) | (! hypersonic) | (h*at) | ("the variation")
-.I 650 
-.W
-(wings) | (! boundary) | (*eeds) | ("the variation")
-.I 651 
-.W
-(values) | (! mach) | (h*at) | ("with calculations")
-.I 652 
-.W
-(reynolds) | (! region) | (h*at) | ("with calculations")
-.I 653 
-.W
-(wings) | (! mach) | (m*od) | ("with calculations")
-.I 654 
-.W
-(transfer) | (! region) | (*eeds) | ("the variation")
-.I 655 
-.W
-(wings) & (! boundary) & (h*at) & ("for the")
-.I 656 
-.W
-(transfer) | (! hypersonic) | (*eeds) | ("the variation")
-.I 657 
-.W
-(wings) | (! hypersonic) | (*eeds) | ("for the")
-.I 658 
-.W
-(wings) | (! mach) | (m*od) | ("for the")
-.I 659 
-.W
-(reynolds) | (! hypersonic) | (h*at) | ("for the")
-.I 660 
-.W
-angle & aero
-.I 661 
-.W
-(transfer) | (! region) | (m*od) | ("creep through")
-.I 662 
-.W
-(wings) & (! pressure) & (h*at) & ("for the")
-.I 663 
-.W
-(wings) | (! boundary) | (the*ies) | ("for the")
-.I 664 
-.W
-(blade) | (! pressure) | (surfa*e) | ("for the")
-.I 665 
-.W
-tunnel | compressible
-.I 666 
-.W
-(values) | (! mach) | (m*od) | ("without heat")
-.I 667 
-.W
-wings
-.I 668 
-.W
-(values) | (! region) | (m*od) | ("the variation")
-.I 669 
-.W
-(reynolds) | (! region) | (h*at) | ("creep through")
-.I 670 
-.W
-(reynolds) & (! region) & (m*od) & ("for the")
-.I 671 
-.W
-(reynolds) | (! region) | (surfa*e) | ("with calculations")
-.I 672 
-.W
-(values) | (! boundary) | (m*od) | ("without heat")
-.I 673 
-.W
-(values) | (! region) | (the*ies) | ("for the")
-.I 674 
-.W
-(blade) | (! region) | (h*at) | ("without heat")
-.I 675 
-.W
-(values) | (! boundary) | (*eeds) | ("with calculations")
-.I 676 
-.W
-(transfer) | (! mach) | (*eeds) | ("with calculations")
-.I 677 
-.W
-(reynolds) | (! region) | (m*od) | ("creep through")
-.I 678 
-.W
-(transfer) | (! pressure) | (*eeds) | ("the variation")
-.I 679 
-.W
-! hypersonic
-.I 680 
-.W
-(wings) | (! pressure) | (surfa*e) | ("for the")
-.I 681 
-.W
-(wings) | (! pressure) | (h*at) | ("with calculations")
-.I 682 
-.W
-(blade) | (! boundary) | (h*at) | ("creep through")
-.I 683 
-.W
-(reynolds) | (! hypersonic) | (m*od) | ("for the")
-.I 684 
-.W
-(transfer) | (! boundary) | (surfa*e) | ("the variation")
-.I 685 
-.W
-(wings) | (! region) | (surfa*e) | ("creep through")
-.I 686 
-.W
-(wings) | (! hypersonic) | (h*at) | ("without heat")
-.I 687 
-.W
-(values) | (! mach) | (h*at) | ("the variation")
-.I 688 
-.W
-(reynolds) | (! mach) | (the*ies) | ("with calculations")
-.I 689 
-.W
-exact & considered
-.I 690 
-.W
-(wings) | (! mach) | (h*at) | ("for the")
-.I 691 
-.W
-(blade) | (! boundary) | (m*od) | ("with calculations")
-.I 692 
-.W
-(values) | (! boundary) | (surfa*e) | ("for the")
-.I 693 
-.W
-(reynolds) | (! region) | (*eeds) | ("the variation")
-.I 694 
-.W
-(blade) | (! pressure) | (the*ies) | ("creep through")
-.I 695 
-.W
-(values) | (! pressure) | (h*at) | ("the variation")
-.I 696 
-.W
-(reynolds) | (! pressure) | (m*od) | ("without heat")
-.I 697 
-.W
-(reynolds) & (! boundary) & (m*od) & ("the variation")
-.I 698 
-.W
-(blade) & (! boundary) & (h*at) & ("for the")
-.I 699 
-.W
-(wings) & (! region) & (m*od) & ("the variation")
-.I 700 
-.W
-(blade) | (! hypersonic) | (the*ies) | ("creep through")
-.I 701 
-.W
-(values) | (! region) | (the*ies) | ("creep through")
-.I 702 
-.W
-(values) | (! boundary) | (m*od) | ("the variation")
-.I 703 
-.W
-(wings) | (! boundary) | (surfa*e) | ("creep through")
-.I 704 
-.W
-(blade) | (! mach) | (m*od) | ("creep through")
-.I 705 
-.W
-(transfer) | (! hypersonic) | (m*od) | ("with calculations")
-.I 706 
-.W
-(transfer) | (! pressure) | (m*od) | ("creep through")
-.I 707 
-.W
-(wings) | (! mach) | (h*at) | ("creep through")
-.I 708 
-.W
-(wings) | (! region) | (*eeds) | ("without heat")
-.I 709 
-.W
-(values) | (! mach) | (surfa*e) | ("the variation")
-.I 710 
-.W
-(wings) | (! pressure) | (surfa*e) | ("with calculations")
-.I 711 
-.W
-(wings) | (! pressure) | (*eeds) | ("creep through")
-.I 712 
-.W
-(blade) | (! mach) | (h*at) | ("creep through")
-.I 713 
-.W
-(blade) | (! boundary) | (h*at) | ("without heat")
-.I 714 
-.W
-(reynolds) | (! pressure) | (the*ies) | ("with calculations")
-.I 715 
-.W
-transfer
-.I 716 
-.W
-(reynolds) | (! pressure) | (h*at) | ("with calculations")
-.I 717 
-.W
-(wings) | (! pressure) | (*eeds) | ("without heat")
-.I 718 
-.W
-(values) | (! hypersonic) | (h*at) | ("creep through")
-.I 719 
-.W
-(blade) | (! mach) | (surfa*e) | ("for the")
-.I 720 
-.W
-(reynolds) & (! boundary) & (m*od) & ("for the")
-.I 721 
-.W
-(wings) | (! mach) | (*eeds) | ("creep through")
-.I 722 
-.W
-(transfer) | (! hypersonic) | (m*od) | ("without heat")
-.I 723 
-.W
-(wings) | (! boundary) | (m*od) | ("for the")
-.I 724 
-.W
-(transfer) | (! boundary) | (h*at) | ("creep through")
-.I 725 
-.W
-(transfer) | (! region) | (surfa*e) | ("the variation")
-.I 726 
-.W
-(values) | (! pressure) | (h*at) | ("with calculations")
-.I 727 
-.W
-(values) | (! mach) | (h*at) | ("for the")
-.I 728 
-.W
-(transfer) | (! mach) | (the*ies) | ("with calculations")
-.I 729 
-.W
-(wings) | (! mach) | (m*od) | ("creep through")
-.I 730 
-.W
-m*od
-.I 731 
-.W
-(values) & (! mach) & (h*at) & ("the variation")
-.I 732 
-.W
-(wings) | (! boundary) | (*eeds) | ("without heat")
-.I 733 
-.W
-(reynolds) | (! hypersonic) | (*eeds) | ("creep through")
-.I 734 
-.W
-(transfer) | (! mach) | (*eeds) | ("without heat")
-.I 735 
-.W
-(wings) | (! pressure) | (the*ies) | ("the variation")
-.I 736 
-.W
-values
-.I 737 
-.W
-(reynolds) | (! boundary) | (h*at) | ("with calculations")
-.I 738 
-.W
-(transfer) | (! region) | (m*od) | ("without heat")
-.I 739 
-.W
-(transfer) | (! hypersonic) | (m*od) | ("the variation")
-.I 740 
-.W
-(blade) | (! region) | (the*ies) | ("for the")
-.I 741 
-.W
-(blade) | (! pressure) | (surfa*e) | ("with calculations")
-.I 742 
-.W
-(blade) | (! mach) | (the*ies) | ("the variation")
-.I 743 
-.W
-(transfer) | (! pressure) | (h*at) | ("for the")
-.I 744 
-.W
-(transfer) | (! mach) | (*eeds) | ("the variation")
-.I 745 
-.W
-(reynolds) & (! hypersonic) & (m*od) & ("for the")
-.I 746 
-.W
-(values) | (! hypersonic) | (the*ies) | ("with calculations")
-.I 747 
-.W
-(transfer) | (! pressure) | (h*at) | ("creep through")
-.I 748 
-.W
-(reynolds) | (! region) | (*eeds) | ("for the")
-.I 749 
-.W
-(transfer) | (! hypersonic) | (surfa*e) | ("with calculations")
-.I 750 
-.W
-(transfer) & (! hypersonic) & (h*at) & ("for the")
-.I 751 
-.W
-! mach
-.I 752 
-.W
-(values) | (! boundary) | (*eeds) | ("creep through")
-.I 753 
-.W
-(values) | (! boundary) | (surfa*e) | ("with calculations")
-.I 754 
-.W
-(values) | (! region) | (*eeds) | ("with calculations")
-.I 755 
-.W
-(transfer) & (! region) & (h*at) & ("for the")
-.I 756 
-.W
-(blade) | (! pressure) | (m*od) | ("with calculations")
-.I 757 
-.W
-(values) | (! hypersonic) | (surfa*e) | ("without heat")
-.I 758 
-.W
-(wings) | (! hypersonic) | (surfa*e) | ("the variation")
-.I 759 
-.W
-(wings) | (! region) | (the*ies) | ("without heat")
-.I 760 
-.W
-(wings) | (! region) | (*eeds) | ("creep through")
-.I 761 
-.W
-(blade) | (! boundary) | (*eeds) | ("with calculations")
-.I 762 
-.W
-(values) | (! region) | (*eeds) | ("creep through")
-.I 763 
-.W
-(values) | (! boundary) | (surfa*e) | ("without heat")
-.I 764 
-.W
-(wings) & (! region) & (h*at) & ("without heat")
-.I 765 
-.W
-(transfer) | (! hypersonic) | (h*at) | ("for the")
-.I 766 
-.W
-(blade) | (! region) | (the*ies) | ("with calculations")
+account
