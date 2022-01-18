@@ -44,12 +44,20 @@ public class InvertedIndexTest {
     public static Supplier<String[]> randomPhraseFromDictionaryOfMovieInvertedIndex;
     private static String END_OF_WORD_PERMUTERM_USED_IN_INVERTED_INDEX;
     private static Corpus sampleCorpus;
+    private static Corpus movieCorpus;
     private static InvertedIndex invertedIndexForTests;
     private static Map<String, SkipList<Posting>> expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings;
     private static Map<String, String> expectedPermutermIndexFromFileAsMapOfStringAndCorrespondingStringFromDictionary;
     private static Map<String, SkipList<Posting>> expectedMapOfStringWithWildcardAndCorrespondingListOfPostingsFromFile;
 
     static {
+
+        try {
+            movieCorpus = Movie.createCorpus();
+        } catch (NoMoreDocIdsAvailable | URISyntaxException e) {
+            fail(e);
+        }
+
         try {
             Field endOfWordPermutermField = InvertedIndex.class.getDeclaredField("END_OF_WORD");
             endOfWordPermutermField.setAccessible(true);
@@ -120,11 +128,10 @@ public class InvertedIndexTest {
         System.setOut(realStdOut);
     }
 
-// Creation of a new instance via reflection (by benchmark framework) is slow
-//    @Benchmark(warmUpIterations = 1, iterations = 3, tearDownIterations = 1, commentToReport = "Inverted index for the Movie corpus.")
-//    static void createInvertedIndexForMovieCorpus() {
-//        new InvertedIndex(movieCorpus);
-//    }
+    @Benchmark(warmUpIterations = 1, iterations = 3, tearDownIterations = 1, commentToReport = "Inverted index for the Movie corpus.")
+    static void createInvertedIndexForMovieCorpus() {
+        new InvertedIndex(movieCorpus);
+    }
 
     @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10)
     static void getDictionaryOfInvertedIndexForMovieCorpus() {
