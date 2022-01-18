@@ -16,12 +16,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import skiplist.SkipList;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -48,6 +50,10 @@ class TestQueriesWithQueryStringParsing {
 
     final static Language USED_LANGUAGE = Language.ENGLISH;
 
+    /**
+     * The folder name where to save results.
+     */
+    static final String FOLDER_NAME_TO_SAVE_RESULTS = "system_evaluation" + File.separator + "test_queries";
     // documents randomly chosen for tests
     static Document doc1, doc2;
     static InformationRetrievalSystem irs;
@@ -55,6 +61,10 @@ class TestQueriesWithQueryStringParsing {
     static Supplier<String> wordsContainedInFirstButNotInSecondDocumentSupplier;
     static Supplier<String> wordsContainedInSecondButNotInFirstDocumentSupplier;
     static Supplier<String> wordsContainedNeitherInFirstNorInSecondDocumentSupplier;
+    /**
+     * The {@link java.io.BufferedWriter} to print results to file.
+     */
+    private static Writer WRITER_TO_FILE;
 
     static {
         try {
@@ -111,6 +121,28 @@ class TestQueriesWithQueryStringParsing {
         }
     }
 
+    static void createOutputFileOfResults() {
+        try {
+            File directory = new File(FOLDER_NAME_TO_SAVE_RESULTS);
+            if (!directory.exists()) {
+                if (!directory.mkdirs()) {
+                    throw new IOException("Output file not created.");
+                }
+            }
+            var currentDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
+                    .withZone(ZoneId.systemDefault())
+                    .format(Instant.now());
+            File f = new File(FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_withQueryParsing" + ".txt");
+            if (!f.createNewFile()) {
+                throw new IOException("Output file not created.");
+            }
+            WRITER_TO_FILE = new BufferedWriter(new FileWriter(f));
+        } catch (IOException e) {
+            WRITER_TO_FILE = new BufferedWriter(new CharArrayWriter());
+            e.printStackTrace();
+        }
+    }
+
     /**
      * @param document A {@link Document}
      * @return the {@link List} of words (normalized but not stemmed) from
@@ -162,54 +194,58 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @BeforeAll
-    static void noticeIfQueryResultsWillBePrinted() {
-        TestQueries.noticeIfQueryResultsWillBePrinted();
+    static void noticeIfQueryResultsWillBePrinted() throws IOException {
+        createOutputFileOfResults();
+        TestQueries.noticeIfQueryResultsWillBePrinted(WRITER_TO_FILE);
     }
 
     @AfterAll
-    static void printEndOfTests() {
-        TestQueries.printEndOfTests();
+    static void printEndOfTests() throws IOException {
+        TestQueries.printEndOfTests(WRITER_TO_FILE);
     }
 
     /**
      * Method to print and return query results.
-     * See {@link TestQueries#evaluatePrintAndGetResultsOf(BooleanExpression)}.
+     * See {@link TestQueries#evaluatePrintAndGetResultsOf(BooleanExpression, Writer)}.
      *
      * @param inputUnparsedQueryString The input (un-parsed) query string.
      * @return the {@link List} of results.
      */
-    static List<Document> evaluatePrintAndGetResultsOf(String inputUnparsedQueryString) {
-        System.out.println("Input query string: " + inputUnparsedQueryString);
+    static List<Document> evaluatePrintAndGetResultsOf(String inputUnparsedQueryString) throws IOException {
+        String out = "Input query string: " + inputUnparsedQueryString;
+        WRITER_TO_FILE.write(out + "\n");
+        WRITER_TO_FILE.flush();
+        System.out.println(out);
         BooleanExpression be = irs.createNewBooleanExpression().parseQuery(inputUnparsedQueryString);
-        return TestQueries.evaluatePrintAndGetResultsOf(be);
+        return TestQueries.evaluatePrintAndGetResultsOf(be, WRITER_TO_FILE);
     }
 
     @BeforeEach
-    void printSpaceBeforeQuery() {
-        TestQueries.printSpaceBeforeQuery_();
+    void printSpaceBeforeQuery() throws IOException {
+        TestQueries.printSpaceBeforeQuery_(WRITER_TO_FILE);
     }
 
     @Test
-    void illustrativeExample() {
+    void illustrativeExample() throws IOException {
         String queryString = "space & jam";
 //        List<Document> results = irs.retrieve(queryString);   // can be used to obtain results directly
         evaluatePrintAndGetResultsOf(queryString);
     }
 
     @Test
-    void illustrativeExample2() {
+    void illustrativeExample2() throws IOException {
         String queryString = "space & !jam";
         evaluatePrintAndGetResultsOf(queryString);
     }
 
     @Test
-    void singleWordQuery() {
+    void singleWordQuery() throws IOException {
         assertTrue(evaluatePrintAndGetResultsOf(wordsContainedInFirstButNotInSecondDocumentSupplier.get())
                 .contains(doc1));
     }
 
     @Test
-    void AND_query_containedInBoth() {
+    void AND_query_containedInBoth() throws IOException {
         String queryString = wordsContainedBothInFirstAndSecondDocumentSupplier.get()
                 + "&" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
         var results = evaluatePrintAndGetResultsOf(queryString);
@@ -218,7 +254,7 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @Test
-    void AND_query2containedIn1stButNotIn2nd() {
+    void AND_query2containedIn1stButNotIn2nd() throws IOException {
         String queryString = wordsContainedInFirstButNotInSecondDocumentSupplier.get()
                 + "&" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
         var results = evaluatePrintAndGetResultsOf(queryString);
@@ -227,7 +263,7 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @Test
-    void AND_query_containedIn2ndButNotIn1st() {
+    void AND_query_containedIn2ndButNotIn1st() throws IOException {
         String queryString = wordsContainedInSecondButNotInFirstDocumentSupplier.get()
                 + "&" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
         var results = evaluatePrintAndGetResultsOf(queryString);
@@ -236,7 +272,7 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @Test
-    void AND_query_containedNeitherIn1stNorIn2nd() {
+    void AND_query_containedNeitherIn1stNorIn2nd() throws IOException {
         String queryString = wordsContainedNeitherInFirstNorInSecondDocumentSupplier.get()
                 + "&" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
         var results = evaluatePrintAndGetResultsOf(queryString);
@@ -245,7 +281,7 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @Test
-    void AND_query2_containedNeitherIn1stNorIn2nd() {
+    void AND_query2_containedNeitherIn1stNorIn2nd() throws IOException {
         String queryString = wordsContainedInFirstButNotInSecondDocumentSupplier.get()
                 + "&" + wordsContainedInSecondButNotInFirstDocumentSupplier.get();
         var results = evaluatePrintAndGetResultsOf(queryString);
@@ -254,7 +290,7 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @Test
-    void OR_query_containedInBoth() {
+    void OR_query_containedInBoth() throws IOException {
         String queryString = wordsContainedBothInFirstAndSecondDocumentSupplier.get()
                 + "|" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
         var results = evaluatePrintAndGetResultsOf(queryString);
@@ -263,7 +299,7 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @Test
-    void OR_query2containedIn1stButNotIn2nd() {
+    void OR_query2containedIn1stButNotIn2nd() throws IOException {
         String queryString = wordsContainedInFirstButNotInSecondDocumentSupplier.get()
                 + "|" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
         var results = evaluatePrintAndGetResultsOf(queryString);
@@ -272,7 +308,7 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @Test
-    void OR_query_containedIn2ndButNotIn1st() {
+    void OR_query_containedIn2ndButNotIn1st() throws IOException {
         String queryString = wordsContainedInSecondButNotInFirstDocumentSupplier.get()
                 + "|" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
         var results = evaluatePrintAndGetResultsOf(queryString);
@@ -281,7 +317,7 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @Test
-    void OR_query_containedNeitherIn1stNorIn2nd() {
+    void OR_query_containedNeitherIn1stNorIn2nd() throws IOException {
         String queryString = wordsContainedNeitherInFirstNorInSecondDocumentSupplier.get()
                 + "|" + wordsContainedBothInFirstAndSecondDocumentSupplier.get();
         var results = evaluatePrintAndGetResultsOf(queryString);
@@ -290,7 +326,7 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @Test
-    void OR_query2_containedNeitherIn1stNorIn2nd() {
+    void OR_query2_containedNeitherIn1stNorIn2nd() throws IOException {
         String queryString = wordsContainedInFirstButNotInSecondDocumentSupplier.get()
                 + "|" + wordsContainedInSecondButNotInFirstDocumentSupplier.get();
         var results = evaluatePrintAndGetResultsOf(queryString);
@@ -299,7 +335,7 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @Test
-    void NOT_query() {
+    void NOT_query() throws IOException {
         String queryString = "!" + wordsContainedInFirstButNotInSecondDocumentSupplier.get();
         var results = evaluatePrintAndGetResultsOf(queryString);
         assertFalse(results.contains(doc1));
@@ -307,7 +343,7 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @Test
-    void NOT_query2() {
+    void NOT_query2() throws IOException {
         String queryString = "!" + wordsContainedInSecondButNotInFirstDocumentSupplier.get();
         var results = evaluatePrintAndGetResultsOf(queryString);
         assertTrue(results.contains(doc1));
@@ -315,7 +351,7 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @Test
-    void phraseQuery() {
+    void phraseQuery() throws IOException {
         String queryString = "\"Space jam\"";
         var results = evaluatePrintAndGetResultsOf(queryString);
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
@@ -323,7 +359,7 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @Test
-    void wildcardQuery() {
+    void wildcardQuery() throws IOException {
         String queryString = "Space *am";
         var results = evaluatePrintAndGetResultsOf(queryString);
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
@@ -331,7 +367,7 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @Test
-    void wildcardQuery2() {
+    void wildcardQuery2() throws IOException {
         String queryString = "Sp*ce *am";
         var results = evaluatePrintAndGetResultsOf(queryString);
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
@@ -339,7 +375,7 @@ class TestQueriesWithQueryStringParsing {
     }
 
     @Test
-    void spellingCorrection() {
+    void spellingCorrection() throws IOException {
         String queryString = "Spade jam";
         var be = irs.createNewBooleanExpression()
                 .parseQuery(queryString).spellingCorrection(false, true);
@@ -351,14 +387,17 @@ class TestQueriesWithQueryStringParsing {
 
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
 
-        System.out.println("Input query string: " + queryString);
-        var results = TestQueries.evaluatePrintAndGetResultsOf(be);
+        String out = "Input query string: " + queryString;
+        WRITER_TO_FILE.write(out + "\n");
+        WRITER_TO_FILE.flush();
+        System.out.println(out);
+        var results = TestQueries.evaluatePrintAndGetResultsOf(be, WRITER_TO_FILE);
 
         assertTrue(results.contains(doc1));
     }
 
     @Test
-    void phoneticCorrection() {
+    void phoneticCorrection() throws IOException {
         String queryString = "Space jem";
         var be = irs.createNewBooleanExpression()
                 .parseQuery(queryString).spellingCorrection(true, true);
@@ -369,8 +408,11 @@ class TestQueriesWithQueryStringParsing {
 
         assert doc1.getTitle() != null && doc1.getTitle().equals("Space Jam");
 
-        System.out.println("Input query string: " + queryString);
-        var results = TestQueries.evaluatePrintAndGetResultsOf(be);
+        String out = "Input query string: " + queryString;
+        WRITER_TO_FILE.write(out + "\n");
+        WRITER_TO_FILE.flush();
+        System.out.println(out);
+        var results = TestQueries.evaluatePrintAndGetResultsOf(be, WRITER_TO_FILE);
 
         assertTrue(results.contains(doc1));
     }
