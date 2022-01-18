@@ -39,6 +39,11 @@ public class XYLineChart extends Application {
      */
     private final static int Y_SIZE_PX = 500;
     /**
+     * The CSS filename used for plots (from resource folder).
+     */
+    @NotNull
+    private static final String CSS_FILE_NAME = "plots.css";
+    /**
      * The current instance of JavaFX.
      */
     @Nullable   // before start
@@ -159,11 +164,13 @@ public class XYLineChart extends Application {
         final LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
         lineChart.setTitle(title);
         lineChart.setLegendVisible(showLegend);
+        lineChart.getStyleClass().add("thick-chart");
 
         Scene scene = new Scene(lineChart, X_SIZE_PX, Y_SIZE_PX);
         for (var aSeries : seriesList) {
             lineChart.getData().add(aSeries);
         }
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource(CSS_FILE_NAME)).toExternalForm());
 
         Platform.runLater(() -> {   // GUI things must be executed on the thread of JavaFX
             currentStage.setScene(scene);
