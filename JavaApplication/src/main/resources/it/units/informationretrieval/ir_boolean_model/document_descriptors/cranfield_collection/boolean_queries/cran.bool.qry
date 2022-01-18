@@ -1,2010 +1,2247 @@
 .I 1 
 .W
-! body
+(supersonic) & (! compared) & (fl*w) & ("explained by")
 .I 2 
 .W
-(concept & transfer) | (giese | lab) | (! body) | ("moderate cooling")
+(supersonic) | (! flow) | (pressu*e) | ("present method")
 .I 3 
 .W
-(concept & transfer) | (pulses | bodies) | (! heat) | ("moderate cooling")
+(temperature) | (! velocity) | (an*le) | ("of deformation")
 .I 4 
 .W
-(concept & transfer) | (compressive | creep) | (! body) | ("moderate cooling")
+(vortex) | (! velocity) | (fl*w) | ("of deformation")
 .I 5 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! body) | ("decrease in")
+(supersonic) | (! compared) | (an*le) | ("are presented")
 .I 6 
 .W
-(tunnel & estimation) | (sources | mixing) | (! flow) | ("a supersonic")
+(supersonic) | (! layer) | (an*le) | ("of deformation")
 .I 7 
 .W
-(function & dynamically) | (compressive | creep) | (! flow) | ("decrease in")
+(boundary) | (! layer) | (f*ow) | ("of deformation")
 .I 8 
 .W
-(pulses & bodies) | (pulses | bodies) | (! heat) | ("moderate cooling")
+(vortex) | (! compared) | (an*le) | ("present method")
 .I 9 
 .W
-(relations & peaks) | (giese | lab) | (! heat) | ("layer increases")
+(boundary) | (! leading) | (an*le) | ("the laminar")
 .I 10 
 .W
-(tunnel & estimation) | (compressive | creep) | (! flight) | ("moderate cooling")
+(temperature) | (! leading) | (fl*w) | ("of deformation")
 .I 11 
 .W
-(pulses & bodies) | (compressive | creep) | (! heat) | ("layer increases")
+(supersonic) & (! velocity) & (f*ow) & ("explained by")
 .I 12 
 .W
-(relations & peaks) | (tunnel | estimation) | (! flow) | ("moderate cooling")
+(temperature) | (! leading) | (b*ary) | ("explained by")
 .I 13 
 .W
-(function & dynamically) | (sources | mixing) | (! heat) | ("decrease in")
+(supersonic) | (! leading) | (fl*w) | ("of deformation")
 .I 14 
 .W
-(function & dynamically) | (tunnel | estimation) | (! flow) | ("a supersonic")
+(vortex) | (! flow) | (an*le) | ("present method")
 .I 15 
 .W
-(function & dynamically) | (pulses | bodies) | (! heat) | ("same range")
+(temperature) | (! compared) | (f*ow) | ("explained by")
 .I 16 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! heat) | ("moderate cooling")
+(supersonic) | (! leading) | (f*ow) | ("of deformation")
 .I 17 
 .W
-(function & dynamically) | (compressive | creep) | (! flight) | ("same range")
+(vortex) | (! leading) | (pressu*e) | ("explained by")
 .I 18 
 .W
-(concept & transfer) | (compressive | creep) | (! mach) | ("layer increases")
+(boundary) | (! compared) | (an*le) | ("of deformation")
 .I 19 
 .W
-(tunnel & estimation) | (compressive | creep) | (! heat) | ("moderate cooling")
+(boundary) | (! leading) | (pressu*e) | ("of deformation")
 .I 20 
 .W
-(relations & peaks) | (giese | lab) | (! flight) | ("layer increases")
+(wing) & (! layer) & (fl*w) & ("are presented")
 .I 21 
 .W
-(pulses & bodies) | (compressive | creep) | (! heat) | ("a supersonic")
+(boundary) | (! flow) | (fl*w) | ("are presented")
 .I 22 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! heat) | ("layer increases")
+(boundary) & (! leading) & (fl*w) & ("explained by")
 .I 23 
 .W
-(tunnel & estimation) | (sources | mixing) | (! body) | ("layer increases")
+(vortex) | (! layer) | (b*ary) | ("of deformation")
 .I 24 
 .W
-(relations & peaks) | (giese | lab) | (! heat) | ("decrease in")
+(temperature) | (! layer) | (f*ow) | ("the laminar")
 .I 25 
 .W
-(pulses & bodies) | (pulses | bodies) | (! heat) | ("a supersonic")
+(boundary) | (! compared) | (an*le) | ("explained by")
 .I 26 
 .W
-(concept & transfer) | (tunnel | estimation) | (! body) | ("moderate cooling")
+(supersonic) | (! velocity) | (fl*w) | ("are presented")
 .I 27 
 .W
-function | dynamically
+(wing) | (! velocity) | (fl*w) | ("present method")
 .I 28 
 .W
-(concept & transfer) | (pulses | bodies) | (! flow) | ("same range")
+(temperature) | (! layer) | (fl*w) | ("the laminar")
 .I 29 
 .W
-(concept & transfer) | (sources | mixing) | (! body) | ("moderate cooling")
+(vortex) | (! flow) | (b*ary) | ("are presented")
 .I 30 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! mach) | ("a supersonic")
+(vortex) | (! compared) | (b*ary) | ("are presented")
 .I 31 
 .W
-(concept & transfer) | (pulses | bodies) | (! body) | ("a supersonic")
+(boundary) | (! flow) | (fl*w) | ("explained by")
 .I 32 
 .W
-(relations & peaks) | (compressive | creep) | (! flow) | ("moderate cooling")
+(wing) | (! layer) | (f*ow) | ("are presented")
 .I 33 
 .W
-(tunnel & estimation) | (compressive | creep) | (! mach) | ("moderate cooling")
+(wing) | (! leading) | (f*ow) | ("are presented")
 .I 34 
 .W
-(relations & peaks) | (compressive | creep) | (! body) | ("moderate cooling")
+(temperature) | (! compared) | (fl*w) | ("present method")
 .I 35 
 .W
-(pulses & bodies) | (compressive | creep) | (! flow) | ("decrease in")
+(supersonic) | (! layer) | (pressu*e) | ("explained by")
 .I 36 
 .W
-(tunnel & estimation) | (sources | mixing) | (! heat) | ("same range")
+(temperature) | (! leading) | (an*le) | ("present method")
 .I 37 
 .W
-(pulses & bodies) | (pulses | bodies) | (! flow) | ("a supersonic")
+angle | constant
 .I 38 
 .W
-(relations & peaks) | (tunnel | estimation) | (! heat) | ("decrease in")
+(wing) | (! leading) | (f*ow) | ("of deformation")
 .I 39 
 .W
-(relations & peaks) | (pulses | bodies) | (! flight) | ("same range")
+(vortex) | (! flow) | (pressu*e) | ("present method")
 .I 40 
 .W
-(concept & transfer) | (compressive | creep) | (! heat) | ("a supersonic")
+(wing) | (! flow) | (an*le) | ("are presented")
 .I 41 
 .W
-(concept & transfer) | (pulses | bodies) | (! body) | ("decrease in")
+wing
 .I 42 
 .W
-(relations & peaks) | (compressive | creep) | (! flight) | ("a supersonic")
+(temperature) | (! leading) | (f*ow) | ("of deformation")
 .I 43 
 .W
-(relations & peaks) | (tunnel | estimation) | (! mach) | ("layer increases")
+(temperature) | (! velocity) | (b*ary) | ("of deformation")
 .I 44 
 .W
-(pulses & bodies) | (pulses | bodies) | (! mach) | ("moderate cooling")
+(vortex) | (! layer) | (an*le) | ("are presented")
 .I 45 
 .W
-"flow an"
+(boundary) | (! compared) | (b*ary) | ("of deformation")
 .I 46 
 .W
-(concept & transfer) | (compressive | creep) | (! mach) | ("same range")
+(boundary) | (! velocity) | (pressu*e) | ("of deformation")
 .I 47 
 .W
-(pulses & bodies) | (sources | mixing) | (! flight) | ("moderate cooling")
+(wing) | (! leading) | (f*ow) | ("explained by")
 .I 48 
 .W
-(function & dynamically) | (giese | lab) | (! heat) | ("a supersonic")
+(vortex) | (! velocity) | (pressu*e) | ("present method")
 .I 49 
 .W
-(function & dynamically) | (giese | lab) | (! mach) | ("decrease in")
+(wing) | (! velocity) | (fl*w) | ("are presented")
 .I 50 
 .W
-(concept & transfer) | (compressive | creep) | (! body) | ("same range")
+(temperature) | (! leading) | (b*ary) | ("present method")
 .I 51 
 .W
-(function & dynamically) | (sources | mixing) | (! heat) | ("a supersonic")
+(vortex) | (! layer) | (b*ary) | ("are presented")
 .I 52 
 .W
-(function & dynamically) | (tunnel | estimation) | (! mach) | ("layer increases")
+(wing) | (! velocity) | (f*ow) | ("present method")
 .I 53 
 .W
-(function & dynamically) | (pulses | bodies) | (! flow) | ("layer increases")
+(wing) | (! leading) | (b*ary) | ("explained by")
 .I 54 
 .W
-(tunnel & estimation) | (giese | lab) | (! heat) | ("a supersonic")
+(temperature) | (! layer) | (fl*w) | ("present method")
 .I 55 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! mach) | ("moderate cooling")
+(wing) | (! flow) | (pressu*e) | ("are presented")
 .I 56 
 .W
-(pulses & bodies) | (compressive | creep) | (! body) | ("decrease in")
+(vortex) & (! velocity) & (f*ow) & ("are presented")
 .I 57 
 .W
-(function & dynamically) | (giese | lab) | (! flight) | ("a supersonic")
+(temperature) & (! velocity) & (fl*w) & ("are presented")
 .I 58 
 .W
-(concept & transfer) | (pulses | bodies) | (! mach) | ("moderate cooling")
+(supersonic) | (! velocity) | (f*ow) | ("of deformation")
 .I 59 
 .W
-(pulses & bodies) | (pulses | bodies) | (! flight) | ("decrease in")
+(boundary) | (! velocity) | (fl*w) | ("present method")
 .I 60 
 .W
-(pulses & bodies) | (compressive | creep) | (! flight) | ("layer increases")
+(supersonic) | (! velocity) | (fl*w) | ("of deformation")
 .I 61 
 .W
-(tunnel & estimation) | (sources | mixing) | (! flight) | ("layer increases")
+(wing) | (! flow) | (f*ow) | ("explained by")
 .I 62 
 .W
-(pulses & bodies) | (sources | mixing) | (! body) | ("decrease in")
+(temperature) | (! layer) | (an*le) | ("explained by")
 .I 63 
 .W
-(function & dynamically) | (pulses | bodies) | (! flight) | ("a supersonic")
+(temperature) | (! velocity) | (fl*w) | ("are presented")
 .I 64 
 .W
-(relations & peaks) | (compressive | creep) | (! flow) | ("same range")
+(temperature) | (! layer) | (an*le) | ("are presented")
 .I 65 
 .W
-(function & dynamically) | (giese | lab) | (! heat) | ("decrease in")
+jet | fluid
 .I 66 
 .W
-(relations & peaks) | (compressive | creep) | (! flow) | ("layer increases")
+(wing) | (! velocity) | (b*ary) | ("of deformation")
 .I 67 
 .W
-(function & dynamically) | (tunnel | estimation) | (! flow) | ("same range")
+(vortex) | (! velocity) | (f*ow) | ("the laminar")
 .I 68 
 .W
-(concept & transfer) | (sources | mixing) | (! flight) | ("a supersonic")
+(vortex) | (! compared) | (an*le) | ("are presented")
 .I 69 
 .W
-(relations & peaks) | (sources | mixing) | (! flight) | ("layer increases")
+(supersonic) | (! layer) | (fl*w) | ("the laminar")
 .I 70 
 .W
-(pulses & bodies) | (pulses | bodies) | (! heat) | ("same range")
+(wing) | (! velocity) | (fl*w) | ("the laminar")
 .I 71 
 .W
-(function & dynamically) | (compressive | creep) | (! mach) | ("decrease in")
+(temperature) | (! flow) | (pressu*e) | ("are presented")
 .I 72 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! flow) | ("decrease in")
+(boundary) | (! leading) | (pressu*e) | ("the laminar")
 .I 73 
 .W
-(relations & peaks) | (giese | lab) | (! mach) | ("decrease in")
+(wing) & (! velocity) & (fl*w) & ("are presented")
 .I 74 
 .W
-(tunnel & estimation) | (compressive | creep) | (! flight) | ("a supersonic")
+(supersonic) | (! velocity) | (f*ow) | ("the laminar")
 .I 75 
 .W
-(function & dynamically) | (sources | mixing) | (! flow) | ("a supersonic")
+(supersonic) | (! compared) | (pressu*e) | ("explained by")
 .I 76 
 .W
-(relations & peaks) | (sources | mixing) | (! heat) | ("decrease in")
+(vortex) | (! layer) | (an*le) | ("of deformation")
 .I 77 
 .W
-(concept & transfer) | (giese | lab) | (! body) | ("decrease in")
+(vortex) | (! layer) | (f*ow) | ("explained by")
 .I 78 
 .W
-(relations & peaks) | (pulses | bodies) | (! heat) | ("layer increases")
+(wing) | (! layer) | (pressu*e) | ("of deformation")
 .I 79 
 .W
-(function & dynamically) | (giese | lab) | (! mach) | ("same range")
+(boundary) | (! velocity) | (f*ow) | ("present method")
 .I 80 
 .W
-(relations & peaks) | (giese | lab) | (! heat) | ("a supersonic")
+(vortex) | (! velocity) | (b*ary) | ("explained by")
 .I 81 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! flow) | ("same range")
+(wing) | (! leading) | (pressu*e) | ("the laminar")
 .I 82 
 .W
-(concept & transfer) | (giese | lab) | (! flight) | ("moderate cooling")
+(wing) | (! velocity) | (pressu*e) | ("present method")
 .I 83 
 .W
-(relations & peaks) | (sources | mixing) | (! body) | ("layer increases")
+(temperature) | (! layer) | (f*ow) | ("present method")
 .I 84 
 .W
-(function & dynamically) | (tunnel | estimation) | (! mach) | ("a supersonic")
+(vortex) | (! compared) | (an*le) | ("the laminar")
 .I 85 
 .W
-(function & dynamically) | (giese | lab) | (! body) | ("same range")
+(supersonic) | (! velocity) | (pressu*e) | ("of deformation")
 .I 86 
 .W
-(function & dynamically) | (tunnel | estimation) | (! flight) | ("a supersonic")
+(vortex) | (! compared) | (b*ary) | ("the laminar")
 .I 87 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! flow) | ("a supersonic")
+(wing) | (! velocity) | (an*le) | ("explained by")
 .I 88 
 .W
-(relations & peaks) | (compressive | creep) | (! flight) | ("layer increases")
+(vortex) | (! flow) | (an*le) | ("are presented")
 .I 89 
 .W
-(concept & transfer) & (pulses | bodies) & (! flight) & ("layer increases")
+(supersonic) | (! layer) | (b*ary) | ("are presented")
 .I 90 
 .W
-(tunnel & estimation) | (compressive | creep) | (! heat) | ("a supersonic")
+(boundary) & (! layer) & (f*ow) & ("present method")
 .I 91 
 .W
-(pulses & bodies) | (giese | lab) | (! heat) | ("moderate cooling")
+(temperature) & (! layer) & (fl*w) & ("the laminar")
 .I 92 
 .W
-(pulses & bodies) | (giese | lab) | (! flight) | ("same range")
+(wing) | (! compared) | (fl*w) | ("the laminar")
 .I 93 
 .W
-(concept & transfer) | (sources | mixing) | (! flight) | ("same range")
+(boundary) | (! flow) | (an*le) | ("of deformation")
 .I 94 
 .W
-"moderate cooling"
+(boundary) | (! velocity) | (pressu*e) | ("the laminar")
 .I 95 
 .W
-(function & dynamically) & (compressive | creep) & (! heat) & ("a supersonic")
+(temperature) | (! flow) | (an*le) | ("the laminar")
 .I 96 
 .W
-(concept & transfer) | (pulses | bodies) | (! body) | ("layer increases")
+(temperature) | (! layer) | (pressu*e) | ("are presented")
 .I 97 
 .W
-(relations & peaks) | (compressive | creep) | (! flow) | ("a supersonic")
+(supersonic) | (! layer) | (an*le) | ("explained by")
 .I 98 
 .W
-(concept & transfer) | (giese | lab) | (! flow) | ("layer increases")
+(temperature) | (! leading) | (f*ow) | ("explained by")
 .I 99 
 .W
-(relations & peaks) | (compressive | creep) | (! heat) | ("same range")
+(supersonic) & (! compared) & (fl*w) & ("are presented")
 .I 100 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! flow) | ("decrease in")
+(boundary) | (! velocity) | (f*ow) | ("of deformation")
 .I 101 
 .W
-(pulses & bodies) | (sources | mixing) | (! heat) | ("layer increases")
+(boundary) | (! leading) | (pressu*e) | ("are presented")
 .I 102 
 .W
-(concept & transfer) | (sources | mixing) | (! body) | ("layer increases")
+(vortex) & (! layer) & (fl*w) & ("are presented")
 .I 103 
 .W
-(concept & transfer) | (sources | mixing) | (! heat) | ("layer increases")
+(temperature) | (! flow) | (pressu*e) | ("present method")
 .I 104 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! body) | ("layer increases")
+(wing) | (! flow) | (b*ary) | ("present method")
 .I 105 
 .W
-(concept & transfer) | (tunnel | estimation) | (! flight) | ("moderate cooling")
+(boundary) | (! leading) | (b*ary) | ("the laminar")
 .I 106 
 .W
-(concept & transfer) | (sources | mixing) | (! heat) | ("a supersonic")
+(wing) & (! compared) & (fl*w) & ("are presented")
 .I 107 
 .W
-(concept & transfer) | (giese | lab) | (! flow) | ("decrease in")
+(vortex) | (! layer) | (pressu*e) | ("of deformation")
 .I 108 
 .W
-(function & dynamically) | (tunnel | estimation) | (! body) | ("same range")
+(temperature) | (! flow) | (pressu*e) | ("of deformation")
 .I 109 
 .W
-(pulses & bodies) | (compressive | creep) | (! mach) | ("decrease in")
+angle & constant
 .I 110 
 .W
-(function & dynamically) | (sources | mixing) | (! flight) | ("layer increases")
+(vortex) | (! velocity) | (fl*w) | ("explained by")
 .I 111 
 .W
-heating & transformation
+(vortex) | (! layer) | (f*ow) | ("present method")
 .I 112 
 .W
-(pulses & bodies) | (giese | lab) | (! flight) | ("moderate cooling")
+(wing) | (! velocity) | (pressu*e) | ("of deformation")
 .I 113 
 .W
-(pulses & bodies) | (sources | mixing) | (! mach) | ("decrease in")
+(supersonic) | (! compared) | (an*le) | ("of deformation")
 .I 114 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! body) | ("a supersonic")
+(vortex) & (! leading) & (fl*w) & ("are presented")
 .I 115 
 .W
-(relations & peaks) | (giese | lab) | (! flight) | ("a supersonic")
+(vortex) | (! velocity) | (f*ow) | ("are presented")
 .I 116 
 .W
-(concept & transfer) | (pulses | bodies) | (! flight) | ("layer increases")
+(wing) | (! compared) | (pressu*e) | ("explained by")
 .I 117 
 .W
-(concept & transfer) | (compressive | creep) | (! flow) | ("same range")
+(boundary) | (! flow) | (b*ary) | ("of deformation")
 .I 118 
 .W
-(concept & transfer) | (pulses | bodies) | (! flow) | ("decrease in")
+(temperature) | (! layer) | (b*ary) | ("are presented")
 .I 119 
 .W
-(tunnel & estimation) | (sources | mixing) | (! mach) | ("a supersonic")
+(wing) & (! leading) & (f*ow) & ("are presented")
 .I 120 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! mach) | ("moderate cooling")
+(vortex) | (! leading) | (fl*w) | ("are presented")
 .I 121 
 .W
-(pulses & bodies) | (compressive | creep) | (! mach) | ("a supersonic")
+(wing) | (! velocity) | (an*le) | ("are presented")
 .I 122 
 .W
-(function & dynamically) | (compressive | creep) | (! body) | ("decrease in")
+(wing) | (! leading) | (fl*w) | ("the laminar")
 .I 123 
 .W
-(tunnel & estimation) | (compressive | creep) | (! mach) | ("layer increases")
+(wing) | (! velocity) | (an*le) | ("of deformation")
 .I 124 
 .W
-"solution of"
+(wing) | (! velocity) | (an*le) | ("the laminar")
 .I 125 
 .W
-relations | peaks
+(wing) | (! flow) | (fl*w) | ("present method")
 .I 126 
 .W
-! flutter
+(wing) | (! layer) | (f*ow) | ("the laminar")
 .I 127 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! body) | ("moderate cooling")
+(temperature) | (! flow) | (fl*w) | ("are presented")
 .I 128 
 .W
-(function & dynamically) | (sources | mixing) | (! body) | ("layer increases")
+(boundary) | (! velocity) | (b*ary) | ("explained by")
 .I 129 
 .W
-(function & dynamically) | (sources | mixing) | (! flow) | ("decrease in")
+(vortex) | (! layer) | (fl*w) | ("explained by")
 .I 130 
 .W
-(concept & transfer) | (compressive | creep) | (! flight) | ("decrease in")
+(supersonic) | (! compared) | (b*ary) | ("of deformation")
 .I 131 
 .W
-(tunnel & estimation) | (compressive | creep) | (! flight) | ("same range")
+(vortex) | (! layer) | (fl*w) | ("present method")
 .I 132 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! heat) | ("same range")
+(boundary) & (! layer) & (f*ow) & ("are presented")
 .I 133 
 .W
-(pulses & bodies) | (sources | mixing) | (! flow) | ("decrease in")
+(boundary) & (! compared) & (fl*w) & ("are presented")
 .I 134 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! flight) | ("a supersonic")
+(temperature) | (! velocity) | (fl*w) | ("the laminar")
 .I 135 
 .W
-(tunnel & estimation) | (giese | lab) | (! mach) | ("same range")
+(wing) | (! flow) | (an*le) | ("present method")
 .I 136 
 .W
-(pulses & bodies) | (compressive | creep) | (! body) | ("moderate cooling")
+(boundary) | (! velocity) | (f*ow) | ("explained by")
 .I 137 
 .W
-(concept & transfer) | (tunnel | estimation) | (! mach) | ("moderate cooling")
+(supersonic) & (! velocity) & (fl*w) & ("are presented")
 .I 138 
 .W
-(relations & peaks) | (compressive | creep) | (! mach) | ("same range")
+(supersonic) | (! compared) | (b*ary) | ("are presented")
 .I 139 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! flight) | ("layer increases")
+(boundary) | (! layer) | (pressu*e) | ("the laminar")
 .I 140 
 .W
-(relations & peaks) | (tunnel | estimation) | (! mach) | ("a supersonic")
+(supersonic) | (! compared) | (b*ary) | ("the laminar")
 .I 141 
 .W
-! heat
+(boundary) & (! compared) & (fl*w) & ("present method")
 .I 142 
 .W
-(tunnel & estimation) | (compressive | creep) | (! flow) | ("layer increases")
+(supersonic) | (! layer) | (f*ow) | ("the laminar")
 .I 143 
 .W
-compressive | creep
+! velocity
 .I 144 
 .W
-(concept & transfer) | (compressive | creep) | (! flight) | ("a supersonic")
+(supersonic) | (! layer) | (fl*w) | ("are presented")
 .I 145 
 .W
-(concept & transfer) | (compressive | creep) | (! heat) | ("layer increases")
+(vortex) | (! velocity) | (fl*w) | ("the laminar")
 .I 146 
 .W
-(concept & transfer) | (sources | mixing) | (! flight) | ("moderate cooling")
+(supersonic) | (! leading) | (f*ow) | ("explained by")
 .I 147 
 .W
-(relations & peaks) | (giese | lab) | (! mach) | ("a supersonic")
+(boundary) | (! velocity) | (an*le) | ("explained by")
 .I 148 
 .W
-(pulses & bodies) | (compressive | creep) | (! body) | ("same range")
+(boundary) | (! compared) | (fl*w) | ("explained by")
 .I 149 
 .W
-(tunnel & estimation) | (sources | mixing) | (! flow) | ("moderate cooling")
+(wing) | (! flow) | (f*ow) | ("present method")
 .I 150 
 .W
-(concept & transfer) | (giese | lab) | (! flight) | ("same range")
+(wing) | (! layer) | (an*le) | ("the laminar")
 .I 151 
 .W
-(tunnel & estimation) | (sources | mixing) | (! heat) | ("layer increases")
+(wing) | (! leading) | (pressu*e) | ("present method")
 .I 152 
 .W
-(pulses & bodies) | (giese | lab) | (! flow) | ("same range")
+(boundary) | (! flow) | (pressu*e) | ("present method")
 .I 153 
 .W
-(function & dynamically) | (tunnel | estimation) | (! heat) | ("a supersonic")
+(temperature) | (! leading) | (pressu*e) | ("present method")
 .I 154 
 .W
-(concept & transfer) | (pulses | bodies) | (! heat) | ("same range")
+(boundary) | (! compared) | (b*ary) | ("present method")
 .I 155 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! heat) | ("same range")
+(temperature) | (! compared) | (f*ow) | ("of deformation")
 .I 156 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! heat) | ("moderate cooling")
+(temperature) | (! layer) | (pressu*e) | ("explained by")
 .I 157 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! heat) | ("decrease in")
+(supersonic) | (! flow) | (pressu*e) | ("are presented")
 .I 158 
 .W
-(concept & transfer) | (tunnel | estimation) | (! flow) | ("a supersonic")
+(wing) | (! layer) | (b*ary) | ("explained by")
 .I 159 
 .W
-"a supersonic"
+(wing) & (! leading) & (fl*w) & ("the laminar")
 .I 160 
 .W
-(function & dynamically) | (sources | mixing) | (! mach) | ("decrease in")
+(boundary) | (! velocity) | (f*ow) | ("are presented")
 .I 161 
 .W
-(tunnel & estimation) | (compressive | creep) | (! heat) | ("decrease in")
+(vortex) | (! velocity) | (f*ow) | ("of deformation")
 .I 162 
 .W
-(function & dynamically) | (pulses | bodies) | (! body) | ("layer increases")
+(temperature) | (! flow) | (an*le) | ("are presented")
 .I 163 
 .W
-(concept & transfer) | (sources | mixing) | (! heat) | ("same range")
+(supersonic) | (! compared) | (an*le) | ("the laminar")
 .I 164 
 .W
-(tunnel & estimation) | (sources | mixing) | (! heat) | ("a supersonic")
+(wing) | (! velocity) | (f*ow) | ("the laminar")
 .I 165 
 .W
-(concept & transfer) | (compressive | creep) | (! mach) | ("a supersonic")
+(boundary) & (! compared) & (f*ow) & ("present method")
 .I 166 
 .W
-(function & dynamically) | (giese | lab) | (! flight) | ("decrease in")
+(temperature) | (! compared) | (fl*w) | ("are presented")
 .I 167 
 .W
-(function & dynamically) | (pulses | bodies) | (! flow) | ("same range")
+(temperature) | (! leading) | (fl*w) | ("present method")
 .I 168 
 .W
-(relations & peaks) | (giese | lab) | (! flight) | ("decrease in")
+(boundary) | (! flow) | (an*le) | ("explained by")
 .I 169 
 .W
-"the relative"
+(supersonic) | (! velocity) | (fl*w) | ("the laminar")
 .I 170 
 .W
-(function & dynamically) | (giese | lab) | (! flow) | ("a supersonic")
+(boundary) | (! compared) | (an*le) | ("present method")
 .I 171 
 .W
-(tunnel & estimation) | (giese | lab) | (! flow) | ("a supersonic")
+(temperature) | (! compared) | (f*ow) | ("present method")
 .I 172 
 .W
-(concept & transfer) | (compressive | creep) | (! flight) | ("same range")
+fl*w
 .I 173 
 .W
-(concept & transfer) | (tunnel | estimation) | (! heat) | ("layer increases")
+(vortex) | (! leading) | (f*ow) | ("explained by")
 .I 174 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! flow) | ("layer increases")
+(boundary) & (! leading) & (fl*w) & ("present method")
 .I 175 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! mach) | ("same range")
+(wing) | (! velocity) | (pressu*e) | ("the laminar")
 .I 176 
 .W
-(pulses & bodies) | (giese | lab) | (! heat) | ("a supersonic")
+(boundary) | (! velocity) | (pressu*e) | ("explained by")
 .I 177 
 .W
-(function & dynamically) | (pulses | bodies) | (! flow) | ("a supersonic")
+(temperature) | (! compared) | (an*le) | ("present method")
 .I 178 
 .W
-(function & dynamically) | (giese | lab) | (! flow) | ("same range")
+(temperature) | (! leading) | (pressu*e) | ("explained by")
 .I 179 
 .W
-(pulses & bodies) | (compressive | creep) | (! flow) | ("moderate cooling")
+(temperature) & (! layer) & (f*ow) & ("are presented")
 .I 180 
 .W
-(concept & transfer) | (pulses | bodies) | (! mach) | ("layer increases")
+(temperature) & (! layer) & (fl*w) & ("are presented")
 .I 181 
 .W
-(relations & peaks) | (sources | mixing) | (! flight) | ("a supersonic")
+(vortex) | (! flow) | (pressu*e) | ("explained by")
 .I 182 
 .W
-(relations & peaks) | (compressive | creep) | (! body) | ("layer increases")
+(wing) | (! velocity) | (b*ary) | ("the laminar")
 .I 183 
 .W
-(concept & transfer) | (compressive | creep) | (! body) | ("decrease in")
+(temperature) | (! compared) | (fl*w) | ("of deformation")
 .I 184 
 .W
-(concept & transfer) | (pulses | bodies) | (! mach) | ("a supersonic")
+(wing) | (! leading) | (fl*w) | ("present method")
 .I 185 
 .W
-(function & dynamically) | (compressive | creep) | (! flight) | ("moderate cooling")
+(wing) | (! leading) | (f*ow) | ("present method")
 .I 186 
 .W
-(relations & peaks) | (giese | lab) | (! flight) | ("moderate cooling")
+(supersonic) | (! layer) | (pressu*e) | ("present method")
 .I 187 
 .W
-(concept & transfer) | (giese | lab) | (! flow) | ("a supersonic")
+(supersonic) | (! layer) | (fl*w) | ("present method")
 .I 188 
 .W
-(pulses & bodies) | (pulses | bodies) | (! body) | ("moderate cooling")
+(supersonic) | (! layer) | (pressu*e) | ("are presented")
 .I 189 
 .W
-(pulses & bodies) | (sources | mixing) | (! flight) | ("a supersonic")
+(boundary) & (! velocity) & (f*ow) & ("present method")
 .I 190 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! body) | ("decrease in")
+(vortex) | (! leading) | (fl*w) | ("the laminar")
 .I 191 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! body) | ("a supersonic")
+(boundary) | (! flow) | (f*ow) | ("explained by")
 .I 192 
 .W
-(concept & transfer) | (giese | lab) | (! heat) | ("decrease in")
+(vortex) | (! layer) | (an*le) | ("present method")
 .I 193 
 .W
-(pulses & bodies) | (pulses | bodies) | (! flow) | ("decrease in")
+(vortex) | (! leading) | (fl*w) | ("explained by")
 .I 194 
 .W
-(pulses & bodies) | (sources | mixing) | (! flow) | ("moderate cooling")
+(temperature) | (! layer) | (f*ow) | ("of deformation")
 .I 195 
 .W
-(function & dynamically) | (sources | mixing) | (! flight) | ("same range")
+(temperature) | (! leading) | (f*ow) | ("present method")
 .I 196 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! heat) | ("decrease in")
+(wing) | (! layer) | (fl*w) | ("present method")
 .I 197 
 .W
-(function & dynamically) | (tunnel | estimation) | (! body) | ("decrease in")
+(vortex) | (! leading) | (an*le) | ("explained by")
 .I 198 
 .W
-sources | mixing
+independent & pitot
 .I 199 
 .W
-(tunnel & estimation) | (giese | lab) | (! body) | ("decrease in")
+(vortex) | (! layer) | (pressu*e) | ("are presented")
 .I 200 
 .W
-(relations & peaks) | (tunnel | estimation) | (! flight) | ("moderate cooling")
+(boundary) & (! leading) & (f*ow) & ("present method")
 .I 201 
 .W
-(function & dynamically) | (compressive | creep) | (! flow) | ("a supersonic")
+(wing) | (! flow) | (fl*w) | ("explained by")
 .I 202 
 .W
-(tunnel & estimation) | (sources | mixing) | (! heat) | ("decrease in")
+(temperature) | (! layer) | (b*ary) | ("explained by")
 .I 203 
 .W
-(concept & transfer) | (tunnel | estimation) | (! heat) | ("a supersonic")
+(supersonic) & (! leading) & (f*ow) & ("are presented")
 .I 204 
 .W
-(relations & peaks) | (pulses | bodies) | (! heat) | ("same range")
+(vortex) | (! compared) | (b*ary) | ("explained by")
 .I 205 
 .W
-(concept & transfer) | (giese | lab) | (! mach) | ("moderate cooling")
+(vortex) | (! leading) | (b*ary) | ("present method")
 .I 206 
 .W
-(concept & transfer) | (compressive | creep) | (! mach) | ("moderate cooling")
+(wing) | (! compared) | (pressu*e) | ("the laminar")
 .I 207 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! flight) | ("moderate cooling")
+(wing) | (! layer) | (f*ow) | ("present method")
 .I 208 
 .W
-(pulses & bodies) | (giese | lab) | (! mach) | ("a supersonic")
+(supersonic) | (! velocity) | (pressu*e) | ("explained by")
 .I 209 
 .W
-(relations & peaks) | (pulses | bodies) | (! body) | ("a supersonic")
+(boundary) & (! leading) & (f*ow) & ("are presented")
 .I 210 
 .W
-(relations & peaks) | (tunnel | estimation) | (! body) | ("a supersonic")
+"of deformation"
 .I 211 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! flow) | ("moderate cooling")
+(supersonic) | (! layer) | (an*le) | ("present method")
 .I 212 
 .W
-(relations & peaks) | (giese | lab) | (! body) | ("decrease in")
+(boundary) & (! leading) & (fl*w) & ("are presented")
 .I 213 
 .W
-(function & dynamically) | (giese | lab) | (! heat) | ("same range")
+(supersonic) & (! leading) & (fl*w) & ("are presented")
 .I 214 
 .W
-(function & dynamically) | (sources | mixing) | (! body) | ("decrease in")
+(wing) | (! flow) | (pressu*e) | ("present method")
 .I 215 
 .W
-(tunnel & estimation) | (giese | lab) | (! flow) | ("moderate cooling")
+(supersonic) | (! leading) | (f*ow) | ("present method")
 .I 216 
 .W
-(function & dynamically) | (sources | mixing) | (! body) | ("same range")
+(wing) | (! layer) | (f*ow) | ("explained by")
 .I 217 
 .W
-(function & dynamically) | (compressive | creep) | (! heat) | ("same range")
+(supersonic) | (! velocity) | (fl*w) | ("present method")
 .I 218 
 .W
-(concept & transfer) | (sources | mixing) | (! heat) | ("moderate cooling")
+(wing) & (! velocity) & (f*ow) & ("present method")
 .I 219 
 .W
-(pulses & bodies) | (pulses | bodies) | (! flight) | ("same range")
+(supersonic) | (! layer) | (an*le) | ("the laminar")
 .I 220 
 .W
-(relations & peaks) | (tunnel | estimation) | (! body) | ("decrease in")
+(temperature) | (! flow) | (b*ary) | ("the laminar")
 .I 221 
 .W
-(tunnel & estimation) | (compressive | creep) | (! mach) | ("a supersonic")
+(temperature) | (! velocity) | (an*le) | ("the laminar")
 .I 222 
 .W
-(relations & peaks) | (compressive | creep) | (! heat) | ("decrease in")
+(boundary) & (! leading) & (f*ow) & ("explained by")
 .I 223 
 .W
-(pulses & bodies) | (giese | lab) | (! flight) | ("decrease in")
+(boundary) | (! flow) | (fl*w) | ("of deformation")
 .I 224 
 .W
-(function & dynamically) | (tunnel | estimation) | (! body) | ("layer increases")
+supersonic
 .I 225 
 .W
-(tunnel & estimation) | (giese | lab) | (! flow) | ("same range")
+(vortex) | (! compared) | (fl*w) | ("explained by")
 .I 226 
 .W
-(pulses & bodies) | (giese | lab) | (! flow) | ("a supersonic")
+f*ow
 .I 227 
 .W
-(concept & transfer) | (pulses | bodies) | (! flow) | ("moderate cooling")
+(supersonic) | (! velocity) | (b*ary) | ("present method")
 .I 228 
 .W
-(tunnel & estimation) | (compressive | creep) | (! mach) | ("same range")
+(temperature) | (! compared) | (f*ow) | ("the laminar")
 .I 229 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! heat) | ("layer increases")
+(supersonic) | (! compared) | (f*ow) | ("are presented")
 .I 230 
 .W
-(concept & transfer) | (tunnel | estimation) | (! body) | ("a supersonic")
+(supersonic) | (! velocity) | (f*ow) | ("present method")
 .I 231 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! mach) | ("layer increases")
+(temperature) | (! layer) | (pressu*e) | ("the laminar")
 .I 232 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! flow) | ("layer increases")
+(temperature) | (! velocity) | (f*ow) | ("explained by")
 .I 233 
 .W
-(concept & transfer) | (pulses | bodies) | (! mach) | ("same range")
+(vortex) | (! compared) | (fl*w) | ("present method")
 .I 234 
 .W
-(pulses & bodies) | (giese | lab) | (! mach) | ("moderate cooling")
+(supersonic) | (! layer) | (f*ow) | ("present method")
 .I 235 
 .W
-(function & dynamically) | (tunnel | estimation) | (! mach) | ("moderate cooling")
+(supersonic) | (! flow) | (f*ow) | ("explained by")
 .I 236 
 .W
-(concept & transfer) | (tunnel | estimation) | (! mach) | ("same range")
+(vortex) | (! flow) | (f*ow) | ("present method")
 .I 237 
 .W
-(pulses & bodies) | (sources | mixing) | (! heat) | ("same range")
+(vortex) | (! layer) | (pressu*e) | ("the laminar")
 .I 238 
 .W
-(relations & peaks) | (sources | mixing) | (! body) | ("decrease in")
+(boundary) | (! velocity) | (an*le) | ("present method")
 .I 239 
 .W
-(relations & peaks) | (giese | lab) | (! flow) | ("same range")
+(supersonic) | (! leading) | (b*ary) | ("present method")
 .I 240 
 .W
-(concept & transfer) | (giese | lab) | (! body) | ("layer increases")
+(boundary) | (! velocity) | (an*le) | ("are presented")
 .I 241 
 .W
-(pulses & bodies) | (giese | lab) | (! body) | ("same range")
+(boundary) | (! compared) | (pressu*e) | ("present method")
 .I 242 
 .W
-(function & dynamically) | (sources | mixing) | (! flight) | ("decrease in")
+(boundary) | (! leading) | (an*le) | ("present method")
 .I 243 
 .W
-(tunnel & estimation) | (compressive | creep) | (! flow) | ("decrease in")
+(wing) | (! compared) | (b*ary) | ("present method")
 .I 244 
 .W
-(relations & peaks) | (giese | lab) | (! body) | ("layer increases")
+(temperature) | (! compared) | (pressu*e) | ("present method")
 .I 245 
 .W
-(relations & peaks) | (compressive | creep) | (! mach) | ("decrease in")
+(boundary) | (! flow) | (f*ow) | ("the laminar")
 .I 246 
 .W
-(function & dynamically) | (pulses | bodies) | (! body) | ("same range")
+(vortex) | (! layer) | (b*ary) | ("present method")
 .I 247 
 .W
-(relations & peaks) | (tunnel | estimation) | (! heat) | ("moderate cooling")
+(supersonic) | (! leading) | (an*le) | ("are presented")
 .I 248 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! flight) | ("moderate cooling")
+(supersonic) | (! flow) | (pressu*e) | ("explained by")
 .I 249 
 .W
-(concept & transfer) | (compressive | creep) | (! heat) | ("moderate cooling")
+(temperature) | (! flow) | (b*ary) | ("are presented")
 .I 250 
 .W
-(relations & peaks) | (tunnel | estimation) | (! body) | ("same range")
+(supersonic) | (! leading) | (an*le) | ("of deformation")
 .I 251 
 .W
-(concept & transfer) | (giese | lab) | (! heat) | ("a supersonic")
+(supersonic) & (! leading) & (f*ow) & ("explained by")
 .I 252 
 .W
-(function & dynamically) | (pulses | bodies) | (! mach) | ("decrease in")
+(temperature) | (! layer) | (fl*w) | ("of deformation")
 .I 253 
 .W
-(concept & transfer) | (giese | lab) | (! flight) | ("layer increases")
+(supersonic) | (! leading) | (fl*w) | ("present method")
 .I 254 
 .W
-(relations & peaks) | (sources | mixing) | (! flow) | ("same range")
+(wing) & (! leading) & (f*ow) & ("the laminar")
 .I 255 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! body) | ("moderate cooling")
+(boundary) | (! flow) | (pressu*e) | ("explained by")
 .I 256 
 .W
-(pulses & bodies) | (sources | mixing) | (! mach) | ("layer increases")
+(vortex) | (! velocity) | (pressu*e) | ("of deformation")
 .I 257 
 .W
-! laminar
+(temperature) | (! flow) | (f*ow) | ("the laminar")
 .I 258 
 .W
-(function & dynamically) | (tunnel | estimation) | (! body) | ("a supersonic")
+(wing) | (! compared) | (an*le) | ("present method")
 .I 259 
 .W
-(concept & transfer) | (pulses | bodies) | (! body) | ("same range")
+(vortex) | (! leading) | (an*le) | ("the laminar")
 .I 260 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! mach) | ("a supersonic")
+(vortex) | (! flow) | (fl*w) | ("present method")
 .I 261 
 .W
-(concept & transfer) | (sources | mixing) | (! body) | ("same range")
+(vortex) | (! compared) | (f*ow) | ("present method")
 .I 262 
 .W
-(relations & peaks) | (sources | mixing) | (! body) | ("a supersonic")
+(supersonic) | (! compared) | (fl*w) | ("are presented")
 .I 263 
 .W
-(pulses & bodies) | (pulses | bodies) | (! mach) | ("decrease in")
+(temperature) | (! velocity) | (an*le) | ("explained by")
 .I 264 
 .W
-(pulses & bodies) | (sources | mixing) | (! body) | ("layer increases")
+(wing) | (! leading) | (b*ary) | ("of deformation")
 .I 265 
 .W
-(pulses & bodies) | (pulses | bodies) | (! mach) | ("same range")
+(supersonic) | (! leading) | (pressu*e) | ("the laminar")
 .I 266 
 .W
-(function & dynamically) | (sources | mixing) | (! mach) | ("a supersonic")
+(temperature) | (! compared) | (b*ary) | ("present method")
 .I 267 
 .W
-(tunnel & estimation) | (compressive | creep) | (! mach) | ("decrease in")
+(wing) | (! flow) | (pressu*e) | ("the laminar")
 .I 268 
 .W
-(relations & peaks) | (sources | mixing) | (! flow) | ("layer increases")
+(temperature) | (! compared) | (fl*w) | ("explained by")
 .I 269 
 .W
-sources & mixing
+(temperature) | (! velocity) | (f*ow) | ("of deformation")
 .I 270 
 .W
-(concept & transfer) | (pulses | bodies) | (! flight) | ("same range")
+(temperature) | (! leading) | (fl*w) | ("the laminar")
 .I 271 
 .W
-(relations & peaks) | (tunnel | estimation) | (! mach) | ("moderate cooling")
+(boundary) & (! velocity) & (f*ow) & ("are presented")
 .I 272 
 .W
-(function & dynamically) | (tunnel | estimation) | (! heat) | ("layer increases")
+(wing) | (! velocity) | (b*ary) | ("explained by")
 .I 273 
 .W
-(function & dynamically) | (pulses | bodies) | (! flight) | ("decrease in")
+(supersonic) | (! flow) | (b*ary) | ("present method")
 .I 274 
 .W
-(pulses & bodies) | (giese | lab) | (! body) | ("moderate cooling")
+(supersonic) | (! leading) | (an*le) | ("present method")
 .I 275 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! flow) | ("same range")
+(boundary) | (! leading) | (an*le) | ("explained by")
 .I 276 
 .W
-! flight
+(boundary) & (! leading) & (fl*w) & ("the laminar")
 .I 277 
 .W
-(tunnel & estimation) | (compressive | creep) | (! flow) | ("a supersonic")
+(supersonic) | (! compared) | (f*ow) | ("the laminar")
 .I 278 
 .W
-(tunnel & estimation) | (sources | mixing) | (! body) | ("a supersonic")
+(vortex) | (! flow) | (fl*w) | ("the laminar")
 .I 279 
 .W
-(relations & peaks) | (compressive | creep) | (! heat) | ("a supersonic")
+(vortex) | (! flow) | (b*ary) | ("explained by")
 .I 280 
 .W
-(function & dynamically) | (tunnel | estimation) | (! flow) | ("layer increases")
+(boundary) | (! leading) | (b*ary) | ("explained by")
 .I 281 
 .W
-(function & dynamically) | (pulses | bodies) | (! heat) | ("a supersonic")
+(temperature) | (! velocity) | (fl*w) | ("present method")
 .I 282 
 .W
-(relations & peaks) | (sources | mixing) | (! heat) | ("layer increases")
+(boundary) | (! layer) | (b*ary) | ("explained by")
 .I 283 
 .W
-(pulses & bodies) | (compressive | creep) | (! heat) | ("decrease in")
+(boundary) & (! compared) & (f*ow) & ("the laminar")
 .I 284 
 .W
-(pulses & bodies) | (pulses | bodies) | (! mach) | ("a supersonic")
+(temperature) | (! flow) | (fl*w) | ("present method")
 .I 285 
 .W
-(function & dynamically) | (compressive | creep) | (! heat) | ("decrease in")
+(temperature) | (! velocity) | (pressu*e) | ("explained by")
 .I 286 
 .W
-(function & dynamically) | (giese | lab) | (! mach) | ("layer increases")
+(boundary) | (! compared) | (f*ow) | ("explained by")
 .I 287 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! mach) | ("decrease in")
+(temperature) | (! flow) | (an*le) | ("of deformation")
 .I 288 
 .W
-(function & dynamically) | (pulses | bodies) | (! flight) | ("moderate cooling")
+(supersonic) | (! leading) | (pressu*e) | ("explained by")
 .I 289 
 .W
-(tunnel & estimation) | (compressive | creep) | (! flow) | ("moderate cooling")
+(boundary) & (! velocity) & (fl*w) & ("are presented")
 .I 290 
 .W
-(concept & transfer) | (compressive | creep) | (! flow) | ("moderate cooling")
+(temperature) | (! velocity) | (fl*w) | ("explained by")
 .I 291 
 .W
-(function & dynamically) | (sources | mixing) | (! flow) | ("layer increases")
+(vortex) | (! leading) | (an*le) | ("of deformation")
 .I 292 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! body) | ("same range")
+(boundary) | (! layer) | (an*le) | ("present method")
 .I 293 
 .W
-(relations & peaks) | (pulses | bodies) | (! mach) | ("layer increases")
+(supersonic) | (! velocity) | (an*le) | ("explained by")
 .I 294 
 .W
-(relations & peaks) | (pulses | bodies) | (! flight) | ("a supersonic")
+(wing) | (! compared) | (pressu*e) | ("are presented")
 .I 295 
 .W
-(function & dynamically) | (sources | mixing) | (! mach) | ("same range")
+(vortex) | (! compared) | (f*ow) | ("of deformation")
 .I 296 
 .W
-(tunnel & estimation) | (giese | lab) | (! flight) | ("same range")
+(wing) | (! leading) | (f*ow) | ("the laminar")
 .I 297 
 .W
-(pulses & bodies) | (giese | lab) | (! body) | ("decrease in")
+(boundary) | (! layer) | (b*ary) | ("of deformation")
 .I 298 
 .W
-(concept & transfer) & (pulses | bodies) & (! mach) & ("layer increases")
+(temperature) | (! layer) | (pressu*e) | ("of deformation")
 .I 299 
 .W
-(relations & peaks) | (giese | lab) | (! flow) | ("a supersonic")
+(vortex) | (! flow) | (an*le) | ("explained by")
 .I 300 
 .W
-(relations & peaks) | (compressive | creep) | (! flow) | ("decrease in")
+(wing) | (! compared) | (fl*w) | ("are presented")
 .I 301 
 .W
-(tunnel & estimation) | (sources | mixing) | (! mach) | ("same range")
+(supersonic) | (! compared) | (fl*w) | ("present method")
 .I 302 
 .W
-(function & dynamically) | (tunnel | estimation) | (! heat) | ("moderate cooling")
+(supersonic) | (! velocity) | (an*le) | ("present method")
 .I 303 
 .W
-(relations & peaks) | (pulses | bodies) | (! body) | ("decrease in")
+(supersonic) | (! layer) | (an*le) | ("are presented")
 .I 304 
 .W
-(concept & transfer) | (tunnel | estimation) | (! heat) | ("same range")
+(boundary) | (! layer) | (pressu*e) | ("explained by")
 .I 305 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! body) | ("a supersonic")
+(temperature) | (! leading) | (f*ow) | ("are presented")
 .I 306 
 .W
-(function & dynamically) | (giese | lab) | (! flow) | ("decrease in")
+(vortex) & (! leading) & (fl*w) & ("the laminar")
 .I 307 
 .W
-(tunnel & estimation) | (giese | lab) | (! mach) | ("a supersonic")
+(supersonic) | (! flow) | (an*le) | ("the laminar")
 .I 308 
 .W
-(pulses & bodies) | (compressive | creep) | (! mach) | ("same range")
+(vortex) | (! layer) | (b*ary) | ("explained by")
 .I 309 
 .W
-(function & dynamically) | (giese | lab) | (! mach) | ("a supersonic")
+(supersonic) | (! velocity) | (b*ary) | ("of deformation")
 .I 310 
 .W
-(concept & transfer) | (sources | mixing) | (! flow) | ("moderate cooling")
+(temperature) | (! flow) | (fl*w) | ("of deformation")
 .I 311 
 .W
-(function & dynamically) | (giese | lab) | (! flight) | ("same range")
+(vortex) | (! layer) | (an*le) | ("explained by")
 .I 312 
 .W
-(function & dynamically) | (compressive | creep) | (! heat) | ("layer increases")
+(supersonic) | (! velocity) | (an*le) | ("are presented")
 .I 313 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! flow) | ("same range")
+(temperature) | (! velocity) | (fl*w) | ("of deformation")
 .I 314 
 .W
-(function & dynamically) | (pulses | bodies) | (! mach) | ("layer increases")
+(temperature) | (! leading) | (fl*w) | ("are presented")
 .I 315 
 .W
-(relations & peaks) | (sources | mixing) | (! flight) | ("decrease in")
+(temperature) | (! layer) | (pressu*e) | ("present method")
 .I 316 
 .W
-(function & dynamically) | (compressive | creep) | (! heat) | ("a supersonic")
+(wing) | (! flow) | (b*ary) | ("the laminar")
 .I 317 
 .W
-(function & dynamically) | (compressive | creep) | (! flight) | ("a supersonic")
+(wing) | (! flow) | (an*le) | ("the laminar")
 .I 318 
 .W
-(function & dynamically) | (sources | mixing) | (! heat) | ("layer increases")
+(vortex) | (! leading) | (an*le) | ("present method")
 .I 319 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! heat) | ("a supersonic")
+(wing) | (! leading) | (fl*w) | ("explained by")
 .I 320 
 .W
-(relations & peaks) | (compressive | creep) | (! mach) | ("layer increases")
+(supersonic) | (! flow) | (an*le) | ("present method")
 .I 321 
 .W
-(function & dynamically) | (sources | mixing) | (! flight) | ("a supersonic")
+(temperature) | (! flow) | (f*ow) | ("present method")
 .I 322 
 .W
-(function & dynamically) | (compressive | creep) | (! flow) | ("layer increases")
+(supersonic) & (! layer) & (fl*w) & ("present method")
 .I 323 
 .W
-(relations & peaks) | (tunnel | estimation) | (! body) | ("moderate cooling")
+(boundary) | (! velocity) | (b*ary) | ("present method")
 .I 324 
 .W
-(concept & transfer) | (compressive | creep) | (! flow) | ("a supersonic")
+(temperature) | (! velocity) | (b*ary) | ("the laminar")
 .I 325 
 .W
-(relations & peaks) | (sources | mixing) | (! flight) | ("moderate cooling")
+(supersonic) | (! velocity) | (an*le) | ("of deformation")
 .I 326 
 .W
-(pulses & bodies) | (sources | mixing) | (! mach) | ("a supersonic")
+(boundary) | (! velocity) | (f*ow) | ("the laminar")
 .I 327 
 .W
-(pulses & bodies) | (sources | mixing) | (! flight) | ("same range")
+(vortex) | (! velocity) | (an*le) | ("are presented")
 .I 328 
 .W
-(relations & peaks) | (tunnel | estimation) | (! flight) | ("layer increases")
+boundary
 .I 329 
 .W
-(relations & peaks) | (sources | mixing) | (! flow) | ("a supersonic")
+(supersonic) | (! leading) | (b*ary) | ("explained by")
 .I 330 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! heat) | ("decrease in")
+(temperature) | (! velocity) | (b*ary) | ("present method")
 .I 331 
 .W
-(function & dynamically) | (sources | mixing) | (! body) | ("moderate cooling")
+(boundary) | (! layer) | (fl*w) | ("explained by")
 .I 332 
 .W
-(concept & transfer) | (pulses | bodies) | (! flight) | ("moderate cooling")
+(temperature) | (! compared) | (pressu*e) | ("of deformation")
 .I 333 
 .W
-(concept & transfer) | (compressive | creep) | (! heat) | ("decrease in")
+(wing) | (! leading) | (b*ary) | ("the laminar")
 .I 334 
 .W
-(function & dynamically) | (giese | lab) | (! flow) | ("moderate cooling")
+(vortex) | (! compared) | (pressu*e) | ("explained by")
 .I 335 
 .W
-(relations & peaks) | (pulses | bodies) | (! body) | ("same range")
+(boundary) | (! compared) | (an*le) | ("are presented")
 .I 336 
 .W
-(function & dynamically) | (compressive | creep) | (! body) | ("same range")
+(supersonic) | (! leading) | (an*le) | ("explained by")
 .I 337 
 .W
-(tunnel & estimation) | (giese | lab) | (! heat) | ("same range")
+(vortex) | (! flow) | (f*ow) | ("of deformation")
 .I 338 
 .W
-(tunnel & estimation) | (giese | lab) | (! body) | ("a supersonic")
+(temperature) | (! compared) | (b*ary) | ("are presented")
 .I 339 
 .W
-(pulses & bodies) | (compressive | creep) | (! flow) | ("layer increases")
+(supersonic) | (! compared) | (f*ow) | ("of deformation")
 .I 340 
 .W
-(function & dynamically) | (sources | mixing) | (! mach) | ("layer increases")
+(supersonic) & (! layer) & (f*ow) & ("present method")
 .I 341 
 .W
-concept & transfer
+(wing) | (! flow) | (an*le) | ("explained by")
 .I 342 
 .W
-(tunnel & estimation) | (giese | lab) | (! flight) | ("layer increases")
+(vortex) | (! leading) | (b*ary) | ("of deformation")
 .I 343 
 .W
-relations & peaks
+(supersonic) & (! leading) & (fl*w) & ("explained by")
 .I 344 
 .W
-(relations & peaks) | (compressive | creep) | (! body) | ("a supersonic")
+(wing) | (! leading) | (an*le) | ("the laminar")
 .I 345 
 .W
-(pulses & bodies) | (sources | mixing) | (! mach) | ("same range")
+(wing) | (! flow) | (b*ary) | ("explained by")
 .I 346 
 .W
-(pulses & bodies) | (compressive | creep) | (! heat) | ("same range")
+(supersonic) | (! flow) | (b*ary) | ("the laminar")
 .I 347 
 .W
-(concept & transfer) | (tunnel | estimation) | (! flight) | ("same range")
+(supersonic) & (! velocity) & (fl*w) & ("explained by")
 .I 348 
 .W
-(relations & peaks) | (giese | lab) | (! flow) | ("layer increases")
+(supersonic) | (! layer) | (b*ary) | ("present method")
 .I 349 
 .W
-(function & dynamically) | (giese | lab) | (! flight) | ("layer increases")
+(boundary) | (! velocity) | (b*ary) | ("of deformation")
 .I 350 
 .W
-(pulses & bodies) | (sources | mixing) | (! body) | ("same range")
+(boundary) & (! velocity) & (fl*w) & ("present method")
 .I 351 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! flow) | ("layer increases")
+(vortex) | (! layer) | (pressu*e) | ("explained by")
 .I 352 
 .W
-(relations & peaks) | (compressive | creep) | (! heat) | ("layer increases")
+(vortex) | (! compared) | (an*le) | ("explained by")
 .I 353 
 .W
-(relations & peaks) | (tunnel | estimation) | (! flight) | ("same range")
+(boundary) | (! layer) | (pressu*e) | ("present method")
 .I 354 
 .W
-(concept & transfer) | (giese | lab) | (! mach) | ("layer increases")
+(temperature) | (! flow) | (b*ary) | ("of deformation")
 .I 355 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! flight) | ("same range")
+(supersonic) | (! flow) | (f*ow) | ("are presented")
 .I 356 
 .W
-(tunnel & estimation) | (sources | mixing) | (! flight) | ("a supersonic")
+(supersonic) | (! flow) | (fl*w) | ("are presented")
 .I 357 
 .W
-(relations & peaks) | (giese | lab) | (! mach) | ("moderate cooling")
+(supersonic) | (! flow) | (an*le) | ("of deformation")
 .I 358 
 .W
-(relations & peaks) | (sources | mixing) | (! mach) | ("moderate cooling")
+(temperature) | (! flow) | (an*le) | ("present method")
 .I 359 
 .W
-(pulses & bodies) | (compressive | creep) | (! body) | ("a supersonic")
+(wing) | (! compared) | (f*ow) | ("are presented")
 .I 360 
 .W
-(function & dynamically) | (tunnel | estimation) | (! heat) | ("decrease in")
+(supersonic) | (! flow) | (b*ary) | ("of deformation")
 .I 361 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! mach) | ("decrease in")
+(supersonic) & (! velocity) & (fl*w) & ("the laminar")
 .I 362 
 .W
-(tunnel & estimation) | (giese | lab) | (! heat) | ("decrease in")
+(wing) | (! flow) | (b*ary) | ("are presented")
 .I 363 
 .W
-(concept & transfer) | (tunnel | estimation) | (! flow) | ("same range")
+(supersonic) | (! velocity) | (b*ary) | ("explained by")
 .I 364 
 .W
-(tunnel & estimation) | (compressive | creep) | (! body) | ("layer increases")
+(boundary) | (! flow) | (f*ow) | ("of deformation")
 .I 365 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! body) | ("layer increases")
+(boundary) | (! compared) | (b*ary) | ("explained by")
 .I 366 
 .W
-(relations & peaks) | (tunnel | estimation) | (! heat) | ("same range")
+(temperature) | (! leading) | (an*le) | ("are presented")
 .I 367 
 .W
-(tunnel & estimation) | (sources | mixing) | (! body) | ("decrease in")
+(wing) & (! velocity) & (fl*w) & ("present method")
 .I 368 
 .W
-(relations & peaks) | (sources | mixing) | (! heat) | ("same range")
+(vortex) | (! compared) | (f*ow) | ("explained by")
 .I 369 
 .W
-(function & dynamically) | (pulses | bodies) | (! body) | ("moderate cooling")
+(supersonic) | (! compared) | (f*ow) | ("present method")
 .I 370 
 .W
-concept | transfer
+(supersonic) | (! layer) | (b*ary) | ("of deformation")
 .I 371 
 .W
-(function & dynamically) | (pulses | bodies) | (! flow) | ("decrease in")
+(boundary) | (! leading) | (pressu*e) | ("explained by")
 .I 372 
 .W
-(function & dynamically) | (pulses | bodies) | (! flight) | ("layer increases")
+(vortex) | (! compared) | (fl*w) | ("the laminar")
 .I 373 
 .W
-(function & dynamically) | (compressive | creep) | (! flight) | ("decrease in")
+(wing) | (! compared) | (an*le) | ("are presented")
 .I 374 
 .W
-(relations & peaks) | (compressive | creep) | (! body) | ("decrease in")
+(boundary) | (! layer) | (an*le) | ("explained by")
 .I 375 
 .W
-(concept & transfer) | (sources | mixing) | (! body) | ("a supersonic")
+(boundary) | (! layer) | (b*ary) | ("present method")
 .I 376 
 .W
-(tunnel & estimation) | (compressive | creep) | (! flight) | ("layer increases")
+(boundary) | (! layer) | (b*ary) | ("the laminar")
 .I 377 
 .W
-(pulses & bodies) | (pulses | bodies) | (! mach) | ("layer increases")
+(supersonic) | (! layer) | (pressu*e) | ("of deformation")
 .I 378 
 .W
-(relations & peaks) | (pulses | bodies) | (! mach) | ("a supersonic")
+(boundary) | (! layer) | (an*le) | ("the laminar")
 .I 379 
 .W
-(relations & peaks) | (sources | mixing) | (! heat) | ("a supersonic")
+(boundary) | (! layer) | (an*le) | ("of deformation")
 .I 380 
 .W
-(function & dynamically) | (pulses | bodies) | (! heat) | ("layer increases")
+(wing) | (! leading) | (fl*w) | ("of deformation")
 .I 381 
 .W
-(function & dynamically) | (compressive | creep) | (! mach) | ("same range")
+(temperature) | (! flow) | (b*ary) | ("present method")
 .I 382 
 .W
-(relations & peaks) | (giese | lab) | (! heat) | ("moderate cooling")
+(temperature) | (! velocity) | (an*le) | ("present method")
 .I 383 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! mach) | ("a supersonic")
+(supersonic) | (! compared) | (fl*w) | ("of deformation")
 .I 384 
 .W
-(concept & transfer) | (giese | lab) | (! flow) | ("same range")
+(boundary) | (! layer) | (pressu*e) | ("of deformation")
 .I 385 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! flight) | ("same range")
+(wing) | (! layer) | (b*ary) | ("are presented")
 .I 386 
 .W
-(pulses & bodies) | (compressive | creep) | (! flight) | ("a supersonic")
+(boundary) & (! velocity) & (fl*w) & ("explained by")
 .I 387 
 .W
-(relations & peaks) | (giese | lab) | (! body) | ("a supersonic")
+(wing) & (! velocity) & (f*ow) & ("the laminar")
 .I 388 
 .W
-(function & dynamically) | (sources | mixing) | (! flight) | ("moderate cooling")
+! leading
 .I 389 
 .W
-(pulses & bodies) | (sources | mixing) | (! heat) | ("moderate cooling")
+(supersonic) | (! flow) | (f*ow) | ("present method")
 .I 390 
 .W
-(function & dynamically) | (sources | mixing) | (! flow) | ("moderate cooling")
+(boundary) | (! flow) | (f*ow) | ("are presented")
 .I 391 
 .W
-(pulses & bodies) | (compressive | creep) | (! heat) | ("moderate cooling")
+(vortex) | (! compared) | (pressu*e) | ("present method")
 .I 392 
 .W
-(concept & transfer) | (pulses | bodies) | (! flight) | ("a supersonic")
+(wing) | (! leading) | (fl*w) | ("are presented")
 .I 393 
 .W
-(concept & transfer) | (sources | mixing) | (! flow) | ("decrease in")
+(vortex) | (! velocity) | (an*le) | ("present method")
 .I 394 
 .W
-(relations & peaks) | (pulses | bodies) | (! mach) | ("same range")
+(temperature) | (! layer) | (b*ary) | ("of deformation")
 .I 395 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! mach) | ("same range")
+(boundary) | (! leading) | (fl*w) | ("the laminar")
 .I 396 
 .W
-(tunnel & estimation) | (giese | lab) | (! mach) | ("layer increases")
+(temperature) | (! compared) | (b*ary) | ("the laminar")
 .I 397 
 .W
-(concept & transfer) | (compressive | creep) | (! body) | ("a supersonic")
+(boundary) | (! flow) | (fl*w) | ("present method")
 .I 398 
 .W
-(pulses & bodies) | (pulses | bodies) | (! heat) | ("decrease in")
+(temperature) | (! flow) | (pressu*e) | ("the laminar")
 .I 399 
 .W
-(function & dynamically) | (giese | lab) | (! body) | ("a supersonic")
+(vortex) | (! layer) | (an*le) | ("the laminar")
 .I 400 
 .W
-(relations & peaks) | (pulses | bodies) | (! flow) | ("decrease in")
+"are presented"
 .I 401 
 .W
-(function & dynamically) | (tunnel | estimation) | (! body) | ("moderate cooling")
+(temperature) | (! velocity) | (f*ow) | ("are presented")
 .I 402 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! body) | ("same range")
+(wing) & (! layer) & (f*ow) & ("are presented")
 .I 403 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! flow) | ("a supersonic")
+(temperature) | (! compared) | (b*ary) | ("of deformation")
 .I 404 
 .W
-(function & dynamically) | (pulses | bodies) | (! body) | ("a supersonic")
+"present method"
 .I 405 
 .W
-(function & dynamically) | (sources | mixing) | (! heat) | ("same range")
+(supersonic) | (! velocity) | (b*ary) | ("are presented")
 .I 406 
 .W
-(function & dynamically) & (compressive | creep) & (! body) & ("a supersonic")
+(supersonic) | (! flow) | (fl*w) | ("present method")
 .I 407 
 .W
-(pulses & bodies) | (sources | mixing) | (! flight) | ("layer increases")
+(supersonic) | (! leading) | (f*ow) | ("the laminar")
 .I 408 
 .W
-(tunnel & estimation) | (giese | lab) | (! heat) | ("moderate cooling")
+(wing) | (! velocity) | (pressu*e) | ("explained by")
 .I 409 
 .W
-(function & dynamically) | (giese | lab) | (! body) | ("moderate cooling")
+(supersonic) | (! compared) | (pressu*e) | ("of deformation")
 .I 410 
 .W
-(concept & transfer) | (tunnel | estimation) | (! body) | ("same range")
+(wing) | (! layer) | (fl*w) | ("are presented")
 .I 411 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! mach) | ("moderate cooling")
+(boundary) | (! leading) | (fl*w) | ("present method")
 .I 412 
 .W
-(concept & transfer) | (giese | lab) | (! heat) | ("layer increases")
+(wing) | (! layer) | (fl*w) | ("of deformation")
 .I 413 
 .W
-(relations & peaks) | (sources | mixing) | (! flow) | ("moderate cooling")
+(temperature) & (! velocity) & (fl*w) & ("the laminar")
 .I 414 
 .W
-(function & dynamically) | (giese | lab) | (! mach) | ("moderate cooling")
+(supersonic) | (! layer) | (f*ow) | ("are presented")
 .I 415 
 .W
-(tunnel & estimation) | (sources | mixing) | (! mach) | ("layer increases")
+(temperature) & (! leading) & (fl*w) & ("the laminar")
 .I 416 
 .W
-(pulses & bodies) | (compressive | creep) | (! mach) | ("moderate cooling")
+(boundary) | (! layer) | (f*ow) | ("the laminar")
 .I 417 
 .W
-(concept & transfer) | (giese | lab) | (! mach) | ("a supersonic")
+(boundary) | (! compared) | (f*ow) | ("of deformation")
 .I 418 
 .W
-(concept & transfer) | (giese | lab) | (! body) | ("same range")
+(boundary) | (! layer) | (fl*w) | ("the laminar")
 .I 419 
 .W
-(pulses & bodies) | (sources | mixing) | (! flow) | ("same range")
+(vortex) & (! velocity) & (fl*w) & ("are presented")
 .I 420 
 .W
-(function & dynamically) | (giese | lab) | (! flight) | ("moderate cooling")
+(temperature) & (! velocity) & (f*ow) & ("the laminar")
 .I 421 
 .W
-(concept & transfer) | (pulses | bodies) | (! flow) | ("a supersonic")
+(supersonic) | (! leading) | (fl*w) | ("the laminar")
 .I 422 
 .W
-(tunnel & estimation) | (compressive | creep) | (! body) | ("same range")
+(boundary) | (! velocity) | (an*le) | ("of deformation")
 .I 423 
 .W
-(tunnel & estimation) | (compressive | creep) | (! heat) | ("same range")
+(supersonic) | (! layer) | (fl*w) | ("of deformation")
 .I 424 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! body) | ("moderate cooling")
+(temperature) | (! flow) | (fl*w) | ("explained by")
 .I 425 
 .W
-(concept & transfer) | (compressive | creep) | (! flow) | ("decrease in")
+(boundary) | (! flow) | (f*ow) | ("present method")
 .I 426 
 .W
-(function & dynamically) | (tunnel | estimation) | (! flow) | ("moderate cooling")
+(temperature) | (! velocity) | (an*le) | ("are presented")
 .I 427 
 .W
-(concept & transfer) | (giese | lab) | (! body) | ("a supersonic")
+(supersonic) | (! flow) | (fl*w) | ("explained by")
 .I 428 
 .W
-(tunnel & estimation) | (sources | mixing) | (! flow) | ("decrease in")
+(supersonic) | (! velocity) | (f*ow) | ("are presented")
 .I 429 
 .W
-(concept & transfer) | (sources | mixing) | (! mach) | ("same range")
+(temperature) & (! leading) & (f*ow) & ("the laminar")
 .I 430 
 .W
-(pulses & bodies) | (pulses | bodies) | (! flight) | ("a supersonic")
+(supersonic) & (! velocity) & (f*ow) & ("are presented")
 .I 431 
 .W
-(pulses & bodies) | (sources | mixing) | (! flow) | ("layer increases")
+(temperature) & (! velocity) & (f*ow) & ("are presented")
 .I 432 
 .W
-(concept & transfer) | (sources | mixing) | (! body) | ("decrease in")
+(boundary) | (! compared) | (pressu*e) | ("explained by")
 .I 433 
 .W
-(concept & transfer) | (sources | mixing) | (! flow) | ("layer increases")
+(supersonic) | (! compared) | (f*ow) | ("explained by")
 .I 434 
 .W
-(function & dynamically) | (compressive | creep) | (! flow) | ("moderate cooling")
+(boundary) | (! leading) | (f*ow) | ("present method")
 .I 435 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! flight) | ("moderate cooling")
+(temperature) | (! layer) | (f*ow) | ("explained by")
 .I 436 
 .W
-(function & dynamically) | (compressive | creep) | (! body) | ("layer increases")
+(vortex) | (! leading) | (b*ary) | ("the laminar")
 .I 437 
 .W
-(tunnel & estimation) | (giese | lab) | (! flow) | ("decrease in")
+(supersonic) | (! flow) | (fl*w) | ("the laminar")
 .I 438 
 .W
-(tunnel & estimation) | (sources | mixing) | (! flight) | ("moderate cooling")
+(supersonic) | (! leading) | (b*ary) | ("the laminar")
 .I 439 
 .W
-heating | transformation
+(wing) | (! velocity) | (f*ow) | ("are presented")
 .I 440 
 .W
-(concept & transfer) | (tunnel | estimation) | (! body) | ("decrease in")
+(wing) & (! compared) & (fl*w) & ("the laminar")
 .I 441 
 .W
-! boundary
+(temperature) | (! layer) | (an*le) | ("of deformation")
 .I 442 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! heat) | ("a supersonic")
+(boundary) & (! velocity) & (f*ow) & ("explained by")
 .I 443 
 .W
-(relations & peaks) | (giese | lab) | (! body) | ("moderate cooling")
+(wing) | (! compared) | (pressu*e) | ("of deformation")
 .I 444 
 .W
-(relations & peaks) | (giese | lab) | (! body) | ("same range")
+(vortex) | (! velocity) | (fl*w) | ("are presented")
 .I 445 
 .W
-giese | lab
+(vortex) | (! velocity) | (b*ary) | ("present method")
 .I 446 
 .W
-(concept & transfer) | (compressive | creep) | (! flight) | ("moderate cooling")
+(vortex) | (! flow) | (fl*w) | ("of deformation")
 .I 447 
 .W
-(concept & transfer) | (tunnel | estimation) | (! flight) | ("decrease in")
+temperature
 .I 448 
 .W
-(concept & transfer) | (compressive | creep) | (! flow) | ("layer increases")
+(supersonic) & (! compared) & (f*ow) & ("the laminar")
 .I 449 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! flight) | ("layer increases")
+(temperature) | (! velocity) | (f*ow) | ("present method")
 .I 450 
 .W
-(function & dynamically) | (giese | lab) | (! heat) | ("moderate cooling")
+(supersonic) | (! leading) | (an*le) | ("the laminar")
 .I 451 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! flight) | ("a supersonic")
+(wing) | (! velocity) | (fl*w) | ("explained by")
 .I 452 
 .W
-(tunnel & estimation) | (sources | mixing) | (! body) | ("same range")
+(boundary) | (! compared) | (fl*w) | ("the laminar")
 .I 453 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! heat) | ("moderate cooling")
+(wing) & (! velocity) & (f*ow) & ("are presented")
 .I 454 
 .W
-(relations & peaks) | (pulses | bodies) | (! body) | ("layer increases")
+(vortex) | (! layer) | (fl*w) | ("the laminar")
 .I 455 
 .W
-(pulses & bodies) | (giese | lab) | (! heat) | ("decrease in")
+(wing) | (! layer) | (b*ary) | ("of deformation")
 .I 456 
 .W
-(pulses & bodies) | (pulses | bodies) | (! body) | ("same range")
+(wing) | (! leading) | (b*ary) | ("present method")
 .I 457 
 .W
-(tunnel & estimation) | (sources | mixing) | (! flow) | ("layer increases")
+(temperature) | (! flow) | (f*ow) | ("of deformation")
 .I 458 
 .W
-(concept & transfer) | (compressive | creep) | (! mach) | ("decrease in")
+(temperature) | (! compared) | (an*le) | ("of deformation")
 .I 459 
 .W
-(concept & transfer) | (sources | mixing) | (! mach) | ("decrease in")
+(vortex) & (! compared) & (f*ow) & ("the laminar")
 .I 460 
 .W
-(pulses & bodies) | (giese | lab) | (! mach) | ("layer increases")
+(wing) | (! leading) | (an*le) | ("of deformation")
 .I 461 
 .W
-(relations & peaks) | (tunnel | estimation) | (! body) | ("layer increases")
+(supersonic) | (! leading) | (pressu*e) | ("of deformation")
 .I 462 
 .W
-pulses | bodies
+(boundary) | (! leading) | (b*ary) | ("of deformation")
 .I 463 
 .W
-(function & dynamically) | (compressive | creep) | (! body) | ("a supersonic")
+(temperature) | (! leading) | (pressu*e) | ("the laminar")
 .I 464 
 .W
-(function & dynamically) | (pulses | bodies) | (! flow) | ("moderate cooling")
+(temperature) | (! compared) | (an*le) | ("the laminar")
 .I 465 
 .W
-(relations & peaks) | (pulses | bodies) | (! flow) | ("same range")
+(vortex) | (! leading) | (b*ary) | ("explained by")
 .I 466 
 .W
-"decrease in"
+(supersonic) | (! leading) | (b*ary) | ("of deformation")
 .I 467 
 .W
-(concept & transfer) | (tunnel | estimation) | (! flight) | ("layer increases")
+(wing) | (! compared) | (b*ary) | ("the laminar")
 .I 468 
 .W
-(relations & peaks) | (pulses | bodies) | (! heat) | ("decrease in")
+(supersonic) | (! layer) | (f*ow) | ("of deformation")
 .I 469 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! heat) | ("layer increases")
+(temperature) & (! compared) & (f*ow) & ("the laminar")
 .I 470 
 .W
-(pulses & bodies) | (sources | mixing) | (! flight) | ("decrease in")
+(temperature) | (! velocity) | (b*ary) | ("are presented")
 .I 471 
 .W
-(relations & peaks) | (tunnel | estimation) | (! flow) | ("same range")
+(temperature) | (! velocity) | (b*ary) | ("explained by")
 .I 472 
 .W
-"pibal r"
+(wing) | (! layer) | (an*le) | ("of deformation")
 .I 473 
 .W
-(tunnel & estimation) | (giese | lab) | (! mach) | ("decrease in")
+(boundary) | (! leading) | (f*ow) | ("the laminar")
 .I 474 
 .W
-(tunnel & estimation) | (compressive | creep) | (! heat) | ("layer increases")
+(vortex) | (! compared) | (fl*w) | ("of deformation")
 .I 475 
 .W
-(pulses & bodies) | (sources | mixing) | (! flow) | ("a supersonic")
+(boundary) | (! compared) | (pressu*e) | ("of deformation")
 .I 476 
 .W
-"so that"
+(vortex) | (! flow) | (pressu*e) | ("are presented")
 .I 477 
 .W
-! layer
+(boundary) | (! leading) | (an*le) | ("of deformation")
 .I 478 
 .W
-(concept & transfer) | (tunnel | estimation) | (! flow) | ("layer increases")
+(wing) & (! compared) & (f*ow) & ("are presented")
 .I 479 
 .W
-(relations & peaks) | (sources | mixing) | (! body) | ("same range")
+(supersonic) | (! leading) | (pressu*e) | ("present method")
 .I 480 
 .W
-(function & dynamically) | (compressive | creep) | (! flow) | ("same range")
+(boundary) | (! flow) | (an*le) | ("are presented")
 .I 481 
 .W
-(tunnel & estimation) | (sources | mixing) | (! mach) | ("decrease in")
+(temperature) | (! velocity) | (pressu*e) | ("of deformation")
 .I 482 
 .W
-(function & dynamically) | (giese | lab) | (! body) | ("layer increases")
+(wing) | (! leading) | (an*le) | ("present method")
 .I 483 
 .W
-(concept & transfer) | (pulses | bodies) | (! flight) | ("decrease in")
+(temperature) | (! leading) | (b*ary) | ("the laminar")
 .I 484 
 .W
-(pulses & bodies) | (giese | lab) | (! heat) | ("layer increases")
+(wing) | (! compared) | (fl*w) | ("present method")
 .I 485 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! body) | ("same range")
+(supersonic) | (! layer) | (pressu*e) | ("the laminar")
 .I 486 
 .W
-(tunnel & estimation) | (compressive | creep) | (! body) | ("moderate cooling")
+(temperature) & (! compared) & (fl*w) & ("the laminar")
 .I 487 
 .W
-(concept & transfer) | (pulses | bodies) | (! mach) | ("decrease in")
+(vortex) & (! layer) & (f*ow) & ("are presented")
 .I 488 
 .W
-(function & dynamically) | (tunnel | estimation) | (! flight) | ("layer increases")
+(boundary) | (! leading) | (b*ary) | ("present method")
 .I 489 
 .W
-(concept & transfer) | (tunnel | estimation) | (! heat) | ("moderate cooling")
+(supersonic) | (! layer) | (b*ary) | ("explained by")
 .I 490 
 .W
-(tunnel & estimation) | (sources | mixing) | (! heat) | ("moderate cooling")
+(vortex) | (! flow) | (f*ow) | ("the laminar")
 .I 491 
 .W
-(pulses & bodies) | (giese | lab) | (! mach) | ("decrease in")
+(wing) | (! leading) | (an*le) | ("are presented")
 .I 492 
 .W
-(concept & transfer) | (sources | mixing) | (! mach) | ("moderate cooling")
+surface | generalised
 .I 493 
 .W
-(concept & transfer) | (pulses | bodies) | (! body) | ("moderate cooling")
+(wing) | (! compared) | (an*le) | ("of deformation")
 .I 494 
 .W
-(concept & transfer) | (giese | lab) | (! heat) | ("moderate cooling")
+(vortex) | (! layer) | (fl*w) | ("of deformation")
 .I 495 
 .W
-(function & dynamically) | (pulses | bodies) | (! mach) | ("moderate cooling")
+(supersonic) & (! leading) & (fl*w) & ("the laminar")
 .I 496 
 .W
-(tunnel & estimation) | (giese | lab) | (! flight) | ("moderate cooling")
+(supersonic) | (! compared) | (fl*w) | ("explained by")
 .I 497 
 .W
-(function & dynamically) | (sources | mixing) | (! heat) | ("moderate cooling")
+(vortex) | (! velocity) | (pressu*e) | ("explained by")
 .I 498 
 .W
-(pulses & bodies) | (pulses | bodies) | (! flow) | ("same range")
+(supersonic) | (! flow) | (an*le) | ("are presented")
 .I 499 
 .W
-(concept & transfer) | (sources | mixing) | (! flow) | ("same range")
+(boundary) | (! velocity) | (fl*w) | ("are presented")
 .I 500 
 .W
-(function & dynamically) | (compressive | creep) | (! mach) | ("layer increases")
+(supersonic) | (! velocity) | (f*ow) | ("explained by")
 .I 501 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! flow) | ("moderate cooling")
+(boundary) | (! layer) | (f*ow) | ("explained by")
 .I 502 
 .W
-(relations & peaks) | (giese | lab) | (! flight) | ("same range")
+(temperature) | (! velocity) | (pressu*e) | ("present method")
 .I 503 
 .W
-(relations & peaks) | (sources | mixing) | (! flow) | ("decrease in")
+(supersonic) | (! compared) | (b*ary) | ("explained by")
 .I 504 
 .W
-(relations & peaks) | (compressive | creep) | (! heat) | ("moderate cooling")
+(vortex) | (! layer) | (b*ary) | ("the laminar")
 .I 505 
 .W
-(tunnel & estimation) | (giese | lab) | (! flight) | ("a supersonic")
+(wing) | (! compared) | (b*ary) | ("of deformation")
 .I 506 
 .W
-(relations & peaks) | (pulses | bodies) | (! flow) | ("moderate cooling")
+(vortex) | (! leading) | (f*ow) | ("are presented")
 .I 507 
 .W
-(function & dynamically) & (compressive | creep) & (! flight) & ("a supersonic")
+(boundary) | (! layer) | (b*ary) | ("are presented")
 .I 508 
 .W
-(relations & peaks) | (tunnel | estimation) | (! flow) | ("layer increases")
+(temperature) | (! flow) | (f*ow) | ("are presented")
 .I 509 
 .W
-(concept & transfer) | (sources | mixing) | (! mach) | ("a supersonic")
+(wing) | (! leading) | (pressu*e) | ("of deformation")
 .I 510 
 .W
-(tunnel & estimation) | (sources | mixing) | (! flight) | ("decrease in")
+(temperature) | (! compared) | (an*le) | ("explained by")
 .I 511 
 .W
-(relations & peaks) | (pulses | bodies) | (! heat) | ("a supersonic")
+(wing) & (! leading) & (fl*w) & ("are presented")
 .I 512 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! heat) | ("same range")
+"the laminar"
 .I 513 
 .W
-(relations & peaks) | (tunnel | estimation) | (! heat) | ("a supersonic")
+(temperature) | (! compared) | (b*ary) | ("explained by")
 .I 514 
 .W
-(tunnel & estimation) | (giese | lab) | (! flight) | ("decrease in")
+(supersonic) | (! layer) | (fl*w) | ("explained by")
 .I 515 
 .W
-(function & dynamically) | (pulses | bodies) | (! heat) | ("moderate cooling")
+(wing) | (! compared) | (pressu*e) | ("present method")
 .I 516 
 .W
-(pulses & bodies) | (compressive | creep) | (! body) | ("layer increases")
+(temperature) | (! velocity) | (pressu*e) | ("the laminar")
 .I 517 
 .W
-(pulses & bodies) | (pulses | bodies) | (! flight) | ("layer increases")
+(wing) | (! velocity) | (pressu*e) | ("are presented")
 .I 518 
 .W
-(concept & transfer) | (sources | mixing) | (! mach) | ("layer increases")
+(vortex) | (! layer) | (pressu*e) | ("present method")
 .I 519 
 .W
-(pulses & bodies) | (compressive | creep) | (! flight) | ("same range")
+(boundary) | (! flow) | (an*le) | ("the laminar")
 .I 520 
 .W
-(concept & transfer) | (giese | lab) | (! mach) | ("decrease in")
+(boundary) | (! leading) | (an*le) | ("are presented")
 .I 521 
 .W
-(tunnel & estimation) | (sources | mixing) | (! flight) | ("same range")
+(vortex) | (! velocity) | (f*ow) | ("explained by")
 .I 522 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! mach) | ("same range")
+(boundary) & (! layer) & (fl*w) & ("are presented")
 .I 523 
 .W
-(pulses & bodies) | (pulses | bodies) | (! flow) | ("moderate cooling")
+(supersonic) | (! layer) | (b*ary) | ("the laminar")
 .I 524 
 .W
-(pulses & bodies) | (giese | lab) | (! flow) | ("layer increases")
+(boundary) & (! compared) & (f*ow) & ("are presented")
 .I 525 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! flow) | ("a supersonic")
+(temperature) | (! leading) | (pressu*e) | ("of deformation")
 .I 526 
 .W
-(relations & peaks) | (tunnel | estimation) | (! flight) | ("a supersonic")
+(temperature) | (! velocity) | (pressu*e) | ("are presented")
 .I 527 
 .W
-(pulses & bodies) | (compressive | creep) | (! flight) | ("moderate cooling")
+(wing) | (! leading) | (b*ary) | ("are presented")
 .I 528 
 .W
-(function & dynamically) | (tunnel | estimation) | (! flight) | ("same range")
+(supersonic) & (! velocity) & (f*ow) & ("present method")
 .I 529 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! mach) | ("layer increases")
+(boundary) | (! compared) | (f*ow) | ("the laminar")
 .I 530 
 .W
-tunnel & estimation
+(supersonic) & (! compared) & (fl*w) & ("the laminar")
 .I 531 
 .W
-(function & dynamically) | (pulses | bodies) | (! mach) | ("same range")
+(wing) | (! layer) | (f*ow) | ("of deformation")
 .I 532 
 .W
-(concept & transfer) | (tunnel | estimation) | (! mach) | ("layer increases")
+(boundary) | (! layer) | (pressu*e) | ("are presented")
 .I 533 
 .W
-(relations & peaks) | (pulses | bodies) | (! body) | ("moderate cooling")
+(vortex) | (! layer) | (f*ow) | ("the laminar")
 .I 534 
 .W
-(relations & peaks) | (tunnel | estimation) | (! mach) | ("same range")
+(boundary) | (! flow) | (b*ary) | ("are presented")
 .I 535 
 .W
-(function & dynamically) | (pulses | bodies) | (! heat) | ("decrease in")
+(wing) | (! compared) | (f*ow) | ("of deformation")
 .I 536 
 .W
-(function & dynamically) | (tunnel | estimation) | (! flight) | ("moderate cooling")
+(supersonic) | (! compared) | (pressu*e) | ("present method")
 .I 537 
 .W
-(relations & peaks) | (sources | mixing) | (! flight) | ("same range")
+(boundary) & (! compared) & (fl*w) & ("explained by")
 .I 538 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! flow) | ("moderate cooling")
+(vortex) | (! flow) | (pressu*e) | ("the laminar")
 .I 539 
 .W
-(concept & transfer) | (tunnel | estimation) | (! heat) | ("decrease in")
+(wing) | (! flow) | (f*ow) | ("of deformation")
 .I 540 
 .W
-(relations & peaks) | (compressive | creep) | (! mach) | ("moderate cooling")
+(temperature) | (! compared) | (f*ow) | ("are presented")
 .I 541 
 .W
-(relations & peaks) | (sources | mixing) | (! mach) | ("layer increases")
+(vortex) | (! compared) | (pressu*e) | ("the laminar")
 .I 542 
 .W
-(pulses & bodies) | (giese | lab) | (! mach) | ("same range")
+(wing) | (! flow) | (fl*w) | ("the laminar")
 .I 543 
 .W
-(pulses & bodies) | (sources | mixing) | (! heat) | ("a supersonic")
+(temperature) | (! flow) | (an*le) | ("explained by")
 .I 544 
 .W
-(pulses & bodies) | (giese | lab) | (! flow) | ("decrease in")
+(wing) | (! velocity) | (an*le) | ("present method")
 .I 545 
 .W
-(relations & peaks) | (pulses | bodies) | (! flow) | ("a supersonic")
+(boundary) | (! compared) | (f*ow) | ("present method")
 .I 546 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! body) | ("layer increases")
+(temperature) | (! flow) | (fl*w) | ("the laminar")
 .I 547 
 .W
-(function & dynamically) | (sources | mixing) | (! mach) | ("moderate cooling")
+(temperature) | (! compared) | (pressu*e) | ("explained by")
 .I 548 
 .W
-(pulses & bodies) | (compressive | creep) | (! flow) | ("same range")
+(temperature) | (! flow) | (b*ary) | ("explained by")
 .I 549 
 .W
-"layer increases"
+(wing) | (! layer) | (b*ary) | ("the laminar")
 .I 550 
 .W
-(pulses & bodies) | (pulses | bodies) | (! body) | ("decrease in")
+(wing) | (! layer) | (an*le) | ("explained by")
 .I 551 
 .W
-(pulses & bodies) | (giese | lab) | (! flow) | ("moderate cooling")
+(boundary) | (! flow) | (fl*w) | ("the laminar")
 .I 552 
 .W
-(relations & peaks) | (sources | mixing) | (! body) | ("moderate cooling")
+(wing) | (! flow) | (fl*w) | ("of deformation")
 .I 553 
 .W
-(pulses & bodies) | (pulses | bodies) | (! flight) | ("moderate cooling")
+(supersonic) | (! flow) | (f*ow) | ("the laminar")
 .I 554 
 .W
-(relations & peaks) | (pulses | bodies) | (! flight) | ("moderate cooling")
+(boundary) | (! layer) | (an*le) | ("are presented")
 .I 555 
 .W
-(tunnel & estimation) | (giese | lab) | (! body) | ("layer increases")
+(boundary) | (! compared) | (fl*w) | ("of deformation")
 .I 556 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! flight) | ("same range")
+(wing) & (! compared) & (f*ow) & ("the laminar")
 .I 557 
 .W
-(concept & transfer) & (pulses | bodies) & (! mach) & ("decrease in")
+(boundary) | (! compared) | (an*le) | ("the laminar")
 .I 558 
 .W
-(concept & transfer) | (tunnel | estimation) | (! flight) | ("a supersonic")
+(wing) | (! compared) | (fl*w) | ("of deformation")
 .I 559 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! mach) | ("decrease in")
+(supersonic) & (! velocity) & (fl*w) & ("present method")
 .I 560 
 .W
-(concept & transfer) | (giese | lab) | (! flight) | ("a supersonic")
+(boundary) | (! leading) | (fl*w) | ("explained by")
 .I 561 
 .W
-(concept & transfer) | (tunnel | estimation) | (! mach) | ("decrease in")
+(wing) | (! layer) | (fl*w) | ("explained by")
 .I 562 
 .W
-(pulses & bodies) | (sources | mixing) | (! body) | ("a supersonic")
+(supersonic) | (! compared) | (b*ary) | ("present method")
 .I 563 
 .W
-(tunnel & estimation) | (sources | mixing) | (! flow) | ("same range")
+(supersonic) | (! leading) | (b*ary) | ("are presented")
 .I 564 
 .W
-(pulses & bodies) | (pulses | bodies) | (! body) | ("layer increases")
+(vortex) & (! compared) & (fl*w) & ("the laminar")
 .I 565 
 .W
-(pulses & bodies) | (sources | mixing) | (! heat) | ("decrease in")
+(wing) | (! compared) | (f*ow) | ("present method")
 .I 566 
 .W
-(function & dynamically) | (tunnel | estimation) | (! flight) | ("decrease in")
+(supersonic) & (! leading) & (f*ow) & ("the laminar")
 .I 567 
 .W
-(function & dynamically) | (giese | lab) | (! body) | ("decrease in")
+(wing) | (! flow) | (pressu*e) | ("of deformation")
 .I 568 
 .W
-(concept & transfer) | (compressive | creep) | (! heat) | ("same range")
+(wing) | (! layer) | (pressu*e) | ("are presented")
 .I 569 
 .W
-(relations & peaks) | (giese | lab) | (! mach) | ("layer increases")
+(vortex) | (! leading) | (an*le) | ("are presented")
 .I 570 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! flight) | ("a supersonic")
+(boundary) | (! compared) | (fl*w) | ("present method")
 .I 571 
 .W
-(relations & peaks) | (pulses | bodies) | (! flight) | ("layer increases")
+(supersonic) | (! flow) | (pressu*e) | ("the laminar")
 .I 572 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! flow) | ("decrease in")
+(temperature) | (! leading) | (f*ow) | ("the laminar")
 .I 573 
 .W
-(pulses & bodies) | (sources | mixing) | (! mach) | ("moderate cooling")
+! layer
 .I 574 
 .W
-(concept & transfer) | (tunnel | estimation) | (! mach) | ("a supersonic")
+(boundary) | (! flow) | (b*ary) | ("explained by")
 .I 575 
 .W
-tunnel | estimation
+(vortex) & (! compared) & (fl*w) & ("are presented")
 .I 576 
 .W
-(relations & peaks) | (giese | lab) | (! flow) | ("moderate cooling")
+(boundary) | (! flow) | (pressu*e) | ("of deformation")
 .I 577 
 .W
-(relations & peaks) | (giese | lab) | (! flow) | ("decrease in")
+(boundary) | (! compared) | (b*ary) | ("the laminar")
 .I 578 
 .W
-(relations & peaks) | (pulses | bodies) | (! flow) | ("layer increases")
+(vortex) & (! compared) & (f*ow) & ("are presented")
 .I 579 
 .W
-(function & dynamically) | (compressive | creep) | (! heat) | ("moderate cooling")
+(supersonic) | (! compared) | (an*le) | ("present method")
 .I 580 
 .W
-! flow
+(vortex) | (! flow) | (b*ary) | ("of deformation")
 .I 581 
 .W
-pulses & bodies
+(vortex) | (! compared) | (b*ary) | ("of deformation")
 .I 582 
 .W
-(relations & peaks) | (compressive | creep) | (! body) | ("same range")
+vortex
 .I 583 
 .W
-(relations & peaks) | (pulses | bodies) | (! mach) | ("moderate cooling")
+(wing) | (! layer) | (pressu*e) | ("the laminar")
 .I 584 
 .W
-(concept & transfer) | (giese | lab) | (! heat) | ("same range")
+(boundary) | (! compared) | (pressu*e) | ("are presented")
 .I 585 
 .W
-function & dynamically
+(vortex) | (! leading) | (pressu*e) | ("the laminar")
 .I 586 
 .W
-(function & dynamically) | (compressive | creep) | (! flight) | ("layer increases")
+(temperature) | (! leading) | (pressu*e) | ("are presented")
 .I 587 
 .W
-(relations & peaks) | (compressive | creep) | (! flight) | ("decrease in")
+(vortex) | (! velocity) | (an*le) | ("explained by")
 .I 588 
 .W
-(function & dynamically) | (tunnel | estimation) | (! heat) | ("same range")
+(temperature) | (! leading) | (an*le) | ("explained by")
 .I 589 
 .W
-(relations & peaks) | (sources | mixing) | (! mach) | ("a supersonic")
+(wing) | (! compared) | (fl*w) | ("explained by")
 .I 590 
 .W
-(function & dynamically) | (compressive | creep) | (! mach) | ("a supersonic")
+(temperature) | (! leading) | (an*le) | ("of deformation")
 .I 591 
 .W
-(relations & peaks) | (tunnel | estimation) | (! flight) | ("decrease in")
+(vortex) | (! leading) | (pressu*e) | ("present method")
 .I 592 
 .W
-(pulses & bodies) | (giese | lab) | (! heat) | ("same range")
+(wing) | (! velocity) | (b*ary) | ("are presented")
 .I 593 
 .W
-(relations & peaks) | (sources | mixing) | (! mach) | ("decrease in")
+(supersonic) | (! velocity) | (an*le) | ("the laminar")
 .I 594 
 .W
-(function & dynamically) | (compressive | creep) | (! body) | ("moderate cooling")
+(vortex) | (! flow) | (pressu*e) | ("of deformation")
 .I 595 
 .W
-(concept & transfer) | (sources | mixing) | (! flight) | ("decrease in")
+(vortex) | (! compared) | (pressu*e) | ("of deformation")
 .I 596 
 .W
-(concept & transfer) | (compressive | creep) | (! flight) | ("layer increases")
+(boundary) | (! velocity) | (fl*w) | ("explained by")
 .I 597 
 .W
-(tunnel & estimation) | (giese | lab) | (! mach) | ("moderate cooling")
+(vortex) | (! velocity) | (f*ow) | ("present method")
 .I 598 
 .W
-(pulses & bodies) | (pulses | bodies) | (! flow) | ("layer increases")
+(vortex) | (! leading) | (f*ow) | ("the laminar")
 .I 599 
 .W
-(relations & peaks) | (giese | lab) | (! mach) | ("same range")
+(supersonic) | (! velocity) | (pressu*e) | ("the laminar")
 .I 600 
 .W
-(tunnel & estimation) | (giese | lab) | (! flow) | ("layer increases")
+(temperature) | (! flow) | (pressu*e) | ("explained by")
 .I 601 
 .W
-(concept & transfer) | (pulses | bodies) | (! heat) | ("a supersonic")
+(vortex) | (! velocity) | (b*ary) | ("of deformation")
 .I 602 
 .W
-(pulses & bodies) | (compressive | creep) | (! mach) | ("layer increases")
+(boundary) | (! velocity) | (b*ary) | ("are presented")
 .I 603 
 .W
-(relations & peaks) | (pulses | bodies) | (! mach) | ("decrease in")
+(temperature) | (! flow) | (f*ow) | ("explained by")
 .I 604 
 .W
-(relations & peaks) | (tunnel | estimation) | (! flow) | ("decrease in")
+(boundary) & (! velocity) & (f*ow) & ("the laminar")
 .I 605 
 .W
-(pulses & bodies) | (giese | lab) | (! flight) | ("layer increases")
+(boundary) | (! leading) | (f*ow) | ("are presented")
 .I 606 
 .W
-! tests
+(boundary) | (! velocity) | (pressu*e) | ("are presented")
 .I 607 
 .W
-(pulses & bodies) | (pulses | bodies) | (! body) | ("a supersonic")
+(vortex) | (! velocity) | (an*le) | ("the laminar")
 .I 608 
 .W
-(pulses & bodies) | (pulses | bodies) | (! heat) | ("layer increases")
+(supersonic) | (! flow) | (f*ow) | ("of deformation")
 .I 609 
 .W
-(concept & transfer) | (tunnel | estimation) | (! body) | ("layer increases")
+(boundary) | (! flow) | (pressu*e) | ("the laminar")
 .I 610 
 .W
-(function & dynamically) | (sources | mixing) | (! flow) | ("same range")
+(supersonic) | (! compared) | (pressu*e) | ("the laminar")
 .I 611 
 .W
-(tunnel & estimation) | (compressive | creep) | (! body) | ("a supersonic")
+(vortex) | (! velocity) | (an*le) | ("of deformation")
 .I 612 
 .W
-(function & dynamically) | (pulses | bodies) | (! body) | ("decrease in")
+(boundary) | (! flow) | (b*ary) | ("the laminar")
 .I 613 
 .W
-(concept & transfer) | (sources | mixing) | (! flow) | ("a supersonic")
+(vortex) | (! velocity) | (fl*w) | ("present method")
 .I 614 
 .W
-(function & dynamically) | (compressive | creep) | (! mach) | ("moderate cooling")
+(vortex) | (! leading) | (pressu*e) | ("are presented")
 .I 615 
 .W
-(relations & peaks) | (pulses | bodies) | (! flight) | ("decrease in")
+(wing) | (! velocity) | (b*ary) | ("present method")
 .I 616 
 .W
-(pulses & bodies) | (compressive | creep) | (! flow) | ("a supersonic")
+(boundary) & (! velocity) & (fl*w) & ("the laminar")
 .I 617 
 .W
-(pulses & bodies) | (giese | lab) | (! body) | ("a supersonic")
+(wing) | (! velocity) | (f*ow) | ("explained by")
 .I 618 
 .W
-(concept & transfer) | (tunnel | estimation) | (! flow) | ("decrease in")
+(boundary) | (! flow) | (b*ary) | ("present method")
 .I 619 
 .W
-(relations & peaks) | (pulses | bodies) | (! heat) | ("moderate cooling")
+(wing) | (! velocity) | (fl*w) | ("of deformation")
 .I 620 
 .W
-(tunnel & estimation) | (giese | lab) | (! heat) | ("layer increases")
+(vortex) | (! velocity) | (b*ary) | ("the laminar")
 .I 621 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! flight) | ("decrease in")
+(vortex) | (! compared) | (pressu*e) | ("are presented")
 .I 622 
 .W
-(concept & transfer) | (giese | lab) | (! flow) | ("moderate cooling")
+(supersonic) | (! velocity) | (pressu*e) | ("are presented")
 .I 623 
 .W
-(function & dynamically) | (tunnel | estimation) | (! mach) | ("same range")
+(supersonic) | (! layer) | (f*ow) | ("explained by")
 .I 624 
 .W
-(relations & peaks) | (compressive | creep) | (! flight) | ("same range")
+(vortex) | (! leading) | (b*ary) | ("are presented")
 .I 625 
 .W
-(relations & peaks) | (sources | mixing) | (! heat) | ("moderate cooling")
+(vortex) & (! leading) & (f*ow) & ("are presented")
 .I 626 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! flight) | ("layer increases")
+(vortex) | (! flow) | (f*ow) | ("explained by")
 .I 627 
 .W
-(tunnel & estimation) | (sources | mixing) | (! mach) | ("moderate cooling")
+(temperature) | (! compared) | (pressu*e) | ("the laminar")
 .I 628 
 .W
-(function & dynamically) | (sources | mixing) | (! body) | ("a supersonic")
+(wing) | (! layer) | (an*le) | ("present method")
 .I 629 
 .W
-(relations & peaks) | (tunnel | estimation) | (! flow) | ("a supersonic")
+(wing) | (! flow) | (f*ow) | ("the laminar")
 .I 630 
 .W
-(function & dynamically) | (giese | lab) | (! flow) | ("layer increases")
+(supersonic) & (! compared) & (f*ow) & ("explained by")
 .I 631 
 .W
-(concept & transfer) | (giese | lab) | (! flight) | ("decrease in")
+(temperature) & (! leading) & (f*ow) & ("are presented")
 .I 632 
 .W
-(function & dynamically) | (tunnel | estimation) | (! flow) | ("decrease in")
+(boundary) | (! leading) | (fl*w) | ("of deformation")
 .I 633 
 .W
-(concept & transfer) | (giese | lab) | (! mach) | ("same range")
+(wing) | (! layer) | (pressu*e) | ("present method")
 .I 634 
 .W
-! mach
+(wing) | (! leading) | (an*le) | ("explained by")
 .I 635 
 .W
-(function & dynamically) | (tunnel | estimation) | (! mach) | ("decrease in")
+(wing) | (! flow) | (an*le) | ("of deformation")
 .I 636 
 .W
-(tunnel & estimation) | (compressive | creep) | (! body) | ("decrease in")
+(temperature) | (! leading) | (b*ary) | ("of deformation")
 .I 637 
 .W
-(relations & peaks) | (tunnel | estimation) | (! heat) | ("layer increases")
+(boundary) & (! layer) & (fl*w) & ("present method")
 .I 638 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! flight) | ("decrease in")
+(temperature) | (! leading) | (fl*w) | ("explained by")
 .I 639 
 .W
-(function & dynamically) | (giese | lab) | (! heat) | ("layer increases")
+independent | pitot
 .I 640 
 .W
-(concept & transfer) | (pulses | bodies) | (! heat) | ("decrease in")
+(temperature) | (! layer) | (fl*w) | ("are presented")
 .I 641 
 .W
-"same range"
+(wing) | (! velocity) | (f*ow) | ("of deformation")
 .I 642 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! heat) | ("a supersonic")
+(boundary) & (! compared) & (f*ow) & ("explained by")
 .I 643 
 .W
-(relations & peaks) | (giese | lab) | (! heat) | ("same range")
+(boundary) | (! leading) | (b*ary) | ("are presented")
 .I 644 
 .W
-(pulses & bodies) | (compressive | creep) | (! flight) | ("decrease in")
+(supersonic) & (! compared) & (f*ow) & ("are presented")
 .I 645 
 .W
-(pulses & bodies) | (sources | mixing) | (! body) | ("moderate cooling")
+(boundary) | (! flow) | (an*le) | ("present method")
 .I 646 
 .W
-(tunnel & estimation) | (compressive | creep) | (! flow) | ("same range")
+(supersonic) | (! compared) | (an*le) | ("explained by")
 .I 647 
 .W
-(concept & transfer) | (sources | mixing) | (! heat) | ("decrease in")
+(temperature) | (! layer) | (b*ary) | ("present method")
 .I 648 
 .W
-(relations & peaks) | (compressive | creep) | (! mach) | ("a supersonic")
+(boundary) | (! velocity) | (pressu*e) | ("present method")
 .I 649 
 .W
-(tunnel & estimation) | (giese | lab) | (! body) | ("same range")
+(wing) | (! flow) | (b*ary) | ("of deformation")
 .I 650 
 .W
-(concept & transfer) | (compressive | creep) | (! body) | ("layer increases")
+(vortex) | (! layer) | (f*ow) | ("of deformation")
 .I 651 
 .W
-(concept & transfer) | (pulses | bodies) | (! heat) | ("layer increases")
+(temperature) | (! layer) | (f*ow) | ("are presented")
 .I 652 
 .W
-(concept & transfer) | (sources | mixing) | (! flight) | ("layer increases")
+(boundary) | (! leading) | (f*ow) | ("of deformation")
 .I 653 
 .W
-(concept & transfer) | (pulses | bodies) | (! flow) | ("layer increases")
+(temperature) | (! leading) | (an*le) | ("the laminar")
 .I 654 
 .W
-(concept & transfer) | (tunnel | estimation) | (! flow) | ("moderate cooling")
+(temperature) | (! layer) | (an*le) | ("present method")
 .I 655 
 .W
-(tunnel & estimation) | (pulses | bodies) | (! body) | ("decrease in")
+(wing) & (! velocity) & (fl*w) & ("the laminar")
 .I 656 
 .W
-(relations & peaks) | (sources | mixing) | (! mach) | ("same range")
+(boundary) | (! velocity) | (fl*w) | ("of deformation")
 .I 657 
 .W
-(tunnel & estimation) | (giese | lab) | (! body) | ("moderate cooling")
+(wing) | (! layer) | (b*ary) | ("present method")
 .I 658 
 .W
-(function & dynamically) | (pulses | bodies) | (! flight) | ("same range")
+! compared
 .I 659 
 .W
-(tunnel & estimation) | (sources | mixing) | (! body) | ("moderate cooling")
+(vortex) | (! compared) | (f*ow) | ("the laminar")
 .I 660 
 .W
-(pulses & bodies) | (giese | lab) | (! flight) | ("a supersonic")
+(supersonic) | (! flow) | (fl*w) | ("of deformation")
 .I 661 
 .W
-(tunnel & estimation) | (compressive | creep) | (! flight) | ("decrease in")
+(wing) | (! compared) | (an*le) | ("the laminar")
 .I 662 
 .W
-(function & dynamically) | (pulses | bodies) | (! mach) | ("a supersonic")
+(wing) | (! leading) | (pressu*e) | ("explained by")
 .I 663 
 .W
-compressive & creep
+(supersonic) & (! velocity) & (f*ow) & ("the laminar")
 .I 664 
 .W
-laboratory | infite
+(vortex) | (! leading) | (f*ow) | ("present method")
 .I 665 
 .W
-(tunnel & estimation) | (tunnel | estimation) | (! flight) | ("decrease in")
+(supersonic) | (! leading) | (fl*w) | ("are presented")
 .I 666 
 .W
-(pulses & bodies) | (giese | lab) | (! body) | ("layer increases")
+(vortex) | (! leading) | (fl*w) | ("of deformation")
 .I 667 
 .W
-(relations & peaks) | (tunnel | estimation) | (! mach) | ("decrease in")
+(boundary) & (! compared) & (fl*w) & ("the laminar")
 .I 668 
 .W
-(relations & peaks) | (compressive | creep) | (! flight) | ("moderate cooling")
+(boundary) | (! compared) | (b*ary) | ("are presented")
 .I 669 
 .W
-(pulses & bodies) | (tunnel | estimation) | (! mach) | ("layer increases")
+(temperature) & (! layer) & (f*ow) & ("the laminar")
 .I 670 
 .W
-(concept & transfer) & (pulses | bodies) & (! flight) & ("decrease in")
+(boundary) | (! compared) | (f*ow) | ("are presented")
+.I 671 
+.W
+(temperature) | (! compared) | (an*le) | ("are presented")
+.I 672 
+.W
+(boundary) & (! leading) & (f*ow) & ("the laminar")
+.I 673 
+.W
+(temperature) & (! compared) & (fl*w) & ("are presented")
+.I 674 
+.W
+(supersonic) | (! compared) | (fl*w) | ("the laminar")
+.I 675 
+.W
+! flow
+.I 676 
+.W
+(supersonic) | (! leading) | (f*ow) | ("are presented")
+.I 677 
+.W
+(supersonic) | (! velocity) | (b*ary) | ("the laminar")
+.I 678 
+.W
+(wing) | (! compared) | (f*ow) | ("the laminar")
+.I 679 
+.W
+(supersonic) | (! velocity) | (pressu*e) | ("present method")
+.I 680 
+.W
+(temperature) & (! leading) & (fl*w) & ("are presented")
+.I 681 
+.W
+(boundary) | (! leading) | (f*ow) | ("explained by")
+.I 682 
+.W
+(boundary) | (! flow) | (pressu*e) | ("are presented")
+.I 683 
+.W
+(supersonic) | (! flow) | (b*ary) | ("explained by")
+.I 684 
+.W
+jet & fluid
+.I 685 
+.W
+(vortex) | (! leading) | (f*ow) | ("of deformation")
+.I 686 
+.W
+(temperature) | (! compared) | (pressu*e) | ("are presented")
+.I 687 
+.W
+(wing) | (! flow) | (f*ow) | ("are presented")
+.I 688 
+.W
+(temperature) | (! velocity) | (f*ow) | ("the laminar")
+.I 689 
+.W
+(supersonic) | (! compared) | (pressu*e) | ("are presented")
+.I 690 
+.W
+(temperature) | (! leading) | (b*ary) | ("are presented")
+.I 691 
+.W
+(wing) | (! layer) | (fl*w) | ("the laminar")
+.I 692 
+.W
+(supersonic) | (! flow) | (an*le) | ("explained by")
+.I 693 
+.W
+(vortex) | (! velocity) | (pressu*e) | ("the laminar")
+.I 694 
+.W
+(vortex) & (! leading) & (f*ow) & ("the laminar")
+.I 695 
+.W
+(wing) | (! layer) | (an*le) | ("are presented")
+.I 696 
+.W
+(boundary) | (! velocity) | (an*le) | ("the laminar")
+.I 697 
+.W
+(wing) | (! compared) | (b*ary) | ("are presented")
+.I 698 
+.W
+(wing) | (! flow) | (fl*w) | ("are presented")
+.I 699 
+.W
+(supersonic) | (! flow) | (b*ary) | ("are presented")
+.I 700 
+.W
+(boundary) | (! compared) | (fl*w) | ("are presented")
+.I 701 
+.W
+(boundary) | (! velocity) | (fl*w) | ("the laminar")
+.I 702 
+.W
+(boundary) | (! compared) | (pressu*e) | ("the laminar")
+.I 703 
+.W
+(supersonic) | (! leading) | (fl*w) | ("explained by")
+.I 704 
+.W
+(wing) | (! compared) | (b*ary) | ("explained by")
+.I 705 
+.W
+(temperature) | (! compared) | (fl*w) | ("the laminar")
+.I 706 
+.W
+(vortex) | (! flow) | (fl*w) | ("are presented")
+.I 707 
+.W
+(vortex) | (! velocity) | (b*ary) | ("are presented")
+.I 708 
+.W
+gas | matrices
+.I 709 
+.W
+(wing) | (! layer) | (pressu*e) | ("explained by")
+.I 710 
+.W
+(boundary) | (! layer) | (fl*w) | ("are presented")
+.I 711 
+.W
+(boundary) | (! layer) | (f*ow) | ("are presented")
+.I 712 
+.W
+(boundary) | (! velocity) | (b*ary) | ("the laminar")
+.I 713 
+.W
+(boundary) | (! leading) | (fl*w) | ("are presented")
+.I 714 
+.W
+(wing) | (! compared) | (an*le) | ("explained by")
+.I 715 
+.W
+(temperature) & (! velocity) & (f*ow) & ("present method")
+.I 716 
+.W
+(wing) | (! compared) | (f*ow) | ("explained by")
+.I 717 
+.W
+(boundary) | (! layer) | (fl*w) | ("present method")
+.I 718 
+.W
+surface & generalised
+.I 719 
+.W
+(vortex) | (! flow) | (b*ary) | ("the laminar")
+.I 720 
+.W
+(vortex) | (! layer) | (f*ow) | ("are presented")
+.I 721 
+.W
+(temperature) | (! layer) | (b*ary) | ("the laminar")
+.I 722 
+.W
+(temperature) | (! layer) | (an*le) | ("the laminar")
+.I 723 
+.W
+(vortex) | (! flow) | (an*le) | ("the laminar")
+.I 724 
+.W
+(supersonic) | (! flow) | (pressu*e) | ("of deformation")
+.I 725 
+.W
+(vortex) | (! leading) | (fl*w) | ("present method")
+.I 726 
+.W
+(temperature) | (! layer) | (fl*w) | ("explained by")
+.I 727 
+.W
+(supersonic) | (! velocity) | (fl*w) | ("explained by")
+.I 728 
+.W
+(supersonic) & (! layer) & (fl*w) & ("are presented")
+.I 729 
+.W
+(wing) | (! leading) | (pressu*e) | ("are presented")
+.I 730 
+.W
+(vortex) | (! layer) | (fl*w) | ("are presented")
+.I 731 
+.W
+(vortex) | (! flow) | (b*ary) | ("present method")
+.I 732 
+.W
+(vortex) | (! compared) | (b*ary) | ("present method")
+.I 733 
+.W
+(vortex) | (! compared) | (fl*w) | ("are presented")
+.I 734 
+.W
+(supersonic) | (! leading) | (pressu*e) | ("are presented")
+.I 735 
+.W
+"explained by"
+.I 736 
+.W
+(vortex) | (! compared) | (an*le) | ("of deformation")
+.I 737 
+.W
+(vortex) | (! flow) | (an*le) | ("of deformation")
+.I 738 
+.W
+(temperature) & (! compared) & (f*ow) & ("are presented")
+.I 739 
+.W
+(vortex) | (! flow) | (f*ow) | ("are presented")
+.I 740 
+.W
+(wing) | (! flow) | (pressu*e) | ("explained by")
+.I 741 
+.W
+(supersonic) & (! layer) & (f*ow) & ("are presented")
+.I 742 
+.W
+(vortex) | (! compared) | (f*ow) | ("are presented")
+.I 743 
+.W
+(boundary) | (! layer) | (f*ow) | ("present method")
+.I 744 
+.W
+(vortex) | (! leading) | (pressu*e) | ("of deformation")
+.I 745 
+.W
+(boundary) | (! leading) | (pressu*e) | ("present method")
+.I 746 
+.W
+(vortex) | (! velocity) | (pressu*e) | ("are presented")
+.I 747 
+.W
+(temperature) & (! velocity) & (fl*w) & ("present method")
+.I 748 
+.W
+(boundary) | (! layer) | (fl*w) | ("of deformation")
+.I 749 
+.W
+(vortex) | (! flow) | (fl*w) | ("explained by")
