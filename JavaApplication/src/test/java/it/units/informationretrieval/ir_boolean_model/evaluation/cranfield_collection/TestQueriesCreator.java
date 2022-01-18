@@ -47,7 +47,7 @@ class TestQueriesCreator {
     /**
      * The number of AND, OR, NOT and PHRASE distinct queries to create.
      */
-    private static final int T = 2;
+    private static final int T = 5;
     /**
      * The number of words in AND, OR and phrase queries.
      */

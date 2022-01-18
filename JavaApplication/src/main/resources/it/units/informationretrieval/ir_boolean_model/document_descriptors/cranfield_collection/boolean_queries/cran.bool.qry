@@ -1,2247 +1,2298 @@
 .I 1 
 .W
-(supersonic) & (! compared) & (fl*w) & ("explained by")
+(reynolds) | (! hypersonic) | (h*at) | ("without heat")
 .I 2 
 .W
-(supersonic) | (! flow) | (pressu*e) | ("present method")
+(blade) | (! hypersonic) | (h*at) | ("with calculations")
 .I 3 
 .W
-(temperature) | (! velocity) | (an*le) | ("of deformation")
+(reynolds) & (! mach) & (h*at) & ("for the")
 .I 4 
 .W
-(vortex) | (! velocity) | (fl*w) | ("of deformation")
+(wings) | (! boundary) | (surfa*e) | ("without heat")
 .I 5 
 .W
-(supersonic) | (! compared) | (an*le) | ("are presented")
+(transfer) | (! hypersonic) | (surfa*e) | ("for the")
 .I 6 
 .W
-(supersonic) | (! layer) | (an*le) | ("of deformation")
+(wings) & (! boundary) & (h*at) & ("with calculations")
 .I 7 
 .W
-(boundary) | (! layer) | (f*ow) | ("of deformation")
+(transfer) | (! region) | (h*at) | ("creep through")
 .I 8 
 .W
-(vortex) | (! compared) | (an*le) | ("present method")
+(blade) | (! pressure) | (the*ies) | ("for the")
 .I 9 
 .W
-(boundary) | (! leading) | (an*le) | ("the laminar")
+(values) | (! hypersonic) | (m*od) | ("the variation")
 .I 10 
 .W
-(temperature) | (! leading) | (fl*w) | ("of deformation")
+(reynolds) | (! region) | (surfa*e) | ("creep through")
 .I 11 
 .W
-(supersonic) & (! velocity) & (f*ow) & ("explained by")
+(values) | (! region) | (m*od) | ("creep through")
 .I 12 
 .W
-(temperature) | (! leading) | (b*ary) | ("explained by")
+(transfer) | (! pressure) | (*eeds) | ("with calculations")
 .I 13 
 .W
-(supersonic) | (! leading) | (fl*w) | ("of deformation")
+(wings) | (! boundary) | (the*ies) | ("the variation")
 .I 14 
 .W
-(vortex) | (! flow) | (an*le) | ("present method")
+(reynolds) | (! boundary) | (surfa*e) | ("with calculations")
 .I 15 
 .W
-(temperature) | (! compared) | (f*ow) | ("explained by")
+(transfer) | (! boundary) | (m*od) | ("the variation")
 .I 16 
 .W
-(supersonic) | (! leading) | (f*ow) | ("of deformation")
+(values) | (! boundary) | (h*at) | ("with calculations")
 .I 17 
 .W
-(vortex) | (! leading) | (pressu*e) | ("explained by")
+(values) | (! boundary) | (the*ies) | ("with calculations")
 .I 18 
 .W
-(boundary) | (! compared) | (an*le) | ("of deformation")
+(transfer) & (! boundary) & (m*od) & ("the variation")
 .I 19 
 .W
-(boundary) | (! leading) | (pressu*e) | ("of deformation")
+(values) | (! pressure) | (h*at) | ("without heat")
 .I 20 
 .W
-(wing) & (! layer) & (fl*w) & ("are presented")
+(reynolds) | (! boundary) | (surfa*e) | ("without heat")
 .I 21 
 .W
-(boundary) | (! flow) | (fl*w) | ("are presented")
+(reynolds) | (! mach) | (m*od) | ("for the")
 .I 22 
 .W
-(boundary) & (! leading) & (fl*w) & ("explained by")
+(reynolds) | (! pressure) | (surfa*e) | ("creep through")
 .I 23 
 .W
-(vortex) | (! layer) | (b*ary) | ("of deformation")
+(blade) | (! hypersonic) | (*eeds) | ("without heat")
 .I 24 
 .W
-(temperature) | (! layer) | (f*ow) | ("the laminar")
+(wings) | (! boundary) | (*eeds) | ("with calculations")
 .I 25 
 .W
-(boundary) | (! compared) | (an*le) | ("explained by")
+(reynolds) | (! pressure) | (h*at) | ("the variation")
 .I 26 
 .W
-(supersonic) | (! velocity) | (fl*w) | ("are presented")
+(reynolds) | (! mach) | (the*ies) | ("for the")
 .I 27 
 .W
-(wing) | (! velocity) | (fl*w) | ("present method")
+(transfer) | (! region) | (*eeds) | ("creep through")
 .I 28 
 .W
-(temperature) | (! layer) | (fl*w) | ("the laminar")
+(transfer) | (! hypersonic) | (h*at) | ("the variation")
 .I 29 
 .W
-(vortex) | (! flow) | (b*ary) | ("are presented")
+(values) & (! boundary) & (h*at) & ("the variation")
 .I 30 
 .W
-(vortex) | (! compared) | (b*ary) | ("are presented")
+(blade) | (! boundary) | (m*od) | ("the variation")
 .I 31 
 .W
-(boundary) | (! flow) | (fl*w) | ("explained by")
+(reynolds) | (! mach) | (the*ies) | ("without heat")
 .I 32 
 .W
-(wing) | (! layer) | (f*ow) | ("are presented")
+(blade) | (! region) | (h*at) | ("the variation")
 .I 33 
 .W
-(wing) | (! leading) | (f*ow) | ("are presented")
+(blade) | (! pressure) | (surfa*e) | ("creep through")
 .I 34 
 .W
-(temperature) | (! compared) | (fl*w) | ("present method")
+(transfer) & (! pressure) & (h*at) & ("the variation")
 .I 35 
 .W
-(supersonic) | (! layer) | (pressu*e) | ("explained by")
+(blade) | (! region) | (the*ies) | ("without heat")
 .I 36 
 .W
-(temperature) | (! leading) | (an*le) | ("present method")
+(transfer) | (! boundary) | (the*ies) | ("without heat")
 .I 37 
 .W
-angle | constant
+(reynolds) | (! pressure) | (*eeds) | ("with calculations")
 .I 38 
 .W
-(wing) | (! leading) | (f*ow) | ("of deformation")
+(wings) | (! boundary) | (surfa*e) | ("for the")
 .I 39 
 .W
-(vortex) | (! flow) | (pressu*e) | ("present method")
+(transfer) | (! hypersonic) | (m*od) | ("creep through")
 .I 40 
 .W
-(wing) | (! flow) | (an*le) | ("are presented")
+(wings) & (! hypersonic) & (m*od) & ("the variation")
 .I 41 
 .W
-wing
+(reynolds) & (! hypersonic) & (m*od) & ("the variation")
 .I 42 
 .W
-(temperature) | (! leading) | (f*ow) | ("of deformation")
+(blade) | (! mach) | (h*at) | ("for the")
 .I 43 
 .W
-(temperature) | (! velocity) | (b*ary) | ("of deformation")
+(transfer) | (! boundary) | (the*ies) | ("the variation")
 .I 44 
 .W
-(vortex) | (! layer) | (an*le) | ("are presented")
+(values) & (! pressure) & (h*at) & ("with calculations")
 .I 45 
 .W
-(boundary) | (! compared) | (b*ary) | ("of deformation")
+(values) | (! boundary) | (h*at) | ("the variation")
 .I 46 
 .W
-(boundary) | (! velocity) | (pressu*e) | ("of deformation")
+(reynolds) | (! pressure) | (*eeds) | ("creep through")
 .I 47 
 .W
-(wing) | (! leading) | (f*ow) | ("explained by")
+(reynolds) | (! boundary) | (h*at) | ("for the")
 .I 48 
 .W
-(vortex) | (! velocity) | (pressu*e) | ("present method")
+(transfer) | (! pressure) | (surfa*e) | ("for the")
 .I 49 
 .W
-(wing) | (! velocity) | (fl*w) | ("are presented")
+(values) | (! mach) | (m*od) | ("the variation")
 .I 50 
 .W
-(temperature) | (! leading) | (b*ary) | ("present method")
+(transfer) & (! region) & (m*od) & ("without heat")
 .I 51 
 .W
-(vortex) | (! layer) | (b*ary) | ("are presented")
+(values) & (! region) & (h*at) & ("the variation")
 .I 52 
 .W
-(wing) | (! velocity) | (f*ow) | ("present method")
+(values) & (! boundary) & (m*od) & ("for the")
 .I 53 
 .W
-(wing) | (! leading) | (b*ary) | ("explained by")
+(reynolds) | (! hypersonic) | (surfa*e) | ("without heat")
 .I 54 
 .W
-(temperature) | (! layer) | (fl*w) | ("present method")
+(values) | (! hypersonic) | (surfa*e) | ("with calculations")
 .I 55 
 .W
-(wing) | (! flow) | (pressu*e) | ("are presented")
+(transfer) | (! pressure) | (*eeds) | ("without heat")
 .I 56 
 .W
-(vortex) & (! velocity) & (f*ow) & ("are presented")
+(blade) | (! region) | (surfa*e) | ("with calculations")
 .I 57 
 .W
-(temperature) & (! velocity) & (fl*w) & ("are presented")
+(blade) | (! boundary) | (m*od) | ("without heat")
 .I 58 
 .W
-(supersonic) | (! velocity) | (f*ow) | ("of deformation")
+(values) | (! region) | (h*at) | ("the variation")
 .I 59 
 .W
-(boundary) | (! velocity) | (fl*w) | ("present method")
+(reynolds) | (! boundary) | (m*od) | ("the variation")
 .I 60 
 .W
-(supersonic) | (! velocity) | (fl*w) | ("of deformation")
+(blade) & (! boundary) & (m*od) & ("the variation")
 .I 61 
 .W
-(wing) | (! flow) | (f*ow) | ("explained by")
+(wings) | (! region) | (m*od) | ("with calculations")
 .I 62 
 .W
-(temperature) | (! layer) | (an*le) | ("explained by")
+(transfer) | (! pressure) | (m*od) | ("with calculations")
 .I 63 
 .W
-(temperature) | (! velocity) | (fl*w) | ("are presented")
+(blade) | (! boundary) | (surfa*e) | ("with calculations")
 .I 64 
 .W
-(temperature) | (! layer) | (an*le) | ("are presented")
+exact | considered
 .I 65 
 .W
-jet | fluid
+(transfer) & (! boundary) & (h*at) & ("for the")
 .I 66 
 .W
-(wing) | (! velocity) | (b*ary) | ("of deformation")
+(wings) & (! pressure) & (h*at) & ("the variation")
 .I 67 
 .W
-(vortex) | (! velocity) | (f*ow) | ("the laminar")
+(wings) | (! hypersonic) | (m*od) | ("creep through")
 .I 68 
 .W
-(vortex) | (! compared) | (an*le) | ("are presented")
+(wings) | (! pressure) | (m*od) | ("creep through")
 .I 69 
 .W
-(supersonic) | (! layer) | (fl*w) | ("the laminar")
+(blade) | (! mach) | (*eeds) | ("creep through")
 .I 70 
 .W
-(wing) | (! velocity) | (fl*w) | ("the laminar")
+(reynolds) | (! pressure) | (h*at) | ("without heat")
 .I 71 
 .W
-(temperature) | (! flow) | (pressu*e) | ("are presented")
+(wings) | (! mach) | (m*od) | ("without heat")
 .I 72 
 .W
-(boundary) | (! leading) | (pressu*e) | ("the laminar")
+h*at
 .I 73 
 .W
-(wing) & (! velocity) & (fl*w) & ("are presented")
+(reynolds) | (! hypersonic) | (the*ies) | ("without heat")
 .I 74 
 .W
-(supersonic) | (! velocity) | (f*ow) | ("the laminar")
+(blade) | (! region) | (m*od) | ("creep through")
 .I 75 
 .W
-(supersonic) | (! compared) | (pressu*e) | ("explained by")
+(blade) | (! hypersonic) | (surfa*e) | ("the variation")
 .I 76 
 .W
-(vortex) | (! layer) | (an*le) | ("of deformation")
+(blade) | (! pressure) | (h*at) | ("with calculations")
 .I 77 
 .W
-(vortex) | (! layer) | (f*ow) | ("explained by")
+(blade) | (! boundary) | (*eeds) | ("creep through")
 .I 78 
 .W
-(wing) | (! layer) | (pressu*e) | ("of deformation")
+(transfer) & (! hypersonic) & (m*od) & ("for the")
 .I 79 
 .W
-(boundary) | (! velocity) | (f*ow) | ("present method")
+(blade) | (! hypersonic) | (h*at) | ("for the")
 .I 80 
 .W
-(vortex) | (! velocity) | (b*ary) | ("explained by")
+(reynolds) | (! boundary) | (m*od) | ("without heat")
 .I 81 
 .W
-(wing) | (! leading) | (pressu*e) | ("the laminar")
+(values) | (! region) | (surfa*e) | ("for the")
 .I 82 
 .W
-(wing) | (! velocity) | (pressu*e) | ("present method")
+(values) | (! pressure) | (surfa*e) | ("creep through")
 .I 83 
 .W
-(temperature) | (! layer) | (f*ow) | ("present method")
+(wings) | (! boundary) | (m*od) | ("without heat")
 .I 84 
 .W
-(vortex) | (! compared) | (an*le) | ("the laminar")
+(transfer) | (! mach) | (h*at) | ("without heat")
 .I 85 
 .W
-(supersonic) | (! velocity) | (pressu*e) | ("of deformation")
+(transfer) | (! mach) | (the*ies) | ("for the")
 .I 86 
 .W
-(vortex) | (! compared) | (b*ary) | ("the laminar")
+(wings) | (! pressure) | (h*at) | ("the variation")
 .I 87 
 .W
-(wing) | (! velocity) | (an*le) | ("explained by")
+(blade) | (! pressure) | (h*at) | ("the variation")
 .I 88 
 .W
-(vortex) | (! flow) | (an*le) | ("are presented")
+(values) | (! hypersonic) | (the*ies) | ("creep through")
 .I 89 
 .W
-(supersonic) | (! layer) | (b*ary) | ("are presented")
+(transfer) | (! mach) | (h*at) | ("with calculations")
 .I 90 
 .W
-(boundary) & (! layer) & (f*ow) & ("present method")
+(wings) | (! boundary) | (*eeds) | ("creep through")
 .I 91 
 .W
-(temperature) & (! layer) & (fl*w) & ("the laminar")
+(reynolds) & (! mach) & (m*od) & ("the variation")
 .I 92 
 .W
-(wing) | (! compared) | (fl*w) | ("the laminar")
+(reynolds) | (! boundary) | (*eeds) | ("creep through")
 .I 93 
 .W
-(boundary) | (! flow) | (an*le) | ("of deformation")
+(reynolds) | (! boundary) | (*eeds) | ("for the")
 .I 94 
 .W
-(boundary) | (! velocity) | (pressu*e) | ("the laminar")
+(values) | (! region) | (m*od) | ("with calculations")
 .I 95 
 .W
-(temperature) | (! flow) | (an*le) | ("the laminar")
+"creep through"
 .I 96 
 .W
-(temperature) | (! layer) | (pressu*e) | ("are presented")
+(blade) | (! pressure) | (m*od) | ("creep through")
 .I 97 
 .W
-(supersonic) | (! layer) | (an*le) | ("explained by")
+(wings) | (! region) | (surfa*e) | ("for the")
 .I 98 
 .W
-(temperature) | (! leading) | (f*ow) | ("explained by")
+(transfer) | (! region) | (the*ies) | ("without heat")
 .I 99 
 .W
-(supersonic) & (! compared) & (fl*w) & ("are presented")
+(reynolds) | (! region) | (the*ies) | ("without heat")
 .I 100 
 .W
-(boundary) | (! velocity) | (f*ow) | ("of deformation")
+(values) & (! region) & (m*od) & ("for the")
 .I 101 
 .W
-(boundary) | (! leading) | (pressu*e) | ("are presented")
+(blade) | (! mach) | (*eeds) | ("without heat")
 .I 102 
 .W
-(vortex) & (! layer) & (fl*w) & ("are presented")
+(values) | (! pressure) | (surfa*e) | ("with calculations")
 .I 103 
 .W
-(temperature) | (! flow) | (pressu*e) | ("present method")
+(blade) | (! hypersonic) | (h*at) | ("the variation")
 .I 104 
 .W
-(wing) | (! flow) | (b*ary) | ("present method")
+(blade) | (! boundary) | (the*ies) | ("for the")
 .I 105 
 .W
-(boundary) | (! leading) | (b*ary) | ("the laminar")
+(transfer) | (! boundary) | (surfa*e) | ("without heat")
 .I 106 
 .W
-(wing) & (! compared) & (fl*w) & ("are presented")
+(transfer) | (! mach) | (surfa*e) | ("the variation")
 .I 107 
 .W
-(vortex) | (! layer) | (pressu*e) | ("of deformation")
+(blade) | (! boundary) | (the*ies) | ("without heat")
 .I 108 
 .W
-(temperature) | (! flow) | (pressu*e) | ("of deformation")
+(blade) | (! hypersonic) | (the*ies) | ("for the")
 .I 109 
 .W
-angle & constant
+(wings) | (! region) | (h*at) | ("with calculations")
 .I 110 
 .W
-(vortex) | (! velocity) | (fl*w) | ("explained by")
+(transfer) | (! pressure) | (h*at) | ("with calculations")
 .I 111 
 .W
-(vortex) | (! layer) | (f*ow) | ("present method")
+(transfer) | (! mach) | (surfa*e) | ("without heat")
 .I 112 
 .W
-(wing) | (! velocity) | (pressu*e) | ("of deformation")
+(reynolds) | (! region) | (m*od) | ("the variation")
 .I 113 
 .W
-(supersonic) | (! compared) | (an*le) | ("of deformation")
+(reynolds) | (! hypersonic) | (h*at) | ("the variation")
 .I 114 
 .W
-(vortex) & (! leading) & (fl*w) & ("are presented")
+(wings) & (! boundary) & (m*od) & ("the variation")
 .I 115 
 .W
-(vortex) | (! velocity) | (f*ow) | ("are presented")
+(reynolds) | (! region) | (*eeds) | ("with calculations")
 .I 116 
 .W
-(wing) | (! compared) | (pressu*e) | ("explained by")
+(values) | (! hypersonic) | (*eeds) | ("for the")
 .I 117 
 .W
-(boundary) | (! flow) | (b*ary) | ("of deformation")
+(values) | (! pressure) | (h*at) | ("creep through")
 .I 118 
 .W
-(temperature) | (! layer) | (b*ary) | ("are presented")
+(reynolds) | (! hypersonic) | (surfa*e) | ("with calculations")
 .I 119 
 .W
-(wing) & (! leading) & (f*ow) & ("are presented")
+(blade) | (! pressure) | (*eeds) | ("without heat")
 .I 120 
 .W
-(vortex) | (! leading) | (fl*w) | ("are presented")
+(blade) & (! pressure) & (h*at) & ("for the")
 .I 121 
 .W
-(wing) | (! velocity) | (an*le) | ("are presented")
+(transfer) & (! hypersonic) & (m*od) & ("the variation")
 .I 122 
 .W
-(wing) | (! leading) | (fl*w) | ("the laminar")
+(reynolds) | (! boundary) | (the*ies) | ("without heat")
 .I 123 
 .W
-(wing) | (! velocity) | (an*le) | ("of deformation")
+(blade) | (! hypersonic) | (*eeds) | ("with calculations")
 .I 124 
 .W
-(wing) | (! velocity) | (an*le) | ("the laminar")
+(blade) | (! boundary) | (m*od) | ("for the")
 .I 125 
 .W
-(wing) | (! flow) | (fl*w) | ("present method")
+(transfer) | (! region) | (m*od) | ("for the")
 .I 126 
 .W
-(wing) | (! layer) | (f*ow) | ("the laminar")
+(blade) | (! pressure) | (h*at) | ("without heat")
 .I 127 
 .W
-(temperature) | (! flow) | (fl*w) | ("are presented")
+(blade) | (! pressure) | (*eeds) | ("creep through")
 .I 128 
 .W
-(boundary) | (! velocity) | (b*ary) | ("explained by")
+(reynolds) | (! pressure) | (*eeds) | ("without heat")
 .I 129 
 .W
-(vortex) | (! layer) | (fl*w) | ("explained by")
+(values) | (! region) | (the*ies) | ("the variation")
 .I 130 
 .W
-(supersonic) | (! compared) | (b*ary) | ("of deformation")
+(reynolds) | (! boundary) | (the*ies) | ("with calculations")
 .I 131 
 .W
-(vortex) | (! layer) | (fl*w) | ("present method")
+(values) | (! boundary) | (m*od) | ("creep through")
 .I 132 
 .W
-(boundary) & (! layer) & (f*ow) & ("are presented")
+(blade) | (! mach) | (h*at) | ("with calculations")
 .I 133 
 .W
-(boundary) & (! compared) & (fl*w) & ("are presented")
+(blade) | (! region) | (*eeds) | ("with calculations")
 .I 134 
 .W
-(temperature) | (! velocity) | (fl*w) | ("the laminar")
+(wings) & (! region) & (m*od) & ("without heat")
 .I 135 
 .W
-(wing) | (! flow) | (an*le) | ("present method")
+(reynolds) | (! region) | (surfa*e) | ("without heat")
 .I 136 
 .W
-(boundary) | (! velocity) | (f*ow) | ("explained by")
+(transfer) | (! pressure) | (the*ies) | ("with calculations")
 .I 137 
 .W
-(supersonic) & (! velocity) & (fl*w) & ("are presented")
+(wings) | (! mach) | (*eeds) | ("the variation")
 .I 138 
 .W
-(supersonic) | (! compared) | (b*ary) | ("are presented")
+(wings) | (! mach) | (the*ies) | ("the variation")
 .I 139 
 .W
-(boundary) | (! layer) | (pressu*e) | ("the laminar")
+(reynolds) & (! pressure) & (m*od) & ("for the")
 .I 140 
 .W
-(supersonic) | (! compared) | (b*ary) | ("the laminar")
+(transfer) | (! region) | (the*ies) | ("the variation")
 .I 141 
 .W
-(boundary) & (! compared) & (fl*w) & ("present method")
+(wings) | (! mach) | (h*at) | ("the variation")
 .I 142 
 .W
-(supersonic) | (! layer) | (f*ow) | ("the laminar")
+(values) | (! mach) | (surfa*e) | ("creep through")
 .I 143 
 .W
-! velocity
+(blade) | (! hypersonic) | (h*at) | ("without heat")
 .I 144 
 .W
-(supersonic) | (! layer) | (fl*w) | ("are presented")
+(transfer) | (! region) | (*eeds) | ("without heat")
 .I 145 
 .W
-(vortex) | (! velocity) | (fl*w) | ("the laminar")
+(blade) | (! region) | (*eeds) | ("for the")
 .I 146 
 .W
-(supersonic) | (! leading) | (f*ow) | ("explained by")
+(blade) & (! region) & (m*od) & ("for the")
 .I 147 
 .W
-(boundary) | (! velocity) | (an*le) | ("explained by")
+(transfer) | (! boundary) | (surfa*e) | ("for the")
 .I 148 
 .W
-(boundary) | (! compared) | (fl*w) | ("explained by")
+(wings) | (! region) | (m*od) | ("without heat")
 .I 149 
 .W
-(wing) | (! flow) | (f*ow) | ("present method")
+(blade) | (! mach) | (h*at) | ("the variation")
 .I 150 
 .W
-(wing) | (! layer) | (an*le) | ("the laminar")
+(values) | (! mach) | (h*at) | ("without heat")
 .I 151 
 .W
-(wing) | (! leading) | (pressu*e) | ("present method")
+(transfer) | (! mach) | (m*od) | ("creep through")
 .I 152 
 .W
-(boundary) | (! flow) | (pressu*e) | ("present method")
+(values) & (! hypersonic) & (h*at) & ("with calculations")
 .I 153 
 .W
-(temperature) | (! leading) | (pressu*e) | ("present method")
+(blade) & (! boundary) & (m*od) & ("for the")
 .I 154 
 .W
-(boundary) | (! compared) | (b*ary) | ("present method")
+(values) | (! region) | (surfa*e) | ("with calculations")
 .I 155 
 .W
-(temperature) | (! compared) | (f*ow) | ("of deformation")
+(transfer) | (! region) | (the*ies) | ("for the")
 .I 156 
 .W
-(temperature) | (! layer) | (pressu*e) | ("explained by")
+(values) | (! hypersonic) | (h*at) | ("with calculations")
 .I 157 
 .W
-(supersonic) | (! flow) | (pressu*e) | ("are presented")
+(blade) | (! hypersonic) | (the*ies) | ("without heat")
 .I 158 
 .W
-(wing) | (! layer) | (b*ary) | ("explained by")
+(wings) | (! region) | (the*ies) | ("for the")
 .I 159 
 .W
-(wing) & (! leading) & (fl*w) & ("the laminar")
+(reynolds) | (! mach) | (m*od) | ("the variation")
 .I 160 
 .W
-(boundary) | (! velocity) | (f*ow) | ("are presented")
+(transfer) | (! boundary) | (*eeds) | ("the variation")
 .I 161 
 .W
-(vortex) | (! velocity) | (f*ow) | ("of deformation")
+(transfer) | (! hypersonic) | (the*ies) | ("the variation")
 .I 162 
 .W
-(temperature) | (! flow) | (an*le) | ("are presented")
+(reynolds) | (! hypersonic) | (the*ies) | ("creep through")
 .I 163 
 .W
-(supersonic) | (! compared) | (an*le) | ("the laminar")
+(reynolds) & (! region) & (m*od) & ("the variation")
 .I 164 
 .W
-(wing) | (! velocity) | (f*ow) | ("the laminar")
+(transfer) | (! pressure) | (m*od) | ("without heat")
 .I 165 
 .W
-(boundary) & (! compared) & (f*ow) & ("present method")
+(transfer) | (! pressure) | (h*at) | ("the variation")
 .I 166 
 .W
-(temperature) | (! compared) | (fl*w) | ("are presented")
+(transfer) | (! region) | (*eeds) | ("with calculations")
 .I 167 
 .W
-(temperature) | (! leading) | (fl*w) | ("present method")
+(wings) | (! hypersonic) | (*eeds) | ("with calculations")
 .I 168 
 .W
-(boundary) | (! flow) | (an*le) | ("explained by")
+(reynolds) | (! mach) | (h*at) | ("the variation")
 .I 169 
 .W
-(supersonic) | (! velocity) | (fl*w) | ("the laminar")
+(values) | (! boundary) | (m*od) | ("with calculations")
 .I 170 
 .W
-(boundary) | (! compared) | (an*le) | ("present method")
+(blade) & (! hypersonic) & (h*at) & ("the variation")
 .I 171 
 .W
-(temperature) | (! compared) | (f*ow) | ("present method")
+(wings) | (! mach) | (*eeds) | ("without heat")
 .I 172 
 .W
-fl*w
+(wings) | (! boundary) | (the*ies) | ("without heat")
 .I 173 
 .W
-(vortex) | (! leading) | (f*ow) | ("explained by")
+(wings) & (! region) & (m*od) & ("for the")
 .I 174 
 .W
-(boundary) & (! leading) & (fl*w) & ("present method")
+(wings) & (! mach) & (h*at) & ("the variation")
 .I 175 
 .W
-(wing) | (! velocity) | (pressu*e) | ("the laminar")
+(values) | (! boundary) | (*eeds) | ("the variation")
 .I 176 
 .W
-(boundary) | (! velocity) | (pressu*e) | ("explained by")
+(transfer) | (! pressure) | (the*ies) | ("the variation")
 .I 177 
 .W
-(temperature) | (! compared) | (an*le) | ("present method")
+(reynolds) | (! hypersonic) | (the*ies) | ("for the")
 .I 178 
 .W
-(temperature) | (! leading) | (pressu*e) | ("explained by")
+(blade) | (! boundary) | (the*ies) | ("with calculations")
 .I 179 
 .W
-(temperature) & (! layer) & (f*ow) & ("are presented")
+(wings) | (! hypersonic) | (surfa*e) | ("creep through")
 .I 180 
 .W
-(temperature) & (! layer) & (fl*w) & ("are presented")
+(blade) | (! pressure) | (surfa*e) | ("without heat")
 .I 181 
 .W
-(vortex) | (! flow) | (pressu*e) | ("explained by")
+(reynolds) | (! mach) | (surfa*e) | ("for the")
 .I 182 
 .W
-(wing) | (! velocity) | (b*ary) | ("the laminar")
+(values) | (! pressure) | (m*od) | ("for the")
 .I 183 
 .W
-(temperature) | (! compared) | (fl*w) | ("of deformation")
+(reynolds) | (! hypersonic) | (*eeds) | ("with calculations")
 .I 184 
 .W
-(wing) | (! leading) | (fl*w) | ("present method")
+(wings) & (! mach) & (m*od) & ("for the")
 .I 185 
 .W
-(wing) | (! leading) | (f*ow) | ("present method")
+(values) | (! mach) | (*eeds) | ("for the")
 .I 186 
 .W
-(supersonic) | (! layer) | (pressu*e) | ("present method")
+(wings) | (! region) | (m*od) | ("creep through")
 .I 187 
 .W
-(supersonic) | (! layer) | (fl*w) | ("present method")
+(transfer) & (! hypersonic) & (m*od) & ("without heat")
 .I 188 
 .W
-(supersonic) | (! layer) | (pressu*e) | ("are presented")
+(blade) | (! hypersonic) | (the*ies) | ("with calculations")
 .I 189 
 .W
-(boundary) & (! velocity) & (f*ow) & ("present method")
+(wings) | (! hypersonic) | (h*at) | ("for the")
 .I 190 
 .W
-(vortex) | (! leading) | (fl*w) | ("the laminar")
+(blade) | (! region) | (surfa*e) | ("creep through")
 .I 191 
 .W
-(boundary) | (! flow) | (f*ow) | ("explained by")
+(reynolds) | (! hypersonic) | (*eeds) | ("for the")
 .I 192 
 .W
-(vortex) | (! layer) | (an*le) | ("present method")
+(blade) | (! mach) | (m*od) | ("without heat")
 .I 193 
 .W
-(vortex) | (! leading) | (fl*w) | ("explained by")
+(transfer) | (! mach) | (m*od) | ("with calculations")
 .I 194 
 .W
-(temperature) | (! layer) | (f*ow) | ("of deformation")
+(wings) | (! region) | (h*at) | ("for the")
 .I 195 
 .W
-(temperature) | (! leading) | (f*ow) | ("present method")
+(reynolds) | (! pressure) | (surfa*e) | ("with calculations")
 .I 196 
 .W
-(wing) | (! layer) | (fl*w) | ("present method")
+(reynolds) | (! mach) | (m*od) | ("with calculations")
 .I 197 
 .W
-(vortex) | (! leading) | (an*le) | ("explained by")
+(values) | (! boundary) | (h*at) | ("creep through")
 .I 198 
 .W
-independent & pitot
+(transfer) | (! mach) | (surfa*e) | ("for the")
 .I 199 
 .W
-(vortex) | (! layer) | (pressu*e) | ("are presented")
+(transfer) | (! region) | (h*at) | ("the variation")
 .I 200 
 .W
-(boundary) & (! leading) & (f*ow) & ("present method")
+(transfer) | (! boundary) | (m*od) | ("for the")
 .I 201 
 .W
-(wing) | (! flow) | (fl*w) | ("explained by")
+(transfer) & (! pressure) & (h*at) & ("for the")
 .I 202 
 .W
-(temperature) | (! layer) | (b*ary) | ("explained by")
+(values) | (! boundary) | (m*od) | ("for the")
 .I 203 
 .W
-(supersonic) & (! leading) & (f*ow) & ("are presented")
+(values) & (! pressure) & (h*at) & ("for the")
 .I 204 
 .W
-(vortex) | (! compared) | (b*ary) | ("explained by")
+(reynolds) | (! pressure) | (h*at) | ("creep through")
 .I 205 
 .W
-(vortex) | (! leading) | (b*ary) | ("present method")
+(reynolds) | (! mach) | (the*ies) | ("the variation")
 .I 206 
 .W
-(wing) | (! compared) | (pressu*e) | ("the laminar")
+(reynolds) | (! region) | (surfa*e) | ("the variation")
 .I 207 
 .W
-(wing) | (! layer) | (f*ow) | ("present method")
+(reynolds) | (! mach) | (*eeds) | ("for the")
 .I 208 
 .W
-(supersonic) | (! velocity) | (pressu*e) | ("explained by")
+(transfer) | (! boundary) | (*eeds) | ("for the")
 .I 209 
 .W
-(boundary) & (! leading) & (f*ow) & ("are presented")
+(blade) & (! region) & (h*at) & ("for the")
 .I 210 
 .W
-"of deformation"
+(reynolds) | (! region) | (m*od) | ("for the")
 .I 211 
 .W
-(supersonic) | (! layer) | (an*le) | ("present method")
+(values) & (! hypersonic) & (h*at) & ("for the")
 .I 212 
 .W
-(boundary) & (! leading) & (fl*w) & ("are presented")
+(wings) & (! hypersonic) & (h*at) & ("without heat")
 .I 213 
 .W
-(supersonic) & (! leading) & (fl*w) & ("are presented")
+(values) | (! pressure) | (*eeds) | ("without heat")
 .I 214 
 .W
-(wing) | (! flow) | (pressu*e) | ("present method")
+(blade) | (! boundary) | (the*ies) | ("the variation")
 .I 215 
 .W
-(supersonic) | (! leading) | (f*ow) | ("present method")
+(values) | (! boundary) | (the*ies) | ("the variation")
 .I 216 
 .W
-(wing) | (! layer) | (f*ow) | ("explained by")
+(transfer) | (! mach) | (surfa*e) | ("with calculations")
 .I 217 
 .W
-(supersonic) | (! velocity) | (fl*w) | ("present method")
+(values) | (! hypersonic) | (*eeds) | ("creep through")
 .I 218 
 .W
-(wing) & (! velocity) & (f*ow) & ("present method")
+(values) | (! hypersonic) | (*eeds) | ("with calculations")
 .I 219 
 .W
-(supersonic) | (! layer) | (an*le) | ("the laminar")
+(transfer) | (! pressure) | (*eeds) | ("for the")
 .I 220 
 .W
-(temperature) | (! flow) | (b*ary) | ("the laminar")
+(transfer) | (! hypersonic) | (the*ies) | ("for the")
 .I 221 
 .W
-(temperature) | (! velocity) | (an*le) | ("the laminar")
+(blade) | (! pressure) | (surfa*e) | ("the variation")
 .I 222 
 .W
-(boundary) & (! leading) & (f*ow) & ("explained by")
+(transfer) | (! hypersonic) | (the*ies) | ("creep through")
 .I 223 
 .W
-(boundary) | (! flow) | (fl*w) | ("of deformation")
+(transfer) | (! pressure) | (surfa*e) | ("with calculations")
 .I 224 
 .W
-supersonic
+(wings) | (! boundary) | (h*at) | ("without heat")
 .I 225 
 .W
-(vortex) | (! compared) | (fl*w) | ("explained by")
+(reynolds) | (! pressure) | (*eeds) | ("the variation")
 .I 226 
 .W
-f*ow
+(reynolds) | (! pressure) | (h*at) | ("for the")
 .I 227 
 .W
-(supersonic) | (! velocity) | (b*ary) | ("present method")
+(transfer) | (! region) | (*eeds) | ("for the")
 .I 228 
 .W
-(temperature) | (! compared) | (f*ow) | ("the laminar")
+(values) | (! hypersonic) | (m*od) | ("with calculations")
 .I 229 
 .W
-(supersonic) | (! compared) | (f*ow) | ("are presented")
+(blade) | (! boundary) | (h*at) | ("for the")
 .I 230 
 .W
-(supersonic) | (! velocity) | (f*ow) | ("present method")
+(reynolds) | (! hypersonic) | (m*od) | ("the variation")
 .I 231 
 .W
-(temperature) | (! layer) | (pressu*e) | ("the laminar")
+(reynolds) | (! hypersonic) | (m*od) | ("with calculations")
 .I 232 
 .W
-(temperature) | (! velocity) | (f*ow) | ("explained by")
+(blade) | (! mach) | (h*at) | ("without heat")
 .I 233 
 .W
-(vortex) | (! compared) | (fl*w) | ("present method")
+(reynolds) | (! pressure) | (the*ies) | ("creep through")
 .I 234 
 .W
-(supersonic) | (! layer) | (f*ow) | ("present method")
+(wings) | (! hypersonic) | (*eeds) | ("the variation")
 .I 235 
 .W
-(supersonic) | (! flow) | (f*ow) | ("explained by")
+(reynolds) | (! mach) | (h*at) | ("with calculations")
 .I 236 
 .W
-(vortex) | (! flow) | (f*ow) | ("present method")
+(reynolds) | (! mach) | (surfa*e) | ("creep through")
 .I 237 
 .W
-(vortex) | (! layer) | (pressu*e) | ("the laminar")
+(transfer) | (! mach) | (h*at) | ("the variation")
 .I 238 
 .W
-(boundary) | (! velocity) | (an*le) | ("present method")
+(wings) & (! boundary) & (m*od) & ("without heat")
 .I 239 
 .W
-(supersonic) | (! leading) | (b*ary) | ("present method")
+(reynolds) | (! boundary) | (m*od) | ("creep through")
 .I 240 
 .W
-(boundary) | (! velocity) | (an*le) | ("are presented")
+(wings) | (! mach) | (surfa*e) | ("creep through")
 .I 241 
 .W
-(boundary) | (! compared) | (pressu*e) | ("present method")
+(wings) | (! boundary) | (h*at) | ("creep through")
 .I 242 
 .W
-(boundary) | (! leading) | (an*le) | ("present method")
+(reynolds) | (! mach) | (surfa*e) | ("without heat")
 .I 243 
 .W
-(wing) | (! compared) | (b*ary) | ("present method")
+(blade) | (! pressure) | (the*ies) | ("with calculations")
 .I 244 
 .W
-(temperature) | (! compared) | (pressu*e) | ("present method")
+(blade) | (! pressure) | (m*od) | ("for the")
 .I 245 
 .W
-(boundary) | (! flow) | (f*ow) | ("the laminar")
+(wings) | (! pressure) | (m*od) | ("the variation")
 .I 246 
 .W
-(vortex) | (! layer) | (b*ary) | ("present method")
+(values) | (! region) | (*eeds) | ("without heat")
 .I 247 
 .W
-(supersonic) | (! leading) | (an*le) | ("are presented")
+(blade) & (! hypersonic) & (h*at) & ("for the")
 .I 248 
 .W
-(supersonic) | (! flow) | (pressu*e) | ("explained by")
+(blade) | (! hypersonic) | (m*od) | ("creep through")
 .I 249 
 .W
-(temperature) | (! flow) | (b*ary) | ("are presented")
+(values) | (! region) | (h*at) | ("creep through")
 .I 250 
 .W
-(supersonic) | (! leading) | (an*le) | ("of deformation")
+(wings) | (! hypersonic) | (the*ies) | ("creep through")
 .I 251 
 .W
-(supersonic) & (! leading) & (f*ow) & ("explained by")
+(wings) | (! mach) | (*eeds) | ("with calculations")
 .I 252 
 .W
-(temperature) | (! layer) | (fl*w) | ("of deformation")
+(values) | (! boundary) | (surfa*e) | ("creep through")
 .I 253 
 .W
-(supersonic) | (! leading) | (fl*w) | ("present method")
+(blade) | (! region) | (surfa*e) | ("without heat")
 .I 254 
 .W
-(wing) & (! leading) & (f*ow) & ("the laminar")
+(blade) | (! boundary) | (h*at) | ("with calculations")
 .I 255 
 .W
-(boundary) | (! flow) | (pressu*e) | ("explained by")
+(transfer) | (! mach) | (m*od) | ("for the")
 .I 256 
 .W
-(vortex) | (! velocity) | (pressu*e) | ("of deformation")
+(values) | (! hypersonic) | (m*od) | ("for the")
 .I 257 
 .W
-(temperature) | (! flow) | (f*ow) | ("the laminar")
+(transfer) | (! region) | (surfa*e) | ("for the")
 .I 258 
 .W
-(wing) | (! compared) | (an*le) | ("present method")
+(transfer) | (! boundary) | (h*at) | ("without heat")
 .I 259 
 .W
-(vortex) | (! leading) | (an*le) | ("the laminar")
+(blade) | (! hypersonic) | (surfa*e) | ("without heat")
 .I 260 
 .W
-(vortex) | (! flow) | (fl*w) | ("present method")
+(wings) | (! region) | (the*ies) | ("with calculations")
 .I 261 
 .W
-(vortex) | (! compared) | (f*ow) | ("present method")
+(blade) | (! boundary) | (surfa*e) | ("creep through")
 .I 262 
 .W
-(supersonic) | (! compared) | (fl*w) | ("are presented")
+(wings) | (! mach) | (h*at) | ("without heat")
 .I 263 
 .W
-(temperature) | (! velocity) | (an*le) | ("explained by")
+(values) | (! pressure) | (surfa*e) | ("the variation")
 .I 264 
 .W
-(wing) | (! leading) | (b*ary) | ("of deformation")
+(blade) | (! region) | (m*od) | ("for the")
 .I 265 
 .W
-(supersonic) | (! leading) | (pressu*e) | ("the laminar")
+(values) | (! boundary) | (h*at) | ("for the")
 .I 266 
 .W
-(temperature) | (! compared) | (b*ary) | ("present method")
+(blade) | (! region) | (the*ies) | ("the variation")
 .I 267 
 .W
-(wing) | (! flow) | (pressu*e) | ("the laminar")
+(reynolds) | (! mach) | (m*od) | ("without heat")
 .I 268 
 .W
-(temperature) | (! compared) | (fl*w) | ("explained by")
+(blade) | (! boundary) | (*eeds) | ("the variation")
 .I 269 
 .W
-(temperature) | (! velocity) | (f*ow) | ("of deformation")
+(values) | (! hypersonic) | (the*ies) | ("the variation")
 .I 270 
 .W
-(temperature) | (! leading) | (fl*w) | ("the laminar")
+(reynolds) | (! region) | (h*at) | ("for the")
 .I 271 
 .W
-(boundary) & (! velocity) & (f*ow) & ("are presented")
+(blade) | (! boundary) | (surfa*e) | ("without heat")
 .I 272 
 .W
-(wing) | (! velocity) | (b*ary) | ("explained by")
+(reynolds) | (! boundary) | (*eeds) | ("the variation")
 .I 273 
 .W
-(supersonic) | (! flow) | (b*ary) | ("present method")
+(blade) | (! region) | (*eeds) | ("without heat")
 .I 274 
 .W
-(supersonic) | (! leading) | (an*le) | ("present method")
+(values) & (! pressure) & (m*od) & ("for the")
 .I 275 
 .W
-(boundary) | (! leading) | (an*le) | ("explained by")
+(transfer) | (! pressure) | (surfa*e) | ("creep through")
 .I 276 
 .W
-(boundary) & (! leading) & (fl*w) & ("the laminar")
+(blade) | (! pressure) | (m*od) | ("the variation")
 .I 277 
 .W
-(supersonic) | (! compared) | (f*ow) | ("the laminar")
+(wings) | (! pressure) | (h*at) | ("creep through")
 .I 278 
 .W
-(vortex) | (! flow) | (fl*w) | ("the laminar")
+(values) | (! region) | (h*at) | ("for the")
 .I 279 
 .W
-(vortex) | (! flow) | (b*ary) | ("explained by")
+(values) & (! hypersonic) & (m*od) & ("for the")
 .I 280 
 .W
-(boundary) | (! leading) | (b*ary) | ("explained by")
+(reynolds) | (! hypersonic) | (surfa*e) | ("the variation")
 .I 281 
 .W
-(temperature) | (! velocity) | (fl*w) | ("present method")
+(blade) & (! pressure) & (m*od) & ("the variation")
 .I 282 
 .W
-(boundary) | (! layer) | (b*ary) | ("explained by")
+(values) | (! boundary) | (*eeds) | ("without heat")
 .I 283 
 .W
-(boundary) & (! compared) & (f*ow) & ("the laminar")
+(reynolds) & (! mach) & (h*at) & ("the variation")
 .I 284 
 .W
-(temperature) | (! flow) | (fl*w) | ("present method")
+(wings) & (! hypersonic) & (m*od) & ("for the")
 .I 285 
 .W
-(temperature) | (! velocity) | (pressu*e) | ("explained by")
+(transfer) & (! mach) & (h*at) & ("for the")
 .I 286 
 .W
-(boundary) | (! compared) | (f*ow) | ("explained by")
+(blade) | (! hypersonic) | (m*od) | ("without heat")
 .I 287 
 .W
-(temperature) | (! flow) | (an*le) | ("of deformation")
+(transfer) | (! mach) | (surfa*e) | ("creep through")
 .I 288 
 .W
-(supersonic) | (! leading) | (pressu*e) | ("explained by")
+(blade) | (! pressure) | (*eeds) | ("the variation")
 .I 289 
 .W
-(boundary) & (! velocity) & (fl*w) & ("are presented")
+(wings) | (! region) | (*eeds) | ("with calculations")
 .I 290 
 .W
-(temperature) | (! velocity) | (fl*w) | ("explained by")
+(values) | (! pressure) | (*eeds) | ("the variation")
 .I 291 
 .W
-(vortex) | (! leading) | (an*le) | ("of deformation")
+(blade) | (! hypersonic) | (h*at) | ("creep through")
 .I 292 
 .W
-(boundary) | (! layer) | (an*le) | ("present method")
+(transfer) & (! mach) & (h*at) & ("the variation")
 .I 293 
 .W
-(supersonic) | (! velocity) | (an*le) | ("explained by")
+(reynolds) | (! pressure) | (surfa*e) | ("for the")
 .I 294 
 .W
-(wing) | (! compared) | (pressu*e) | ("are presented")
+(blade) | (! hypersonic) | (m*od) | ("for the")
 .I 295 
 .W
-(vortex) | (! compared) | (f*ow) | ("of deformation")
+(transfer) | (! boundary) | (the*ies) | ("for the")
 .I 296 
 .W
-(wing) | (! leading) | (f*ow) | ("the laminar")
+blade
 .I 297 
 .W
-(boundary) | (! layer) | (b*ary) | ("of deformation")
+(reynolds) | (! hypersonic) | (h*at) | ("creep through")
 .I 298 
 .W
-(temperature) | (! layer) | (pressu*e) | ("of deformation")
+(reynolds) | (! boundary) | (h*at) | ("without heat")
 .I 299 
 .W
-(vortex) | (! flow) | (an*le) | ("explained by")
+(blade) | (! region) | (*eeds) | ("the variation")
 .I 300 
 .W
-(wing) | (! compared) | (fl*w) | ("are presented")
+(transfer) & (! pressure) & (h*at) & ("without heat")
 .I 301 
 .W
-(supersonic) | (! compared) | (fl*w) | ("present method")
+(reynolds) | (! region) | (surfa*e) | ("for the")
 .I 302 
 .W
-(supersonic) | (! velocity) | (an*le) | ("present method")
+(values) | (! region) | (h*at) | ("without heat")
 .I 303 
 .W
-(supersonic) | (! layer) | (an*le) | ("are presented")
+(values) & (! hypersonic) & (m*od) & ("the variation")
 .I 304 
 .W
-(boundary) | (! layer) | (pressu*e) | ("explained by")
+(values) | (! hypersonic) | (surfa*e) | ("the variation")
 .I 305 
 .W
-(temperature) | (! leading) | (f*ow) | ("are presented")
+(reynolds) & (! mach) & (m*od) & ("for the")
 .I 306 
 .W
-(vortex) & (! leading) & (fl*w) & ("the laminar")
+(wings) | (! hypersonic) | (m*od) | ("for the")
 .I 307 
 .W
-(supersonic) | (! flow) | (an*le) | ("the laminar")
+(reynolds) | (! boundary) | (m*od) | ("with calculations")
 .I 308 
 .W
-(vortex) | (! layer) | (b*ary) | ("explained by")
+(reynolds) | (! mach) | (*eeds) | ("creep through")
 .I 309 
 .W
-(supersonic) | (! velocity) | (b*ary) | ("of deformation")
+(transfer) & (! pressure) & (m*od) & ("for the")
 .I 310 
 .W
-(temperature) | (! flow) | (fl*w) | ("of deformation")
+(wings) | (! boundary) | (m*od) | ("the variation")
 .I 311 
 .W
-(vortex) | (! layer) | (an*le) | ("explained by")
+(blade) | (! pressure) | (m*od) | ("without heat")
 .I 312 
 .W
-(supersonic) | (! velocity) | (an*le) | ("are presented")
+(blade) | (! hypersonic) | (surfa*e) | ("with calculations")
 .I 313 
 .W
-(temperature) | (! velocity) | (fl*w) | ("of deformation")
+(values) | (! pressure) | (*eeds) | ("with calculations")
 .I 314 
 .W
-(temperature) | (! leading) | (fl*w) | ("are presented")
+(transfer) | (! mach) | (m*od) | ("the variation")
 .I 315 
 .W
-(temperature) | (! layer) | (pressu*e) | ("present method")
+(reynolds) | (! pressure) | (m*od) | ("for the")
 .I 316 
 .W
-(wing) | (! flow) | (b*ary) | ("the laminar")
+(transfer) | (! mach) | (m*od) | ("without heat")
 .I 317 
 .W
-(wing) | (! flow) | (an*le) | ("the laminar")
+(transfer) & (! boundary) & (h*at) & ("the variation")
 .I 318 
 .W
-(vortex) | (! leading) | (an*le) | ("present method")
+(values) | (! region) | (surfa*e) | ("the variation")
 .I 319 
 .W
-(wing) | (! leading) | (fl*w) | ("explained by")
+(reynolds) | (! region) | (the*ies) | ("the variation")
 .I 320 
 .W
-(supersonic) | (! flow) | (an*le) | ("present method")
+(reynolds) | (! mach) | (h*at) | ("without heat")
 .I 321 
 .W
-(temperature) | (! flow) | (f*ow) | ("present method")
+(wings) | (! boundary) | (surfa*e) | ("with calculations")
 .I 322 
 .W
-(supersonic) & (! layer) & (fl*w) & ("present method")
+(transfer) | (! region) | (the*ies) | ("creep through")
 .I 323 
 .W
-(boundary) | (! velocity) | (b*ary) | ("present method")
+(wings) | (! mach) | (surfa*e) | ("for the")
 .I 324 
 .W
-(temperature) | (! velocity) | (b*ary) | ("the laminar")
+(transfer) | (! boundary) | (m*od) | ("with calculations")
 .I 325 
 .W
-(supersonic) | (! velocity) | (an*le) | ("of deformation")
+(blade) | (! pressure) | (h*at) | ("for the")
 .I 326 
 .W
-(boundary) | (! velocity) | (f*ow) | ("the laminar")
+(wings) | (! mach) | (the*ies) | ("creep through")
 .I 327 
 .W
-(vortex) | (! velocity) | (an*le) | ("are presented")
+(blade) | (! mach) | (surfa*e) | ("without heat")
 .I 328 
 .W
-boundary
+(wings) | (! region) | (surfa*e) | ("without heat")
 .I 329 
 .W
-(supersonic) | (! leading) | (b*ary) | ("explained by")
+(wings) | (! hypersonic) | (surfa*e) | ("with calculations")
 .I 330 
 .W
-(temperature) | (! velocity) | (b*ary) | ("present method")
+(blade) & (! region) & (m*od) & ("the variation")
 .I 331 
 .W
-(boundary) | (! layer) | (fl*w) | ("explained by")
+(transfer) & (! pressure) & (m*od) & ("the variation")
 .I 332 
 .W
-(temperature) | (! compared) | (pressu*e) | ("of deformation")
+(blade) | (! mach) | (*eeds) | ("with calculations")
 .I 333 
 .W
-(wing) | (! leading) | (b*ary) | ("the laminar")
+(wings) & (! mach) & (m*od) & ("without heat")
 .I 334 
 .W
-(vortex) | (! compared) | (pressu*e) | ("explained by")
+(reynolds) | (! boundary) | (h*at) | ("creep through")
 .I 335 
 .W
-(boundary) | (! compared) | (an*le) | ("are presented")
+(values) | (! hypersonic) | (m*od) | ("without heat")
 .I 336 
 .W
-(supersonic) | (! leading) | (an*le) | ("explained by")
+(values) & (! boundary) & (h*at) & ("with calculations")
 .I 337 
 .W
-(vortex) | (! flow) | (f*ow) | ("of deformation")
+(transfer) | (! mach) | (the*ies) | ("creep through")
 .I 338 
 .W
-(temperature) | (! compared) | (b*ary) | ("are presented")
+(blade) | (! mach) | (the*ies) | ("with calculations")
 .I 339 
 .W
-(supersonic) | (! compared) | (f*ow) | ("of deformation")
+(reynolds) | (! pressure) | (m*od) | ("creep through")
 .I 340 
 .W
-(supersonic) & (! layer) & (f*ow) & ("present method")
+(reynolds) | (! hypersonic) | (m*od) | ("creep through")
 .I 341 
 .W
-(wing) | (! flow) | (an*le) | ("explained by")
+(wings) & (! pressure) & (h*at) & ("with calculations")
 .I 342 
 .W
-(vortex) | (! leading) | (b*ary) | ("of deformation")
+(wings) & (! region) & (h*at) & ("with calculations")
 .I 343 
 .W
-(supersonic) & (! leading) & (fl*w) & ("explained by")
+(values) | (! boundary) | (the*ies) | ("without heat")
 .I 344 
 .W
-(wing) | (! leading) | (an*le) | ("the laminar")
+"for the"
 .I 345 
 .W
-(wing) | (! flow) | (b*ary) | ("explained by")
+(blade) | (! hypersonic) | (m*od) | ("with calculations")
 .I 346 
 .W
-(supersonic) | (! flow) | (b*ary) | ("the laminar")
+(reynolds) | (! hypersonic) | (m*od) | ("without heat")
 .I 347 
 .W
-(supersonic) & (! velocity) & (fl*w) & ("explained by")
+(transfer) & (! mach) & (m*od) & ("for the")
 .I 348 
 .W
-(supersonic) | (! layer) | (b*ary) | ("present method")
+(values) | (! mach) | (*eeds) | ("creep through")
 .I 349 
 .W
-(boundary) | (! velocity) | (b*ary) | ("of deformation")
+(transfer) | (! boundary) | (*eeds) | ("creep through")
 .I 350 
 .W
-(boundary) & (! velocity) & (fl*w) & ("present method")
+(blade) | (! region) | (surfa*e) | ("for the")
 .I 351 
 .W
-(vortex) | (! layer) | (pressu*e) | ("explained by")
+(wings) | (! hypersonic) | (*eeds) | ("without heat")
 .I 352 
 .W
-(vortex) | (! compared) | (an*le) | ("explained by")
+(transfer) & (! mach) & (m*od) & ("the variation")
 .I 353 
 .W
-(boundary) | (! layer) | (pressu*e) | ("present method")
+(values) | (! region) | (m*od) | ("for the")
 .I 354 
 .W
-(temperature) | (! flow) | (b*ary) | ("of deformation")
+(blade) | (! pressure) | (*eeds) | ("with calculations")
 .I 355 
 .W
-(supersonic) | (! flow) | (f*ow) | ("are presented")
+(reynolds) | (! mach) | (h*at) | ("creep through")
 .I 356 
 .W
-(supersonic) | (! flow) | (fl*w) | ("are presented")
+(reynolds) | (! mach) | (m*od) | ("creep through")
 .I 357 
 .W
-(supersonic) | (! flow) | (an*le) | ("of deformation")
+(reynolds) | (! region) | (m*od) | ("with calculations")
 .I 358 
 .W
-(temperature) | (! flow) | (an*le) | ("present method")
+(values) | (! hypersonic) | (the*ies) | ("without heat")
 .I 359 
 .W
-(wing) | (! compared) | (f*ow) | ("are presented")
+(wings) | (! pressure) | (h*at) | ("for the")
 .I 360 
 .W
-(supersonic) | (! flow) | (b*ary) | ("of deformation")
+(reynolds) | (! region) | (h*at) | ("without heat")
 .I 361 
 .W
-(supersonic) & (! velocity) & (fl*w) & ("the laminar")
+"without heat"
 .I 362 
 .W
-(wing) | (! flow) | (b*ary) | ("are presented")
+(values) | (! mach) | (m*od) | ("with calculations")
 .I 363 
 .W
-(supersonic) | (! velocity) | (b*ary) | ("explained by")
+(wings) | (! hypersonic) | (the*ies) | ("for the")
 .I 364 
 .W
-(boundary) | (! flow) | (f*ow) | ("of deformation")
+(values) | (! pressure) | (the*ies) | ("the variation")
 .I 365 
 .W
-(boundary) | (! compared) | (b*ary) | ("explained by")
+(reynolds) | (! hypersonic) | (the*ies) | ("the variation")
 .I 366 
 .W
-(temperature) | (! leading) | (an*le) | ("are presented")
+(wings) | (! mach) | (h*at) | ("with calculations")
 .I 367 
 .W
-(wing) & (! velocity) & (fl*w) & ("present method")
+(reynolds) | (! pressure) | (*eeds) | ("for the")
 .I 368 
 .W
-(vortex) | (! compared) | (f*ow) | ("explained by")
+(reynolds) | (! hypersonic) | (the*ies) | ("with calculations")
 .I 369 
 .W
-(supersonic) | (! compared) | (f*ow) | ("present method")
+(wings) | (! region) | (h*at) | ("the variation")
 .I 370 
 .W
-(supersonic) | (! layer) | (b*ary) | ("of deformation")
+(blade) | (! region) | (m*od) | ("with calculations")
 .I 371 
 .W
-(boundary) | (! leading) | (pressu*e) | ("explained by")
+(values) | (! mach) | (*eeds) | ("with calculations")
 .I 372 
 .W
-(vortex) | (! compared) | (fl*w) | ("the laminar")
+(blade) & (! hypersonic) & (m*od) & ("for the")
 .I 373 
 .W
-(wing) | (! compared) | (an*le) | ("are presented")
+(wings) | (! hypersonic) | (the*ies) | ("without heat")
 .I 374 
 .W
-(boundary) | (! layer) | (an*le) | ("explained by")
+(transfer) | (! boundary) | (*eeds) | ("with calculations")
 .I 375 
 .W
-(boundary) | (! layer) | (b*ary) | ("present method")
+(wings) | (! region) | (m*od) | ("the variation")
 .I 376 
 .W
-(boundary) | (! layer) | (b*ary) | ("the laminar")
+(values) | (! hypersonic) | (the*ies) | ("for the")
 .I 377 
 .W
-(supersonic) | (! layer) | (pressu*e) | ("of deformation")
+(blade) | (! mach) | (the*ies) | ("for the")
 .I 378 
 .W
-(boundary) | (! layer) | (an*le) | ("the laminar")
+(blade) | (! hypersonic) | (*eeds) | ("creep through")
 .I 379 
 .W
-(boundary) | (! layer) | (an*le) | ("of deformation")
+(transfer) | (! region) | (the*ies) | ("with calculations")
 .I 380 
 .W
-(wing) | (! leading) | (fl*w) | ("of deformation")
+(blade) | (! region) | (surfa*e) | ("the variation")
 .I 381 
 .W
-(temperature) | (! flow) | (b*ary) | ("present method")
+(transfer) | (! hypersonic) | (*eeds) | ("without heat")
 .I 382 
 .W
-(temperature) | (! velocity) | (an*le) | ("present method")
+(wings) | (! pressure) | (the*ies) | ("for the")
 .I 383 
 .W
-(supersonic) | (! compared) | (fl*w) | ("of deformation")
+(transfer) | (! pressure) | (the*ies) | ("creep through")
 .I 384 
 .W
-(boundary) | (! layer) | (pressu*e) | ("of deformation")
+(values) | (! region) | (h*at) | ("with calculations")
 .I 385 
 .W
-(wing) | (! layer) | (b*ary) | ("are presented")
+(values) | (! hypersonic) | (h*at) | ("for the")
 .I 386 
 .W
-(boundary) & (! velocity) & (fl*w) & ("explained by")
+(blade) | (! boundary) | (*eeds) | ("without heat")
 .I 387 
 .W
-(wing) & (! velocity) & (f*ow) & ("the laminar")
+(wings) | (! pressure) | (m*od) | ("without heat")
 .I 388 
 .W
-! leading
+(reynolds) | (! boundary) | (*eeds) | ("with calculations")
 .I 389 
 .W
-(supersonic) | (! flow) | (f*ow) | ("present method")
+(wings) | (! pressure) | (surfa*e) | ("the variation")
 .I 390 
 .W
-(boundary) | (! flow) | (f*ow) | ("are presented")
+(reynolds) | (! pressure) | (the*ies) | ("without heat")
 .I 391 
 .W
-(vortex) | (! compared) | (pressu*e) | ("present method")
+(values) | (! mach) | (*eeds) | ("without heat")
 .I 392 
 .W
-(wing) | (! leading) | (fl*w) | ("are presented")
+(reynolds) | (! mach) | (the*ies) | ("creep through")
 .I 393 
 .W
-(vortex) | (! velocity) | (an*le) | ("present method")
+(reynolds) | (! hypersonic) | (surfa*e) | ("creep through")
 .I 394 
 .W
-(temperature) | (! layer) | (b*ary) | ("of deformation")
+(values) | (! boundary) | (the*ies) | ("creep through")
 .I 395 
 .W
-(boundary) | (! leading) | (fl*w) | ("the laminar")
+(wings) | (! pressure) | (the*ies) | ("without heat")
 .I 396 
 .W
-(temperature) | (! compared) | (b*ary) | ("the laminar")
+(reynolds) | (! boundary) | (the*ies) | ("creep through")
 .I 397 
 .W
-(boundary) | (! flow) | (fl*w) | ("present method")
+(blade) | (! mach) | (surfa*e) | ("the variation")
 .I 398 
 .W
-(temperature) | (! flow) | (pressu*e) | ("the laminar")
+(values) | (! pressure) | (surfa*e) | ("for the")
 .I 399 
 .W
-(vortex) | (! layer) | (an*le) | ("the laminar")
+(wings) | (! hypersonic) | (h*at) | ("with calculations")
 .I 400 
 .W
-"are presented"
+(values) | (! pressure) | (m*od) | ("creep through")
 .I 401 
 .W
-(temperature) | (! velocity) | (f*ow) | ("are presented")
+(wings) | (! region) | (m*od) | ("for the")
 .I 402 
 .W
-(wing) & (! layer) & (f*ow) & ("are presented")
+(blade) | (! boundary) | (*eeds) | ("for the")
 .I 403 
 .W
-(temperature) | (! compared) | (b*ary) | ("of deformation")
+(reynolds) | (! mach) | (surfa*e) | ("with calculations")
 .I 404 
 .W
-"present method"
+(transfer) | (! boundary) | (surfa*e) | ("with calculations")
 .I 405 
 .W
-(supersonic) | (! velocity) | (b*ary) | ("are presented")
+(blade) | (! pressure) | (*eeds) | ("for the")
 .I 406 
 .W
-(supersonic) | (! flow) | (fl*w) | ("present method")
+(wings) | (! pressure) | (*eeds) | ("for the")
 .I 407 
 .W
-(supersonic) | (! leading) | (f*ow) | ("the laminar")
+(wings) | (! pressure) | (*eeds) | ("with calculations")
 .I 408 
 .W
-(wing) | (! velocity) | (pressu*e) | ("explained by")
+(values) | (! pressure) | (surfa*e) | ("without heat")
 .I 409 
 .W
-(supersonic) | (! compared) | (pressu*e) | ("of deformation")
+(values) & (! boundary) & (h*at) & ("for the")
 .I 410 
 .W
-(wing) | (! layer) | (fl*w) | ("are presented")
+(wings) & (! boundary) & (h*at) & ("the variation")
 .I 411 
 .W
-(boundary) | (! leading) | (fl*w) | ("present method")
+(transfer) | (! hypersonic) | (surfa*e) | ("creep through")
 .I 412 
 .W
-(wing) | (! layer) | (fl*w) | ("of deformation")
+(blade) | (! boundary) | (the*ies) | ("creep through")
 .I 413 
 .W
-(temperature) & (! velocity) & (fl*w) & ("the laminar")
+(wings) & (! hypersonic) & (h*at) & ("with calculations")
 .I 414 
 .W
-(supersonic) | (! layer) | (f*ow) | ("are presented")
+(values) | (! hypersonic) | (*eeds) | ("the variation")
 .I 415 
 .W
-(temperature) & (! leading) & (fl*w) & ("the laminar")
+(transfer) | (! pressure) | (m*od) | ("for the")
 .I 416 
 .W
-(boundary) | (! layer) | (f*ow) | ("the laminar")
+(wings) | (! region) | (the*ies) | ("creep through")
 .I 417 
 .W
-(boundary) | (! compared) | (f*ow) | ("of deformation")
+(values) | (! region) | (surfa*e) | ("without heat")
 .I 418 
 .W
-(boundary) | (! layer) | (fl*w) | ("the laminar")
+(transfer) | (! region) | (h*at) | ("for the")
 .I 419 
 .W
-(vortex) & (! velocity) & (fl*w) & ("are presented")
+(blade) & (! pressure) & (m*od) & ("for the")
 .I 420 
 .W
-(temperature) & (! velocity) & (f*ow) & ("the laminar")
+(reynolds) & (! hypersonic) & (h*at) & ("for the")
 .I 421 
 .W
-(supersonic) | (! leading) | (fl*w) | ("the laminar")
+(blade) | (! mach) | (the*ies) | ("creep through")
 .I 422 
 .W
-(boundary) | (! velocity) | (an*le) | ("of deformation")
+(values) | (! boundary) | (h*at) | ("without heat")
 .I 423 
 .W
-(supersonic) | (! layer) | (fl*w) | ("of deformation")
+(transfer) | (! hypersonic) | (h*at) | ("with calculations")
 .I 424 
 .W
-(temperature) | (! flow) | (fl*w) | ("explained by")
+(wings) | (! hypersonic) | (surfa*e) | ("for the")
 .I 425 
 .W
-(boundary) | (! flow) | (f*ow) | ("present method")
+(values) | (! mach) | (the*ies) | ("creep through")
 .I 426 
 .W
-(temperature) | (! velocity) | (an*le) | ("are presented")
+(wings) | (! boundary) | (*eeds) | ("for the")
 .I 427 
 .W
-(supersonic) | (! flow) | (fl*w) | ("explained by")
+(transfer) & (! boundary) & (m*od) & ("for the")
 .I 428 
 .W
-(supersonic) | (! velocity) | (f*ow) | ("are presented")
+"with calculations"
 .I 429 
 .W
-(temperature) & (! leading) & (f*ow) & ("the laminar")
+(transfer) | (! mach) | (h*at) | ("creep through")
 .I 430 
 .W
-(supersonic) & (! velocity) & (f*ow) & ("are presented")
+(wings) & (! region) & (h*at) & ("for the")
 .I 431 
 .W
-(temperature) & (! velocity) & (f*ow) & ("are presented")
+tunnel & compressible
 .I 432 
 .W
-(boundary) | (! compared) | (pressu*e) | ("explained by")
+(values) | (! mach) | (surfa*e) | ("with calculations")
 .I 433 
 .W
-(supersonic) | (! compared) | (f*ow) | ("explained by")
+(wings) | (! hypersonic) | (*eeds) | ("creep through")
 .I 434 
 .W
-(boundary) | (! leading) | (f*ow) | ("present method")
+(values) | (! mach) | (surfa*e) | ("without heat")
 .I 435 
 .W
-(temperature) | (! layer) | (f*ow) | ("explained by")
+(wings) | (! boundary) | (h*at) | ("the variation")
 .I 436 
 .W
-(vortex) | (! leading) | (b*ary) | ("the laminar")
+longitudinally | supersonic
 .I 437 
 .W
-(supersonic) | (! flow) | (fl*w) | ("the laminar")
+(reynolds) | (! pressure) | (m*od) | ("with calculations")
 .I 438 
 .W
-(supersonic) | (! leading) | (b*ary) | ("the laminar")
+(reynolds) & (! boundary) & (h*at) & ("the variation")
 .I 439 
 .W
-(wing) | (! velocity) | (f*ow) | ("are presented")
+(reynolds) & (! pressure) & (h*at) & ("for the")
 .I 440 
 .W
-(wing) & (! compared) & (fl*w) & ("the laminar")
+(values) | (! boundary) | (surfa*e) | ("the variation")
 .I 441 
 .W
-(temperature) | (! layer) | (an*le) | ("of deformation")
+(wings) | (! mach) | (surfa*e) | ("the variation")
 .I 442 
 .W
-(boundary) & (! velocity) & (f*ow) & ("explained by")
+(transfer) | (! pressure) | (surfa*e) | ("the variation")
 .I 443 
 .W
-(wing) | (! compared) | (pressu*e) | ("of deformation")
+(reynolds) | (! boundary) | (surfa*e) | ("the variation")
 .I 444 
 .W
-(vortex) | (! velocity) | (fl*w) | ("are presented")
+(reynolds) | (! region) | (m*od) | ("without heat")
 .I 445 
 .W
-(vortex) | (! velocity) | (b*ary) | ("present method")
+(values) | (! pressure) | (h*at) | ("for the")
 .I 446 
 .W
-(vortex) | (! flow) | (fl*w) | ("of deformation")
+(blade) | (! boundary) | (surfa*e) | ("the variation")
 .I 447 
 .W
-temperature
+(values) | (! boundary) | (*eeds) | ("for the")
 .I 448 
 .W
-(supersonic) & (! compared) & (f*ow) & ("the laminar")
+(wings) & (! hypersonic) & (m*od) & ("without heat")
 .I 449 
 .W
-(temperature) | (! velocity) | (f*ow) | ("present method")
+(reynolds) | (! pressure) | (the*ies) | ("for the")
 .I 450 
 .W
-(supersonic) | (! leading) | (an*le) | ("the laminar")
+(wings) | (! hypersonic) | (the*ies) | ("with calculations")
 .I 451 
 .W
-(wing) | (! velocity) | (fl*w) | ("explained by")
+(reynolds) | (! pressure) | (the*ies) | ("the variation")
 .I 452 
 .W
-(boundary) | (! compared) | (fl*w) | ("the laminar")
+(reynolds) | (! mach) | (surfa*e) | ("the variation")
 .I 453 
 .W
-(wing) & (! velocity) & (f*ow) & ("are presented")
+(reynolds) | (! mach) | (*eeds) | ("with calculations")
 .I 454 
 .W
-(vortex) | (! layer) | (fl*w) | ("the laminar")
+(transfer) | (! hypersonic) | (*eeds) | ("with calculations")
 .I 455 
 .W
-(wing) | (! layer) | (b*ary) | ("of deformation")
+reynolds
 .I 456 
 .W
-(wing) | (! leading) | (b*ary) | ("present method")
+(wings) | (! hypersonic) | (the*ies) | ("the variation")
 .I 457 
 .W
-(temperature) | (! flow) | (f*ow) | ("of deformation")
+(reynolds) | (! boundary) | (*eeds) | ("without heat")
 .I 458 
 .W
-(temperature) | (! compared) | (an*le) | ("of deformation")
+(blade) | (! region) | (h*at) | ("with calculations")
 .I 459 
 .W
-(vortex) & (! compared) & (f*ow) & ("the laminar")
+(values) | (! mach) | (the*ies) | ("for the")
 .I 460 
 .W
-(wing) | (! leading) | (an*le) | ("of deformation")
+(wings) | (! pressure) | (the*ies) | ("with calculations")
 .I 461 
 .W
-(supersonic) | (! leading) | (pressu*e) | ("of deformation")
+(blade) | (! region) | (the*ies) | ("creep through")
 .I 462 
 .W
-(boundary) | (! leading) | (b*ary) | ("of deformation")
+(wings) | (! hypersonic) | (h*at) | ("creep through")
 .I 463 
 .W
-(temperature) | (! leading) | (pressu*e) | ("the laminar")
+(transfer) | (! hypersonic) | (*eeds) | ("creep through")
 .I 464 
 .W
-(temperature) | (! compared) | (an*le) | ("the laminar")
+(blade) | (! hypersonic) | (m*od) | ("the variation")
 .I 465 
 .W
-(vortex) | (! leading) | (b*ary) | ("explained by")
+(reynolds) | (! mach) | (h*at) | ("for the")
 .I 466 
 .W
-(supersonic) | (! leading) | (b*ary) | ("of deformation")
+(wings) | (! region) | (h*at) | ("without heat")
 .I 467 
 .W
-(wing) | (! compared) | (b*ary) | ("the laminar")
+(transfer) | (! boundary) | (*eeds) | ("without heat")
 .I 468 
 .W
-(supersonic) | (! layer) | (f*ow) | ("of deformation")
+(transfer) | (! pressure) | (the*ies) | ("without heat")
 .I 469 
 .W
-(temperature) & (! compared) & (f*ow) & ("the laminar")
+(transfer) | (! region) | (m*od) | ("the variation")
 .I 470 
 .W
-(temperature) | (! velocity) | (b*ary) | ("are presented")
+(values) | (! mach) | (the*ies) | ("without heat")
 .I 471 
 .W
-(temperature) | (! velocity) | (b*ary) | ("explained by")
+(blade) | (! mach) | (the*ies) | ("without heat")
 .I 472 
 .W
-(wing) | (! layer) | (an*le) | ("of deformation")
+(values) | (! region) | (the*ies) | ("without heat")
 .I 473 
 .W
-(boundary) | (! leading) | (f*ow) | ("the laminar")
+(transfer) | (! hypersonic) | (*eeds) | ("for the")
 .I 474 
 .W
-(vortex) | (! compared) | (fl*w) | ("of deformation")
+(reynolds) | (! region) | (h*at) | ("the variation")
 .I 475 
 .W
-(boundary) | (! compared) | (pressu*e) | ("of deformation")
+(transfer) | (! boundary) | (surfa*e) | ("creep through")
 .I 476 
 .W
-(vortex) | (! flow) | (pressu*e) | ("are presented")
+(transfer) & (! region) & (m*od) & ("the variation")
 .I 477 
 .W
-(boundary) | (! leading) | (an*le) | ("of deformation")
+(wings) & (! boundary) & (h*at) & ("without heat")
 .I 478 
 .W
-(wing) & (! compared) & (f*ow) & ("are presented")
+(transfer) | (! pressure) | (*eeds) | ("creep through")
 .I 479 
 .W
-(supersonic) | (! leading) | (pressu*e) | ("present method")
+(values) | (! boundary) | (the*ies) | ("for the")
 .I 480 
 .W
-(boundary) | (! flow) | (an*le) | ("are presented")
+(blade) | (! region) | (*eeds) | ("creep through")
 .I 481 
 .W
-(temperature) | (! velocity) | (pressu*e) | ("of deformation")
+(values) | (! pressure) | (*eeds) | ("creep through")
 .I 482 
 .W
-(wing) | (! leading) | (an*le) | ("present method")
+(blade) | (! boundary) | (h*at) | ("the variation")
 .I 483 
 .W
-(temperature) | (! leading) | (b*ary) | ("the laminar")
+(wings) | (! pressure) | (surfa*e) | ("without heat")
 .I 484 
 .W
-(wing) | (! compared) | (fl*w) | ("present method")
+(transfer) | (! region) | (h*at) | ("without heat")
 .I 485 
 .W
-(supersonic) | (! layer) | (pressu*e) | ("the laminar")
+(values) & (! pressure) & (h*at) & ("the variation")
 .I 486 
 .W
-(temperature) & (! compared) & (fl*w) & ("the laminar")
+(blade) | (! pressure) | (the*ies) | ("the variation")
 .I 487 
 .W
-(vortex) & (! layer) & (f*ow) & ("are presented")
+(transfer) | (! hypersonic) | (m*od) | ("for the")
 .I 488 
 .W
-(boundary) | (! leading) | (b*ary) | ("present method")
+(values) | (! hypersonic) | (surfa*e) | ("creep through")
 .I 489 
 .W
-(supersonic) | (! layer) | (b*ary) | ("explained by")
+(reynolds) | (! mach) | (*eeds) | ("the variation")
 .I 490 
 .W
-(vortex) | (! flow) | (f*ow) | ("the laminar")
+(reynolds) | (! region) | (the*ies) | ("for the")
 .I 491 
 .W
-(wing) | (! leading) | (an*le) | ("are presented")
+(wings) | (! region) | (surfa*e) | ("the variation")
 .I 492 
 .W
-surface | generalised
+! pressure
 .I 493 
 .W
-(wing) | (! compared) | (an*le) | ("of deformation")
+(values) | (! mach) | (h*at) | ("creep through")
 .I 494 
 .W
-(vortex) | (! layer) | (fl*w) | ("of deformation")
+(blade) | (! mach) | (*eeds) | ("for the")
 .I 495 
 .W
-(supersonic) & (! leading) & (fl*w) & ("the laminar")
+(values) & (! region) & (h*at) & ("for the")
 .I 496 
 .W
-(supersonic) | (! compared) | (fl*w) | ("explained by")
+(values) | (! pressure) | (the*ies) | ("creep through")
 .I 497 
 .W
-(vortex) | (! velocity) | (pressu*e) | ("explained by")
+(wings) | (! region) | (*eeds) | ("for the")
 .I 498 
 .W
-(supersonic) | (! flow) | (an*le) | ("are presented")
+(reynolds) & (! region) & (h*at) & ("the variation")
 .I 499 
 .W
-(boundary) | (! velocity) | (fl*w) | ("are presented")
+(transfer) | (! pressure) | (m*od) | ("the variation")
 .I 500 
 .W
-(supersonic) | (! velocity) | (f*ow) | ("explained by")
+(transfer) | (! region) | (surfa*e) | ("creep through")
 .I 501 
 .W
-(boundary) | (! layer) | (f*ow) | ("explained by")
+(reynolds) | (! boundary) | (h*at) | ("the variation")
 .I 502 
 .W
-(temperature) | (! velocity) | (pressu*e) | ("present method")
+(transfer) | (! boundary) | (m*od) | ("without heat")
 .I 503 
 .W
-(supersonic) | (! compared) | (b*ary) | ("explained by")
+(blade) | (! hypersonic) | (the*ies) | ("the variation")
 .I 504 
 .W
-(vortex) | (! layer) | (b*ary) | ("the laminar")
+(blade) | (! mach) | (m*od) | ("for the")
 .I 505 
 .W
-(wing) | (! compared) | (b*ary) | ("of deformation")
+(blade) | (! mach) | (m*od) | ("the variation")
 .I 506 
 .W
-(vortex) | (! leading) | (f*ow) | ("are presented")
+(values) | (! pressure) | (m*od) | ("with calculations")
 .I 507 
 .W
-(boundary) | (! layer) | (b*ary) | ("are presented")
+(reynolds) | (! region) | (the*ies) | ("creep through")
 .I 508 
 .W
-(temperature) | (! flow) | (f*ow) | ("are presented")
+(transfer) | (! boundary) | (the*ies) | ("with calculations")
 .I 509 
 .W
-(wing) | (! leading) | (pressu*e) | ("of deformation")
+(wings) | (! mach) | (the*ies) | ("with calculations")
 .I 510 
 .W
-(temperature) | (! compared) | (an*le) | ("explained by")
+(values) | (! hypersonic) | (h*at) | ("the variation")
 .I 511 
 .W
-(wing) & (! leading) & (fl*w) & ("are presented")
+(transfer) | (! hypersonic) | (the*ies) | ("without heat")
 .I 512 
 .W
-"the laminar"
+(transfer) | (! boundary) | (h*at) | ("with calculations")
 .I 513 
 .W
-(temperature) | (! compared) | (b*ary) | ("explained by")
+(blade) | (! mach) | (surfa*e) | ("with calculations")
 .I 514 
 .W
-(supersonic) | (! layer) | (fl*w) | ("explained by")
+(blade) & (! mach) & (h*at) & ("for the")
 .I 515 
 .W
-(wing) | (! compared) | (pressu*e) | ("present method")
+(blade) | (! hypersonic) | (surfa*e) | ("for the")
 .I 516 
 .W
-(temperature) | (! velocity) | (pressu*e) | ("the laminar")
+(wings) | (! pressure) | (m*od) | ("for the")
 .I 517 
 .W
-(wing) | (! velocity) | (pressu*e) | ("are presented")
+(blade) | (! hypersonic) | (*eeds) | ("for the")
 .I 518 
 .W
-(vortex) | (! layer) | (pressu*e) | ("present method")
+! boundary
 .I 519 
 .W
-(boundary) | (! flow) | (an*le) | ("the laminar")
+(reynolds) | (! region) | (*eeds) | ("without heat")
 .I 520 
 .W
-(boundary) | (! leading) | (an*le) | ("are presented")
+(transfer) | (! boundary) | (h*at) | ("for the")
 .I 521 
 .W
-(vortex) | (! velocity) | (f*ow) | ("explained by")
+(values) | (! region) | (surfa*e) | ("creep through")
 .I 522 
 .W
-(boundary) & (! layer) & (fl*w) & ("are presented")
+(reynolds) | (! pressure) | (surfa*e) | ("without heat")
 .I 523 
 .W
-(supersonic) | (! layer) | (b*ary) | ("the laminar")
+(wings) | (! boundary) | (m*od) | ("creep through")
 .I 524 
 .W
-(boundary) & (! compared) & (f*ow) & ("are presented")
+(wings) | (! pressure) | (*eeds) | ("the variation")
 .I 525 
 .W
-(temperature) | (! leading) | (pressu*e) | ("of deformation")
+(reynolds) | (! hypersonic) | (surfa*e) | ("for the")
 .I 526 
 .W
-(temperature) | (! velocity) | (pressu*e) | ("are presented")
+(transfer) | (! hypersonic) | (the*ies) | ("with calculations")
 .I 527 
 .W
-(wing) | (! leading) | (b*ary) | ("are presented")
+(values) & (! region) & (m*od) & ("the variation")
 .I 528 
 .W
-(supersonic) & (! velocity) & (f*ow) & ("present method")
+(reynolds) | (! hypersonic) | (*eeds) | ("the variation")
 .I 529 
 .W
-(boundary) | (! compared) | (f*ow) | ("the laminar")
+(transfer) | (! boundary) | (the*ies) | ("creep through")
 .I 530 
 .W
-(supersonic) & (! compared) & (fl*w) & ("the laminar")
+! region
 .I 531 
 .W
-(wing) | (! layer) | (f*ow) | ("of deformation")
+(blade) | (! region) | (h*at) | ("for the")
 .I 532 
 .W
-(boundary) | (! layer) | (pressu*e) | ("are presented")
+(wings) | (! mach) | (m*od) | ("the variation")
 .I 533 
 .W
-(vortex) | (! layer) | (f*ow) | ("the laminar")
+(values) | (! pressure) | (m*od) | ("without heat")
 .I 534 
 .W
-(boundary) | (! flow) | (b*ary) | ("are presented")
+(transfer) & (! pressure) & (m*od) & ("without heat")
 .I 535 
 .W
-(wing) | (! compared) | (f*ow) | ("of deformation")
+(values) | (! region) | (*eeds) | ("the variation")
 .I 536 
 .W
-(supersonic) | (! compared) | (pressu*e) | ("present method")
+(values) & (! pressure) & (m*od) & ("the variation")
 .I 537 
 .W
-(boundary) & (! compared) & (fl*w) & ("explained by")
+(wings) | (! hypersonic) | (m*od) | ("without heat")
 .I 538 
 .W
-(vortex) | (! flow) | (pressu*e) | ("the laminar")
+(transfer) | (! mach) | (*eeds) | ("creep through")
 .I 539 
 .W
-(wing) | (! flow) | (f*ow) | ("of deformation")
+(reynolds) | (! pressure) | (m*od) | ("the variation")
 .I 540 
 .W
-(temperature) | (! compared) | (f*ow) | ("are presented")
+(wings) | (! pressure) | (the*ies) | ("creep through")
 .I 541 
 .W
-(vortex) | (! compared) | (pressu*e) | ("the laminar")
+(wings) & (! boundary) & (m*od) & ("for the")
 .I 542 
 .W
-(wing) | (! flow) | (fl*w) | ("the laminar")
+(wings) | (! pressure) | (m*od) | ("with calculations")
 .I 543 
 .W
-(temperature) | (! flow) | (an*le) | ("explained by")
+(values) | (! mach) | (the*ies) | ("with calculations")
 .I 544 
 .W
-(wing) | (! velocity) | (an*le) | ("present method")
+(wings) | (! boundary) | (h*at) | ("for the")
 .I 545 
 .W
-(boundary) | (! compared) | (f*ow) | ("present method")
+(transfer) | (! mach) | (the*ies) | ("the variation")
 .I 546 
 .W
-(temperature) | (! flow) | (fl*w) | ("the laminar")
+(wings) | (! boundary) | (surfa*e) | ("the variation")
 .I 547 
 .W
-(temperature) | (! compared) | (pressu*e) | ("explained by")
+(values) & (! mach) & (m*od) & ("for the")
 .I 548 
 .W
-(temperature) | (! flow) | (b*ary) | ("explained by")
+(values) | (! region) | (m*od) | ("without heat")
 .I 549 
 .W
-(wing) | (! layer) | (b*ary) | ("the laminar")
+(wings) | (! mach) | (surfa*e) | ("without heat")
 .I 550 
 .W
-(wing) | (! layer) | (an*le) | ("explained by")
+(reynolds) | (! boundary) | (m*od) | ("for the")
 .I 551 
 .W
-(boundary) | (! flow) | (fl*w) | ("the laminar")
+(reynolds) & (! region) & (h*at) & ("for the")
 .I 552 
 .W
-(wing) | (! flow) | (fl*w) | ("of deformation")
+(values) | (! pressure) | (*eeds) | ("for the")
 .I 553 
 .W
-(supersonic) | (! flow) | (f*ow) | ("the laminar")
+(reynolds) | (! region) | (the*ies) | ("with calculations")
 .I 554 
 .W
-(boundary) | (! layer) | (an*le) | ("are presented")
+(values) & (! region) & (h*at) & ("with calculations")
 .I 555 
 .W
-(boundary) | (! compared) | (fl*w) | ("of deformation")
+(reynolds) | (! boundary) | (the*ies) | ("for the")
 .I 556 
 .W
-(wing) & (! compared) & (f*ow) & ("the laminar")
+(wings) | (! hypersonic) | (m*od) | ("with calculations")
 .I 557 
 .W
-(boundary) | (! compared) | (an*le) | ("the laminar")
+(transfer) & (! region) & (h*at) & ("without heat")
 .I 558 
 .W
-(wing) | (! compared) | (fl*w) | ("of deformation")
+(blade) | (! boundary) | (surfa*e) | ("for the")
 .I 559 
 .W
-(supersonic) & (! velocity) & (fl*w) & ("present method")
+(wings) | (! region) | (h*at) | ("creep through")
 .I 560 
 .W
-(boundary) | (! leading) | (fl*w) | ("explained by")
+(wings) | (! boundary) | (m*od) | ("with calculations")
 .I 561 
 .W
-(wing) | (! layer) | (fl*w) | ("explained by")
+(reynolds) | (! region) | (*eeds) | ("creep through")
 .I 562 
 .W
-(supersonic) | (! compared) | (b*ary) | ("present method")
+(blade) | (! hypersonic) | (*eeds) | ("the variation")
 .I 563 
 .W
-(supersonic) | (! leading) | (b*ary) | ("are presented")
+(transfer) | (! hypersonic) | (surfa*e) | ("without heat")
 .I 564 
 .W
-(vortex) & (! compared) & (fl*w) & ("the laminar")
+(values) | (! hypersonic) | (h*at) | ("without heat")
 .I 565 
 .W
-(wing) | (! compared) | (f*ow) | ("present method")
+(values) | (! mach) | (*eeds) | ("the variation")
 .I 566 
 .W
-(supersonic) & (! leading) & (f*ow) & ("the laminar")
+(wings) & (! mach) & (h*at) & ("without heat")
 .I 567 
 .W
-(wing) | (! flow) | (pressu*e) | ("of deformation")
+(transfer) | (! hypersonic) | (h*at) | ("without heat")
 .I 568 
 .W
-(wing) | (! layer) | (pressu*e) | ("are presented")
+longitudinally & supersonic
 .I 569 
 .W
-(vortex) | (! leading) | (an*le) | ("are presented")
+(values) | (! hypersonic) | (*eeds) | ("without heat")
 .I 570 
 .W
-(boundary) | (! compared) | (fl*w) | ("present method")
+(blade) & (! hypersonic) & (m*od) & ("the variation")
 .I 571 
 .W
-(supersonic) | (! flow) | (pressu*e) | ("the laminar")
+(transfer) | (! region) | (h*at) | ("with calculations")
 .I 572 
 .W
-(temperature) | (! leading) | (f*ow) | ("the laminar")
+(transfer) | (! mach) | (h*at) | ("for the")
 .I 573 
 .W
-! layer
+(wings) | (! region) | (surfa*e) | ("with calculations")
 .I 574 
 .W
-(boundary) | (! flow) | (b*ary) | ("explained by")
+(transfer) | (! mach) | (*eeds) | ("for the")
 .I 575 
 .W
-(vortex) & (! compared) & (fl*w) & ("are presented")
+"the variation"
 .I 576 
 .W
-(boundary) | (! flow) | (pressu*e) | ("of deformation")
+(reynolds) | (! pressure) | (surfa*e) | ("the variation")
 .I 577 
 .W
-(boundary) | (! compared) | (b*ary) | ("the laminar")
+(values) | (! hypersonic) | (m*od) | ("creep through")
 .I 578 
 .W
-(vortex) & (! compared) & (f*ow) & ("are presented")
+(values) | (! mach) | (surfa*e) | ("for the")
 .I 579 
 .W
-(supersonic) | (! compared) | (an*le) | ("present method")
+(reynolds) & (! boundary) & (h*at) & ("for the")
 .I 580 
 .W
-(vortex) | (! flow) | (b*ary) | ("of deformation")
+(wings) | (! boundary) | (the*ies) | ("with calculations")
 .I 581 
 .W
-(vortex) | (! compared) | (b*ary) | ("of deformation")
+(reynolds) | (! boundary) | (surfa*e) | ("for the")
 .I 582 
 .W
-vortex
+(transfer) | (! pressure) | (the*ies) | ("for the")
 .I 583 
 .W
-(wing) | (! layer) | (pressu*e) | ("the laminar")
+(transfer) | (! pressure) | (h*at) | ("without heat")
 .I 584 
 .W
-(boundary) | (! compared) | (pressu*e) | ("are presented")
+(values) | (! mach) | (m*od) | ("for the")
 .I 585 
 .W
-(vortex) | (! leading) | (pressu*e) | ("the laminar")
+(values) | (! hypersonic) | (surfa*e) | ("for the")
 .I 586 
 .W
-(temperature) | (! leading) | (pressu*e) | ("are presented")
+(blade) & (! mach) & (m*od) & ("for the")
 .I 587 
 .W
-(vortex) | (! velocity) | (an*le) | ("explained by")
+(reynolds) | (! boundary) | (the*ies) | ("the variation")
 .I 588 
 .W
-(temperature) | (! leading) | (an*le) | ("explained by")
+(blade) | (! pressure) | (the*ies) | ("without heat")
 .I 589 
 .W
-(wing) | (! compared) | (fl*w) | ("explained by")
+(transfer) | (! boundary) | (m*od) | ("creep through")
 .I 590 
 .W
-(temperature) | (! leading) | (an*le) | ("of deformation")
+(blade) | (! pressure) | (h*at) | ("creep through")
 .I 591 
 .W
-(vortex) | (! leading) | (pressu*e) | ("present method")
+(reynolds) | (! hypersonic) | (*eeds) | ("without heat")
 .I 592 
 .W
-(wing) | (! velocity) | (b*ary) | ("are presented")
+(wings) & (! mach) & (m*od) & ("the variation")
 .I 593 
 .W
-(supersonic) | (! velocity) | (an*le) | ("the laminar")
+(wings) | (! mach) | (the*ies) | ("without heat")
 .I 594 
 .W
-(vortex) | (! flow) | (pressu*e) | ("of deformation")
+(transfer) | (! pressure) | (surfa*e) | ("without heat")
 .I 595 
 .W
-(vortex) | (! compared) | (pressu*e) | ("of deformation")
+(values) | (! region) | (*eeds) | ("for the")
 .I 596 
 .W
-(boundary) | (! velocity) | (fl*w) | ("explained by")
+(values) | (! pressure) | (the*ies) | ("for the")
 .I 597 
 .W
-(vortex) | (! velocity) | (f*ow) | ("present method")
+(transfer) | (! region) | (surfa*e) | ("with calculations")
 .I 598 
 .W
-(vortex) | (! leading) | (f*ow) | ("the laminar")
+(wings) | (! region) | (*eeds) | ("the variation")
 .I 599 
 .W
-(supersonic) | (! velocity) | (pressu*e) | ("the laminar")
+(values) & (! mach) & (m*od) & ("the variation")
 .I 600 
 .W
-(temperature) | (! flow) | (pressu*e) | ("explained by")
+(transfer) | (! hypersonic) | (surfa*e) | ("the variation")
 .I 601 
 .W
-(vortex) | (! velocity) | (b*ary) | ("of deformation")
+(wings) & (! pressure) & (m*od) & ("the variation")
 .I 602 
 .W
-(boundary) | (! velocity) | (b*ary) | ("are presented")
+(wings) | (! pressure) | (surfa*e) | ("creep through")
 .I 603 
 .W
-(temperature) | (! flow) | (f*ow) | ("explained by")
+(wings) & (! pressure) & (m*od) & ("for the")
 .I 604 
 .W
-(boundary) & (! velocity) & (f*ow) & ("the laminar")
+(transfer) | (! mach) | (the*ies) | ("without heat")
 .I 605 
 .W
-(boundary) | (! leading) | (f*ow) | ("are presented")
+(values) | (! pressure) | (the*ies) | ("with calculations")
 .I 606 
 .W
-(boundary) | (! velocity) | (pressu*e) | ("are presented")
+(wings) & (! hypersonic) & (h*at) & ("for the")
 .I 607 
 .W
-(vortex) | (! velocity) | (an*le) | ("the laminar")
+(wings) | (! mach) | (surfa*e) | ("with calculations")
 .I 608 
 .W
-(supersonic) | (! flow) | (f*ow) | ("of deformation")
+(values) & (! mach) & (h*at) & ("for the")
 .I 609 
 .W
-(boundary) | (! flow) | (pressu*e) | ("the laminar")
+(blade) | (! hypersonic) | (surfa*e) | ("creep through")
 .I 610 
 .W
-(supersonic) | (! compared) | (pressu*e) | ("the laminar")
+(blade) | (! mach) | (m*od) | ("with calculations")
 .I 611 
 .W
-(vortex) | (! velocity) | (an*le) | ("of deformation")
+(reynolds) & (! pressure) & (m*od) & ("the variation")
 .I 612 
 .W
-(boundary) | (! flow) | (b*ary) | ("the laminar")
+(values) | (! mach) | (m*od) | ("creep through")
 .I 613 
 .W
-(vortex) | (! velocity) | (fl*w) | ("present method")
+(values) | (! region) | (the*ies) | ("with calculations")
 .I 614 
 .W
-(vortex) | (! leading) | (pressu*e) | ("are presented")
+(blade) | (! mach) | (surfa*e) | ("creep through")
 .I 615 
 .W
-(wing) | (! velocity) | (b*ary) | ("present method")
+(wings) | (! hypersonic) | (surfa*e) | ("without heat")
 .I 616 
 .W
-(boundary) & (! velocity) & (fl*w) & ("the laminar")
+(wings) | (! region) | (the*ies) | ("the variation")
 .I 617 
 .W
-(wing) | (! velocity) | (f*ow) | ("explained by")
+(transfer) | (! region) | (surfa*e) | ("without heat")
 .I 618 
 .W
-(boundary) | (! flow) | (b*ary) | ("present method")
+(transfer) & (! region) & (h*at) & ("the variation")
 .I 619 
 .W
-(wing) | (! velocity) | (fl*w) | ("of deformation")
+(values) | (! pressure) | (m*od) | ("the variation")
 .I 620 
 .W
-(vortex) | (! velocity) | (b*ary) | ("the laminar")
+(blade) | (! region) | (h*at) | ("creep through")
 .I 621 
 .W
-(vortex) | (! compared) | (pressu*e) | ("are presented")
+(blade) & (! mach) & (m*od) & ("the variation")
 .I 622 
 .W
-(supersonic) | (! velocity) | (pressu*e) | ("are presented")
+(transfer) & (! hypersonic) & (h*at) & ("without heat")
 .I 623 
 .W
-(supersonic) | (! layer) | (f*ow) | ("explained by")
+vibrations | liable
 .I 624 
 .W
-(vortex) | (! leading) | (b*ary) | ("are presented")
+(reynolds) | (! hypersonic) | (h*at) | ("with calculations")
 .I 625 
 .W
-(vortex) & (! leading) & (f*ow) & ("are presented")
+(wings) | (! mach) | (*eeds) | ("for the")
 .I 626 
 .W
-(vortex) | (! flow) | (f*ow) | ("explained by")
+(wings) | (! boundary) | (the*ies) | ("creep through")
 .I 627 
 .W
-(temperature) | (! compared) | (pressu*e) | ("the laminar")
+(reynolds) & (! hypersonic) & (h*at) & ("the variation")
 .I 628 
 .W
-(wing) | (! layer) | (an*le) | ("present method")
+(values) | (! mach) | (the*ies) | ("the variation")
 .I 629 
 .W
-(wing) | (! flow) | (f*ow) | ("the laminar")
+(transfer) | (! hypersonic) | (h*at) | ("creep through")
 .I 630 
 .W
-(supersonic) & (! compared) & (f*ow) & ("explained by")
+(transfer) & (! hypersonic) & (h*at) & ("the variation")
 .I 631 
 .W
-(temperature) & (! leading) & (f*ow) & ("are presented")
+(transfer) | (! region) | (m*od) | ("with calculations")
 .I 632 
 .W
-(boundary) | (! leading) | (fl*w) | ("of deformation")
+(values) | (! pressure) | (the*ies) | ("without heat")
 .I 633 
 .W
-(wing) | (! layer) | (pressu*e) | ("present method")
+(transfer) & (! region) & (m*od) & ("for the")
 .I 634 
 .W
-(wing) | (! leading) | (an*le) | ("explained by")
+(wings) & (! region) & (h*at) & ("the variation")
 .I 635 
 .W
-(wing) | (! flow) | (an*le) | ("of deformation")
+(transfer) | (! boundary) | (h*at) | ("the variation")
 .I 636 
 .W
-(temperature) | (! leading) | (b*ary) | ("of deformation")
+(wings) | (! hypersonic) | (m*od) | ("the variation")
 .I 637 
 .W
-(boundary) & (! layer) & (fl*w) & ("present method")
+(blade) | (! region) | (m*od) | ("without heat")
 .I 638 
 .W
-(temperature) | (! leading) | (fl*w) | ("explained by")
+(reynolds) | (! mach) | (*eeds) | ("without heat")
 .I 639 
 .W
-independent | pitot
+(wings) | (! boundary) | (h*at) | ("with calculations")
 .I 640 
 .W
-(temperature) | (! layer) | (fl*w) | ("are presented")
+angle | aero
 .I 641 
 .W
-(wing) | (! velocity) | (f*ow) | ("of deformation")
+(blade) | (! region) | (m*od) | ("the variation")
 .I 642 
 .W
-(boundary) & (! compared) & (f*ow) & ("explained by")
+(wings) & (! mach) & (h*at) & ("for the")
 .I 643 
 .W
-(boundary) | (! leading) | (b*ary) | ("are presented")
+(reynolds) | (! boundary) | (surfa*e) | ("creep through")
 .I 644 
 .W
-(supersonic) & (! compared) & (f*ow) & ("are presented")
+(values) & (! boundary) & (m*od) & ("the variation")
 .I 645 
 .W
-(boundary) | (! flow) | (an*le) | ("present method")
+(wings) | (! pressure) | (h*at) | ("without heat")
 .I 646 
 .W
-(supersonic) | (! compared) | (an*le) | ("explained by")
+(blade) | (! mach) | (*eeds) | ("the variation")
 .I 647 
 .W
-(temperature) | (! layer) | (b*ary) | ("present method")
+(blade) | (! boundary) | (m*od) | ("creep through")
 .I 648 
 .W
-(boundary) | (! velocity) | (pressu*e) | ("present method")
+(wings) | (! mach) | (the*ies) | ("for the")
 .I 649 
 .W
-(wing) | (! flow) | (b*ary) | ("of deformation")
+(wings) | (! hypersonic) | (h*at) | ("the variation")
 .I 650 
 .W
-(vortex) | (! layer) | (f*ow) | ("of deformation")
+(wings) | (! boundary) | (*eeds) | ("the variation")
 .I 651 
 .W
-(temperature) | (! layer) | (f*ow) | ("are presented")
+(values) | (! mach) | (h*at) | ("with calculations")
 .I 652 
 .W
-(boundary) | (! leading) | (f*ow) | ("of deformation")
+(reynolds) | (! region) | (h*at) | ("with calculations")
 .I 653 
 .W
-(temperature) | (! leading) | (an*le) | ("the laminar")
+(wings) | (! mach) | (m*od) | ("with calculations")
 .I 654 
 .W
-(temperature) | (! layer) | (an*le) | ("present method")
+(transfer) | (! region) | (*eeds) | ("the variation")
 .I 655 
 .W
-(wing) & (! velocity) & (fl*w) & ("the laminar")
+(wings) & (! boundary) & (h*at) & ("for the")
 .I 656 
 .W
-(boundary) | (! velocity) | (fl*w) | ("of deformation")
+(transfer) | (! hypersonic) | (*eeds) | ("the variation")
 .I 657 
 .W
-(wing) | (! layer) | (b*ary) | ("present method")
+(wings) | (! hypersonic) | (*eeds) | ("for the")
 .I 658 
 .W
-! compared
+(wings) | (! mach) | (m*od) | ("for the")
 .I 659 
 .W
-(vortex) | (! compared) | (f*ow) | ("the laminar")
+(reynolds) | (! hypersonic) | (h*at) | ("for the")
 .I 660 
 .W
-(supersonic) | (! flow) | (fl*w) | ("of deformation")
+angle & aero
 .I 661 
 .W
-(wing) | (! compared) | (an*le) | ("the laminar")
+(transfer) | (! region) | (m*od) | ("creep through")
 .I 662 
 .W
-(wing) | (! leading) | (pressu*e) | ("explained by")
+(wings) & (! pressure) & (h*at) & ("for the")
 .I 663 
 .W
-(supersonic) & (! velocity) & (f*ow) & ("the laminar")
+(wings) | (! boundary) | (the*ies) | ("for the")
 .I 664 
 .W
-(vortex) | (! leading) | (f*ow) | ("present method")
+(blade) | (! pressure) | (surfa*e) | ("for the")
 .I 665 
 .W
-(supersonic) | (! leading) | (fl*w) | ("are presented")
+tunnel | compressible
 .I 666 
 .W
-(vortex) | (! leading) | (fl*w) | ("of deformation")
+(values) | (! mach) | (m*od) | ("without heat")
 .I 667 
 .W
-(boundary) & (! compared) & (fl*w) & ("the laminar")
+wings
 .I 668 
 .W
-(boundary) | (! compared) | (b*ary) | ("are presented")
+(values) | (! region) | (m*od) | ("the variation")
 .I 669 
 .W
-(temperature) & (! layer) & (f*ow) & ("the laminar")
+(reynolds) | (! region) | (h*at) | ("creep through")
 .I 670 
 .W
-(boundary) | (! compared) | (f*ow) | ("are presented")
+(reynolds) & (! region) & (m*od) & ("for the")
 .I 671 
 .W
-(temperature) | (! compared) | (an*le) | ("are presented")
+(reynolds) | (! region) | (surfa*e) | ("with calculations")
 .I 672 
 .W
-(boundary) & (! leading) & (f*ow) & ("the laminar")
+(values) | (! boundary) | (m*od) | ("without heat")
 .I 673 
 .W
-(temperature) & (! compared) & (fl*w) & ("are presented")
+(values) | (! region) | (the*ies) | ("for the")
 .I 674 
 .W
-(supersonic) | (! compared) | (fl*w) | ("the laminar")
+(blade) | (! region) | (h*at) | ("without heat")
 .I 675 
 .W
-! flow
+(values) | (! boundary) | (*eeds) | ("with calculations")
 .I 676 
 .W
-(supersonic) | (! leading) | (f*ow) | ("are presented")
+(transfer) | (! mach) | (*eeds) | ("with calculations")
 .I 677 
 .W
-(supersonic) | (! velocity) | (b*ary) | ("the laminar")
+(reynolds) | (! region) | (m*od) | ("creep through")
 .I 678 
 .W
-(wing) | (! compared) | (f*ow) | ("the laminar")
+(transfer) | (! pressure) | (*eeds) | ("the variation")
 .I 679 
 .W
-(supersonic) | (! velocity) | (pressu*e) | ("present method")
+! hypersonic
 .I 680 
 .W
-(temperature) & (! leading) & (fl*w) & ("are presented")
+(wings) | (! pressure) | (surfa*e) | ("for the")
 .I 681 
 .W
-(boundary) | (! leading) | (f*ow) | ("explained by")
+(wings) | (! pressure) | (h*at) | ("with calculations")
 .I 682 
 .W
-(boundary) | (! flow) | (pressu*e) | ("are presented")
+(blade) | (! boundary) | (h*at) | ("creep through")
 .I 683 
 .W
-(supersonic) | (! flow) | (b*ary) | ("explained by")
+(reynolds) | (! hypersonic) | (m*od) | ("for the")
 .I 684 
 .W
-jet & fluid
+(transfer) | (! boundary) | (surfa*e) | ("the variation")
 .I 685 
 .W
-(vortex) | (! leading) | (f*ow) | ("of deformation")
+(wings) | (! region) | (surfa*e) | ("creep through")
 .I 686 
 .W
-(temperature) | (! compared) | (pressu*e) | ("are presented")
+(wings) | (! hypersonic) | (h*at) | ("without heat")
 .I 687 
 .W
-(wing) | (! flow) | (f*ow) | ("are presented")
+(values) | (! mach) | (h*at) | ("the variation")
 .I 688 
 .W
-(temperature) | (! velocity) | (f*ow) | ("the laminar")
+(reynolds) | (! mach) | (the*ies) | ("with calculations")
 .I 689 
 .W
-(supersonic) | (! compared) | (pressu*e) | ("are presented")
+exact & considered
 .I 690 
 .W
-(temperature) | (! leading) | (b*ary) | ("are presented")
+(wings) | (! mach) | (h*at) | ("for the")
 .I 691 
 .W
-(wing) | (! layer) | (fl*w) | ("the laminar")
+(blade) | (! boundary) | (m*od) | ("with calculations")
 .I 692 
 .W
-(supersonic) | (! flow) | (an*le) | ("explained by")
+(values) | (! boundary) | (surfa*e) | ("for the")
 .I 693 
 .W
-(vortex) | (! velocity) | (pressu*e) | ("the laminar")
+(reynolds) | (! region) | (*eeds) | ("the variation")
 .I 694 
 .W
-(vortex) & (! leading) & (f*ow) & ("the laminar")
+(blade) | (! pressure) | (the*ies) | ("creep through")
 .I 695 
 .W
-(wing) | (! layer) | (an*le) | ("are presented")
+(values) | (! pressure) | (h*at) | ("the variation")
 .I 696 
 .W
-(boundary) | (! velocity) | (an*le) | ("the laminar")
+(reynolds) | (! pressure) | (m*od) | ("without heat")
 .I 697 
 .W
-(wing) | (! compared) | (b*ary) | ("are presented")
+(reynolds) & (! boundary) & (m*od) & ("the variation")
 .I 698 
 .W
-(wing) | (! flow) | (fl*w) | ("are presented")
+(blade) & (! boundary) & (h*at) & ("for the")
 .I 699 
 .W
-(supersonic) | (! flow) | (b*ary) | ("are presented")
+(wings) & (! region) & (m*od) & ("the variation")
 .I 700 
 .W
-(boundary) | (! compared) | (fl*w) | ("are presented")
+(blade) | (! hypersonic) | (the*ies) | ("creep through")
 .I 701 
 .W
-(boundary) | (! velocity) | (fl*w) | ("the laminar")
+(values) | (! region) | (the*ies) | ("creep through")
 .I 702 
 .W
-(boundary) | (! compared) | (pressu*e) | ("the laminar")
+(values) | (! boundary) | (m*od) | ("the variation")
 .I 703 
 .W
-(supersonic) | (! leading) | (fl*w) | ("explained by")
+(wings) | (! boundary) | (surfa*e) | ("creep through")
 .I 704 
 .W
-(wing) | (! compared) | (b*ary) | ("explained by")
+(blade) | (! mach) | (m*od) | ("creep through")
 .I 705 
 .W
-(temperature) | (! compared) | (fl*w) | ("the laminar")
+(transfer) | (! hypersonic) | (m*od) | ("with calculations")
 .I 706 
 .W
-(vortex) | (! flow) | (fl*w) | ("are presented")
+(transfer) | (! pressure) | (m*od) | ("creep through")
 .I 707 
 .W
-(vortex) | (! velocity) | (b*ary) | ("are presented")
+(wings) | (! mach) | (h*at) | ("creep through")
 .I 708 
 .W
-gas | matrices
+(wings) | (! region) | (*eeds) | ("without heat")
 .I 709 
 .W
-(wing) | (! layer) | (pressu*e) | ("explained by")
+(values) | (! mach) | (surfa*e) | ("the variation")
 .I 710 
 .W
-(boundary) | (! layer) | (fl*w) | ("are presented")
+(wings) | (! pressure) | (surfa*e) | ("with calculations")
 .I 711 
 .W
-(boundary) | (! layer) | (f*ow) | ("are presented")
+(wings) | (! pressure) | (*eeds) | ("creep through")
 .I 712 
 .W
-(boundary) | (! velocity) | (b*ary) | ("the laminar")
+(blade) | (! mach) | (h*at) | ("creep through")
 .I 713 
 .W
-(boundary) | (! leading) | (fl*w) | ("are presented")
+(blade) | (! boundary) | (h*at) | ("without heat")
 .I 714 
 .W
-(wing) | (! compared) | (an*le) | ("explained by")
+(reynolds) | (! pressure) | (the*ies) | ("with calculations")
 .I 715 
 .W
-(temperature) & (! velocity) & (f*ow) & ("present method")
+transfer
 .I 716 
 .W
-(wing) | (! compared) | (f*ow) | ("explained by")
+(reynolds) | (! pressure) | (h*at) | ("with calculations")
 .I 717 
 .W
-(boundary) | (! layer) | (fl*w) | ("present method")
+(wings) | (! pressure) | (*eeds) | ("without heat")
 .I 718 
 .W
-surface & generalised
+(values) | (! hypersonic) | (h*at) | ("creep through")
 .I 719 
 .W
-(vortex) | (! flow) | (b*ary) | ("the laminar")
+(blade) | (! mach) | (surfa*e) | ("for the")
 .I 720 
 .W
-(vortex) | (! layer) | (f*ow) | ("are presented")
+(reynolds) & (! boundary) & (m*od) & ("for the")
 .I 721 
 .W
-(temperature) | (! layer) | (b*ary) | ("the laminar")
+(wings) | (! mach) | (*eeds) | ("creep through")
 .I 722 
 .W
-(temperature) | (! layer) | (an*le) | ("the laminar")
+(transfer) | (! hypersonic) | (m*od) | ("without heat")
 .I 723 
 .W
-(vortex) | (! flow) | (an*le) | ("the laminar")
+(wings) | (! boundary) | (m*od) | ("for the")
 .I 724 
 .W
-(supersonic) | (! flow) | (pressu*e) | ("of deformation")
+(transfer) | (! boundary) | (h*at) | ("creep through")
 .I 725 
 .W
-(vortex) | (! leading) | (fl*w) | ("present method")
+(transfer) | (! region) | (surfa*e) | ("the variation")
 .I 726 
 .W
-(temperature) | (! layer) | (fl*w) | ("explained by")
+(values) | (! pressure) | (h*at) | ("with calculations")
 .I 727 
 .W
-(supersonic) | (! velocity) | (fl*w) | ("explained by")
+(values) | (! mach) | (h*at) | ("for the")
 .I 728 
 .W
-(supersonic) & (! layer) & (fl*w) & ("are presented")
+(transfer) | (! mach) | (the*ies) | ("with calculations")
 .I 729 
 .W
-(wing) | (! leading) | (pressu*e) | ("are presented")
+(wings) | (! mach) | (m*od) | ("creep through")
 .I 730 
 .W
-(vortex) | (! layer) | (fl*w) | ("are presented")
+m*od
 .I 731 
 .W
-(vortex) | (! flow) | (b*ary) | ("present method")
+(values) & (! mach) & (h*at) & ("the variation")
 .I 732 
 .W
-(vortex) | (! compared) | (b*ary) | ("present method")
+(wings) | (! boundary) | (*eeds) | ("without heat")
 .I 733 
 .W
-(vortex) | (! compared) | (fl*w) | ("are presented")
+(reynolds) | (! hypersonic) | (*eeds) | ("creep through")
 .I 734 
 .W
-(supersonic) | (! leading) | (pressu*e) | ("are presented")
+(transfer) | (! mach) | (*eeds) | ("without heat")
 .I 735 
 .W
-"explained by"
+(wings) | (! pressure) | (the*ies) | ("the variation")
 .I 736 
 .W
-(vortex) | (! compared) | (an*le) | ("of deformation")
+values
 .I 737 
 .W
-(vortex) | (! flow) | (an*le) | ("of deformation")
+(reynolds) | (! boundary) | (h*at) | ("with calculations")
 .I 738 
 .W
-(temperature) & (! compared) & (f*ow) & ("are presented")
+(transfer) | (! region) | (m*od) | ("without heat")
 .I 739 
 .W
-(vortex) | (! flow) | (f*ow) | ("are presented")
+(transfer) | (! hypersonic) | (m*od) | ("the variation")
 .I 740 
 .W
-(wing) | (! flow) | (pressu*e) | ("explained by")
+(blade) | (! region) | (the*ies) | ("for the")
 .I 741 
 .W
-(supersonic) & (! layer) & (f*ow) & ("are presented")
+(blade) | (! pressure) | (surfa*e) | ("with calculations")
 .I 742 
 .W
-(vortex) | (! compared) | (f*ow) | ("are presented")
+(blade) | (! mach) | (the*ies) | ("the variation")
 .I 743 
 .W
-(boundary) | (! layer) | (f*ow) | ("present method")
+(transfer) | (! pressure) | (h*at) | ("for the")
 .I 744 
 .W
-(vortex) | (! leading) | (pressu*e) | ("of deformation")
+(transfer) | (! mach) | (*eeds) | ("the variation")
 .I 745 
 .W
-(boundary) | (! leading) | (pressu*e) | ("present method")
+(reynolds) & (! hypersonic) & (m*od) & ("for the")
 .I 746 
 .W
-(vortex) | (! velocity) | (pressu*e) | ("are presented")
+(values) | (! hypersonic) | (the*ies) | ("with calculations")
 .I 747 
 .W
-(temperature) & (! velocity) & (fl*w) & ("present method")
+(transfer) | (! pressure) | (h*at) | ("creep through")
 .I 748 
 .W
-(boundary) | (! layer) | (fl*w) | ("of deformation")
+(reynolds) | (! region) | (*eeds) | ("for the")
 .I 749 
 .W
-(vortex) | (! flow) | (fl*w) | ("explained by")
+(transfer) | (! hypersonic) | (surfa*e) | ("with calculations")
+.I 750 
+.W
+(transfer) & (! hypersonic) & (h*at) & ("for the")
+.I 751 
+.W
+! mach
+.I 752 
+.W
+(values) | (! boundary) | (*eeds) | ("creep through")
+.I 753 
+.W
+(values) | (! boundary) | (surfa*e) | ("with calculations")
+.I 754 
+.W
+(values) | (! region) | (*eeds) | ("with calculations")
+.I 755 
+.W
+(transfer) & (! region) & (h*at) & ("for the")
+.I 756 
+.W
+(blade) | (! pressure) | (m*od) | ("with calculations")
+.I 757 
+.W
+(values) | (! hypersonic) | (surfa*e) | ("without heat")
+.I 758 
+.W
+(wings) | (! hypersonic) | (surfa*e) | ("the variation")
+.I 759 
+.W
+(wings) | (! region) | (the*ies) | ("without heat")
+.I 760 
+.W
+(wings) | (! region) | (*eeds) | ("creep through")
+.I 761 
+.W
+(blade) | (! boundary) | (*eeds) | ("with calculations")
+.I 762 
+.W
+(values) | (! region) | (*eeds) | ("creep through")
+.I 763 
+.W
+(values) | (! boundary) | (surfa*e) | ("without heat")
+.I 764 
+.W
+(wings) & (! region) & (h*at) & ("without heat")
+.I 765 
+.W
+(transfer) | (! hypersonic) | (h*at) | ("for the")
+.I 766 
+.W
+(blade) | (! region) | (the*ies) | ("with calculations")
