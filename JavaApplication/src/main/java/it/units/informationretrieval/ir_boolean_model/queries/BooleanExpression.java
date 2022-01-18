@@ -517,6 +517,16 @@ public class BooleanExpression {
 
                 //noinspection unchecked
                 return parseExpression(negation.getE()).setUnaryOperator(UNARY_OPERATOR.NOT);
+            } else if (expression instanceof Literal literal) {
+                if (literal.getValue()) {
+                    System.err.println("Input query evaluated to literal true, this means that" +
+                            " all indexed documents should be retrieved during the evaluation of" +
+                            " this instance, but no results will be returned. Please, reformulate" +
+                            " your query.");
+                }
+
+                // evaluation will return nothing (either if query expression evaluated true or false)
+                return informationRetrievalSystem.createNewBooleanExpression();
             } else {
                 // binary expression
 
@@ -1222,8 +1232,9 @@ public class BooleanExpression {
             results = evaluateBothSimpleAndAggregatedExpressionRecursively();
         } catch (StackOverflowError e) {
             System.err.println("No more results will be shown due to low stack memory.");
-            assert spellingCorrector != null;
-            spellingCorrector.stop();
+            if (spellingCorrector != null) {    // Often spelling correction causes errors due to the high computational cost
+                spellingCorrector.stop();
+            }
         }
         assert results.stream().sorted().distinct().toList().equals(results.stream().toList());
         if (!maxNumberOfResultsSpecified) {
