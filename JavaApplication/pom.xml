@@ -267,7 +267,7 @@
             <version>2.0.1</version>
         </dependency>
 
-        <!-- JFreeChart -->
+        <!-- JavaFX -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -275,44 +275,10 @@
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
-            <artifactId>javafx-web</artifactId>
+            <artifactId>javafx-swing</artifactId>
             <version>16</version>
         </dependency>
-        <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>org.jfree.chart3d</artifactId>
-            <version>2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>org.jfree.chart3d.fx</artifactId>
-            <version>2.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <version>1.5.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>org.jfree.chart.fx</artifactId>
-            <version>2.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>org.jfree.svg</artifactId>
-            <version>4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>org.jfree.pdf</artifactId>
-            <version>2.0</version>
-        </dependency>
-        <!-- JFreeChart END -->
-
+        <!-- JavaFX END -->
 
     </dependencies>
 
