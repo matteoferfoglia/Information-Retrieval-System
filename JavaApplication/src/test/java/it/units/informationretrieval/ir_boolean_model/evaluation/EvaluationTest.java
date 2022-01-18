@@ -203,13 +203,7 @@ public class EvaluationTest {
     @Test
     void precisionRecallCurve() {
 
-        final int MAX_NUM_OF_QUERIES_TO_USE = 20;
-
-        var shuffledQueries = new ArrayList<>(CRANFIELD_QUERIES);
-        Collections.shuffle(shuffledQueries);
-
-        List<Point.Series> seriesList = shuffledQueries.parallelStream().unordered()
-                .limit(MAX_NUM_OF_QUERIES_TO_USE)
+        List<Point.Series> seriesList = CRANFIELD_QUERIES.parallelStream().unordered()
                 .map(query -> {
                     SkipList<Document> relevantDocuments = new SkipList<>(
                             query.getRelevantDocs().keySet().stream().map(doc -> (Document) doc).toList());
@@ -234,6 +228,8 @@ public class EvaluationTest {
             } catch (OutOfMemoryError e) {
                 Logger.getLogger(getClass().getCanonicalName()).log(Level.SEVERE, "Out of memory. Re-trying with less data", e);
                 if (seriesList.size() > 0) {
+                    // remove one series randomly (to reduce the size) a re-try
+                    Collections.shuffle(seriesList);
                     seriesList.remove(seriesList.size() - 1);
                 } else {
                     throw e;
