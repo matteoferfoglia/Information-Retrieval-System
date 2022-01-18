@@ -39,7 +39,7 @@ Boolean queries were realized with the following procedure
    list
 4. create a map *M* (each key will be a query string (`String`) and each corresponding value will be the set of document
    identifiers (`Set<Integer>`) answering the query string)
-5. repeat the following operations for *T* times (*T=10* was chosen)
+5. repeat the following operations for *T* times (*T=5* was chosen)
     1. choose the number *N* of words that will compose a query string (the number *N=2* was chosen to create these
        files) and take *N* words randomly from the obtained list
     2. concatenate words to form the query string to form both AND queries and OR queries; this means that for each

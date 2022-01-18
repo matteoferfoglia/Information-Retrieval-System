@@ -3,6 +3,7 @@ package it.units.informationretrieval.ir_boolean_model.evaluation.cranfield_coll
 import it.units.informationretrieval.ir_boolean_model.document_descriptors.CranfieldDocument;
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
+import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex;
 import it.units.informationretrieval.ir_boolean_model.entities.Language;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.queries.BINARY_OPERATOR;
@@ -44,7 +45,7 @@ class TestQueriesCreator {
     /**
      * The number of AND, OR, NOT and PHRASE distinct queries to create.
      */
-    private static final int T = 10;
+    private static final int T = 5;
     /**
      * The number of words in AND, OR and phrase queries.
      */
@@ -74,7 +75,7 @@ class TestQueriesCreator {
         mapQueryStringsToDocIdsOfAnswers = new HashMap<>();
 
         for (int i = 0; i < T; i++) {
-            createAndAddToMap_AND_OR_NOT_queries(allWordsFromAllDocsWithoutStopWords, stemmedDocumentsWithoutStopWords);
+            createAndAddToMap_SINGLEWORD_AND_OR_NOT_WILDCARD_queries(allWordsFromAllDocsWithoutStopWords, stemmedDocumentsWithoutStopWords);
             createAndAddToMap_PHRASE_queries(allWordsFromAllDocsKeepingStopWords, stemmedDocumentsKeepingStopWords);
         }
 
@@ -127,11 +128,13 @@ class TestQueriesCreator {
      */
     private static void createAndAddToMapComplexQueries() {
 
+        // TODO: refactor
+
         final int MAX_NUMBER_OF_QUERY_PER_TYPE = 5;    // with cartesian product, complexity increases fast
 
-        Pattern andQueriesPattern = Pattern.compile("^\\w+ \\" + BINARY_OPERATOR.AND.getSymbol() + " \\w+$");
-        Pattern orQueriesPattern = Pattern.compile("^\\w+ \\" + BINARY_OPERATOR.OR.getSymbol() + " \\w+$");
+        Pattern singleWordPattern = Pattern.compile("^\\w+$");
         Pattern notQueriesPattern = Pattern.compile("^\\" + UNARY_OPERATOR.NOT.getSymbol() + " \\w+$");
+        Pattern wildcardQueriesPattern = Pattern.compile("\\w*\\" + InvertedIndex.WILDCARD + "\\w*$");
         Pattern phraseQueriesPattern = Pattern.compile("^[" + BooleanExpression.PHRASE_DELIMITER
                 + "][\\w ]+[" + BooleanExpression.PHRASE_DELIMITER + "]$");
 
@@ -142,17 +145,17 @@ class TestQueriesCreator {
                         .limit(MAX_NUMBER_OF_QUERY_PER_TYPE)
                         .toList();
 
-        List<Map.Entry<String, List<Integer>>> andQueriesEntries =
-                getListOfEntriesWithQueriesMatchingThePattern.apply(mapQueryStringsToDocIdsOfAnswers, andQueriesPattern);
-        List<Map.Entry<String, List<Integer>>> orQueriesEntries =
-                getListOfEntriesWithQueriesMatchingThePattern.apply(mapQueryStringsToDocIdsOfAnswers, orQueriesPattern);
+        List<Map.Entry<String, List<Integer>>> singleWordQueriesEntries =
+                getListOfEntriesWithQueriesMatchingThePattern.apply(mapQueryStringsToDocIdsOfAnswers, singleWordPattern);
         List<Map.Entry<String, List<Integer>>> notQueriesEntries =
                 getListOfEntriesWithQueriesMatchingThePattern.apply(mapQueryStringsToDocIdsOfAnswers, notQueriesPattern);
+        List<Map.Entry<String, List<Integer>>> wildcardQueriesEntries =
+                getListOfEntriesWithQueriesMatchingThePattern.apply(mapQueryStringsToDocIdsOfAnswers, wildcardQueriesPattern);
         List<Map.Entry<String, List<Integer>>> phraseQueriesEntries =
                 getListOfEntriesWithQueriesMatchingThePattern.apply(mapQueryStringsToDocIdsOfAnswers, phraseQueriesPattern);
 
-        var cartesianProduct =
-                Utility.getCartesianProduct(Arrays.asList(andQueriesEntries, orQueriesEntries, notQueriesEntries, phraseQueriesEntries));
+        var cartesianProduct = Utility.getCartesianProduct(Arrays.asList(
+                singleWordQueriesEntries, notQueriesEntries, wildcardQueriesEntries, phraseQueriesEntries));
 
         BiFunction<List<Map.Entry<String, List<Integer>>>, BINARY_OPERATOR, Map.Entry<String, List<Integer>>>
                 complexQueryStringCreator = (queryEntryList, binaryOperator) -> {
@@ -226,19 +229,34 @@ class TestQueriesCreator {
     }
 
     /**
-     * Creates and adds to {@link #mapQueryStringsToDocIdsOfAnswers} AND / OR / NOT queries.
+     * Creates and adds to {@link #mapQueryStringsToDocIdsOfAnswers} SINGLEWORD / AND / OR / NOT / WILDCARD queries.
      *
      * @param allWordsFromAllDocsWithoutStopWords The list of words to use to create the queries.
      * @param stemmedDocumentsWithoutStopWords    The list of {@link StemmedDocument} obtained by removing stop-words.
      */
-    private static void createAndAddToMap_AND_OR_NOT_queries(
+    private static void createAndAddToMap_SINGLEWORD_AND_OR_NOT_WILDCARD_queries(
             List<String> allWordsFromAllDocsWithoutStopWords, List<StemmedDocument> stemmedDocumentsWithoutStopWords) {
+
+        // TODO: refactor
+
+        // SINGLEWORD boolean query string creation
+        List<String> stemmedQueryWordListOf1Element;
+        String singleQueryWord, singleWordQueryString = null;
+        int iterationsCounter = 0;
+        do {
+            singleQueryWord = getNDistinctWordsRandomly(1, allWordsFromAllDocsWithoutStopWords).get(0);
+            stemmedQueryWordListOf1Element = getStemmed(List.of(singleQueryWord));
+        } while ((stemmedQueryWordListOf1Element.size() != 1   // stemming may remove entire words
+                // following condition enforces to have distinct queries:
+                || mapQueryStringsToDocIdsOfAnswers.containsKey(singleWordQueryString = singleQueryWord))
+                && iterationsCounter++ < allWordsFromAllDocsWithoutStopWords.size()/*avoid infinity loop*/);
+        final String finalStemmedQueryWord = stemmedQueryWordListOf1Element.get(0);
 
         // AND and OR boolean query strings creation
         List<String> queryWords, stemmedQueryWords;
         String andQueryString = null, orQueryString = null;
 
-        int iterationsCounter = 0;
+        iterationsCounter = 0;
         do {
             queryWords = getNDistinctWordsRandomly(N, allWordsFromAllDocsWithoutStopWords);
             stemmedQueryWords = getStemmed(queryWords);
@@ -262,15 +280,54 @@ class TestQueriesCreator {
                 && iterationsCounter++ < allWordsFromAllDocsWithoutStopWords.size()/*avoid infinity loop*/);
         final String finalStemmedQueryWordNot = stemmedNotQueryWordListOf1Element.get(0);
 
+        // WILDCARD boolean query string creation
+        String wildcardQueryString = null;
+        iterationsCounter = 0;
+        do {
+            singleQueryWord = getNDistinctWordsRandomly(1, allWordsFromAllDocsWithoutStopWords).get(0);
+            stemmedQueryWordListOf1Element = getStemmed(List.of(singleQueryWord));
+        } while ((stemmedQueryWordListOf1Element.size() != 1   // stemming may remove entire words
+                // following condition enforces to have distinct queries:
+                || mapQueryStringsToDocIdsOfAnswers.containsKey(wildcardQueryString = replaceRandomCharInStringWithWildcard(singleQueryWord)))
+                && iterationsCounter++ < allWordsFromAllDocsWithoutStopWords.size()/*avoid infinity loop*/);
+
+
         // add query strings and results to the map
+        String finalSingleWordQueryString = Objects.requireNonNull(singleWordQueryString);
         String finalAndQueryString = Objects.requireNonNull(andQueryString);
         String finalOrQueryString = Objects.requireNonNull(orQueryString);
         String finalNotQueryString = Objects.requireNonNull(notQueryString);
+        String finalWildcardQueryString = Objects.requireNonNull(wildcardQueryString);
         stemmedDocumentsWithoutStopWords.forEach(stemmedDocument -> {
+            addQueryToMapIf(finalSingleWordQueryString, stemmedDocument.getDocId(), stemmedDocument.contains(finalStemmedQueryWord));
             addQueryToMapIf(finalAndQueryString, stemmedDocument.getDocId(), stemmedDocument.containsAllWords(finalStemmedQueryWords));
             addQueryToMapIf(finalOrQueryString, stemmedDocument.getDocId(), stemmedDocument.containsAtLeastOneWord(finalStemmedQueryWords));
             addQueryToMapIf(finalNotQueryString, stemmedDocument.getDocId(), stemmedDocument.notContain(finalStemmedQueryWordNot));
+            addQueryToMapIf(finalWildcardQueryString, stemmedDocument.getDocId(), stemmedDocument.containsWithWildcard(finalWildcardQueryString));
         });
+    }
+
+    /**
+     * Replaces one character randomly chosen from the given input string and
+     * with the wildcard symbol and returns the corresponding string (after
+     * replacement).
+     *
+     * @param inputString The input string.
+     * @return The input string with one of its characters replaced by the
+     * {@link InvertedIndex#WILDCARD wildcard} character.
+     */
+    private static String replaceRandomCharInStringWithWildcard(@NotNull String inputString) {
+        inputString = Objects.requireNonNull(inputString).strip();
+        if (inputString.isBlank()) {
+            throw new IllegalArgumentException("Input string cannot be blank.");
+        } else {
+            int indexOfCharToReplace = (int) (Math.random() * (inputString.length() - 1));
+            String beforeWildcard = inputString.substring(0, indexOfCharToReplace);
+            String afterWildcard = inputString.substring(indexOfCharToReplace + 1);
+            int numOfCharsToRemove = (int) (Math.random() * Math.max(0, afterWildcard.length() - 1));   // randomly decide if removing any characters (wildcard means 0 or more missing characters)
+            afterWildcard = afterWildcard.substring(numOfCharsToRemove);
+            return beforeWildcard + InvertedIndex.WILDCARD + afterWildcard;
+        }
     }
 
     /**
@@ -410,6 +467,14 @@ class TestQueriesCreator {
         }
 
         /**
+         * @param word A word.
+         * @return true if this instance contains the given word, false otherwise.
+         */
+        public boolean contains(@NotNull String word) {
+            return entireContent.contains(word);
+        }
+
+        /**
          * @param words A {@link List} of words.
          * @return true if this instance contains all the given words, and they are consecutive, false otherwise.
          */
@@ -443,6 +508,24 @@ class TestQueriesCreator {
          */
         public boolean notContain(@NotNull String word) {
             return !entireContent.contains(Objects.requireNonNull(word));
+        }
+
+        /**
+         * @param wordWithWildcard A word with a {@link InvertedIndex#WILDCARD}.
+         * @return true if this document contains a word matching the given one
+         * (considering the wildcard), false otherwise.
+         */
+        public boolean containsWithWildcard(@NotNull String wordWithWildcard) {
+            int indexOfWildcard = wordWithWildcard.indexOf(InvertedIndex.WILDCARD);
+            if (indexOfWildcard == -1) {
+                throw new IllegalArgumentException("Wildcard (" + InvertedIndex.WILDCARD + ") not found in "
+                        + "input word (" + wordWithWildcard + ")");
+            }
+            final String substringBeforeWildcard = wordWithWildcard.substring(0, indexOfWildcard);
+            final String substringAfterWildcard = wordWithWildcard.substring(indexOfWildcard + 1);
+            return entireContent.stream()
+                    .anyMatch(word -> word.length() >= substringBeforeWildcard.length() + substringAfterWildcard.length()
+                            && word.startsWith(substringBeforeWildcard) && word.endsWith(substringAfterWildcard));
         }
     }
 }
