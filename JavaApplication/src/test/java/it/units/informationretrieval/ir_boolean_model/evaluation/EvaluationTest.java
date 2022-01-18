@@ -20,6 +20,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -200,10 +202,14 @@ public class EvaluationTest {
 
     @Test
     void precisionRecallCurve() {
-        Map<CranfieldQuery, Point.Series> mapQueryToRecallPrecisionPoints =
-                new HashMap<>(CRANFIELD_QUERIES.size());
 
-        List<Point.Series> seriesList = CRANFIELD_QUERIES.parallelStream().unordered()
+        final int MAX_NUM_OF_QUERIES_TO_USE = 20;
+
+        var shuffledQueries = new ArrayList<>(CRANFIELD_QUERIES);
+        Collections.shuffle(shuffledQueries);
+
+        List<Point.Series> seriesList = shuffledQueries.parallelStream().unordered()
+                .limit(MAX_NUM_OF_QUERIES_TO_USE)
                 .map(query -> {
                     SkipList<Document> relevantDocuments = new SkipList<>(
                             query.getRelevantDocs().keySet().stream().map(doc -> (Document) doc).toList());
@@ -220,8 +226,20 @@ public class EvaluationTest {
                 })
                 .toList();
 
-        Point.plotAndSavePNG_ofMultipleSeries("Precision-Recall curve", seriesList, "Recall", "Precision", true,
-                FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_precisionRecallCurves.png", 10);
+        do {
+            try {
+                Point.plotAndSavePNG_ofMultipleSeries("Precision-Recall curve", seriesList, "Recall", "Precision", true,
+                        FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_precisionRecallCurves.png", 10, true);
+                break;
+            } catch (OutOfMemoryError e) {
+                Logger.getLogger(getClass().getCanonicalName()).log(Level.SEVERE, "Out of memory. Re-trying with less data", e);
+                if (seriesList.size() > 0) {
+                    seriesList.remove(seriesList.size() - 1);
+                } else {
+                    throw e;
+                }
+            }
+        } while (true /*exit via break instruction*/);
 
     }
 
