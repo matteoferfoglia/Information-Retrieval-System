@@ -65,6 +65,8 @@ public class EvaluationTest {
     @NotNull
     private final static List<Double> recalls = new ArrayList<>();
 
+    private static String currentDateTime;
+
     static {
         BufferedWriter bwToFile1;   // tmp variable to defer the assignment to a final variable
         try {
@@ -74,7 +76,7 @@ public class EvaluationTest {
                     throw new IOException("Output file not created.");
                 }
             }
-            var currentDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
+            currentDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
                     .withZone(ZoneId.systemDefault())
                     .format(Instant.now());
             File f = new File(FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + ".txt");
@@ -201,24 +203,25 @@ public class EvaluationTest {
         Map<CranfieldQuery, Point.Series> mapQueryToRecallPrecisionPoints =
                 new HashMap<>(CRANFIELD_QUERIES.size());
 
-        List<Point.Series> seriesList = new ArrayList<>();
-        for (var query : CRANFIELD_QUERIES) {   // TODO: parallelstream()
-            SkipList<Document> relevantDocuments = new SkipList<>(
-                    query.getRelevantDocs().keySet().stream().map(doc -> (Document) doc).toList());
-            List<Document> retrievedDocuments = CRANFIELD_IRS.retrieve(query.getQueryText());
-            Point.Series recall_precision_points = new Point.Series(String.valueOf(query.getQueryNumber()));
-            for (int j = 1; j < retrievedDocuments.size(); j++) {
-                var retrievedDocsTillJth = new SkipList<>(retrievedDocuments.subList(0, j));
-                var relevantAndRetrievedTillJth = Utility.intersection(relevantDocuments, retrievedDocsTillJth);
-                double precision = (double) relevantAndRetrievedTillJth.size() / retrievedDocsTillJth.size();
-                double recall = (double) relevantAndRetrievedTillJth.size() / relevantDocuments.size();
-                recall_precision_points.add(new Point<>(recall, precision));
-            }
-            seriesList.add(recall_precision_points);
-        }
+        List<Point.Series> seriesList = CRANFIELD_QUERIES.parallelStream().unordered()
+                .map(query -> {
+                    SkipList<Document> relevantDocuments = new SkipList<>(
+                            query.getRelevantDocs().keySet().stream().map(doc -> (Document) doc).toList());
+                    List<Document> retrievedDocuments = CRANFIELD_IRS.retrieve(query.getQueryText());
+                    Point.Series recall_precision_points = new Point.Series(String.valueOf(query.getQueryNumber()));
+                    for (int j = 1; j < retrievedDocuments.size(); j++) {
+                        var retrievedDocsTillJth = new SkipList<>(retrievedDocuments.subList(0, j));
+                        var relevantAndRetrievedTillJth = Utility.intersection(relevantDocuments, retrievedDocsTillJth);
+                        double precision = (double) relevantAndRetrievedTillJth.size() / retrievedDocsTillJth.size();
+                        double recall = (double) relevantAndRetrievedTillJth.size() / relevantDocuments.size();
+                        recall_precision_points.add(new Point<>(recall, precision));
+                    }
+                    return recall_precision_points;
+                })
+                .toList();
 
         Point.plotAndSavePNG_ofMultipleSeries("Precision-Recall curve", seriesList, "Recall", "Precision", true,
-                FOLDER_NAME_TO_SAVE_RESULTS + File.separator + "precisionRecallCurves.png", 10);
+                FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_precisionRecallCurves.png", 10);
 
     }
 
