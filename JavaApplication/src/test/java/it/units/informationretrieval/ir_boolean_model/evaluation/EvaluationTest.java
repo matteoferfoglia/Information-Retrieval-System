@@ -218,11 +218,11 @@ public class EvaluationTest {
                     }
                     return recall_precision_points;
                 })
-                .toList();
+                .collect(Collectors.toList());
 
         do {
             try {
-                Point.plotAndSavePNG_ofMultipleSeries("Precision-Recall curve", seriesList, "Recall", "Precision", true,
+                Point.plotAndSavePNG_ofMultipleSeries("Precision-Recall curve", seriesList, "Recall", "Precision", false,
                         FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_precisionRecallCurves.png", 10, true);
                 break;
             } catch (OutOfMemoryError e) {
@@ -236,6 +236,27 @@ public class EvaluationTest {
                 }
             }
         } while (true /*exit via break instruction*/);
+
+
+        // Investigation on the worst query // TODO: investigate on the reeason of low accuracy values
+        List<Double> avgPrecisions = seriesList.stream().sequential()   // same order
+                .map(serie -> serie.stream().mapToDouble(Point::getY).average().orElse(0))
+                .sorted().toList();
+        // sort list of series according to avg precision (worst series at beginning)
+        SortedMap<Double, Point.Series> avgPrecisionToSeries = new TreeMap<>();
+        for (int i = 0; i < avgPrecisions.size(); i++) {
+            avgPrecisionToSeries.put(avgPrecisions.get(i), seriesList.get(i));
+        }
+        System.out.println("Worst queries: ");
+        final int MAX_NUM_OF_WORST_QUERIES = 10;
+        avgPrecisionToSeries.entrySet().stream()
+                .sorted(Comparator.comparingDouble(Map.Entry::getKey))
+                .limit(MAX_NUM_OF_WORST_QUERIES)
+                .forEach(avgPrecisionToseries -> {
+                    var avgPrecision = avgPrecisionToseries.getKey();
+                    var seriesName = avgPrecisionToseries.getValue().getName();
+                    System.out.println("\tQuery " + seriesName + ") \tAvg precision: " + avgPrecision);
+                });
 
     }
 

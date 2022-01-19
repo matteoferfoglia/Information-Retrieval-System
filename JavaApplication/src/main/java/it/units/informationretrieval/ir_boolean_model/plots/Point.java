@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * Class representing a point, e.g.: P = (x,y).
@@ -191,6 +192,13 @@ public class Point<X extends Number, Y extends Number> extends Pair<X, Y> {
         @NotNull
         public String getName() {
             return name;
+        }
+
+        /**
+         * @return the {@link Stream} for this instance.
+         */
+        public Stream<Point<Double, Double>> stream() {
+            return series.stream();
         }
     }
 }
