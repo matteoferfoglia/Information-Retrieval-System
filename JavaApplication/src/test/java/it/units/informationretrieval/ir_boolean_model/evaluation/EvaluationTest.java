@@ -374,6 +374,28 @@ public class EvaluationTest {
         Point.plotAndSavePNG_ofMultipleSeries(     // TODO: Handle OutOfMemoryError: Java heap space
                 SERIES_NAME, List.of(NPointsInterpolatedAveragePrecision), "Recall", "Precision", false,
                 FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_NPointInterpolatedAveragePrecisions.png", 10);
+
+
+        // Write results
+        StringBuilder sb = new StringBuilder();
+        sb.append(System.lineSeparator()).append(SERIES_NAME).append(System.lineSeparator());
+        sb.append(
+                IntStream.range(0, NPointsInterpolatedAveragePrecision.size())
+                        .mapToObj(i -> {
+                            var p = NPointsInterpolatedAveragePrecision.get(i);
+                            return "\t" + i + ")\trecall: " + p.getX() + ", precision: " + p.getY();
+                        })
+                        .collect(Collectors.joining(System.lineSeparator())));
+        sb.append(System.lineSeparator());
+
+        String toString = sb.toString();
+        System.out.println(toString);
+        try {
+            WRITER_TO_FILE.write(toString);
+            WRITER_TO_FILE.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
