@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import skiplist.SkipList;
 
 import java.io.*;
@@ -21,6 +23,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -279,7 +282,7 @@ public class EvaluationTest {
     }
 
     @Test
-    void interpolatedPrecision() {
+    void interpolatedPrecisions() {    // TODO: re-check calculus
         if (precisionRecallSeries == null) {
             precisionRecallCurve();
         }
@@ -301,20 +304,89 @@ public class EvaluationTest {
                     var precision0 = interpolatedPoints.isEmpty() ? 0.0 : interpolatedPoints.get(0).getY();
                     interpolatedPoints.add(0 /*add at beginning*/, new Point<>(recall0, precision0));
 
-                    // add point at recall=1
-                    var recall1 = 1D;
-                    var precision1 = interpolatedPoints.get(interpolatedPoints.size() - 1).getY();
-                    interpolatedPoints.add(/*add at end*/ new Point<>(recall1, precision1));
-
                     return new Point.Series(interpolatedPoints, aSeries.getName());
                 })
                 .toList();
-
 
         do {    // TODO: extract method (code duplication with precision-recall curve plot)
             try {
                 Point.plotAndSavePNG_ofMultipleSeries("Interpolated precisions curve", interpolatedPrecisionSeries, "Recall", "Precision", false,
                         FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_interpolatedPrecisions.png", 10);
+                break;
+            } catch (OutOfMemoryError e) {
+                Logger.getLogger(getClass().getCanonicalName()).log(Level.SEVERE, "Out of memory. Re-trying with less data", e);
+                if (interpolatedPrecisionSeries.size() > 0) {
+                    // remove one series randomly (to reduce the size) a re-try
+                    Collections.shuffle(interpolatedPrecisionSeries);
+                    interpolatedPrecisionSeries.remove(interpolatedPrecisionSeries.size() - 1);
+                } else {
+                    throw e;
+                }
+            }
+        } while (true /*exit via break instruction*/);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {11/*11-point interpolated average precision*/})
+    void NPointInterpolatedAveragePrecision(int NUM_OF_POINTS) {    // TODO: re-check calculus
+
+        if (interpolatedPrecisionSeries == null) {
+            interpolatedPrecisions();
+        }
+
+        final double MIN_RECALL = 0D;
+        final double MAX_RECALL = 1D;
+        final double INCREMENT = MAX_RECALL / (NUM_OF_POINTS - 1); // -1 to consider the zero as first point,
+        // i.e., we will have N points and N-1 intervals
+
+        // Create interpolated series on points
+        var interpolatedPrecisionSeriesOnTargetPoints = interpolatedPrecisionSeries.parallelStream()
+                .map(aSeries -> {
+                    var recallsThisSeries = aSeries.stream().map(Point::getX).toList();
+                    var precisionsThisSeries = aSeries.stream().map(Point::getY).toList();
+
+                    Point.Series interpolated = new Point.Series(aSeries.getName());
+
+                    BiFunction<List<Double>, Double, Integer> findNearestDoubleInListAndGetItsIndex = (list, target) -> {
+                        assert list.size() > 0;
+                        int answerIndex = 0;
+                        double distance = Double.MAX_VALUE;
+                        for (int i = 0; i < list.size(); i++) {
+                            double currentDistance = Math.abs(list.get(i) - target);
+                            if (currentDistance < distance) {
+                                answerIndex = i;
+                                distance = currentDistance;
+                            }
+                        }
+                        return answerIndex;
+                    };
+
+                    for (double recall = MIN_RECALL; recall <= MAX_RECALL; recall += INCREMENT) {
+                        var indexOfPointWithRecallNearestToCurrent = findNearestDoubleInListAndGetItsIndex.apply(recallsThisSeries, recall);
+                        interpolated.add(new Point<>(
+                                Math.round(recall * 100D) / 100D, // round to 2 decimals
+                                precisionsThisSeries.get(indexOfPointWithRecallNearestToCurrent)));
+                    }
+
+                    return interpolated;
+                })
+                .toList();
+
+        final String SERIES_NAME = NUM_OF_POINTS + "-point interpolated average precision";
+        var NPointsInterpolatedAveragePrecision =
+                new Point.Series(IntStream.range(0, NUM_OF_POINTS)
+                        .sequential()   // respect order of growing recall values
+                        .mapToObj(i -> new Point<>(
+                                interpolatedPrecisionSeriesOnTargetPoints.get(0).get(i).getX(),    // i-th recall value (taken from first series, but recall values are the same for all the series)
+                                interpolatedPrecisionSeriesOnTargetPoints.stream().mapToDouble(aSeries -> aSeries.get(i).getY()).average().orElseThrow()))
+                        .toList(), SERIES_NAME);
+
+
+        do {    // TODO: extract method (code duplication with precision-recall curve plot)
+            try {
+                Point.plotAndSavePNG_ofMultipleSeries(
+                        SERIES_NAME, List.of(NPointsInterpolatedAveragePrecision), "Recall", "Precision", false,
+                        FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_NPointInterpolatedAveragePrecisions.png", 10);
                 break;
             } catch (OutOfMemoryError e) {
                 Logger.getLogger(getClass().getCanonicalName()).log(Level.SEVERE, "Out of memory. Re-trying with less data", e);
