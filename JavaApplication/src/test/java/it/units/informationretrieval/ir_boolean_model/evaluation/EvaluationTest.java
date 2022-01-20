@@ -9,9 +9,7 @@ import it.units.informationretrieval.ir_boolean_model.plots.Point;
 import it.units.informationretrieval.ir_boolean_model.plots.XYLineChart;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import skiplist.SkipList;
@@ -39,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  *
  * @author Matteo Ferfoglia
  */
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class EvaluationTest {
 
     /**
@@ -212,16 +211,19 @@ public class EvaluationTest {
     }
 
     @Test
+    @Order(1)
     void precision() {
         printStatistics("precision", precisions);
     }
 
     @Test
+    @Order(2)
     void recall() {
         printStatistics("recall", recalls);
     }
 
     @Test
+    @Order(3)
     void precisionRecallCurve() {
 
         precisionRecallSeries = CRANFIELD_QUERIES.parallelStream().unordered()
@@ -242,7 +244,7 @@ public class EvaluationTest {
                 .collect(Collectors.toList());
 
         do {
-            try {
+            try {   // TODO: Handle better OutOfMemoryError: Java heap space
                 Point.plotAndSavePNG_ofMultipleSeries("Precision-Recall curve", precisionRecallSeries, "Recall", "Precision", false,
                         FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_precisionRecallCurves.png", 10);
                 break;
@@ -282,6 +284,7 @@ public class EvaluationTest {
     }
 
     @Test
+    @Order(4)
     void interpolatedPrecisions() {    // TODO: re-check calculus
         if (precisionRecallSeries == null) {
             precisionRecallCurve();
@@ -308,25 +311,12 @@ public class EvaluationTest {
                 })
                 .toList();
 
-        do {    // TODO: extract method (code duplication with precision-recall curve plot)
-            try {
-                Point.plotAndSavePNG_ofMultipleSeries("Interpolated precisions curve", interpolatedPrecisionSeries, "Recall", "Precision", false,
-                        FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_interpolatedPrecisions.png", 10);
-                break;
-            } catch (OutOfMemoryError e) {
-                Logger.getLogger(getClass().getCanonicalName()).log(Level.SEVERE, "Out of memory. Re-trying with less data", e);
-                if (interpolatedPrecisionSeries.size() > 0) {
-                    // remove one series randomly (to reduce the size) a re-try
-                    Collections.shuffle(interpolatedPrecisionSeries);
-                    interpolatedPrecisionSeries.remove(interpolatedPrecisionSeries.size() - 1);
-                } else {
-                    throw e;
-                }
-            }
-        } while (true /*exit via break instruction*/);
+        Point.plotAndSavePNG_ofMultipleSeries("Interpolated precisions curve", interpolatedPrecisionSeries, "Recall", "Precision", false,   // TODO: Handle OutOfMemoryError: Java heap space
+                FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_interpolatedPrecisions.png", 10);
     }
 
     @ParameterizedTest
+    @Order(5)
     @ValueSource(ints = {11/*11-point interpolated average precision*/})
     void NPointInterpolatedAveragePrecision(int NUM_OF_POINTS) {    // TODO: re-check calculus
 
@@ -381,24 +371,9 @@ public class EvaluationTest {
                                 interpolatedPrecisionSeriesOnTargetPoints.stream().mapToDouble(aSeries -> aSeries.get(i).getY()).average().orElseThrow()))
                         .toList(), SERIES_NAME);
 
-
-        do {    // TODO: extract method (code duplication with precision-recall curve plot)
-            try {
-                Point.plotAndSavePNG_ofMultipleSeries(
-                        SERIES_NAME, List.of(NPointsInterpolatedAveragePrecision), "Recall", "Precision", false,
-                        FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_NPointInterpolatedAveragePrecisions.png", 10);
-                break;
-            } catch (OutOfMemoryError e) {
-                Logger.getLogger(getClass().getCanonicalName()).log(Level.SEVERE, "Out of memory. Re-trying with less data", e);
-                if (interpolatedPrecisionSeries.size() > 0) {
-                    // remove one series randomly (to reduce the size) a re-try
-                    Collections.shuffle(interpolatedPrecisionSeries);
-                    interpolatedPrecisionSeries.remove(interpolatedPrecisionSeries.size() - 1);
-                } else {
-                    throw e;
-                }
-            }
-        } while (true /*exit via break instruction*/);
+        Point.plotAndSavePNG_ofMultipleSeries(     // TODO: Handle OutOfMemoryError: Java heap space
+                SERIES_NAME, List.of(NPointsInterpolatedAveragePrecision), "Recall", "Precision", false,
+                FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_NPointInterpolatedAveragePrecisions.png", 10);
     }
 
 }
