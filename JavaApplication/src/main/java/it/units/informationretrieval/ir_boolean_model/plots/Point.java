@@ -4,6 +4,7 @@ import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -70,32 +71,6 @@ public class Point<X extends Number, Y extends Number> extends Pair<X, Y> {
                                                        String pathForOutputFileWhereToSave, int pixelScale) {
         plotMultipleSeries(title, xySeries, xAxisLabel, yAxisLabel, showLegend);
         XYLineChart.saveAsPng(pathForOutputFileWhereToSave, pixelScale);
-    }
-
-    /**
-     * Plots a {@link List} of {@link Point.Series} of points and the
-     * save the plot as PNG image at the specified path.
-     * After have saved the plot to file, close the window and stop JavaFX,
-     * if the parameter "closeAfterSaving" is true.
-     *
-     * @param title                        The title for the plot.
-     * @param xySeries                     The list of {@link Point.Series} of points to plot.
-     * @param xAxisLabel                   The x-axis label in the plot.
-     * @param yAxisLabel                   The y-axis label in the plot.
-     * @param showLegend                   Flag: true if the plot legend must be shown, false otherwise.
-     * @param pathForOutputFileWhereToSave The path for the output file (where to save the image).
-     * @param pixelScale                   The scale for the image (to change the image resolution when saved to file)
-     *                                     wrt. the currently shown image on the screen.
-     * @param closeAfterSaving             Close JavaFx after saving the plot if this flag is true.
-     */
-    public static void plotAndSavePNG_ofMultipleSeries(String title, List<Series> xySeries,
-                                                       String xAxisLabel, String yAxisLabel, boolean showLegend,
-                                                       String pathForOutputFileWhereToSave, int pixelScale,
-                                                       boolean closeAfterSaving) {
-        plotAndSavePNG_ofMultipleSeries(title, xySeries, xAxisLabel, yAxisLabel, showLegend, pathForOutputFileWhereToSave, pixelScale);
-        if (closeAfterSaving) {
-            XYLineChart.close();
-        }
     }
 
     /**
@@ -168,6 +143,20 @@ public class Point<X extends Number, Y extends Number> extends Pair<X, Y> {
             } else {
                 throw new IndexOutOfBoundsException("Index " + index + " out of bounds for size " + series.size());
             }
+        }
+
+        /**
+         * @param x A value for the x-coordinates.
+         * @return the {@link List} of points having the x-coordinates which is
+         * greater or equal (&ge;) the give param. The returned {@link List} of
+         * {@link Point}s is sorted according to the x-coordinates.
+         */
+        @NotNull
+        public List<Point<Double, Double>> getSortedListOfPointWithXGreaterOrEqual(double x) {
+            return series.stream()
+                    .filter(point -> point.getX() >= x)
+                    .sorted(Comparator.comparingDouble(Point::getX))
+                    .toList();
         }
 
         /**

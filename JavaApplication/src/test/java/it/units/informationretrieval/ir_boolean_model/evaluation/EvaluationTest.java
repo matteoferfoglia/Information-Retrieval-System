@@ -6,8 +6,10 @@ import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.evaluation.cranfield_collection.CranfieldQuery;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.plots.Point;
+import it.units.informationretrieval.ir_boolean_model.plots.XYLineChart;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import skiplist.SkipList;
@@ -23,6 +25,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -68,6 +71,16 @@ public class EvaluationTest {
     private final static List<Double> recalls = new ArrayList<>();
 
     private static String currentDateTime;
+    /**
+     * {@link List} of {@link Point.Series} of points (precision,recall)
+     * for the precision-recall curve, computed on {@link #CRANFIELD_QUERIES}.
+     */
+    private static List<Point.Series> precisionRecallSeries;
+    /**
+     * {@link List} of {@link Point.Series} of points (precision,recall)
+     * for the interpolation precisions curve, computed on {@link #precisionRecallSeries}.
+     */
+    private static List<Point.Series> interpolatedPrecisionSeries;
 
     static {
         BufferedWriter bwToFile1;   // tmp variable to defer the assignment to a final variable
@@ -133,6 +146,11 @@ public class EvaluationTest {
                             ? (double) relevantAndRetrieved.size() / relevantDocuments.size()
                             : retrievedDocuments.size() == 0 ? 1 : 0);
                 });
+    }
+
+    @AfterAll
+    static void closeJavaFX() {
+        XYLineChart.close();
     }
 
     /**
@@ -203,7 +221,7 @@ public class EvaluationTest {
     @Test
     void precisionRecallCurve() {
 
-        List<Point.Series> seriesList = CRANFIELD_QUERIES.parallelStream().unordered()
+        precisionRecallSeries = CRANFIELD_QUERIES.parallelStream().unordered()
                 .map(query -> {
                     SkipList<Document> relevantDocuments = new SkipList<>(
                             query.getRelevantDocs().keySet().stream().map(doc -> (Document) doc).toList());
@@ -222,15 +240,15 @@ public class EvaluationTest {
 
         do {
             try {
-                Point.plotAndSavePNG_ofMultipleSeries("Precision-Recall curve", seriesList, "Recall", "Precision", false,
-                        FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_precisionRecallCurves.png", 10, true);
+                Point.plotAndSavePNG_ofMultipleSeries("Precision-Recall curve", precisionRecallSeries, "Recall", "Precision", false,
+                        FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_precisionRecallCurves.png", 10);
                 break;
             } catch (OutOfMemoryError e) {
                 Logger.getLogger(getClass().getCanonicalName()).log(Level.SEVERE, "Out of memory. Re-trying with less data", e);
-                if (seriesList.size() > 0) {
+                if (precisionRecallSeries.size() > 0) {
                     // remove one series randomly (to reduce the size) a re-try
-                    Collections.shuffle(seriesList);
-                    seriesList.remove(seriesList.size() - 1);
+                    Collections.shuffle(precisionRecallSeries);
+                    precisionRecallSeries.remove(precisionRecallSeries.size() - 1);
                 } else {
                     throw e;
                 }
@@ -239,13 +257,13 @@ public class EvaluationTest {
 
 
         // Investigation on the worst query // TODO: investigate on the reeason of low accuracy values
-        List<Double> avgPrecisions = seriesList.stream().sequential()   // same order
+        List<Double> avgPrecisions = precisionRecallSeries.stream().sequential()   // same order
                 .map(serie -> serie.stream().mapToDouble(Point::getY).average().orElse(0))
                 .sorted().toList();
         // sort list of series according to avg precision (worst series at beginning)
         SortedMap<Double, Point.Series> avgPrecisionToSeries = new TreeMap<>();
         for (int i = 0; i < avgPrecisions.size(); i++) {
-            avgPrecisionToSeries.put(avgPrecisions.get(i), seriesList.get(i));
+            avgPrecisionToSeries.put(avgPrecisions.get(i), precisionRecallSeries.get(i));
         }
         System.out.println("Worst queries: ");
         final int MAX_NUM_OF_WORST_QUERIES = 10;
@@ -258,6 +276,57 @@ public class EvaluationTest {
                     System.out.println("\tQuery " + seriesName + ") \tAvg precision: " + avgPrecision);
                 });
 
+    }
+
+    @Test
+    void interpolatedPrecision() {
+        if (precisionRecallSeries == null) {
+            precisionRecallCurve();
+        }
+        interpolatedPrecisionSeries = precisionRecallSeries
+                .stream().sequential() // order matters to guarantee to match series of precision-recall curve
+                .map(aSeries -> {
+                    var interpolatedPoints = IntStream.range(0, aSeries.size())
+                            .mapToObj(i -> {
+                                var recallLevel = aSeries.get(i).getX();
+                                var maxPrecisionForRecallLevelsGreaterOrEqual =
+                                        aSeries.getSortedListOfPointWithXGreaterOrEqual(recallLevel)
+                                                .stream().mapToDouble(Point::getY).max().orElseThrow();
+                                return new Point<>(recallLevel, maxPrecisionForRecallLevelsGreaterOrEqual);
+                            })
+                            .collect(Collectors.toList());
+
+                    // add point at recall=0
+                    var recall0 = 0D;
+                    var precision0 = interpolatedPoints.isEmpty() ? 0.0 : interpolatedPoints.get(0).getY();
+                    interpolatedPoints.add(0 /*add at beginning*/, new Point<>(recall0, precision0));
+
+                    // add point at recall=1
+                    var recall1 = 1D;
+                    var precision1 = interpolatedPoints.get(interpolatedPoints.size() - 1).getY();
+                    interpolatedPoints.add(/*add at end*/ new Point<>(recall1, precision1));
+
+                    return new Point.Series(interpolatedPoints, aSeries.getName());
+                })
+                .toList();
+
+
+        do {    // TODO: extract method (code duplication with precision-recall curve plot)
+            try {
+                Point.plotAndSavePNG_ofMultipleSeries("Interpolated precisions curve", interpolatedPrecisionSeries, "Recall", "Precision", false,
+                        FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_interpolatedPrecisions.png", 10);
+                break;
+            } catch (OutOfMemoryError e) {
+                Logger.getLogger(getClass().getCanonicalName()).log(Level.SEVERE, "Out of memory. Re-trying with less data", e);
+                if (interpolatedPrecisionSeries.size() > 0) {
+                    // remove one series randomly (to reduce the size) a re-try
+                    Collections.shuffle(interpolatedPrecisionSeries);
+                    interpolatedPrecisionSeries.remove(interpolatedPrecisionSeries.size() - 1);
+                } else {
+                    throw e;
+                }
+            }
+        } while (true /*exit via break instruction*/);
     }
 
 }
