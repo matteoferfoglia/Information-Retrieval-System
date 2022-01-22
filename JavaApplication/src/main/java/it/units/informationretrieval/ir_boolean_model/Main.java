@@ -3,11 +3,11 @@ package it.units.informationretrieval.ir_boolean_model;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.factories.CorpusFactory;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
+import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Main {
+    // TODO: remove code duplication from input controls
 
     /**
      * The flag to insert to terminate the execution.
@@ -35,9 +36,41 @@ public class Main {
      */
     public static final String SPELLING_CORRECTION_REQUEST_PREFIX = "-" + OptionsSpellingCorrection.USE_SPELLING_CORRECTION;
     /**
+     * The name of the folder where pre-created IR Systems are saved.
+     */
+    @Nullable // null if problems when getting the folder name from app properties
+    public static final File FOLDER_WITH_IRS;
+    /**
      * The {@link Scanner} used to read from {@link System#in}.
      */
     private static final Scanner scannerReader = new Scanner(System.in);
+    /**
+     * Application properties.
+     */
+    @Nullable // null if instantiation problems
+    private static final AppProperties APP_PROPERTIES;
+
+    static {
+        File folderWithIrsTmp;        // defer the assignment of final field
+        AppProperties appPropertiesTmp; // defer the assignment of final field
+        try {
+            appPropertiesTmp = AppProperties.getInstance();
+            folderWithIrsTmp = new File(
+                    Objects.requireNonNull(appPropertiesTmp).get("workingDirectory_name") + "/irs/");
+            if (!folderWithIrsTmp.exists()) {
+                if (!folderWithIrsTmp.mkdirs()) {
+                    throw new IOException("Unable to create directory");
+                }
+            }
+        } catch (IOException | NullPointerException e) {
+            appPropertiesTmp = null;
+            Logger.getLogger(Main.class.getCanonicalName())
+                    .log(Level.SEVERE, "Error reading app properties", e);
+            folderWithIrsTmp = null;
+        }
+        APP_PROPERTIES = appPropertiesTmp;
+        FOLDER_WITH_IRS = folderWithIrsTmp;
+    }
 
     public static void main(String[] args) throws NoMoreDocIdsAvailable, URISyntaxException, IOException {
 
@@ -63,8 +96,11 @@ public class Main {
         InformationRetrievalSystem irs;
         try {
             irs = switch (option) {
-                case LOAD_IRS -> throw new UnsupportedOperationException();
-                case CREATE_NEW_IRS -> createNewIRSOption();
+                case LOAD_IRS -> {
+                    var irs_ = loadIRS();
+                    yield irs_ == null ? createNewIRS() : irs_;
+                }
+                case CREATE_NEW_IRS -> createNewIRS();
             };
         } catch (NoAvailableCorpus e) {
             System.out.println("No available corpus for indexing. The program will terminate.");
@@ -119,6 +155,66 @@ public class Main {
         }
         while (anotherQuery);
 
+    }
+
+    /**
+     * Load one already-created IR system from the file system.
+     * This method asks directly to the user what IR System to load.
+     *
+     * @return the {@link InformationRetrievalSystem} chosen by the user
+     * or null if no IR systems are saved.
+     */
+    private static InformationRetrievalSystem loadIRS() {   // TODO: method very similar to createNewIRS ==> refactoring
+        if (FOLDER_WITH_IRS != null) {
+            File[] filesOfIRS = FOLDER_WITH_IRS.listFiles();
+            for (int i = 0; i < Objects.requireNonNull(filesOfIRS).length; i++) {
+                System.out.println("\t " + (i + 1) + ") \t" + filesOfIRS[i].getName());
+            }
+            File fileWithIrsChosen = null;
+            do {
+                System.out.print("Insert the number of the IRS that you want to load: ");
+                try {
+                    int insertedIrsIndex = Integer.parseInt(
+                            scannerReader.nextLine().replaceAll("\\s+", ""));
+                    if (1 <= insertedIrsIndex && insertedIrsIndex <= filesOfIRS.length) {
+                        fileWithIrsChosen = filesOfIRS[insertedIrsIndex - 1];
+                    }
+                } catch (Exception ignored) {
+                }
+                if (fileWithIrsChosen == null) {
+                    System.out.println("Please insert an integer between 1 and " + filesOfIRS.length + ".");
+                }
+            } while (fileWithIrsChosen == null);
+
+            System.out.println("Loading the IRSystem from the file system");
+            try (ObjectInputStream ois = new ObjectInputStream(
+                    new BufferedInputStream(new FileInputStream(fileWithIrsChosen)))) {
+                Object irSystem_object = ois.readObject();
+                if (irSystem_object instanceof InformationRetrievalSystem irs) {
+                    System.out.println("IRSystem loaded from the file system.");
+                    return irs;
+                } else {
+                    System.err.println("Invalid file.");
+                    if (!fileWithIrsChosen.delete()) {
+                        Logger.getLogger(Main.class.getCanonicalName())
+                                .log(Level.SEVERE, "Unable to delete file " + fileWithIrsChosen.getAbsolutePath());
+                    }
+                    throw new Exception("Deserialized object is not an instance of "
+                            + InformationRetrievalSystem.class.getCanonicalName());
+                }
+            } catch (Exception e) {
+                System.err.println("Errors occurred when reading the IR System from the file system. " +
+                        "Please, create it");
+                Logger.getLogger(Main.class.getCanonicalName())
+                        .log(Level.SEVERE, "Error reading IR system from file.", e);
+                System.out.println();
+                return null;
+            }
+
+        } else {
+            System.out.println("No IR System found in the file system.");
+            return null;
+        }
     }
 
     /**
@@ -281,7 +377,7 @@ public class Main {
      * @throws NoAvailableCorpus     If no corpus are available for indexing.
      * @throws NoMoreDocIdsAvailable If during the corpus creation no more docIds were available.
      */
-    private static InformationRetrievalSystem createNewIRSOption()
+    private static InformationRetrievalSystem createNewIRS()
             throws IOException, NoAvailableCorpus, NoMoreDocIdsAvailable {
         var availableCorpusFactories = getCorpusFactories();
         switch (availableCorpusFactories.size()) {
@@ -310,7 +406,41 @@ public class Main {
                 }
             } while (corpusFactoryOfCollectionToIndex == null);
 
-            return new InformationRetrievalSystem(corpusFactoryOfCollectionToIndex.createCorpus());
+            var irs = new InformationRetrievalSystem(corpusFactoryOfCollectionToIndex.createCorpus());
+
+            String input = null;
+            boolean saveToFile = false;
+            do {
+                System.out.print("Do you want to save the IR system to file? [y/n]");   // TODO: code duplication (already done somewhere the y/n request)
+                try {
+                    input = scannerReader.nextLine().toLowerCase().strip();
+                    saveToFile = input.equals("y");
+                } catch (Exception ignored) {
+                }
+            } while (input == null || !(input.equals("n") || input.equals("y")));
+            if (saveToFile) {
+
+                String fileName_irSystem = FOLDER_WITH_IRS + File.separator
+                        + corpusFactoryOfCollectionToIndex.getCorpusName();
+                File file_irSystem = new File(fileName_irSystem);
+
+                // Serialize and save the IR System to the file system
+                if (file_irSystem.createNewFile()) {    // if file already exists will do nothing
+                    System.out.println("File \"" + fileName_irSystem + "\" created.");
+                } else {
+                    System.out.println("File \"" + fileName_irSystem + "\" already exists. It will be replaced.");
+                }
+                try (ObjectOutputStream oos = new ObjectOutputStream(
+                        new BufferedOutputStream(
+                                new FileOutputStream(fileName_irSystem, false)))) {
+                    oos.writeObject(irs);
+                    oos.flush();
+                    System.out.println("IR System saved to file " + fileName_irSystem);
+                }
+
+            }
+
+            return irs;
 
         } else {
             throw new NoAvailableCorpus();
