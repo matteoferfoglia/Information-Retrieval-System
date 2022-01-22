@@ -1,11 +1,11 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
 import benchmark.Benchmark;
-import it.units.informationretrieval.ir_boolean_model.document_descriptors.Movie;
 import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeCorpus;
 import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocumentIdentifier;
 import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocument_LineOfAFile;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
+import it.units.informationretrieval.ir_boolean_model.user_defined_contents.movies.MovieCorpusFactory;
 import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
@@ -53,8 +53,8 @@ public class InvertedIndexTest {
     static {
 
         try {
-            movieCorpus = Movie.createCorpus();
-        } catch (NoMoreDocIdsAvailable | URISyntaxException e) {
+            movieCorpus = new MovieCorpusFactory().createCorpus();
+        } catch (NoMoreDocIdsAvailable | IOException e) {
             fail(e);
         }
 
@@ -69,7 +69,7 @@ public class InvertedIndexTest {
         PrintStream realStdOut = System.out;
         System.setOut(new PrintStream(new ByteArrayOutputStream()));      // ignore std out for this block
         try {
-            Corpus movieCorpus = Movie.createCorpus();                           // used for benchmarks
+            Corpus movieCorpus = new MovieCorpusFactory().createCorpus();                           // used for benchmarks
             invertedIndexForMovieCorpus = new InvertedIndex(movieCorpus); // used for benchmarks
             randomTokenFromDictionaryOfMovieInvertedIndex = new Supplier<>() {
 
@@ -122,7 +122,7 @@ public class InvertedIndexTest {
                     return phraseToReturn;
                 }
             };
-        } catch (NoMoreDocIdsAvailable | URISyntaxException e) {
+        } catch (NoMoreDocIdsAvailable | IOException e) {
             fail(e);
         }
         System.setOut(realStdOut);

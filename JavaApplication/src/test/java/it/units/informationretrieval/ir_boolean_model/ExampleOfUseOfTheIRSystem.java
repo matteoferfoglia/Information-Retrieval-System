@@ -1,15 +1,14 @@
 package it.units.informationretrieval.ir_boolean_model;
 
-import it.units.informationretrieval.ir_boolean_model.document_descriptors.Movie;
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
+import it.units.informationretrieval.ir_boolean_model.user_defined_contents.movies.MovieCorpusFactory;
 import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -62,7 +61,7 @@ class ExampleOfUseOfTheIRSystem {
                     System.out.println("Reading the corpus");
 
                     // Load the corpus
-                    Corpus corpus = Movie.createCorpus();
+                    Corpus corpus = new MovieCorpusFactory().createCorpus();
                     System.out.println(corpus.head(3));
 
                     // Create the IR System
@@ -170,7 +169,7 @@ class ExampleOfUseOfTheIRSystem {
             }
 
 
-        } catch (URISyntaxException | IOException | NoMoreDocIdsAvailable e) {
+        } catch (IOException | NoMoreDocIdsAvailable e) {
             e.printStackTrace();
         }
 

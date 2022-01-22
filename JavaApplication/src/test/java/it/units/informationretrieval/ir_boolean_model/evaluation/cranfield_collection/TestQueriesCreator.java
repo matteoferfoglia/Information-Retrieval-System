@@ -1,6 +1,5 @@
 package it.units.informationretrieval.ir_boolean_model.evaluation.cranfield_collection;
 
-import it.units.informationretrieval.ir_boolean_model.document_descriptors.CranfieldDocument;
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex;
@@ -9,6 +8,8 @@ import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAva
 import it.units.informationretrieval.ir_boolean_model.queries.BINARY_OPERATOR;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
 import it.units.informationretrieval.ir_boolean_model.queries.UNARY_OPERATOR;
+import it.units.informationretrieval.ir_boolean_model.user_defined_contents.cranfield.CranfieldCorpusFactory;
+import it.units.informationretrieval.ir_boolean_model.user_defined_contents.cranfield.CranfieldDocument;
 import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import it.units.informationretrieval.ir_boolean_model.utils.stemmers.Stemmer;
@@ -68,7 +69,7 @@ class TestQueriesCreator {
 
     public static void main(String[] args) throws NoMoreDocIdsAvailable, URISyntaxException, IOException {
 
-        List<Document> corpusAsSortedListOfDocs = CranfieldDocument.createCorpus()
+        List<Document> corpusAsSortedListOfDocs = new CranfieldCorpusFactory().createCorpus()
                 .getListOfDocuments().stream().sorted().toList();    // sort according doc numbers;
         List<String> allWordsFromAllDocsWithoutStopWords = getAllWordsFromAllDocs(corpusAsSortedListOfDocs, true);
         List<String> allWordsFromAllDocsKeepingStopWords = getAllWordsFromAllDocs(corpusAsSortedListOfDocs, false);

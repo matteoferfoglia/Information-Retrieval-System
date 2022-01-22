@@ -1,4 +1,4 @@
-package it.units.informationretrieval.ir_boolean_model.document_descriptors;
+package it.units.informationretrieval.ir_boolean_model.user_defined_contents.cranfield;
 
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
@@ -23,10 +23,9 @@ import java.util.regex.Pattern;
 public class CranfieldDocument extends Document {
 
     /**
-     * The folder name in the resources where files about this collection
-     * are available.
+     * The {@link Language}.
      */
-    private static final String RESOURCE_FOLDER_NAME_CRANFIELD = "cranfield_collection";
+    public static final Language LANGUAGE = Language.ENGLISH;
 
     //region regex for data extraction from text
     // -----------------------------------------------------------------------------------------------------------------
@@ -62,6 +61,8 @@ public class CranfieldDocument extends Document {
      */
     private static final int CAPTURING_GROUP_REGEX_ACTUAL_CONTENT = 5;
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // endregion regex
     /**
      * The regex for a Cranfield's collection document.
      */
@@ -73,15 +74,6 @@ public class CranfieldDocument extends Document {
                     + "(.*?)\\s+\\.B\\s*"           // (.*?)  matches the doc authors   (group 3 of the overall regex)
                     + "(.*?)\\s+\\.W\\s*"           // (.*?)  matches the doc source    (group 4 of the overall regex)
                     + "(.*?)\\s+((\\.I\\s*)|\\z)"); // (.*?)  matches the doc actual content (group 5 of the overall regex), matching goes on until either the next doc beginning or the end of file
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // endregion regex
-
-    /**
-     * The {@link Language}.
-     */
-    public static final Language LANGUAGE = Language.ENGLISH;
-
     /**
      * The number of the document in the collection.
      */
@@ -115,7 +107,7 @@ public class CranfieldDocument extends Document {
         this.source = source;
     }
 
-    public static Corpus createCorpus() throws URISyntaxException, IOException, NoMoreDocIdsAvailable {
+    static Corpus createCorpus() throws URISyntaxException, IOException, NoMoreDocIdsAvailable {
         return new Corpus(
                 getDocuments()
                         .parallelStream()
@@ -147,7 +139,7 @@ public class CranfieldDocument extends Document {
     @NotNull
     private static List<String> getDocuments() throws IOException, URISyntaxException {
 
-        final String PATH_TO_FILE_WITH_DOCS = RESOURCE_FOLDER_NAME_CRANFIELD + "/cran.all.1400";
+        final String PATH_TO_FILE_WITH_DOCS = "cran.all.1400";
         String allLinesFromFile = Files.readString(Path.of(Objects.requireNonNull(
                 CranfieldDocument.class.getResource(PATH_TO_FILE_WITH_DOCS)).toURI()));
 

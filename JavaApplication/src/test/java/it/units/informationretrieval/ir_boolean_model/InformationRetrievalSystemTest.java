@@ -1,10 +1,10 @@
 package it.units.informationretrieval.ir_boolean_model;
 
 import benchmark.Benchmark;
-import it.units.informationretrieval.ir_boolean_model.document_descriptors.Movie;
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
 import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndexTest;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
+import it.units.informationretrieval.ir_boolean_model.user_defined_contents.movies.MovieCorpusFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,8 +26,8 @@ class InformationRetrievalSystemTest {
     static {
         ignoreStdOut();
         try {
-            irs = new InformationRetrievalSystem(Movie.createCorpus());
-        } catch (NoMoreDocIdsAvailable | URISyntaxException e) {
+            irs = new InformationRetrievalSystem(new MovieCorpusFactory().createCorpus());
+        } catch (NoMoreDocIdsAvailable | IOException e) {
             fail(e);
         }
         reSetRealStdOut();
@@ -41,6 +41,11 @@ class InformationRetrievalSystemTest {
         System.setOut(realStdOut);
     }
 
+    @Benchmark(warmUpIterations = 100, tearDownIterations = 100, commentToReport = "Token randomly taken from the dictionary associated to the movie corpus.")
+    static void getListOfPostingForToken() {    // method already tested by the inverted index class test, which is the actual responsible to retrieve posting lists
+        irs.getListOfPostingForToken(randomTokenFromDictionaryOfMovieInvertedIndex.get());
+    }
+
     @BeforeEach
     void setup() {
         ignoreStdOut();
@@ -49,11 +54,6 @@ class InformationRetrievalSystemTest {
     @AfterEach()
     void tearDown() {
         reSetRealStdOut();
-    }
-
-    @Benchmark(warmUpIterations = 100, tearDownIterations = 100, commentToReport = "Token randomly taken from the dictionary associated to the movie corpus.")
-    static void getListOfPostingForToken() {    // method already tested by the inverted index class test, which is the actual responsible to retrieve posting lists
-        irs.getListOfPostingForToken(randomTokenFromDictionaryOfMovieInvertedIndex.get());
     }
 
     @Test

@@ -1,8 +1,8 @@
 package it.units.informationretrieval.ir_boolean_model.evaluation.test_queries;
 
-import it.units.informationretrieval.ir_boolean_model.document_descriptors.Movie;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
+import it.units.informationretrieval.ir_boolean_model.user_defined_contents.movies.Movie;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

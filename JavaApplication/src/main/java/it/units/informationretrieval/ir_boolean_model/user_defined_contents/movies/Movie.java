@@ -1,4 +1,4 @@
-package it.units.informationretrieval.ir_boolean_model.document_descriptors;
+package it.units.informationretrieval.ir_boolean_model.user_defined_contents.movies;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.units.informationretrieval.ir_boolean_model.entities.*;
@@ -33,20 +33,15 @@ import java.util.stream.Stream;
 public class Movie extends Document implements Serializable {
 
     /**
-     * Folder name in resources where movie corpus is located.
-     */
-    @NotNull
-    private static final String MOVIE_CORPUS_FOLDER_NAME = "movies_dataset";
-    /**
      * Name of file in resources containing movie descriptions.
      */
     @NotNull
-    private static final String MOVIE_DESCRIPTIONS_FILE_NAME = MOVIE_CORPUS_FOLDER_NAME + "/plot_summaries.txt";
+    private static final String MOVIE_DESCRIPTIONS_FILE_NAME = "plot_summaries.txt";
     /**
      * Name of file in resources containing movie metadata.
      */
     @NotNull
-    private static final String MOVIE_METADATA_FILE_NAME = MOVIE_CORPUS_FOLDER_NAME + "/movie.metadata.tsv";
+    private static final String MOVIE_METADATA_FILE_NAME = "movie.metadata.tsv";
     /**
      * The regex used to separate field of input metadata
      */
@@ -261,7 +256,7 @@ public class Movie extends Document implements Serializable {
      * @throws URISyntaxException    If an exception is thrown while getting the URI of the files containing the information.
      */
     @NotNull
-    public static Corpus createCorpus() throws NoMoreDocIdsAvailable, URISyntaxException {
+    static Corpus createCorpus() throws NoMoreDocIdsAvailable, URISyntaxException {
 
         // Function to open a file, given its name (path to the file), and returns it as BufferedReader
         FunctionThrowingException<String, BufferedReader, URISyntaxException> openFileFunction = filePath ->

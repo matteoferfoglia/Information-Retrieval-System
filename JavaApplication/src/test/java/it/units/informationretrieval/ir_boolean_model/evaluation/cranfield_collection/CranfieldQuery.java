@@ -1,7 +1,8 @@
 package it.units.informationretrieval.ir_boolean_model.evaluation.cranfield_collection;
 
-import it.units.informationretrieval.ir_boolean_model.document_descriptors.CranfieldDocument;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
+import it.units.informationretrieval.ir_boolean_model.user_defined_contents.cranfield.CranfieldCorpusFactory;
+import it.units.informationretrieval.ir_boolean_model.user_defined_contents.cranfield.CranfieldDocument;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -92,11 +93,11 @@ public class CranfieldQuery {
         // Get documents
         Map<Integer, CranfieldDocument> cranfieldDocumentsMapTmp = new HashMap<>();
         try {
-            cranfieldDocumentsMapTmp = CranfieldDocument.createCorpus().getCorpus().values()
+            cranfieldDocumentsMapTmp = new CranfieldCorpusFactory().createCorpus().getCorpus().values()
                     .stream()
                     .map(doc -> (CranfieldDocument) doc)
                     .collect(Collectors.toMap(CranfieldDocument::getDocNumber, Function.identity()));
-        } catch (URISyntaxException | IOException | NoMoreDocIdsAvailable e) {
+        } catch (IOException | NoMoreDocIdsAvailable e) {
             System.err.println("Error reading documents");
             e.printStackTrace();
         } finally {

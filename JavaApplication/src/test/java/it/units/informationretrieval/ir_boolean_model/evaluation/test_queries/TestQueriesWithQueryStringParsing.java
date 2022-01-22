@@ -1,12 +1,13 @@
 package it.units.informationretrieval.ir_boolean_model.evaluation.test_queries;
 
 import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem;
-import it.units.informationretrieval.ir_boolean_model.document_descriptors.Movie;
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.Language;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
+import it.units.informationretrieval.ir_boolean_model.user_defined_contents.movies.Movie;
+import it.units.informationretrieval.ir_boolean_model.user_defined_contents.movies.MovieCorpusFactory;
 import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import it.units.informationretrieval.ir_boolean_model.utils.stemmers.Stemmer;
@@ -19,7 +20,6 @@ import skiplist.SkipList;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URISyntaxException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -71,7 +71,7 @@ class TestQueriesWithQueryStringParsing {
             // init fields without printing anything to stdOut
             var stdOut = System.out;
             System.setOut(new PrintStream(new ByteArrayOutputStream()));
-            Corpus movieCorpus = Movie.createCorpus();
+            Corpus movieCorpus = new MovieCorpusFactory().createCorpus();
             irs = new InformationRetrievalSystem(movieCorpus);
             System.setOut(stdOut);
             doc1 = new Movie(
@@ -114,8 +114,8 @@ class TestQueriesWithQueryStringParsing {
                     new WordSupplier(wordsContainedInFirstButNotInSecondDocumentList);
             wordsContainedInSecondButNotInFirstDocumentSupplier =
                     new WordSupplier(wordsContainedInSecondButNotInFirstDocumentList);
-        } catch (NoMoreDocIdsAvailable | URISyntaxException
-                | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+        } catch (NoMoreDocIdsAvailable | InvocationTargetException | NoSuchMethodException
+                | IllegalAccessException | IOException e) {
             Logger.getLogger(TestQueriesWithQueryStringParsing.class.getCanonicalName())
                     .log(Level.SEVERE, "Error during class initialization", e);
         }

@@ -1,12 +1,12 @@
 package it.units.informationretrieval.ir_boolean_model.evaluation;
 
 import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem;
-import it.units.informationretrieval.ir_boolean_model.document_descriptors.CranfieldDocument;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.evaluation.cranfield_collection.CranfieldQuery;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.plots.Point;
 import it.units.informationretrieval.ir_boolean_model.plots.XYLineChart;
+import it.units.informationretrieval.ir_boolean_model.user_defined_contents.cranfield.CranfieldCorpusFactory;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
@@ -117,7 +117,7 @@ public class EvaluationTest {
         try {
             PrintStream realStdOut = System.out;
             System.setOut(new PrintStream(new ByteArrayOutputStream()));  // avoid to print useless output during tests
-            irsTmp = new InformationRetrievalSystem(CranfieldDocument.createCorpus());
+            irsTmp = new InformationRetrievalSystem(new CranfieldCorpusFactory().createCorpus());
             System.setOut(realStdOut);
             queriesTmp = CranfieldQuery.readQueries();
         } catch (URISyntaxException | IOException | NoMoreDocIdsAvailable e) {
