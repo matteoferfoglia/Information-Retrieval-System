@@ -179,7 +179,7 @@ class SpellingCorrector {   // TODO: benchmark
      * Saves the overall edit-distance that was before {@link #getNewCorrections()} ()} invocation.
      * This field is used to determine if further corrections are still possible.
      */
-    private int oldOverallEditDistance = overallEditDistance - 1;
+    private int oldOverallEditDistance = overallEditDistance - 1; // initial value
 
     /**
      * Changes status according to {@link #stop()}.
@@ -313,6 +313,7 @@ class SpellingCorrector {   // TODO: benchmark
                 boolean furtherCorrectionsPossible = PHRASE_TO_CORRECT.getListOfWords()
                         .stream()
                         .map(correctionsCache::get)
+                        .filter(Objects::nonNull)
                         .map(Map::keySet)
                         .flatMap(Collection::stream)
                         .mapToInt(i -> i)
@@ -418,12 +419,11 @@ class SpellingCorrector {   // TODO: benchmark
 
             assert mapOfCorrectionsHavingDistanceAsKey != null; // map must be initialized in one of IF branches
             return USE_EDIT_DISTANCE
-                    ? mapOfCorrectionsHavingDistanceAsKey.get(targetEditDistance)
+                    ? mapOfCorrectionsHavingDistanceAsKey.getOrDefault(targetEditDistance, new ArrayList<>())
                     : mapOfCorrectionsHavingDistanceAsKey.values().stream().flatMap(Collection::stream).toList();
 
         }
     }
-
     /**
      * If invoked, this method will stop any further spelling-correction
      * procedure, like if no more results are available.

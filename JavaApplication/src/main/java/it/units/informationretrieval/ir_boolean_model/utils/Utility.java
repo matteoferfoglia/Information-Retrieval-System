@@ -475,8 +475,10 @@ public class Utility {
      */
     public static String encodeForJson(@NotNull String str) {
         return str
-                .replaceAll("\"", "\\\"")
-                .replaceAll("'", "\\'");
+                .replaceAll("\\r\\n", "\\\\r\\\\n")
+                .replaceAll("\\n", "\\\\n")
+                .replaceAll("\"", "\\\\\"")
+                .replaceAll("'", "\\\\'");
 
     }
 

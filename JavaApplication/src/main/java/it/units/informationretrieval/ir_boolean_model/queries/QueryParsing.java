@@ -91,6 +91,8 @@ class QueryParsing {
     @NotNull
     private static String replaceSpacesWithAndOperator(@NotNull String queryString) {
 
+        queryString = queryString.strip();
+
         final String LOOK_AHEAD_REGEX =
                 "(?=(" + "[^\\" + PHRASE_DELIMITER + "]*\\" + PHRASE_DELIMITER
                         + "[^\\" + PHRASE_DELIMITER + "]*\\" + PHRASE_DELIMITER + ")*"
