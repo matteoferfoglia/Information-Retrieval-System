@@ -1,21 +1,475 @@
 package it.units.informationretrieval.ir_boolean_model;
 
-import it.units.informationretrieval.ir_boolean_model.document_descriptors.Movie;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
+import it.units.informationretrieval.ir_boolean_model.factories.CorpusFactory;
+import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
+import java.util.*;
+import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Main {
-    public static void main(String[] args) throws NoMoreDocIdsAvailable, URISyntaxException {
-        var irs = new InformationRetrievalSystem(Movie.createCorpus());
-        var be = irs.createNewBooleanExpression()
-                .setMatchingValue("beware")
-                .not();
+
+    /**
+     * The flag to insert to terminate the execution.
+     */
+    public static final String EXIT_REQUEST = "-q";
+    /**
+     * The flag to insert if phonetic correction must be applied.
+     */
+    public static final String PHONETIC_CORRECTION_REQUEST_PREFIX = "-" + OptionsSpellingCorrection.USE_PHONETIC_CORRECTION;
+    /**
+     * The flag to insert if spelling correction must be applied.
+     */
+    public static final String SPELLING_CORRECTION_REQUEST_PREFIX = "-" + OptionsSpellingCorrection.USE_SPELLING_CORRECTION;
+    /**
+     * The {@link Scanner} used to read from {@link System#in}.
+     */
+    private static final Scanner scannerReader = new Scanner(System.in);
+
+    public static void main(String[] args) throws NoMoreDocIdsAvailable, URISyntaxException, IOException {
+
+        System.out.println("=========================================================================================");
+        System.out.println("=====                  Information Retrieval System - Boolean Model                  ====");
+        System.out.println("=========================================================================================");
+        System.out.println(System.lineSeparator());
+
+        OptionsIRS option = null;
+        do {
+            System.out.print("Insert '" + OptionsIRS.CREATE_NEW_IRS + "' to crate a new IR system or '"
+                    + OptionsIRS.LOAD_IRS + "' to load an already existing one: ");
+            try {
+                char optionIRS_in = scannerReader.nextLine().toUpperCase().charAt(0);
+                option = Arrays.stream(OptionsIRS.values())
+                        .filter(p -> p.charSelection == optionIRS_in)
+                        .findAny().orElse(null);
+            } catch (Exception ignored) {
+            }
+        } while (option == null);
+
+        System.out.println();
+        InformationRetrievalSystem irs;
+        try {
+            irs = switch (option) {
+                case LOAD_IRS -> throw new UnsupportedOperationException();
+                case CREATE_NEW_IRS -> createNewIRSOption();
+            };
+        } catch (NoAvailableCorpus e) {
+            System.out.println("No available corpus for indexing. The program will terminate.");
+            return;
+        } catch (NoMoreDocIdsAvailable e) {
+            System.out.println("Corpus is too large and cannot be indexed. The program will terminate.");
+            return;
+        }
+
+        System.out.println();
+        System.out.println("System ready");
+        System.out.println();
+
+        System.out.println("INSTRUCTIONS" + System.lineSeparator() +
+                "Insert:" + System.lineSeparator() +
+                "\t'" + PHONETIC_CORRECTION_REQUEST_PREFIX + "' before the query " +
+                "string to enable the phonetic correction, " + System.lineSeparator() +
+                "\t'" + SPELLING_CORRECTION_REQUEST_PREFIX + "' before the query " +
+                "string to enable the spelling correction, " + System.lineSeparator() +
+                "\tthe query string only to retrieve exact matches." +
+                System.lineSeparator() +
+                "Spelling and phonetic correction can be used together. For each of them, " + System.lineSeparator() +
+                "the number of corrections to attempt can be specified by " + System.lineSeparator() +
+                "adding the number (the edit distance) after the flag (e.g., \"" +
+                PHONETIC_CORRECTION_REQUEST_PREFIX + "2 foo&bar\" " + System.lineSeparator() +
+                "means to try to correct (phonetic correction) two times; this does " + System.lineSeparator() +
+                "not mean that the final query string (after correction) will have " + System.lineSeparator() +
+                "edit distance of 2 from the initial query string, but it means that " + System.lineSeparator() +
+                "it will have an edit distance of at least 2, in fact, suppose that " + System.lineSeparator() +
+                "no corrections are available at distance 1, so the system automatically " + System.lineSeparator() +
+                "increases the edit-distance to 2 and re-try: after one single attempt " + System.lineSeparator() +
+                "of correction, in this example, the overall edit-distance will be 2, " + System.lineSeparator() +
+                "but in the input string we specified to try to correct 2 times, hence " + System.lineSeparator() +
+                "another correction attempt will be made and the resulting edit distance " + System.lineSeparator() +
+                "will be >=2).");
+        System.out.println("The query string can have AND, OR or NOT operations (use the symbols '&', '|', '!' " +
+                System.lineSeparator() + "respectively, spaces are interpreted as AND queries).");
+
+        boolean anotherQuery;
+        do {
+            try {
+                anotherQuery = answerOneQuery(irs);
+            } catch (Exception e) {
+                Logger.getLogger(Main.class.getCanonicalName())
+                        .log(Level.SEVERE, "Error during main program execution.", e);
+                anotherQuery = true;
+                try {
+                    Thread.sleep(500);  // just the time to show the log message
+                } catch (InterruptedException ignored) {
+                }
+            }
+        }
+        while (anotherQuery);
+
+    }
+
+    /**
+     * Method which expects one input query string (requested by the method itself
+     * to the user directly), retrieves the documents and shows them to the user.
+     * Then the method requests to the user if they want to perform another query
+     * and return the answer to the caller.
+     *
+     * @param irs The {@link InformationRetrievalSystem}.
+     * @return true if the user wants to perform another query, false otherwise.
+     */
+    private static boolean answerOneQuery(InformationRetrievalSystem irs) {
+        System.out.println();
+        System.out.println("Insert a query or '" + EXIT_REQUEST + "' to exit: ");
+        String queryString = scannerReader.nextLine().strip();
+        if (queryString.equalsIgnoreCase(EXIT_REQUEST)) {
+            return false;   // user wants to stop querying the system
+        }
+
+        boolean usePhoneticCorrection = false;
+        int phoneticCorrectionMaxEditDistance = 0;
+        boolean useSpellingCorrection = false;
+        int spellingCorrectionMaxEditDistance = 0;
+        {
+            // parse the query string to decide if applying spelling/phonetic correction
+            final Matcher USE_CORRECTIONS = Pattern.compile(
+                            "\\s*((" +
+                                    "((" + PHONETIC_CORRECTION_REQUEST_PREFIX + ")(\\d*))" +
+                                    "|" +
+                                    "((" + SPELLING_CORRECTION_REQUEST_PREFIX + ")(\\d*))" +
+                                    ")\\s*){0,2}\\s*.*")
+                    .matcher(queryString);
+            final int USE_PHONETIC_CORRECTION_GROUP = 4;
+            final int EDIT_DISTANCE_PHONETIC_CORRECTION_GROUP = 5;
+            final int USE_SPELLING_CORRECTION_GROUP = 7;
+            final int EDIT_DISTANCE_SPELLING_CORRECTION_GROUP = 8;
+
+            Function<@Nullable String, @NotNull Integer> get1IfNullOrParseTheValue =
+                    nullableStringRepresentingAnInteger -> Math.max(
+                            0 /*must be >=1*/,
+                            nullableStringRepresentingAnInteger == null || nullableStringRepresentingAnInteger.isBlank()
+                                    ? 1
+                                    : Integer.parseInt(nullableStringRepresentingAnInteger));
+            if (USE_CORRECTIONS.find()) {
+                String groupValue;
+                if ((groupValue = USE_CORRECTIONS.group(USE_PHONETIC_CORRECTION_GROUP)) != null
+                        && !groupValue.isBlank()) {// use phonetic correction
+                    usePhoneticCorrection = true;
+                    String editDistanceIfInserted = USE_CORRECTIONS.group(EDIT_DISTANCE_PHONETIC_CORRECTION_GROUP);
+                    editDistanceIfInserted = editDistanceIfInserted == null ? "" : editDistanceIfInserted;
+                    queryString = queryString.replace(
+                            PHONETIC_CORRECTION_REQUEST_PREFIX + editDistanceIfInserted, "");
+                    phoneticCorrectionMaxEditDistance = get1IfNullOrParseTheValue.apply(editDistanceIfInserted);
+                }
+                if ((groupValue = USE_CORRECTIONS.group(USE_SPELLING_CORRECTION_GROUP)) != null
+                        && !groupValue.isBlank()) {// use spelling correction
+                    useSpellingCorrection = true;
+                    // TODO : same code in the previous IF branch
+                    String editDistanceIfInserted = USE_CORRECTIONS.group(EDIT_DISTANCE_SPELLING_CORRECTION_GROUP);
+                    editDistanceIfInserted = editDistanceIfInserted == null ? "" : editDistanceIfInserted;
+                    queryString = queryString.replace(
+                            SPELLING_CORRECTION_REQUEST_PREFIX + editDistanceIfInserted, "");
+                    spellingCorrectionMaxEditDistance = get1IfNullOrParseTheValue.apply(editDistanceIfInserted);
+                }
+            }
+        }
+
+        var be = irs.createNewBooleanExpression().parseQuery(queryString);
+
+        {   // Handle spelling correction
+            var bePCorrection = new BooleanExpression(be);
+            var beSCorrection = new BooleanExpression(be);
+
+            if (usePhoneticCorrection) {
+                for (int i = 0; i < phoneticCorrectionMaxEditDistance; i++) {
+                    bePCorrection.spellingCorrection(true, true);
+                }
+            }
+            if (useSpellingCorrection) {
+                for (int i = 0; i < spellingCorrectionMaxEditDistance; i++) {
+                    beSCorrection.spellingCorrection(false, true);
+                }
+            }
+
+            if (usePhoneticCorrection && useSpellingCorrection) {
+                Function<String, Set<String>> wordsExtractor = str ->
+                        Arrays.stream(str.replaceAll("[^\\w]", " ")
+                                        .replaceAll("\\s+", " ")
+                                        .split(" "))
+                                .collect(Collectors.toSet());
+                Set<String> wordsInPCorrection = wordsExtractor.apply(bePCorrection.getQueryString());
+                Set<String> wordsInSCorrection = wordsExtractor.apply(beSCorrection.getQueryString());
+                if (wordsInPCorrection.equals(wordsInSCorrection)) {
+                    be = bePCorrection;
+                } else {    // no sense to compute OR if the resulting query is the same
+                    be = bePCorrection.or(beSCorrection);
+                }
+            } else if (usePhoneticCorrection) {
+                be = bePCorrection;
+            } else if (useSpellingCorrection) {
+                be = beSCorrection;
+            }
+        }
+
         long start, end;
         start = System.nanoTime();
         var results = be.evaluate();
         end = System.nanoTime();
-        System.out.println(
-                "Query evaluated in " + (end - start) / 1e6 + " ms and produced " + results.size() + " results.");
+        var tmpResults = results;
+        var numberOfAlreadyShowedResults = 0;
+        System.out.print(results.size() + " results found in " + (end - start) / 1e6 + " ms");
+        if (usePhoneticCorrection || useSpellingCorrection) {
+            System.out.println(" for " + be.getQueryString());
+        } else {
+            System.out.println();
+        }
+        final int DEFAULT_NUM_OF_RESULTS_TO_PRINT = 10;
+        boolean userWantsMoreResults;
+
+        do { // results printing
+
+            userWantsMoreResults = false;   // initialization at each iteration
+
+            if (tmpResults.size() > DEFAULT_NUM_OF_RESULTS_TO_PRINT) {
+                tmpResults = results.subList(
+                        numberOfAlreadyShowedResults, numberOfAlreadyShowedResults + DEFAULT_NUM_OF_RESULTS_TO_PRINT);
+                if (numberOfAlreadyShowedResults == 0) {
+                    System.out.println("First " + DEFAULT_NUM_OF_RESULTS_TO_PRINT + " results:");
+                }
+            }
+            tmpResults.stream().map(r -> "\t- " + r).forEachOrdered(System.out::println);
+            numberOfAlreadyShowedResults += tmpResults.size();
+            tmpResults = results.subList(numberOfAlreadyShowedResults, results.size()); // prepare for the next iteration
+
+            int numOfUnseenResults = results.size() - numberOfAlreadyShowedResults;
+            if (numOfUnseenResults > 0) {
+                boolean invalidInput = true;
+                do {
+                    System.out.print(numOfUnseenResults + " result" +
+                            (numOfUnseenResults > 1 ? "s" : "") + " not showed yet. " +
+                            "Do you want to see more results? [y/n]: ");
+                    try {
+                        String input = scannerReader.nextLine();
+                        userWantsMoreResults = !input.strip().equalsIgnoreCase("n");
+                        invalidInput = false;
+                    } catch (Exception ignored) {
+                    }
+                } while (invalidInput);
+            }
+        } while (userWantsMoreResults);
+
+        return true;       // user wants to continue querying the system
+    }
+
+    /**
+     * Method executed when the user decides to create a new Information Retrieval System.
+     *
+     * @return the created {@link InformationRetrievalSystem}.
+     * @throws IOException           If I/O errors occur while reading the corpus.
+     * @throws NoAvailableCorpus     If no corpus are available for indexing.
+     * @throws NoMoreDocIdsAvailable If during the corpus creation no more docIds were available.
+     */
+    private static InformationRetrievalSystem createNewIRSOption()
+            throws IOException, NoAvailableCorpus, NoMoreDocIdsAvailable {
+        var availableCorpusFactories = getCorpusFactories();
+        switch (availableCorpusFactories.size()) {
+            case 0 -> System.out.println("No available collections to index.");
+            case 1 -> System.out.println("Available collection to index: ");
+            default -> System.out.println("Available collections to index: ");
+        }
+        if (availableCorpusFactories.size() > 0) {
+            for (int i = 0; i < availableCorpusFactories.size(); i++) {
+                System.out.println("\t " + (i + 1) + ") \t" + availableCorpusFactories.get(i).getCorpusName());
+            }
+            CorpusFactory<?> corpusFactoryOfCollectionToIndex = null;
+            do {
+                System.out.print("Insert the number of the collection that you want to index: ");
+                try {
+                    int insertedCollectionIndex = Integer.parseInt(
+                            scannerReader.nextLine().replaceAll("\\s+", ""));
+                    if (1 <= insertedCollectionIndex && insertedCollectionIndex <= availableCorpusFactories.size()) {
+                        corpusFactoryOfCollectionToIndex = availableCorpusFactories.get(insertedCollectionIndex - 1);
+                    }
+                } catch (Exception ignored) {
+                }
+                if (corpusFactoryOfCollectionToIndex == null) {
+                    System.out.println(
+                            "Please insert an integer between 1 and " + availableCorpusFactories.size() + ".");
+                }
+            } while (corpusFactoryOfCollectionToIndex == null);
+
+            return new InformationRetrievalSystem(corpusFactoryOfCollectionToIndex.createCorpus());
+
+        } else {
+            throw new NoAvailableCorpus();
+        }
+    }
+
+    /**
+     * @return the {@link List} of available {@link CorpusFactory Corpus factories}.
+     */
+    @NotNull
+    private static List<? extends CorpusFactory<?>> getCorpusFactories() throws IOException {
+        //noinspection unchecked
+        return getAllClasses().stream()
+                .filter(CorpusFactory.class::isAssignableFrom)
+                .filter(aClass -> !Modifier.isAbstract(aClass.getModifiers())
+                        && !aClass.isEnum() && !aClass.isInterface())
+                .map(aClass -> (Class<CorpusFactory<?>>) aClass)
+                .map(corpusFactoryClass -> {
+                    CorpusFactory<?> corpusFactory = null;
+                    try {
+                        Constructor<?> ctor = corpusFactoryClass.getDeclaredConstructor();
+                        ctor.setAccessible(true);
+                        corpusFactory = (CorpusFactory<?>) ctor.newInstance();
+                    } catch (NoSuchMethodException | InstantiationException |
+                            IllegalAccessException | InvocationTargetException e) {
+                        System.err.println("Error instantiating corpus factory " + corpusFactoryClass);
+                        e.printStackTrace();
+                    }
+                    return corpusFactory;
+                })
+                .filter(Objects::nonNull)
+                .sorted(Comparator.comparing(CorpusFactory::getCorpusName))
+                .toList();
+    }
+
+    /**
+     * @return the {@link List} of all classes found in this project.
+     */
+    private static List<Class<?>> getAllClasses() throws IOException {
+        List<Class<?>> classes = new ArrayList<>();
+        for (File directory : Objects.requireNonNull(getRootDirectoryOfProject().listFiles())) {
+            classes.addAll(findClasses(directory));
+        }
+        return classes;
+    }
+
+    /**
+     * @return the root directory of the current project.
+     */
+    private static File getRootDirectoryOfProject() {
+        return new File(System.getProperty("user.dir"));
+    }
+
+    /**
+     * @return the {@link List} of classes found at the given directory
+     * and in its subdirectories.
+     */
+    private static List<Class<?>> findClasses(File directory) throws IOException {
+        List<Class<?>> classes = new ArrayList<>();
+        if (!directory.exists()) {
+            return classes;
+        }
+        final String rootOfProjectDirectoryOfClasses = getRootDirectoryOfProject().getCanonicalPath();
+        String classExtension = ".class";   // compiled classes
+        if (directory.isDirectory()) {
+            for (File file : Objects.requireNonNull(directory.listFiles())) {
+                classes.addAll(findClasses(file));
+            }
+        } else {
+            @SuppressWarnings("UnnecessaryLocalVariable") File file = directory;  // it is a file and not a directory
+            if (file.getName().endsWith(classExtension) && !file.getName().startsWith("module-info")) {
+                try {
+                    final String ESCAPED_FILE_SEPARATOR = "\\" + File.separator;    // correctly escaped
+                    classes.add(
+                            Class.forName(
+                                    file.getCanonicalPath()
+                                            .substring(rootOfProjectDirectoryOfClasses.length() + 1,
+                                                    file.getCanonicalPath().length() - classExtension.length())
+                                            .replace("target" + File.separator + "classes" + File.separator, "")        // remove folder names till the project classes
+                                            .replaceAll(ESCAPED_FILE_SEPARATOR, ".")
+                            ));
+                } catch (ClassNotFoundException ignored) {
+                    // test-class are found too as files, but they are not accessible from production code
+                    // and this results in ClassNotFoundException; furthermore, all non-class files are found too
+                }
+            }
+        }
+        return classes;
+    }
+
+    /**
+     * Enumeration of possible options for the user (creation of a new
+     * Information Retrieval System vs loading one from the file system).
+     */
+    private enum OptionsIRS {
+        /**
+         * Option for which a new Information Retrieval System must be created.
+         */
+        CREATE_NEW_IRS('C'),
+        /**
+         * Option for which an already created Information Retrieval System must be loaded.
+         */
+        LOAD_IRS('L');
+
+        /**
+         * A character associated with the option.
+         */
+        private final char charSelection;
+
+        /**
+         * Constructor.
+         */
+        OptionsIRS(char charSelection) {
+            this.charSelection = charSelection;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(charSelection);
+        }
+    }
+
+    /**
+     * Enumeration of possible options for the user (if they want to use
+     * spelling correction).
+     */
+    private enum OptionsSpellingCorrection {
+        /**
+         * Option for which spelling correction must be used.
+         */
+        USE_SPELLING_CORRECTION('s'),
+        /**
+         * Option for which phonetic correction must be used.
+         */
+        USE_PHONETIC_CORRECTION('p');
+
+        /**
+         * A character associated with the option.
+         */
+        private final char charSelection;
+
+        /**
+         * Constructor.
+         */
+        OptionsSpellingCorrection(char charSelection) {
+            this.charSelection = charSelection;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(charSelection);
+        }
+    }
+
+
+    /**
+     * Class defining a {@link Throwable} object to be thrown if no
+     * corpus is available.
+     */
+    private static class NoAvailableCorpus extends Throwable {
     }
 }
