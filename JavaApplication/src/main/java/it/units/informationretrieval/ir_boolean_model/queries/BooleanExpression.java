@@ -264,7 +264,7 @@ public class BooleanExpression {
      *
      * @param booleanExpression The instance to be copied.
      */
-    private BooleanExpression(@NotNull BooleanExpression booleanExpression) throws IllegalArgumentException {
+    public BooleanExpression(@NotNull BooleanExpression booleanExpression) throws IllegalArgumentException {
         this(booleanExpression, false);
     }
 
@@ -550,6 +550,22 @@ public class BooleanExpression {
     /**
      * This method tries to perform a spelling correction on the query inserted
      * by the user and returns the instance, ready for a new evaluation.
+     * <strong>NOTICE:</strong> the same instance of this class does
+     * <strong>NOT</strong> support different corrector together. This
+     * method <strong>can</strong> be invoked multiple time to have a
+     * correction which is further (wrt. the edit-distance from the initial
+     * query string) at each invocation, but you cannot invoke this method
+     * once for spelling correction and then for phonetic correction,
+     * because it will simply <strong>not</strong> working as expected
+     * (only the first corrector, i.e., the spelling one for this example,
+     * will be invoked). <strong>If you need to use different type of
+     * spelling correction</strong>, you can create different instances
+     * of this class (same matching value/phrase) and apply the different
+     * correction on them and then use the OR operator among all the created
+     * instance (<strong>NOTICE:</strong> copies of the instance must be
+     * done before invoking this method the first time, otherwise it simply
+     * will not work, because the corrector would have already set, as
+     * just explained above).
      *
      * @param phoneticCorrection true if phonetic correction is desired, false if
      *                           "classic" spelling correction is preferred.
@@ -563,7 +579,7 @@ public class BooleanExpression {
      *                           <strong>NOTICE</strong>: it can be <strong>dangerous</strong>
      *                           to set this parameter to <code>false</code>, due to the high level
      *                           number of combinations in which the correction can take place
-     *                           (very high computational cost) and it might leads to
+     *                           (very high computational cost) and it might lead to
      *                           {@link StackOverflowError}.
      * @return a new instance of this class with the spelling correction, ready
      * to invoke {@link #evaluate()} for a new evaluation of the instance on the
