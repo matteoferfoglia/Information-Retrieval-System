@@ -250,7 +250,7 @@ public class EvaluationTest {
                 .collect(Collectors.toList());
 
         do {
-            try {   // TODO: Handle better OutOfMemoryError: Java heap space
+            try {
                 Point.plotAndSavePNG_ofMultipleSeries("Precision-Recall curve", precisionRecallSeries, "Recall", "Precision", false,
                         FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_precisionRecallCurves.png", 10);
                 break;
@@ -317,8 +317,13 @@ public class EvaluationTest {
                 })
                 .toList();
 
-        Point.plotAndSavePNG_ofMultipleSeries("Interpolated precisions curve", interpolatedPrecisionSeries, "Recall", "Precision", false,   // TODO: Handle OutOfMemoryError: Java heap space
-                FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_interpolatedPrecisions.png", 10);
+        try {
+            Point.plotAndSavePNG_ofMultipleSeries("Interpolated precisions curve", interpolatedPrecisionSeries, "Recall", "Precision", false,
+                    FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_interpolatedPrecisions.png", 10);
+        } catch (OutOfMemoryError e) {
+            Logger.getLogger(getClass().getCanonicalName())
+                    .log(Level.SEVERE, "Error with plot.", e);
+        }
     }
 
     @ParameterizedTest
@@ -377,9 +382,14 @@ public class EvaluationTest {
                                 interpolatedPrecisionSeriesOnTargetPoints.stream().mapToDouble(aSeries -> aSeries.get(i).getY()).average().orElseThrow()))
                         .toList(), SERIES_NAME);
 
-        Point.plotAndSavePNG_ofMultipleSeries(     // TODO: Handle OutOfMemoryError: Java heap space
-                SERIES_NAME, List.of(NPointsInterpolatedAveragePrecision), "Recall", "Precision", false,
-                FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_NPointInterpolatedAveragePrecisions.png", 10);
+        try {
+            Point.plotAndSavePNG_ofMultipleSeries(
+                    SERIES_NAME, List.of(NPointsInterpolatedAveragePrecision), "Recall", "Precision", false,
+                    FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_NPointInterpolatedAveragePrecisions.png", 10);
+        } catch (OutOfMemoryError e) {
+            Logger.getLogger(getClass().getCanonicalName())
+                    .log(Level.SEVERE, "Error with plot.", e);
+        }
 
 
         // Write results
