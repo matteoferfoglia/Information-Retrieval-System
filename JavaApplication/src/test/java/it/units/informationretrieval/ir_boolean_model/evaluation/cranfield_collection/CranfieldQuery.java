@@ -29,7 +29,7 @@ public class CranfieldQuery {
      * to evaluate the system) are.
      */
     @NotNull
-    private final static String PATH_TO_CRANFIELD_RESOURCE_FOLDER = "cranfield_collection/boolean_queries/";
+    private final static String PATH_TO_CRANFIELD_RESOURCE_FOLDER = "boolean_queries/";
 
     /**
      * The name of the file containing the queries.
@@ -107,10 +107,10 @@ public class CranfieldQuery {
         // Get answers to queries
         var docsAnsweringQueriesAssociationTmp = "";
         try {
-            var pathToQueries = Path.of(Objects.requireNonNull(
-                            CranfieldDocument.class.getResource(
+            var pathToQueries = Path.of(
+                    Objects.requireNonNull(CranfieldDocument.class.getResource(
                                     PATH_TO_CRANFIELD_RESOURCE_FOLDER + RELATIVE_PATH_TO_DOCS_ANSWERING_QUERIES))
-                    .toURI());
+                            .toURI());
             docsAnsweringQueriesAssociationTmp = Files.readString(pathToQueries); // not working with large files
         } catch (URISyntaxException | IOException | OutOfMemoryError e) {
             System.err.println("Error reading queries answers association.");
