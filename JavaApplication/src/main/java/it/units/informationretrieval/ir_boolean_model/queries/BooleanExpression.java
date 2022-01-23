@@ -387,7 +387,13 @@ public class BooleanExpression {
      * </ul>
      * <p/>
      * Examples:
-     * // TODO: add examples
+     * <ul>
+     *     <li>america | amusement</li>
+     *     <li>foo</li>
+     *     <li>!bar</li>
+     *     <li>foo & (!bar | car)</li>
+     *     <li>foo & !bar</li>
+     * </ul>
      *
      * @param queryString The query string.
      * @return the {@link BooleanExpression} for the input query string.
@@ -395,7 +401,7 @@ public class BooleanExpression {
      * @throws IllegalStateException    if matching value or phrase were already set for this instance.
      */
     public BooleanExpression parseQuery(@NotNull String queryString)
-            throws IllegalArgumentException, IllegalStateException {    // TODO: benchmark
+            throws IllegalArgumentException, IllegalStateException {
 
         Objects.requireNonNull(queryString);
         throwIfAggregatedOrMatchingValueAlreadySetOrMatchingPhraseAlreadySet();
@@ -1006,7 +1012,7 @@ public class BooleanExpression {
      */
     @NotNull
     private SkipList<Posting> evaluateBothSimpleAndAggregatedExpressionRecursively()
-            throws UnsupportedOperationException {  // TODO: benchmark wildcard queries
+            throws UnsupportedOperationException {
 
         results = switch (unaryOperator) {
             case NOT -> evaluateNotQuery();
@@ -1016,7 +1022,7 @@ public class BooleanExpression {
                     assert leftChildOperand != null;
                     assert rightChildOperand != null;
                     assert binaryOperator != null;
-                    yield switch (binaryOperator) { // TODO: refactoring (extract methods to avoid code duplication inside switch)
+                    yield switch (binaryOperator) {
                         case AND -> {
 
                             // Optimization for NOT queries:
@@ -1115,7 +1121,7 @@ public class BooleanExpression {
                         SkipList<Posting> phraseQueryIntersection = getPostingListOfIthWordInPhrase.apply(0);
                         for (int i = 1; !phraseQueryIntersection.isEmpty() && i < matchingPhrase.size(); i++) {
                             SkipList<Posting> postings = getPostingListOfIthWordInPhrase.apply(i);
-                            phraseQueryIntersection = SkipList.intersection(    // TODO: move to class utility (for uniformity)
+                            phraseQueryIntersection = SkipList.intersection(
                                     phraseQueryIntersection, postings,
                                     biPredicatesForCheckingPositionsForPhrasalQueries[i - 1], Posting.DOC_ID_COMPARATOR);
                         }
@@ -1259,7 +1265,7 @@ public class BooleanExpression {
 
         final var corpus = informationRetrievalSystem.getCorpus();
         final var entireCorpusSize = corpus.size();
-        if (RANK_RESULTS) { // TODO: for OR expression: retrieved docs with higher numbers of matches first
+        if (RANK_RESULTS) { // TODO: for OR expression: retrieved docs with higher numbers of matches first, extract class Ranker
             return results.stream()
                     .collect(Collectors.toMap(
                             posting -> corpus.getDocumentByDocId(posting.getDocId()),
