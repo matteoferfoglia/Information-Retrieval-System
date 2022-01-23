@@ -24,5 +24,6 @@ open module it.units.informationretrieval.ir_boolean_model {
     exports it.units.informationretrieval.ir_boolean_model.utils.stemmers;
     exports it.units.informationretrieval.ir_boolean_model.plots;
     exports it.units.informationretrieval.ir_boolean_model.factories;
+    exports it.units.informationretrieval.ir_boolean_model.utils.functional;
 
 }

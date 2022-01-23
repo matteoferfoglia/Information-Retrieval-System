@@ -3,8 +3,8 @@ package it.units.informationretrieval.ir_boolean_model.user_defined_contents.mov
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.units.informationretrieval.ir_boolean_model.entities.*;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
-import it.units.informationretrieval.ir_boolean_model.utils.FunctionThrowingException;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import it.units.informationretrieval.ir_boolean_model.utils.functional.FunctionThrowingException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

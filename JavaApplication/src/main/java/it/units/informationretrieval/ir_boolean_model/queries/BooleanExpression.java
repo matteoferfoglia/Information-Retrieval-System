@@ -365,6 +365,11 @@ public class BooleanExpression {
                 .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_WILDCARD, VALID_CHAR_FOR_PARSER), WILDCARD);
     }
 
+    /**
+     * @return The comparator to sort corrected query words when applying spelling
+     * correction if they have the same edit-distance wrt. the initial query
+     * string.
+     */
     private Comparator<String> spellingCorrectedQueryWordsComparatorFactory() {
         return (s1, s2) -> {
             // TODO: rethink about ranking

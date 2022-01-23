@@ -1,5 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.utils;
 
+import it.units.informationretrieval.ir_boolean_model.utils.functional.SupplierThrowingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
