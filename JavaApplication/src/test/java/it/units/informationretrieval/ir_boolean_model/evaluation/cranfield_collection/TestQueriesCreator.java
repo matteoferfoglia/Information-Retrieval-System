@@ -16,7 +16,6 @@ import it.units.informationretrieval.ir_boolean_model.utils.stemmers.Stemmer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -67,7 +66,7 @@ class TestQueriesCreator {
      */
     private static Map<String, List<Integer>> mapQueryStringsToDocIdsOfAnswers;
 
-    public static void main(String[] args) throws NoMoreDocIdsAvailable, URISyntaxException, IOException {
+    public static void main(String[] args) throws NoMoreDocIdsAvailable, IOException {
 
         List<Document> corpusAsSortedListOfDocs = new CranfieldCorpusFactory().createCorpus()
                 .getListOfDocuments().stream().sorted().toList();    // sort according doc numbers;
@@ -102,8 +101,7 @@ class TestQueriesCreator {
                 Writer queryWriter = new BufferedWriter(new OutputStreamWriter(
                         new FileOutputStream(BOOLEAN_QUERIES_FILE_NAME), StandardCharsets.UTF_8));
                 Writer queryAssociationWriter = new BufferedWriter(new OutputStreamWriter(
-                        new FileOutputStream(BOOLEAN_QUERIES_ASSOCIATION_TO_DOCS_FILE_NAME), StandardCharsets.UTF_8))
-        ) {
+                        new FileOutputStream(BOOLEAN_QUERIES_ASSOCIATION_TO_DOCS_FILE_NAME), StandardCharsets.UTF_8))) {
             int i = 1;
             for (var entry : mapQueryStringsToDocIdsOfAnswers.entrySet()) {
                 int I = i;
@@ -131,34 +129,18 @@ class TestQueriesCreator {
      */
     private static void createAndAddToMapComplexQueries() {
 
-        // TODO: refactor
+        final int MAX_NUMBER_OF_QUERY_PER_TYPE = 3;    // with cartesian product, computational complexity increases very quickly
 
-        final int MAX_NUMBER_OF_QUERY_PER_TYPE = 3;    // with cartesian product, complexity increases fast
+        Map<QueryTypes, List<Map.Entry<String, List<Integer>>>> mapQueryTypesToListOfEntriesHavingQueryStringAsKeyAndDocIdsAnsweringTheQueryAsValue =
+                Arrays.stream(QueryTypes.values())
+                        .map(queryType -> new Pair<>(
+                                queryType,
+                                queryType.getListOfEntriesWithQueriesMatchingThePattern(
+                                        mapQueryStringsToDocIdsOfAnswers, MAX_NUMBER_OF_QUERY_PER_TYPE)))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        Pattern singleWordPattern = Pattern.compile("^\\w+$");
-        Pattern notQueriesPattern = Pattern.compile("^\\" + UNARY_OPERATOR.NOT.getSymbol() + " \\w+$");
-        Pattern wildcardQueriesPattern = Pattern.compile("\\w*\\" + InvertedIndex.WILDCARD + "\\w*$");
-        Pattern phraseQueriesPattern = Pattern.compile("^[" + BooleanExpression.PHRASE_DELIMITER
-                + "][\\w ]+[" + BooleanExpression.PHRASE_DELIMITER + "]$");
-
-        final BiFunction<Map<String, List<Integer>>, Pattern, List<Map.Entry<String, List<Integer>>>>
-                getListOfEntriesWithQueriesMatchingThePattern = (mapQueryStringsToDocIds, pattern) ->
-                mapQueryStringsToDocIds.entrySet().stream()
-                        .filter(e -> pattern.matcher(e.getKey()).matches())
-                        .limit(MAX_NUMBER_OF_QUERY_PER_TYPE)
-                        .toList();
-
-        List<Map.Entry<String, List<Integer>>> singleWordQueriesEntries =
-                getListOfEntriesWithQueriesMatchingThePattern.apply(mapQueryStringsToDocIdsOfAnswers, singleWordPattern);
-        List<Map.Entry<String, List<Integer>>> notQueriesEntries =
-                getListOfEntriesWithQueriesMatchingThePattern.apply(mapQueryStringsToDocIdsOfAnswers, notQueriesPattern);
-        List<Map.Entry<String, List<Integer>>> wildcardQueriesEntries =
-                getListOfEntriesWithQueriesMatchingThePattern.apply(mapQueryStringsToDocIdsOfAnswers, wildcardQueriesPattern);
-        List<Map.Entry<String, List<Integer>>> phraseQueriesEntries =
-                getListOfEntriesWithQueriesMatchingThePattern.apply(mapQueryStringsToDocIdsOfAnswers, phraseQueriesPattern);
-
-        var cartesianProduct = Utility.getCartesianProduct(Arrays.asList(
-                singleWordQueriesEntries, notQueriesEntries, wildcardQueriesEntries, phraseQueriesEntries));
+        var cartesianProduct = Utility.getCartesianProduct(
+                mapQueryTypesToListOfEntriesHavingQueryStringAsKeyAndDocIdsAnsweringTheQueryAsValue.values().stream().toList());
 
         BiFunction<List<Map.Entry<String, List<Integer>>>, BINARY_OPERATOR, Map.Entry<String, List<Integer>>>
                 complexQueryStringCreator = (queryEntryList, binaryOperator) -> {
@@ -415,6 +397,65 @@ class TestQueriesCreator {
                 .sequential()
                 .filter(s -> !s.isBlank())
                 .filter(s -> !removeStopWords || !Utility.isStopWord(s, CORPUS_LANGUAGE));
+    }
+
+    /**
+     * Enumeration of possible query types.
+     */
+    enum QueryTypes {
+        /**
+         * Single word query.
+         */
+        SINGLE_WORD("^\\w+$"),
+        /**
+         * Not query.
+         */
+        NOT("^\\" + UNARY_OPERATOR.NOT.getSymbol() + " \\w+$"),
+        /**
+         * Wildcard query.
+         */
+        WILDCARD("\\w*\\" + InvertedIndex.WILDCARD + "\\w*$"),
+        /**
+         * Phrase query.
+         */
+        PHRASE("^[" + BooleanExpression.PHRASE_DELIMITER
+                + "][\\w ]+[" + BooleanExpression.PHRASE_DELIMITER + "]$");
+
+        /**
+         * The pattern (regex) for this query type.
+         */
+        @NotNull
+        private final Pattern pattern;
+
+        /**
+         * Constructor.
+         *
+         * @param pattern The pattern (regex) for this query type.
+         */
+        QueryTypes(String pattern) {
+            this.pattern = Pattern.compile(pattern);
+        }
+
+        /**
+         * @param mapQueryStringsToDocIds_ The {@link TestQueriesCreator#mapQueryStringsToDocIdsOfAnswers}
+         * @param maxNumOfQueries          Max number of entries to produce in the output list.
+         * @return the {@link List} of {@link Map.Entry entries} where the key is
+         * a query string and the value is the {@link List} of docIds answering the
+         * query expressed by the corresponding key.
+         */
+        @NotNull
+        public List<Map.Entry<String, List<Integer>>> getListOfEntriesWithQueriesMatchingThePattern(
+                @NotNull Map<String, List<Integer>> mapQueryStringsToDocIds_,
+                int maxNumOfQueries) {
+            if (maxNumOfQueries > 0) {
+                return mapQueryStringsToDocIds_.entrySet().stream()
+                        .filter(e -> pattern.matcher(e.getKey()).matches())
+                        .limit(maxNumOfQueries)
+                        .toList();
+            } else {
+                throw new IllegalStateException(maxNumOfQueries + " must be >0, but found: " + maxNumOfQueries);
+            }
+        }
     }
 
     /**
