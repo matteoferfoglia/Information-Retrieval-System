@@ -13,7 +13,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -43,18 +47,12 @@ public class Main {
     /**
      * The {@link Scanner} used to read from {@link System#in}.
      */
-    private static final Scanner scannerReader = new Scanner(System.in);
-    /**
-     * Application properties.
-     */
-    @Nullable // null if instantiation problems
-    private static final AppProperties APP_PROPERTIES;
+    private static final Scanner SCANNER_READER = new Scanner(System.in);
 
     static {
         File folderWithIrsTmp;        // defer the assignment of final field
-        AppProperties appPropertiesTmp; // defer the assignment of final field
         try {
-            appPropertiesTmp = AppProperties.getInstance();
+            AppProperties appPropertiesTmp = AppProperties.getInstance();
             folderWithIrsTmp = new File(
                     Objects.requireNonNull(appPropertiesTmp).get("workingDirectory_name") + "/irs/");
             if (!folderWithIrsTmp.exists()) {
@@ -63,12 +61,10 @@ public class Main {
                 }
             }
         } catch (IOException | NullPointerException e) {
-            appPropertiesTmp = null;
             Logger.getLogger(Main.class.getCanonicalName())
                     .log(Level.SEVERE, "Error reading app properties", e);
             folderWithIrsTmp = null;
         }
-        APP_PROPERTIES = appPropertiesTmp;
         FOLDER_WITH_IRS = folderWithIrsTmp;
     }
 
@@ -84,7 +80,7 @@ public class Main {
             System.out.print("Insert '" + OptionsIRS.CREATE_NEW_IRS + "' to crate a new IR system or '"
                     + OptionsIRS.LOAD_IRS + "' to load an already existing one: ");
             try {
-                char optionIRS_in = scannerReader.nextLine().toUpperCase().charAt(0);
+                char optionIRS_in = SCANNER_READER.nextLine().toUpperCase().charAt(0);
                 option = Arrays.stream(OptionsIRS.values())
                         .filter(p -> p.charSelection == optionIRS_in)
                         .findAny().orElse(null);
@@ -175,7 +171,7 @@ public class Main {
                 System.out.print("Insert the number of the IRS that you want to load: ");
                 try {
                     int insertedIrsIndex = Integer.parseInt(
-                            scannerReader.nextLine().replaceAll("\\s+", ""));
+                            SCANNER_READER.nextLine().replaceAll("\\s+", ""));
                     if (1 <= insertedIrsIndex && insertedIrsIndex <= filesOfIRS.length) {
                         fileWithIrsChosen = filesOfIRS[insertedIrsIndex - 1];
                     }
@@ -229,17 +225,18 @@ public class Main {
     private static boolean answerOneQuery(InformationRetrievalSystem irs) {
         System.out.println();
         System.out.println("Insert a query or '" + EXIT_REQUEST + "' to exit: ");
-        String queryString = scannerReader.nextLine().strip();
+        String queryString = SCANNER_READER.nextLine().strip();
         if (queryString.equalsIgnoreCase(EXIT_REQUEST)) {
             return false;   // user wants to stop querying the system
         }
 
-        boolean usePhoneticCorrection = false;
-        int phoneticCorrectionMaxEditDistance = 0;
-        boolean useSpellingCorrection = false;
-        int spellingCorrectionMaxEditDistance = 0;
+        AtomicBoolean usePhoneticCorrection = new AtomicBoolean(false);
+        AtomicInteger phoneticCorrectionMaxEditDistance = new AtomicInteger();
+        AtomicBoolean useSpellingCorrection = new AtomicBoolean(false);
+        AtomicInteger spellingCorrectionMaxEditDistance = new AtomicInteger();
         {
             // parse the query string to decide if applying spelling/phonetic correction
+            //noinspection RegExpDuplicateAlternationBranch
             final Matcher USE_CORRECTIONS = Pattern.compile(
                             "\\s*((" +
                                     "((" + PHONETIC_CORRECTION_REQUEST_PREFIX + ")(\\d*))" +
@@ -259,26 +256,56 @@ public class Main {
                                     ? 1
                                     : Integer.parseInt(nullableStringRepresentingAnInteger));
             if (USE_CORRECTIONS.find()) {
-                String groupValue;
-                if ((groupValue = USE_CORRECTIONS.group(USE_PHONETIC_CORRECTION_GROUP)) != null
-                        && !groupValue.isBlank()) {// use phonetic correction
-                    usePhoneticCorrection = true;
-                    String editDistanceIfInserted = USE_CORRECTIONS.group(EDIT_DISTANCE_PHONETIC_CORRECTION_GROUP);
-                    editDistanceIfInserted = editDistanceIfInserted == null ? "" : editDistanceIfInserted;
-                    queryString = queryString.replace(
-                            PHONETIC_CORRECTION_REQUEST_PREFIX + editDistanceIfInserted, "");
-                    phoneticCorrectionMaxEditDistance = get1IfNullOrParseTheValue.apply(editDistanceIfInserted);
-                }
-                if ((groupValue = USE_CORRECTIONS.group(USE_SPELLING_CORRECTION_GROUP)) != null
-                        && !groupValue.isBlank()) {// use spelling correction
-                    useSpellingCorrection = true;
-                    // TODO : same code in the previous IF branch
-                    String editDistanceIfInserted = USE_CORRECTIONS.group(EDIT_DISTANCE_SPELLING_CORRECTION_GROUP);
-                    editDistanceIfInserted = editDistanceIfInserted == null ? "" : editDistanceIfInserted;
-                    queryString = queryString.replace(
-                            SPELLING_CORRECTION_REQUEST_PREFIX + editDistanceIfInserted, "");
-                    spellingCorrectionMaxEditDistance = get1IfNullOrParseTheValue.apply(editDistanceIfInserted);
-                }
+                // prepare the system to evaluate query with corrections
+                enum CorrectionTypes {PHONETIC, SPELLING}
+                Predicate<CorrectionTypes> shouldApplyCorrection = correctionType -> {
+                    int groupNumberInRegex = switch (correctionType) {
+                        case PHONETIC -> USE_PHONETIC_CORRECTION_GROUP;
+                        case SPELLING -> USE_SPELLING_CORRECTION_GROUP;
+                    };
+                    String groupValue = USE_CORRECTIONS.group(groupNumberInRegex);
+                    return groupValue != null && !groupValue.isBlank();
+                };
+                BiFunction<CorrectionTypes, String, String> setEditDistanceAndGetCleanedQueryString =
+                        (correctionType, queryString_) -> {
+                            AtomicBoolean useCorrection;
+                            AtomicInteger maxEditDistance;
+                            String queryStringPrefixSpecifyingTheCorrectionToApply;
+                            int editDistanceGroupInRegex = switch (correctionType) {
+                                case PHONETIC -> {
+                                    useCorrection = usePhoneticCorrection;
+                                    maxEditDistance = phoneticCorrectionMaxEditDistance;
+                                    queryStringPrefixSpecifyingTheCorrectionToApply = PHONETIC_CORRECTION_REQUEST_PREFIX;
+                                    yield EDIT_DISTANCE_PHONETIC_CORRECTION_GROUP;
+                                }
+                                case SPELLING -> {
+                                    useCorrection = useSpellingCorrection;
+                                    maxEditDistance = spellingCorrectionMaxEditDistance;
+                                    queryStringPrefixSpecifyingTheCorrectionToApply = SPELLING_CORRECTION_REQUEST_PREFIX;
+                                    yield EDIT_DISTANCE_SPELLING_CORRECTION_GROUP;
+                                }
+                                default -> throw new IllegalStateException("Unexpected value: " + correctionType);
+                            };
+                            useCorrection.set(true);
+                            String editDistanceIfInserted = USE_CORRECTIONS.group(editDistanceGroupInRegex);
+                            editDistanceIfInserted = editDistanceIfInserted == null ? "" : editDistanceIfInserted;
+                            maxEditDistance.set(get1IfNullOrParseTheValue.apply(editDistanceIfInserted));
+                            return queryString_.replace(
+                                    queryStringPrefixSpecifyingTheCorrectionToApply
+                                            + editDistanceIfInserted, "");
+                        };
+                BiFunction<CorrectionTypes, String, String> applyCorrectionIfRequiredAndGetCleanedQueryString =
+                        (correctionType, queryString_) -> {
+                            if (shouldApplyCorrection.test(correctionType)) {
+                                return setEditDistanceAndGetCleanedQueryString.apply(correctionType, queryString_);
+                            } else {
+                                return queryString_;
+                            }
+                        };
+                queryString =
+                        applyCorrectionIfRequiredAndGetCleanedQueryString.apply(CorrectionTypes.PHONETIC, queryString);
+                queryString =
+                        applyCorrectionIfRequiredAndGetCleanedQueryString.apply(CorrectionTypes.SPELLING, queryString);
             }
         }
 
@@ -288,18 +315,18 @@ public class Main {
             var bePCorrection = new BooleanExpression(be);
             var beSCorrection = new BooleanExpression(be);
 
-            if (usePhoneticCorrection) {
-                for (int i = 0; i < phoneticCorrectionMaxEditDistance; i++) {
+            if (usePhoneticCorrection.get()) {
+                for (int i = 0; i < phoneticCorrectionMaxEditDistance.get(); i++) {
                     bePCorrection.spellingCorrection(true, true);
                 }
             }
-            if (useSpellingCorrection) {
-                for (int i = 0; i < spellingCorrectionMaxEditDistance; i++) {
+            if (useSpellingCorrection.get()) {
+                for (int i = 0; i < spellingCorrectionMaxEditDistance.get(); i++) {
                     beSCorrection.spellingCorrection(false, true);
                 }
             }
 
-            if (usePhoneticCorrection && useSpellingCorrection) {
+            if (usePhoneticCorrection.get() && useSpellingCorrection.get()) {
                 Function<String, Set<String>> wordsExtractor = str ->
                         Arrays.stream(str.replaceAll("[^\\w]", " ")
                                         .replaceAll("\\s+", " ")
@@ -312,9 +339,9 @@ public class Main {
                 } else {    // no sense to compute OR if the resulting query is the same
                     be = bePCorrection.or(beSCorrection);
                 }
-            } else if (usePhoneticCorrection) {
+            } else if (usePhoneticCorrection.get()) {
                 be = bePCorrection;
-            } else if (useSpellingCorrection) {
+            } else if (useSpellingCorrection.get()) {
                 be = beSCorrection;
             }
         }
@@ -326,7 +353,7 @@ public class Main {
         var tmpResults = results;
         var numberOfAlreadyShowedResults = 0;
         System.out.print(results.size() + " results found in " + (end - start) / 1e6 + " ms");
-        if (usePhoneticCorrection || useSpellingCorrection) {
+        if (usePhoneticCorrection.get() || useSpellingCorrection.get()) {
             System.out.println(" for " + be.getQueryString());
         } else {
             System.out.println();
@@ -357,7 +384,7 @@ public class Main {
                             (numOfUnseenResults > 1 ? "s" : "") + " not showed yet. " +
                             "Do you want to see more results? [y/n]: ");
                     try {
-                        String input = scannerReader.nextLine();
+                        String input = SCANNER_READER.nextLine();
                         userWantsMoreResults = !input.strip().equalsIgnoreCase("n");
                         invalidInput = false;
                     } catch (Exception ignored) {
@@ -394,7 +421,7 @@ public class Main {
                 System.out.print("Insert the number of the collection that you want to index: ");
                 try {
                     int insertedCollectionIndex = Integer.parseInt(
-                            scannerReader.nextLine().replaceAll("\\s+", ""));
+                            SCANNER_READER.nextLine().replaceAll("\\s+", ""));
                     if (1 <= insertedCollectionIndex && insertedCollectionIndex <= availableCorpusFactories.size()) {
                         corpusFactoryOfCollectionToIndex = availableCorpusFactories.get(insertedCollectionIndex - 1);
                     }
@@ -413,7 +440,7 @@ public class Main {
             do {
                 System.out.print("Do you want to save the IR system to file? [y/n]");   // TODO: code duplication (already done somewhere the y/n request)
                 try {
-                    input = scannerReader.nextLine().toLowerCase().strip();
+                    input = SCANNER_READER.nextLine().toLowerCase().strip();
                     saveToFile = input.equals("y");
                 } catch (Exception ignored) {
                 }
