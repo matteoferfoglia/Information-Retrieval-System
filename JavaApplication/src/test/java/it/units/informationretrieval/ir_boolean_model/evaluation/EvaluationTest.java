@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -185,10 +186,15 @@ public class EvaluationTest {
             long occurrencesOfMax = whatToComputeStatisticsAbout_.stream().filter(d -> Math.abs((double) d - max_) < EPSILON).count();
             long occurrencesOfMin = whatToComputeStatisticsAbout_.stream().filter(d -> Math.abs((double) d - min_) < EPSILON).count();
 
+            Function<Double, String> formatDouble = doubleIn -> {
+                final int NUM_OF_DECIMALS = 16;
+                final String PRINT_FORMAT = "%." + NUM_OF_DECIMALS + "f";
+                return String.format(PRINT_FORMAT, doubleIn);
+            };
             sb.append("\tNumber of available measures:  ").append(whatToComputeStatisticsAbout_.size()).append(System.lineSeparator());
-            sb.append("\tAverage: ").append(avg_).append(System.lineSeparator());
-            sb.append("\tMax:     ").append(max_).append("\t observed in ").append(occurrencesOfMax).append(" samples").append(System.lineSeparator());
-            sb.append("\tMin:     ").append(min_).append("\t observed in ").append(occurrencesOfMin).append(" samples").append(System.lineSeparator());
+            sb.append("\tAverage: ").append(formatDouble.apply(avg_)).append(System.lineSeparator());
+            sb.append("\tMax:     ").append(formatDouble.apply(max_)).append("\t observed in ").append(occurrencesOfMax).append(" samples").append(System.lineSeparator());
+            sb.append("\tMin:     ").append(formatDouble.apply(min_)).append("\t observed in ").append(occurrencesOfMin).append(" samples").append(System.lineSeparator());
         };
 
         sb.append(System.lineSeparator()).append("Statistics about ").append(dimensionName).append(System.lineSeparator());
