@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Main {
-    // TODO: remove code duplication from input controls
 
     /**
      * The flag to insert to terminate the execution.
@@ -68,6 +67,9 @@ public class Main {
         FOLDER_WITH_IRS = folderWithIrsTmp;
     }
 
+    /**
+     * Main method, used by the system to communicate with the user.
+     */
     public static void main(String[] args) throws NoMoreDocIdsAvailable, URISyntaxException, IOException {
 
         System.out.println("=========================================================================================");
@@ -75,6 +77,50 @@ public class Main {
         System.out.println("=========================================================================================");
         System.out.println(System.lineSeparator());
 
+        InformationRetrievalSystem irs = loadOrCreateInformationRetrievalSystem_orNullIfErrors();
+        if (irs == null) {
+            return;
+        }
+
+        System.out.println();
+        System.out.println("System ready");
+        System.out.println();
+
+        printInstructions();
+
+        boolean anotherQuery;
+        do {
+            try {
+                anotherQuery = answerOneQuery(irs);
+            } catch (Exception e) {
+                Logger.getLogger(Main.class.getCanonicalName())
+                        .log(Level.SEVERE, "Error during main program execution.", e);
+                anotherQuery = true;
+                try {
+                    Thread.sleep(500);  // just the time to show the log message
+                } catch (InterruptedException ignored) {
+                }
+            }
+        }
+        while (anotherQuery);
+
+    }
+
+    /**
+     * Asks the user if creating or loading from the file-system
+     * an already-existent {@link InformationRetrievalSystem} and
+     * do the required action, then returns the instance of
+     * {@link InformationRetrievalSystem} or null if errors occurred.
+     *
+     * @return the instance of the required (by the user, via stdIn)
+     * or null if errors occurred.
+     * @throws IOException if errors occur while reading the required
+     *                     instance of the {@link InformationRetrievalSystem}
+     *                     from the file system.
+     */
+    @Nullable
+    private static InformationRetrievalSystem loadOrCreateInformationRetrievalSystem_orNullIfErrors()
+            throws IOException {
         OptionsIRS option = null;
         do {
             System.out.print("Insert '" + OptionsIRS.CREATE_NEW_IRS + "' to crate a new IR system or '"
@@ -100,16 +146,18 @@ public class Main {
             };
         } catch (NoAvailableCorpus e) {
             System.out.println("No available corpus for indexing. The program will terminate.");
-            return;
+            return null;
         } catch (NoMoreDocIdsAvailable e) {
             System.out.println("Corpus is too large and cannot be indexed. The program will terminate.");
-            return;
+            return null;
         }
+        return irs;
+    }
 
-        System.out.println();
-        System.out.println("System ready");
-        System.out.println();
-
+    /**
+     * Prints on {@link System#out} the instructions to use the system.
+     */
+    private static void printInstructions() {
         System.out.println("INSTRUCTIONS" + System.lineSeparator() +
                 "Insert:" + System.lineSeparator() +
                 "\t'" + PHONETIC_CORRECTION_REQUEST_PREFIX + "' before the query " +
@@ -134,23 +182,6 @@ public class Main {
                 "will be >=2).");
         System.out.println("The query string can have AND, OR or NOT operations (use the symbols '&', '|', '!' " +
                 System.lineSeparator() + "respectively, spaces are interpreted as AND queries).");
-
-        boolean anotherQuery;
-        do {
-            try {
-                anotherQuery = answerOneQuery(irs);
-            } catch (Exception e) {
-                Logger.getLogger(Main.class.getCanonicalName())
-                        .log(Level.SEVERE, "Error during main program execution.", e);
-                anotherQuery = true;
-                try {
-                    Thread.sleep(500);  // just the time to show the log message
-                } catch (InterruptedException ignored) {
-                }
-            }
-        }
-        while (anotherQuery);
-
     }
 
     /**
@@ -160,7 +191,7 @@ public class Main {
      * @return the {@link InformationRetrievalSystem} chosen by the user
      * or null if no IR systems are saved.
      */
-    private static InformationRetrievalSystem loadIRS() {   // TODO: method very similar to createNewIRS ==> refactoring
+    private static InformationRetrievalSystem loadIRS() {
         if (FOLDER_WITH_IRS != null) {
             File[] filesOfIRS = FOLDER_WITH_IRS.listFiles();
             for (int i = 0; i < Objects.requireNonNull(filesOfIRS).length; i++) {
@@ -234,6 +265,7 @@ public class Main {
         AtomicInteger phoneticCorrectionMaxEditDistance = new AtomicInteger();
         AtomicBoolean useSpellingCorrection = new AtomicBoolean(false);
         AtomicInteger spellingCorrectionMaxEditDistance = new AtomicInteger();
+
         {
             // parse the query string to decide if applying spelling/phonetic correction
             //noinspection RegExpDuplicateAlternationBranch
@@ -257,28 +289,27 @@ public class Main {
                                     : Integer.parseInt(nullableStringRepresentingAnInteger));
             if (USE_CORRECTIONS.find()) {
                 // prepare the system to evaluate query with corrections
-                enum CorrectionTypes {PHONETIC, SPELLING}
-                Predicate<CorrectionTypes> shouldApplyCorrection = correctionType -> {
+                Predicate<OptionsSpellingCorrection> shouldApplyCorrection = correctionType -> {
                     int groupNumberInRegex = switch (correctionType) {
-                        case PHONETIC -> USE_PHONETIC_CORRECTION_GROUP;
-                        case SPELLING -> USE_SPELLING_CORRECTION_GROUP;
+                        case USE_PHONETIC_CORRECTION -> USE_PHONETIC_CORRECTION_GROUP;
+                        case USE_SPELLING_CORRECTION -> USE_SPELLING_CORRECTION_GROUP;
                     };
                     String groupValue = USE_CORRECTIONS.group(groupNumberInRegex);
                     return groupValue != null && !groupValue.isBlank();
                 };
-                BiFunction<CorrectionTypes, String, String> setEditDistanceAndGetCleanedQueryString =
+                BiFunction<OptionsSpellingCorrection, String, String> setEditDistanceAndGetCleanedQueryString =
                         (correctionType, queryString_) -> {
                             AtomicBoolean useCorrection;
                             AtomicInteger maxEditDistance;
                             String queryStringPrefixSpecifyingTheCorrectionToApply;
                             int editDistanceGroupInRegex = switch (correctionType) {
-                                case PHONETIC -> {
+                                case USE_PHONETIC_CORRECTION -> {
                                     useCorrection = usePhoneticCorrection;
                                     maxEditDistance = phoneticCorrectionMaxEditDistance;
                                     queryStringPrefixSpecifyingTheCorrectionToApply = PHONETIC_CORRECTION_REQUEST_PREFIX;
                                     yield EDIT_DISTANCE_PHONETIC_CORRECTION_GROUP;
                                 }
-                                case SPELLING -> {
+                                case USE_SPELLING_CORRECTION -> {
                                     useCorrection = useSpellingCorrection;
                                     maxEditDistance = spellingCorrectionMaxEditDistance;
                                     queryStringPrefixSpecifyingTheCorrectionToApply = SPELLING_CORRECTION_REQUEST_PREFIX;
@@ -294,7 +325,7 @@ public class Main {
                                     queryStringPrefixSpecifyingTheCorrectionToApply
                                             + editDistanceIfInserted, "");
                         };
-                BiFunction<CorrectionTypes, String, String> applyCorrectionIfRequiredAndGetCleanedQueryString =
+                BiFunction<OptionsSpellingCorrection, String, String> applyCorrectionIfRequiredAndGetCleanedQueryString =
                         (correctionType, queryString_) -> {
                             if (shouldApplyCorrection.test(correctionType)) {
                                 return setEditDistanceAndGetCleanedQueryString.apply(correctionType, queryString_);
@@ -302,10 +333,10 @@ public class Main {
                                 return queryString_;
                             }
                         };
-                queryString =
-                        applyCorrectionIfRequiredAndGetCleanedQueryString.apply(CorrectionTypes.PHONETIC, queryString);
-                queryString =
-                        applyCorrectionIfRequiredAndGetCleanedQueryString.apply(CorrectionTypes.SPELLING, queryString);
+                queryString = applyCorrectionIfRequiredAndGetCleanedQueryString.apply(
+                        OptionsSpellingCorrection.USE_PHONETIC_CORRECTION, queryString);
+                queryString = applyCorrectionIfRequiredAndGetCleanedQueryString.apply(
+                        OptionsSpellingCorrection.USE_SPELLING_CORRECTION, queryString);
             }
         }
 
@@ -378,18 +409,9 @@ public class Main {
 
             int numOfUnseenResults = results.size() - numberOfAlreadyShowedResults;
             if (numOfUnseenResults > 0) {
-                boolean invalidInput = true;
-                do {
-                    System.out.print(numOfUnseenResults + " result" +
-                            (numOfUnseenResults > 1 ? "s" : "") + " not showed yet. " +
-                            "Do you want to see more results? [y/n]: ");
-                    try {
-                        String input = SCANNER_READER.nextLine();
-                        userWantsMoreResults = !input.strip().equalsIgnoreCase("n");
-                        invalidInput = false;
-                    } catch (Exception ignored) {
-                    }
-                } while (invalidInput);
+                userWantsMoreResults = OptionsYesNo.getFromStdIn(
+                        numOfUnseenResults + " result" + (numOfUnseenResults > 1 ? "s" : "") + " not showed yet. " +
+                                "Do you want to see more results?").toBoolean();
             }
         } while (userWantsMoreResults);
 
@@ -435,16 +457,7 @@ public class Main {
 
             var irs = new InformationRetrievalSystem(corpusFactoryOfCollectionToIndex.createCorpus());
 
-            String input = null;
-            boolean saveToFile = false;
-            do {
-                System.out.print("Do you want to save the IR system to file? [y/n]");   // TODO: code duplication (already done somewhere the y/n request)
-                try {
-                    input = SCANNER_READER.nextLine().toLowerCase().strip();
-                    saveToFile = input.equals("y");
-                } catch (Exception ignored) {
-                }
-            } while (input == null || !(input.equals("n") || input.equals("y")));
+            boolean saveToFile = OptionsYesNo.getFromStdIn("Do you want to save the IR system to file?").toBoolean();
             if (saveToFile) {
 
                 String fileName_irSystem = FOLDER_WITH_IRS + File.separator
@@ -579,6 +592,8 @@ public class Main {
 
         /**
          * Constructor.
+         *
+         * @param charSelection The character associated with the option.
          */
         OptionsIRS(char charSelection) {
             this.charSelection = charSelection;
@@ -611,6 +626,8 @@ public class Main {
 
         /**
          * Constructor.
+         *
+         * @param charSelection The character associated with the option.
          */
         OptionsSpellingCorrection(char charSelection) {
             this.charSelection = charSelection;
@@ -622,6 +639,84 @@ public class Main {
         }
     }
 
+    /**
+     * Enumeration to describe a "yes/no" option.
+     */
+    private enum OptionsYesNo {
+        /**
+         * "Yes" option.
+         */
+        YES('y'),
+        /**
+         * "No" option.
+         */
+        NO('n');
+
+        /**
+         * A character associated with the option.
+         */
+        private final char charSelection;
+
+        /**
+         * Constructor.
+         *
+         * @param charSelection The character associated with the option.
+         */
+        OptionsYesNo(char charSelection) {
+            this.charSelection = charSelection;
+        }
+
+        /**
+         * Requests to the user (via stdIn) the {@link OptionsYesNo}.
+         *
+         * @param messageToDisplay The message to display.
+         * @return the {@link OptionsYesNo} inserted on {@link System#in}.
+         */
+        @NotNull
+        public static OptionsYesNo getFromStdIn(@NotNull String messageToDisplay) {
+            OptionsYesNo input = null;
+            do {
+                System.out.print(messageToDisplay + " ["
+                        + Arrays.stream(OptionsYesNo.values()).map(OptionsYesNo::toString).collect(Collectors.joining("/"))
+                        + "]: ");
+                try {
+                    input = valueOf(SCANNER_READER.nextLine().toLowerCase().strip().toLowerCase().charAt(0));
+                } catch (Exception ignored) {
+                }
+            } while (input == null);
+            return input;
+        }
+
+        /**
+         * @param charSelection The character for which the respective {@link OptionsYesNo}
+         *                      enum constant is requested.
+         * @return the enum constant of this type with the specified {@link #charSelection}
+         * or null if no match is found.
+         */
+        @Nullable
+        public static OptionsYesNo valueOf(char charSelection) {
+            return Arrays.stream(OptionsYesNo.values())
+                    .filter(enumVal -> enumVal.charSelection == charSelection)
+                    .findAny()
+                    .orElse(null);
+        }
+
+        /**
+         * @return the natural boolean value associated with this instance.
+         * (YES converted to true, NO to false).
+         */
+        public boolean toBoolean() {
+            return switch (this) {
+                case YES -> true;
+                case NO -> false;
+            };
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(charSelection);
+        }
+    }
 
     /**
      * Class defining a {@link Throwable} object to be thrown if no
