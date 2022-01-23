@@ -6,6 +6,7 @@ import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.jetbrains.annotations.NotNull;
 import skiplist.SkipList;
+import skiplist.SkipListHashMap;
 
 import java.io.Serializable;
 import java.util.*;
@@ -56,7 +57,7 @@ public class InvertedIndex implements Serializable {
      * (because positions are saved in {@link Posting}s).
      */
     @NotNull
-    private final ConcurrentMap<DocumentIdentifier, Set<Posting>> postingsByDocId;
+    private final SkipListHashMap<DocumentIdentifier, Set<Posting>> postingsByDocId;
 
     /**
      * The (reference to the) {@link Corpus} on which indexing is done.
@@ -86,7 +87,7 @@ public class InvertedIndex implements Serializable {
     public InvertedIndex(@NotNull final Corpus corpus) {
 
         this.corpus = corpus;
-        this.postingsByDocId = new ConcurrentHashMap<>(corpus.size());
+        this.postingsByDocId = new SkipListHashMap<>();
 
         AtomicLong numberOfAlreadyProcessedDocuments = new AtomicLong(0L);
         Runnable indexingProgressPrinterInterrupter =
@@ -388,7 +389,10 @@ public class InvertedIndex implements Serializable {
     }
 
     /**
-     * @return the {@link Set} of all {@link DocumentIdentifier}s currently present.
+     * @return the sorted {@link Set} of all {@link DocumentIdentifier}s currently present.
+     * <strong>Notice</strong>: the returned collection is the keySet of a {@link SkipListHashMap},
+     * this means that it is sorted, because it is based on a skipList.
+     * </ol>
      */
     @NotNull
     public Set<DocumentIdentifier> getAllDocIds() {

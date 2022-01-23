@@ -1185,7 +1185,15 @@ public class BooleanExpression {
         if (DEBUG_NOT_QUERY) {
             start = System.nanoTime();
         }
-        var allDocIds = new SkipList<>(informationRetrievalSystem.getAllDocIds());  // TODO: try to get an already sorted list and create skiplist from sorted collection
+        var allDocIds = SkipList.createNewInstanceFromSortedCollection(
+                informationRetrievalSystem.getAllDocIds(), Comparator.naturalOrder());
+        // collection of docIds MUST be already sorted
+        // We could create a new SkipList<>(...), so the SkipList construction would implicitly sort elements,
+        //  but it is time-expensive: now we are exploiting the fact that the received collection is already sorted!
+
+        assert informationRetrievalSystem.getAllDocIds().stream().sorted().toList()
+                .equals(informationRetrievalSystem.getAllDocIds().stream().toList());   // assert that the document collection was effectively sorted
+
         if (DEBUG_NOT_QUERY) {
             stop = System.nanoTime();
             System.out.println("SkipList of all docIds in the index created in " + (stop - start) / 1e6 + " ms.");

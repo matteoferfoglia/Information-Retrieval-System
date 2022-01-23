@@ -96,8 +96,7 @@ public class InformationRetrievalSystem implements Serializable {
     }
 
     /**
-     * @return The {@link Set} of all (distinct) {@link DocumentIdentifier}s in the System.
-     * <strong>Important</strong>: the returned collection is <em>not</em> suitable for concurrent actions.
+     * @return The sorted {@link Set} of all (distinct) {@link DocumentIdentifier}s in the System.
      */
     @NotNull
     public Set<DocumentIdentifier> getAllDocIds() {
