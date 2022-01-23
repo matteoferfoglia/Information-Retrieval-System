@@ -407,7 +407,7 @@ public class Movie extends Document implements Serializable {
         assert countryKeys != null;
         assert genreKeys != null;
 
-        Utility.MyBiFunction<@NotNull List<@NotNull String>, Map<@NotNull String, @NotNull String>, @NotNull List<?>> keyListToValueList =
+        BiFunction<@NotNull List<@NotNull String>, Map<@NotNull String, @NotNull String>, @NotNull List<?>> keyListToValueList =
                 (keyList, mapKeyToValue) ->
                         keyList.stream()
                                 .map(mapKeyToValue::get)
