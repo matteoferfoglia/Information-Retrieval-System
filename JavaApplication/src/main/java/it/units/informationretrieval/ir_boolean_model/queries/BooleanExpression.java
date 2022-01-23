@@ -245,6 +245,13 @@ public class BooleanExpression {
     private String queryString = "";
 
     /**
+     * Flag: true if this instance has already been evaluated
+     * (i.e., method {@link #evaluateBothSimpleAndAggregatedExpressionRecursively()}
+     * already invoked).
+     */
+    private boolean alreadyEvaluated = false;
+
+    /**
      * Constructor. Creates a non-aggregated expression.
      *
      * @param informationRetrievalSystem The {@link InformationRetrievalSystem} on which the query must be performed.
@@ -256,7 +263,8 @@ public class BooleanExpression {
         this.rightChildOperand = null;
         this.binaryOperator = null;
         this.informationRetrievalSystem = Objects.requireNonNull(informationRetrievalSystem);
-        this.spellingCorrectedQueryWordsComparator = spellingCorrectedQueryWordsComparatorFactory();
+        this.spellingCorrectedQueryWordsComparator =
+                SpellingCorrector.spellingCorrectedQueryWordsComparatorFactory(informationRetrievalSystem);
     }
 
     /**
@@ -285,7 +293,8 @@ public class BooleanExpression {
             this.leftChildOperand = Objects.requireNonNull(expr1);
             this.rightChildOperand = Objects.requireNonNull(expr2);
             this.binaryOperator = Objects.requireNonNull(operator);
-            this.spellingCorrectedQueryWordsComparator = spellingCorrectedQueryWordsComparatorFactory();
+            this.spellingCorrectedQueryWordsComparator =
+                    SpellingCorrector.spellingCorrectedQueryWordsComparatorFactory(informationRetrievalSystem);
         } else {
             throw new IllegalStateException(
                     "Impossible to create an aggregate expression with children" +
@@ -308,7 +317,8 @@ public class BooleanExpression {
         this.rightChildOperand = booleanExpression.rightChildOperand;
         this.queryString = booleanExpression.queryString;
         this.spellingCorrector = booleanExpression.spellingCorrector;
-        this.spellingCorrectedQueryWordsComparator = spellingCorrectedQueryWordsComparatorFactory();
+        this.spellingCorrectedQueryWordsComparator =
+                SpellingCorrector.spellingCorrectedQueryWordsComparatorFactory(informationRetrievalSystem);
     }
 
     /**
@@ -363,22 +373,6 @@ public class BooleanExpression {
                 .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_TRUE_LITERAL, VALID_CHAR_FOR_PARSER), "true")
                 .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW, VALID_CHAR_FOR_PARSER), NUM_OF_WORDS_FOLLOWS_CHARACTER)
                 .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_WILDCARD, VALID_CHAR_FOR_PARSER), WILDCARD);
-    }
-
-    /**
-     * @return The comparator to sort corrected query words when applying spelling
-     * correction if they have the same edit-distance wrt. the initial query
-     * string.
-     */
-    private Comparator<String> spellingCorrectedQueryWordsComparatorFactory() {
-        return (s1, s2) -> {
-            // TODO: rethink about ranking
-            int comparison = s1.compareTo(s2);
-            return comparison == 0  // if same edit-distance, then give precedence to the most frequent term
-                    ? informationRetrievalSystem.getTotalNumberOfOccurrencesOfTerm(s2)
-                    - informationRetrievalSystem.getTotalNumberOfOccurrencesOfTerm(s1)
-                    : comparison;
-        };
     }
 
     /**
@@ -1019,6 +1013,7 @@ public class BooleanExpression {
     private SkipList<Posting> evaluateBothSimpleAndAggregatedExpressionRecursively()
             throws UnsupportedOperationException {
 
+        alreadyEvaluated = true;
         results = switch (unaryOperator) {
             case NOT -> evaluateNotQuery();
             case IDENTITY -> {
@@ -1270,31 +1265,8 @@ public class BooleanExpression {
 
         final var corpus = informationRetrievalSystem.getCorpus();
         final var entireCorpusSize = corpus.size();
-        if (RANK_RESULTS) { // TODO: for OR expression: retrieved docs with higher numbers of matches first, extract class Ranker
-            return results.stream()
-                    .collect(Collectors.toMap(
-                            posting -> corpus.getDocumentByDocId(posting.getDocId()),
-                            posting -> USE_WF_IDF ? posting.wfIdf(entireCorpusSize) : posting.tfIdf(entireCorpusSize),         // score
-                            Double::sum,    // sum scores if more query terms are present in the same document
-                            LinkedHashMap::new))
-                    .entrySet().stream().sequential()
-                    .sorted((docToRank1, docToRank2) -> {
-                        // Assign extra rank if any of query terms are present in the title of the document
-                        double score1 = docToRank1.getValue();
-                        double score2 = docToRank2.getValue();
-                        List<String> queryTerms = Arrays.asList(
-                                Utility.split(getQueryWords(false, true)));
-                        long extraScore1 = docToRank1.getKey().howManyCommonNormalizedWords(queryTerms);
-                        long extraScore2 = docToRank2.getKey().howManyCommonNormalizedWords(queryTerms);
-                        BiFunction<Double, Long, Double> assignExtraScore = (initialScore, extraScore) ->
-                                extraScore > 1 ? initialScore * extraScore : extraScore + initialScore;
-                        score1 = assignExtraScore.apply(score1, extraScore1);
-                        score2 = assignExtraScore.apply(score2, extraScore2);
-                        return Double.compare(score2, score1);  // highest scores at top
-                    })
-                    .map(Map.Entry::getKey)
-                    .limit(maxNumberOfResults)
-                    .toList();
+        if (RANK_RESULTS) {
+            return new QueryResultsRanking().getRankedDocuments();
         } else {
             return results.stream()
                     .map(Posting::getDocId)
@@ -1483,4 +1455,51 @@ public class BooleanExpression {
         }
     }
 
+    /**
+     * Class with capability to rank {@link Document}s.
+     */
+    public class QueryResultsRanking {
+
+        /**
+         * @return the {@link List} of results opportunely ranked.
+         */
+        @NotNull
+        public List<Document> getRankedDocuments() {
+
+            if (!alreadyEvaluated) {
+                System.err.println("Trying to rank results of a NON-evaluated query");
+                return new ArrayList<>();
+            } else {
+
+                Corpus corpus = informationRetrievalSystem.getCorpus();
+                final int entireCorpusSize = corpus.size();
+
+                return results.stream()
+                        .collect(Collectors.toMap(
+                                posting -> corpus.getDocumentByDocId(posting.getDocId()),
+                                posting -> USE_WF_IDF ? posting.wfIdf(entireCorpusSize) : posting.tfIdf(entireCorpusSize),         // score
+                                Double::sum,    // sum scores if more query terms are present in the same document
+                                LinkedHashMap::new))
+                        .entrySet().stream().sequential()
+                        .sorted((docToRank1, docToRank2) -> {
+                            // Assign extra rank if any of query terms are present in the title of the document
+                            double score1 = docToRank1.getValue();
+                            double score2 = docToRank2.getValue();
+                            List<String> queryTerms = Arrays.asList(
+                                    Utility.split(getQueryWords(false, true)));
+                            long extraScore1 = docToRank1.getKey().howManyCommonNormalizedWords(queryTerms);
+                            long extraScore2 = docToRank2.getKey().howManyCommonNormalizedWords(queryTerms);
+                            BiFunction<Double, Long, Double> assignExtraScore = (initialScore, extraScore) ->
+                                    extraScore > 1 ? initialScore * extraScore : extraScore + initialScore;
+                            score1 = assignExtraScore.apply(score1, extraScore1);
+                            score2 = assignExtraScore.apply(score2, extraScore2);
+
+                            return Double.compare(score2, score1);  // highest scores at top
+                        })
+                        .map(Map.Entry::getKey)
+                        .limit(maxNumberOfResults)
+                        .toList();
+            }
+        }
+    }
 }

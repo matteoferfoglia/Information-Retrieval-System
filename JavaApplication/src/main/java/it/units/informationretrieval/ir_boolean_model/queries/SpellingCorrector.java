@@ -225,6 +225,23 @@ class SpellingCorrector {
     }
 
     /**
+     * @param irs The {@link InformationRetrievalSystem}.
+     * @return The comparator to sort corrected query words after applying spelling
+     * correction if they have the same edit-distance wrt. the initial query string.
+     */
+    @NotNull
+    public static Comparator<String> spellingCorrectedQueryWordsComparatorFactory(
+            @NotNull InformationRetrievalSystem irs) {
+        return (s1, s2) -> {
+            int comparison = s1.compareTo(s2);
+            return comparison == 0  // if same edit-distance, then give precedence to the most frequent term
+                    ? irs.getTotalNumberOfOccurrencesOfTerm(s2)
+                    - irs.getTotalNumberOfOccurrencesOfTerm(s1)
+                    : comparison;
+        };
+    }
+
+    /**
      * This method returns a {@link List} in which each element is a {@link List}
      * of {@link Integer}s, where (in the inner-most list) the i-th element is
      * the edit-distance that the i-th spelling corrected word in the phrase
