@@ -1,651 +1,723 @@
 .I 1 
 .W
-(considered) | (! equations) | (angl*s) | ("and yawing")
+! body
 .I 2 
 .W
-(mixing) | (! equations) | (*ture) | ("careful consideration")
+("stagnation gas") | (f*ow) | (! equations) | (drag)
 .I 3 
 .W
-"careful consideration"
+("stagnation gas") | (solut*on) | (! analysis) | (drag)
 .I 4 
 .W
-(mixing) | (! reynolds) | (angl*s) | ("distribution skin")
+! equations
 .I 5 
 .W
-mixing
+extend & symmetry
 .I 6 
 .W
-! data
+("problem but") & (*ch) & (! equations) & (flow)
 .I 7 
 .W
-! equations
+("viscous flow") | (f*ow) | (! analysis) | (drag)
 .I 8 
 .W
-discussed & flow
+*ch
 .I 9 
 .W
-(mixing) | (! equations) | (*de) | ("distribution skin")
+("viscous flow") & (f*ow) & (! analysis) & (flow)
 .I 10 
 .W
-theoretical & sinusoidal
+("problem but") | (f*ow) | (! body) | (flow)
 .I 11 
 .W
-(mixing) | (! reynolds) | (*de) | ("and yawing")
+("problem but") | (f*ow) | (! equations) | (drag)
 .I 12 
 .W
-conducting | aircraft
+("viscous flow") & (*ch) & (! body) & (considered)
 .I 13 
 .W
-waves
+"viscous flow"
 .I 14 
 .W
-agreement
+circulation | radius
 .I 15 
 .W
-shock
+! tunnel
 .I 16 
 .W
-! spheres
+("problem but") | (solut*on) | (! analysis) | (drag)
 .I 17 
 .W
-*de
+("stagnation gas") | (f*ow) | (! body) | (considered)
 .I 18 
 .W
-"starts at"
+hypersonic | flight
 .I 19 
 .W
-! knowledge
+shock
 .I 20 
 .W
-(considered) | (! data) | (*ture) | ("careful consideration")
+"properties have"
 .I 21 
 .W
-(considered) | (! equations) | (*de) | ("careful consideration")
+"density viscosity"
 .I 22 
 .W
-(flow) | (! data) | (*ture) | ("careful consideration")
+thickness & bell
 .I 23 
 .W
-! dimensional
+("viscous flow") | (solut*on) | (! equations) | (drag)
 .I 24 
 .W
-(mixing) | (! reynolds) | (*ture) | ("careful consideration")
+wing
 .I 25 
 .W
-(flow) | (! reynolds) | (*ture) | ("and yawing")
+dimensional | movement
 .I 26 
 .W
-(considered) | (! data) | (*ture) | ("distribution skin")
+("viscous flow") | (*ch) | (! body) | (drag)
 .I 27 
 .W
-terms | collocation
+("viscous flow") | (solut*on) | (! analysis) | (drag)
 .I 28 
 .W
-(flow) & (! equations) & (*de) & ("and yawing")
+("stagnation gas") | (solut*on) | (! equations) | (drag)
 .I 29 
 .W
-theoretical | sinusoidal
+("viscous flow") | (f*ow) | (! equations) | (drag)
 .I 30 
 .W
-(mixing) | (! reynolds) | (*de) | ("distribution skin")
+! factor
 .I 31 
 .W
-(flow) | (! data) | (*de) | ("careful consideration")
+*er
 .I 32 
 .W
-failure | modifying
+("stagnation gas") & (*ch) & (! equations) & (flow)
 .I 33 
 .W
-(mixing) | (! data) | (angl*s) | ("and yawing")
+r*te
 .I 34 
 .W
-(mixing) | (! reynolds) | (*ture) | ("distribution skin")
+measurements
 .I 35 
 .W
-temperature
+("problem but") | (f*ow) | (! analysis) | (considered)
 .I 36 
 .W
-! flat
+("stagnation gas") | (f*ow) | (! analysis) | (drag)
 .I 37 
 .W
-"technique is"
+("viscous flow") | (f*ow) | (! analysis) | (considered)
 .I 38 
 .W
-"surface we"
+("viscous flow") | (*ch) | (! analysis) | (drag)
 .I 39 
 .W
-boundary & integration
+circular | stream
 .I 40 
 .W
-shells
+"critical transition"
 .I 41 
 .W
-amounts | tail
+("stagnation gas") | (solut*on) | (! analysis) | (considered)
 .I 42 
 .W
-(flow) | (! reynolds) | (*de) | ("distribution skin")
+! thermodynamic
 .I 43 
 .W
-circu*ar
+pla*e
 .I 44 
 .W
-"been derived"
+speed & function
 .I 45 
 .W
-(flow) | (! equations) | (*de) | ("careful consideration")
+ratio
 .I 46 
 .W
-agree | procedure
+("problem but") & (f*ow) & (! body) & (flow)
 .I 47 
 .W
-detection | aero
+"of varying"
 .I 48 
 .W
-mo*ion
+"afterbody agreed"
 .I 49 
 .W
-"beckett william"
+("stagnation gas") | (f*ow) | (! analysis) | (flow)
 .I 50 
 .W
-series
+method & perpendicular
 .I 51 
 .W
-introduced & include
+("stagnation gas") & (*ch) & (! equations) & (considered)
 .I 52 
 .W
-stress & density
+("viscous flow") | (*ch) | (! equations) | (considered)
 .I 53 
 .W
-inch
+"practical significance"
 .I 54 
 .W
-(mixing) | (! equations) | (*de) | ("careful consideration")
+technique & wires
 .I 55 
 .W
-(mixing) | (! data) | (angl*s) | ("distribution skin")
+! pressure
 .I 56 
 .W
-(considered) | (! reynolds) | (angl*s) | ("distribution skin")
+"given for"
 .I 57 
 .W
-(flow) | (! data) | (*de) | ("and yawing")
+("stagnation gas") | (*ch) | (! equations) | (considered)
 .I 58 
 .W
-(considered) | (! reynolds) | (*ture) | ("distribution skin")
+data | hypersonic
 .I 59 
 .W
-(mixing) | (! data) | (*ture) | ("distribution skin")
+"on a"
 .I 60 
 .W
-(mixing) | (! equations) | (*ture) | ("distribution skin")
+tests
 .I 61 
 .W
-! pressure
+! approximations
 .I 62 
 .W
-(considered) | (! reynolds) | (angl*s) | ("and yawing")
+("viscous flow") & (f*ow) & (! analysis) & (considered)
 .I 63 
 .W
-(flow) | (! reynolds) | (angl*s) | ("careful consideration")
+! boundary
 .I 64 
 .W
-stability
+("stagnation gas") & (f*ow) & (! equations) & (flow)
 .I 65 
 .W
-experimental | circular
+("stagnation gas") | (solut*on) | (! body) | (drag)
 .I 66 
 .W
-(flow) | (! data) | (*de) | ("distribution skin")
+("problem but") | (solut*on) | (! equations) | (flow)
 .I 67 
 .W
-(considered) | (! equations) | (angl*s) | ("careful consideration")
+("stagnation gas") | (f*ow) | (! body) | (flow)
 .I 68 
 .W
-references & transformed
+("viscous flow") & (f*ow) & (! body) & (flow)
 .I 69 
 .W
-(flow) | (! data) | (angl*s) | ("careful consideration")
+mach
 .I 70 
 .W
-(considered) | (! data) | (*de) | ("careful consideration")
+"form of"
 .I 71 
 .W
-(considered) | (! data) | (*de) | ("and yawing")
+("problem but") | (*ch) | (! equations) | (drag)
 .I 72 
 .W
-heating & flow
+("problem but") | (*ch) | (! analysis) | (considered)
 .I 73 
 .W
-! boundary
+! heat
 .I 74 
 .W
-cro*s
+"time and"
 .I 75 
 .W
-(considered) | (! data) | (angl*s) | ("distribution skin")
+speed
 .I 76 
 .W
-(mixing) | (! reynolds) | (angl*s) | ("and yawing")
+yaw & internal
 .I 77 
 .W
-! velocity
+("problem but") & (*ch) & (! analysis) & (flow)
 .I 78 
 .W
-(flow) | (! data) | (*ture) | ("distribution skin")
+("problem but") & (f*ow) & (! analysis) & (flow)
 .I 79 
 .W
-effects | extends
+*is
 .I 80 
 .W
-! adjacent
+("stagnation gas") | (*ch) | (! analysis) | (flow)
 .I 81 
 .W
-! heat
+la*er
 .I 82 
 .W
-"are related"
+stability | shock
 .I 83 
 .W
-"either in"
+delta & theory
 .I 84 
 .W
-(flow) | (! equations) | (angl*s) | ("distribution skin")
+("viscous flow") | (*ch) | (! body) | (flow)
 .I 85 
 .W
-str*am
+"from procedures"
 .I 86 
 .W
-flows
+strips & leading
 .I 87 
 .W
-"jnl uniformly"
+calculated & shear
 .I 88 
 .W
-require | engineering
+("problem but") & (*ch) & (! body) & (flow)
 .I 89 
 .W
-fin | slender
+("problem but") | (solut*on) | (! body) | (flow)
 .I 90 
 .W
-(flow) | (! reynolds) | (angl*s) | ("and yawing")
+"thickness was"
 .I 91 
 .W
-"s birnbaum"
+finite | theoretical
 .I 92 
 .W
-(considered) | (! reynolds) | (*ture) | ("and yawing")
+("viscous flow") | (f*ow) | (! equations) | (flow)
 .I 93 
 .W
-vibration | location
+interstellar | supersonic
 .I 94 
 .W
-"compressible nonsteady"
+("stagnation gas") | (f*ow) | (! analysis) | (considered)
 .I 95 
 .W
-l*yer
+("problem but") | (solut*on) | (! analysis) | (flow)
 .I 96 
 .W
-! constant
+("viscous flow") | (solut*on) | (! body) | (flow)
 .I 97 
 .W
-! plate
+! layer
 .I 98 
 .W
-(considered) | (! equations) | (*ture) | ("careful consideration")
+fl*w
 .I 99 
 .W
-fl*w
+*low
 .I 100 
 .W
-*low
+("viscous flow") & (*ch) & (! equations) & (flow)
 .I 101 
 .W
-(flow) | (! reynolds) | (*de) | ("careful consideration")
+"problem but"
 .I 102 
 .W
-"and yawing"
+("stagnation gas") | (f*ow) | (! equations) | (considered)
 .I 103 
 .W
-"distribution skin"
+("viscous flow") | (*ch) | (! analysis) | (considered)
 .I 104 
 .W
-considered
+("viscous flow") & (*ch) & (! analysis) & (flow)
 .I 105 
 .W
-(considered) | (! equations) | (*ture) | ("distribution skin")
+considered
 .I 106 
 .W
-fin & slender
+("stagnation gas") | (f*ow) | (! body) | (drag)
 .I 107 
 .W
-! reynolds
+! analysis
 .I 108 
 .W
-external & bending
+("problem but") | (f*ow) | (! body) | (considered)
 .I 109 
 .W
-(mixing) | (! reynolds) | (angl*s) | ("careful consideration")
+("viscous flow") | (*ch) | (! analysis) | (flow)
 .I 110 
 .W
-"the production"
+! gradient
 .I 111 
 .W
-*ture
+! fluid
 .I 112 
 .W
-flow
+propellants & equations
 .I 113 
 .W
-(considered) | (! reynolds) | (angl*s) | ("careful consideration")
+"stagnation gas"
 .I 114 
 .W
-(flow) | (! equations) | (*de) | ("and yawing")
+("viscous flow") | (*ch) | (! body) | (considered)
 .I 115 
 .W
-experimental & circular
+("viscous flow") | (solut*on) | (! equations) | (flow)
 .I 116 
 .W
-"these equations"
+drag
 .I 117 
 .W
-(mixing) | (! data) | (*de) | ("distribution skin")
+("viscous flow") | (f*ow) | (! body) | (considered)
 .I 118 
 .W
-! shock
+math | aeroelastic
 .I 119 
 .W
-references | transformed
+flow
 .I 120 
 .W
-! surface
+quasi & supersonic
 .I 121 
 .W
-stress | density
+("viscous flow") | (solut*on) | (! analysis) | (considered)
 .I 122 
 .W
-(flow) | (! reynolds) | (*ture) | ("careful consideration")
+physical & boundary
 .I 123 
 .W
-! approximate
+surface
 .I 124 
 .W
-(mixing) | (! reynolds) | (*ture) | ("and yawing")
+("problem but") | (solut*on) | (! body) | (considered)
 .I 125 
 .W
-(flow) & (! reynolds) & (*de) & ("and yawing")
+("stagnation gas") | (solut*on) | (! body) | (considered)
 .I 126 
 .W
-"of stokes"
+involving | analysis
 .I 127 
 .W
-(considered) | (! equations) | (angl*s) | ("distribution skin")
+("problem but") | (f*ow) | (! equations) | (flow)
 .I 128 
 .W
-(mixing) | (! equations) | (angl*s) | ("and yawing")
+("problem but") | (f*ow) | (! body) | (drag)
 .I 129 
 .W
-study
+("viscous flow") | (solut*on) | (! body) | (considered)
 .I 130 
 .W
-(considered) | (! data) | (*de) | ("distribution skin")
+! surface
 .I 131 
 .W
-"plate stewartson"
+"attack the"
 .I 132 
 .W
-(flow) | (! reynolds) | (*de) | ("and yawing")
+models | experimental
 .I 133 
 .W
-(flow) | (! data) | (angl*s) | ("and yawing")
+("stagnation gas") | (solut*on) | (! analysis) | (flow)
 .I 134 
 .W
-r*ion
+lift
 .I 135 
 .W
-layer
+("problem but") | (*ch) | (! body) | (considered)
 .I 136 
 .W
-(considered) | (! reynolds) | (*ture) | ("careful consideration")
+! electric
 .I 137 
 .W
-! method
+contour | reynolds
 .I 138 
 .W
-! transfer
+("viscous flow") | (*ch) | (! equations) | (drag)
 .I 139 
 .W
-flat
+("viscous flow") & (f*ow) & (! analysis) & (drag)
 .I 140 
 .W
-mo*el
+theory
 .I 141 
 .W
-response & theory
+reynolds | plate
 .I 142 
 .W
-"its derivatives"
+reynolds | investigations
 .I 143 
 .W
-plate | magnitudes
+("problem but") | (solut*on) | (! equations) | (considered)
 .I 144 
 .W
-magnetic | diameter
+f*ow
 .I 145 
 .W
-(considered) | (! equations) | (*de) | ("distribution skin")
+meth*d
 .I 146 
 .W
-(considered) | (! reynolds) | (*de) | ("distribution skin")
+cross | experimental
 .I 147 
 .W
-discussed
+shear | flow
 .I 148 
 .W
-"high angles"
+("viscous flow") | (f*ow) | (! analysis) | (flow)
 .I 149 
 .W
-discussed | flow
+distribution
 .I 150 
 .W
-heating | flow
+("problem but") | (solut*on) | (! analysis) | (considered)
 .I 151 
 .W
-"no numerical"
+("stagnation gas") & (f*ow) & (! equations) & (considered)
 .I 152 
 .W
-(flow) | (! data) | (*ture) | ("and yawing")
+! transfer
 .I 153 
 .W
-laminar
+! method
 .I 154 
 .W
-"was small"
+("viscous flow") | (f*ow) | (! body) | (drag)
 .I 155 
 .W
-theoretical
+("viscous flow") | (solut*on) | (! body) | (drag)
 .I 156 
 .W
-*on
+flat
 .I 157 
 .W
-! hypersonic
+("problem but") | (f*ow) | (! analysis) | (flow)
 .I 158 
 .W
-terms & collocation
+("stagnation gas") | (*ch) | (! body) | (drag)
 .I 159 
 .W
-! flow
+! experimental
 .I 160 
 .W
-! edges
+layer & lift
 .I 161 
 .W
-edge
+("stagnation gas") | (*ch) | (! body) | (considered)
 .I 162 
 .W
-(flow) | (! equations) | (angl*s) | ("careful consideration")
+("stagnation gas") | (solut*on) | (! body) | (flow)
 .I 163 
 .W
-(flow) | (! equations) | (*de) | ("distribution skin")
+("viscous flow") | (solut*on) | (! analysis) | (flow)
 .I 164 
 .W
-(mixing) | (! data) | (*de) | ("careful consideration")
+iterative & solution
 .I 165 
 .W
-vibration & location
+*ng
 .I 166 
 .W
-effects & extends
+initial
 .I 167 
 .W
-"into a"
+theoretically & flow
 .I 168 
 .W
-(mixing) | (! data) | (*de) | ("and yawing")
+("problem but") | (*ch) | (! analysis) | (drag)
 .I 169 
 .W
-conducting & aircraft
+("viscous flow") & (*ch) & (! body) & (flow)
 .I 170 
 .W
-"distribution with"
+"layer displacement"
 .I 171 
 .W
-a*r
+("viscous flow") & (f*ow) & (! body) & (drag)
 .I 172 
 .W
-mach | procedure
+"general of"
 .I 173 
 .W
-pressure
+("problem but") | (*ch) | (! equations) | (considered)
 .I 174 
 .W
-"the mechanism"
+! uniaxial
 .I 175 
 .W
-(considered) | (! equations) | (*ture) | ("and yawing")
+he*t
 .I 176 
 .W
-approximation | dimensionless
+"of airfoils"
 .I 177 
 .W
-(flow) | (! equations) | (*ture) | ("careful consideration")
+classification | majority
 .I 178 
 .W
-approximation & dimensionless
+"deals with"
 .I 179 
 .W
-external | bending
+("stagnation gas") | (*ch) | (! analysis) | (drag)
 .I 180 
 .W
-(mixing) | (! equations) | (*ture) | ("and yawing")
+! laminar
 .I 181 
 .W
-(flow) | (! reynolds) | (angl*s) | ("distribution skin")
+theory & loads
 .I 182 
 .W
-(mixing) | (! equations) | (*de) | ("and yawing")
+dimensional
 .I 183 
 .W
-(flow) | (! equations) | (angl*s) | ("and yawing")
+flight | simple
 .I 184 
 .W
-(mixing) | (! data) | (*ture) | ("and yawing")
+("problem but") | (f*ow) | (! equations) | (considered)
 .I 185 
 .W
-require & engineering
+method | tabulated
 .I 186 
 .W
-boundary | integration
+! variables
 .I 187 
 .W
-boundary
+("viscous flow") & (*ch) & (! equations) & (considered)
 .I 188 
 .W
-heat
+("viscous flow") & (f*ow) & (! equations) & (considered)
 .I 189 
 .W
-(considered) | (! reynolds) | (*de) | ("and yawing")
+body
 .I 190 
 .W
-accuracy | quantitative
+! flow
 .I 191 
 .W
-(mixing) | (! reynolds) | (*de) | ("careful consideration")
+("problem but") | (solut*on) | (! body) | (drag)
 .I 192 
 .W
-(considered) | (! data) | (angl*s) | ("careful consideration")
+edge
 .I 193 
 .W
-introduced | include
+*ow
 .I 194 
 .W
-(flow) | (! reynolds) | (*ture) | ("distribution skin")
+("problem but") & (f*ow) & (! equations) & (flow)
 .I 195 
 .W
-(flow) | (! data) | (angl*s) | ("distribution skin")
+("problem but") | (*ch) | (! body) | (flow)
 .I 196 
 .W
-(flow) | (! equations) | (*ture) | ("and yawing")
+("stagnation gas") | (*ch) | (! equations) | (drag)
 .I 197 
 .W
-(mixing) | (! data) | (angl*s) | ("careful consideration")
+("stagnation gas") | (*ch) | (! analysis) | (considered)
 .I 198 
 .W
-! supersonic
+cones | reduced
 .I 199 
 .W
-accuracy & quantitative
+"this problem"
 .I 200 
 .W
-(considered) | (! data) | (angl*s) | ("and yawing")
+rates & pressure
 .I 201 
 .W
-plate & magnitudes
+("problem but") | (*ch) | (! equations) | (flow)
 .I 202 
 .W
-(flow) | (! equations) | (*ture) | ("distribution skin")
+("stagnation gas") | (solut*on) | (! equations) | (considered)
 .I 203 
 .W
-(considered) | (! data) | (*ture) | ("and yawing")
+("viscous flow") | (f*ow) | (! equations) | (considered)
 .I 204 
 .W
-blunt
+("viscous flow") | (solut*on) | (! equations) | (considered)
 .I 205 
 .W
-! buckling
+("viscous flow") & (f*ow) & (! equations) & (flow)
 .I 206 
 .W
-agree & procedure
+("viscous flow") | (f*ow) | (! body) | (flow)
 .I 207 
 .W
-(considered) | (! reynolds) | (*de) | ("careful consideration")
+"perfect gas"
 .I 208 
 .W
-response | theory
+pressure
 .I 209 
 .W
-(mixing) | (! equations) | (angl*s) | ("careful consideration")
+! effects
 .I 210 
 .W
-! ratio
+process | local
 .I 211 
 .W
-wa*e
+foughner | modulus
 .I 212 
 .W
-(mixing) | (! data) | (*ture) | ("careful consideration")
+heat | approximate
 .I 213 
 .W
-(considered) | (! equations) | (*de) | ("and yawing")
+("problem but") | (solut*on) | (! equations) | (drag)
 .I 214 
 .W
-(mixing) | (! equations) | (angl*s) | ("distribution skin")
+"treated separately"
 .I 215 
 .W
-wall
+("problem but") | (*ch) | (! body) | (drag)
 .I 216 
 .W
-mach & procedure
+("stagnation gas") | (*ch) | (! body) | (flow)
 .I 217 
 .W
-account
+("stagnation gas") | (*ch) | (! equations) | (flow)
+.I 218 
+.W
+("viscous flow") & (*ch) & (! analysis) & (considered)
+.I 219 
+.W
+m*od
+.I 220 
+.W
+boundary
+.I 221 
+.W
+("viscous flow") | (*ch) | (! equations) | (flow)
+.I 222 
+.W
+("problem but") | (*ch) | (! analysis) | (flow)
+.I 223 
+.W
+("stagnation gas") | (f*ow) | (! equations) | (flow)
+.I 224 
+.W
+hypersonic
+.I 225 
+.W
+! supersonic
+.I 226 
+.W
+! mach
+.I 227 
+.W
+"of air"
+.I 228 
+.W
+cones & waves
+.I 229 
+.W
+"is shown"
+.I 230 
+.W
+("stagnation gas") | (solut*on) | (! equations) | (flow)
+.I 231 
+.W
+criteria & cambered
+.I 232 
+.W
+("viscous flow") & (f*ow) & (! body) & (considered)
+.I 233 
+.W
+classical | transverse
+.I 234 
+.W
+consideration | pressure
+.I 235 
+.W
+nozzle
+.I 236 
+.W
+surface & national
+.I 237 
+.W
+("problem but") | (f*ow) | (! analysis) | (drag)
+.I 238 
+.W
+conical
+.I 239 
+.W
+wi*g
+.I 240 
+.W
+investigation
+.I 241 
+.W
+*sed

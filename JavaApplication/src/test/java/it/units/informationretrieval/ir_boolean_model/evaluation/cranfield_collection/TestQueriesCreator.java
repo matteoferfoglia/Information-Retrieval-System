@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -222,61 +223,74 @@ class TestQueriesCreator {
     private static void createAndAddToMap_SINGLEWORD_AND_OR_NOT_WILDCARD_queries(
             List<String> allWordsFromAllDocsWithoutStopWords, List<StemmedDocument> stemmedDocumentsWithoutStopWords) {
 
-        // TODO: refactor
+        BiFunction<Integer, Function<List<String>, String>, Pair<String, List<String>>>
+                getPairOfQueryStringAndListOfStemmedWordsInTheQueryString = (
+                numOfWordsComposingQuery,              // num of words that will be present in the query string
+                queryStringCreatorFromListOfWords      // create a query string (one string) from the list (of size specified in numOfWordsComposingQuery) of query words
+        ) -> {
+            String queryString;
+            List<String> queryWords_, stemmedQueryWords_;
+            int iterationsCounter_ = 0;
+            do {
+                queryWords_ = getNDistinctWordsRandomly(numOfWordsComposingQuery, allWordsFromAllDocsWithoutStopWords);
+                assert queryWords_.size() > numOfWordsComposingQuery;
+                queryString = queryStringCreatorFromListOfWords.apply(queryWords_);
+                stemmedQueryWords_ = getStemmed(queryWords_);
+            } while ((stemmedQueryWords_.size() != numOfWordsComposingQuery   // stemming may remove entire words
+                    // following condition enforces to have distinct queries:
+                    || mapQueryStringsToDocIdsOfAnswers.containsKey(queryString))
+                    && iterationsCounter_++ < allWordsFromAllDocsWithoutStopWords.size()/*avoid infinity loop*/);
+            return new Pair<>(queryString, stemmedQueryWords_);
+        };
 
         // SINGLEWORD boolean query string creation
-        List<String> stemmedQueryWordListOf1Element;
-        String singleQueryWord, singleWordQueryString = null;
-        int iterationsCounter = 0;
-        do {
-            singleQueryWord = getNDistinctWordsRandomly(1, allWordsFromAllDocsWithoutStopWords).get(0);
-            stemmedQueryWordListOf1Element = getStemmed(List.of(singleQueryWord));
-        } while ((stemmedQueryWordListOf1Element.size() != 1   // stemming may remove entire words
-                // following condition enforces to have distinct queries:
-                || mapQueryStringsToDocIdsOfAnswers.containsKey(singleWordQueryString = singleQueryWord))
-                && iterationsCounter++ < allWordsFromAllDocsWithoutStopWords.size()/*avoid infinity loop*/);
-        final String finalStemmedQueryWord = stemmedQueryWordListOf1Element.get(0);
+        final int numOfWordsComposingSingleWordQuery = 1;
+        var pair = getPairOfQueryStringAndListOfStemmedWordsInTheQueryString.apply(
+                numOfWordsComposingSingleWordQuery,
+                wordList -> wordList.get(0));
+        final String singleWordQueryString = pair.getKey();
+        final String finalStemmedSingleWordQuery = pair.getValue().get(0);
 
-        // AND and OR boolean query strings creation
-        List<String> queryWords, stemmedQueryWords;
-        String andQueryString = null, orQueryString = null;
-
-        iterationsCounter = 0;
-        do {
-            queryWords = getNDistinctWordsRandomly(N, allWordsFromAllDocsWithoutStopWords);
-            stemmedQueryWords = getStemmed(queryWords);
-        } while ((queryWords.size() != stemmedQueryWords.size()   // stemming may remove entire words
-                // following conditions enforce to have distinct queries:
-                || mapQueryStringsToDocIdsOfAnswers.containsKey(andQueryString = String.join(" " + BINARY_OPERATOR.AND.getSymbol() + " ", queryWords))
-                || mapQueryStringsToDocIdsOfAnswers.containsKey(orQueryString = String.join(" " + BINARY_OPERATOR.OR.getSymbol() + " ", queryWords)))
-                && iterationsCounter++ < allWordsFromAllDocsWithoutStopWords.size()/*avoid infinity loop*/);
-        final List<String> finalStemmedQueryWords = stemmedQueryWords;
+        // AND and OR query string creation
+        String andQueryString = null;
+        List<String> stemmedAndQueryWords = null;
+        String orQueryString = null;
+        List<String> stemmedOrQueryWords = null;
+        for (var binaryOperator : BINARY_OPERATOR.values()) {
+            final int numOfWordsComposingAndQuery = 2;
+            pair = getPairOfQueryStringAndListOfStemmedWordsInTheQueryString.apply(
+                    numOfWordsComposingAndQuery,
+                    wordList -> String.join(" " + binaryOperator.getSymbol() + " ", wordList));
+            final String queryString = pair.getKey();
+            final List<String> stemmedWordsInQueryString = pair.getValue();
+            switch (binaryOperator) {
+                case AND -> {
+                    andQueryString = queryString;
+                    stemmedAndQueryWords = stemmedWordsInQueryString;
+                }
+                case OR -> {
+                    orQueryString = queryString;
+                    stemmedOrQueryWords = stemmedWordsInQueryString;
+                }
+            }
+        }
+        assert andQueryString != null;
+        var finalStemmedAndQueryWords = Objects.requireNonNull(stemmedAndQueryWords);
+        assert orQueryString != null;
+        var finalStemmedOrQueryWords = Objects.requireNonNull(stemmedOrQueryWords);
 
         // NOT boolean query string creation (negation of single word)
-        List<String> stemmedNotQueryWordListOf1Element;
-        String notQueryWord, notQueryString = null;
-        iterationsCounter = 0;
-        do {
-            notQueryWord = getNDistinctWordsRandomly(1, allWordsFromAllDocsWithoutStopWords).get(0);
-            stemmedNotQueryWordListOf1Element = getStemmed(List.of(notQueryWord));
-        } while ((stemmedNotQueryWordListOf1Element.size() != 1   // stemming may remove entire words
-                // following condition enforces to have distinct queries:
-                || mapQueryStringsToDocIdsOfAnswers.containsKey(notQueryString = UNARY_OPERATOR.NOT.getSymbol() + " " + notQueryWord)
-                || notQueryWord.equals(singleQueryWord)/*avoid using the same word*/)
-                && iterationsCounter++ < allWordsFromAllDocsWithoutStopWords.size()/*avoid infinity loop*/);
-        final String finalStemmedQueryWordNot = stemmedNotQueryWordListOf1Element.get(0);
+        pair = getPairOfQueryStringAndListOfStemmedWordsInTheQueryString.apply(
+                numOfWordsComposingSingleWordQuery,
+                wordList -> UNARY_OPERATOR.NOT.getSymbol() + " " + wordList.get(0));
+        final String notQueryString = pair.getKey();
+        final String finalStemmedQueryWordNot = pair.getValue().get(0);
 
         // WILDCARD boolean query string creation
-        String wildcardQueryString = null;
-        iterationsCounter = 0;
-        do {
-            singleQueryWord = getNDistinctWordsRandomly(1, allWordsFromAllDocsWithoutStopWords).get(0);
-            stemmedQueryWordListOf1Element = getStemmed(List.of(singleQueryWord));
-        } while ((stemmedQueryWordListOf1Element.size() != 1   // stemming may remove entire words
-                // following condition enforces to have distinct queries:
-                || mapQueryStringsToDocIdsOfAnswers.containsKey(wildcardQueryString = replaceRandomCharInStringWithWildcard(singleQueryWord)))
-                && iterationsCounter++ < allWordsFromAllDocsWithoutStopWords.size()/*avoid infinity loop*/);
-
+        pair = getPairOfQueryStringAndListOfStemmedWordsInTheQueryString.apply(
+                numOfWordsComposingSingleWordQuery,
+                wordList -> replaceRandomCharInStringWithWildcard(wordList.get(0)));
+        final String wildcardQueryString = pair.getKey();
 
         // add query strings and results to the map
         String finalSingleWordQueryString = Objects.requireNonNull(singleWordQueryString);
@@ -285,9 +299,9 @@ class TestQueriesCreator {
         String finalNotQueryString = Objects.requireNonNull(notQueryString);
         String finalWildcardQueryString = Objects.requireNonNull(wildcardQueryString);
         stemmedDocumentsWithoutStopWords.forEach(stemmedDocument -> {
-            addQueryToMapIf(finalSingleWordQueryString, stemmedDocument.getDocId(), stemmedDocument.contains(finalStemmedQueryWord));
-            addQueryToMapIf(finalAndQueryString, stemmedDocument.getDocId(), stemmedDocument.containsAllWords(finalStemmedQueryWords));
-            addQueryToMapIf(finalOrQueryString, stemmedDocument.getDocId(), stemmedDocument.containsAtLeastOneWord(finalStemmedQueryWords));
+            addQueryToMapIf(finalSingleWordQueryString, stemmedDocument.getDocId(), stemmedDocument.contains(finalStemmedSingleWordQuery));
+            addQueryToMapIf(finalAndQueryString, stemmedDocument.getDocId(), stemmedDocument.containsAllWords(finalStemmedAndQueryWords));
+            addQueryToMapIf(finalOrQueryString, stemmedDocument.getDocId(), stemmedDocument.containsAtLeastOneWord(finalStemmedOrQueryWords));
             addQueryToMapIf(finalNotQueryString, stemmedDocument.getDocId(), stemmedDocument.notContain(finalStemmedQueryWordNot));
             addQueryToMapIf(finalWildcardQueryString, stemmedDocument.getDocId(), stemmedDocument.containsWithWildcard(finalWildcardQueryString));
         });
