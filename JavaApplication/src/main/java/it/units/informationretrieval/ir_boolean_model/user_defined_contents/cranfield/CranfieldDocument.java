@@ -128,7 +128,7 @@ public class CranfieldDocument extends Document {
                                         + System.lineSeparator() + docAsStr.replaceAll("\\n", "\t\n")/*only for printing*/);
                             }
                         })
-                        .toList());
+                        .toList(), LANGUAGE);
 
     }
 
