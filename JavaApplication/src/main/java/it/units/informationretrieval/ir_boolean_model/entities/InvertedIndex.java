@@ -190,6 +190,7 @@ public class InvertedIndex implements Serializable {
                 .filter(documentContentNotNullPredicate)
                 .map(this::getEntrySetOfTokensAndCorrespondingTermsFromADocument)
                 .peek(ignored -> numberOfAlreadyProcessedDocuments.getAndIncrement()/*TODO: threads must wait to increase this value: needed?*/)
+                // TODO: re-see how the indexing progress is updated and printed
                 .flatMap(Collection::stream /*outputs all entries from all the documents*/)
                 .collect(
                         Collectors.toConcurrentMap(
@@ -323,13 +324,17 @@ public class InvertedIndex implements Serializable {
     /**
      * Getter for a {@link PostingList} associated with a
      * {@link Term} in this instance.
+     * This method does work also with {@link #WILDCARD} symbol
+     * in the term, but the wildcard does <sttong>not</sttong>
+     * capture spaces (in such case, it would refer to more than
+     * one token, and this function is not currently supported).
      *
      * @param normalizedToken The normalized term.
      * @return The {@link PostingList} associated with the desired term or null
      * if it is not found in this {@link InvertedIndex}.
      */
     @NotNull
-    public final SkipList<Posting> getListOfPostingsForToken(String normalizedToken) {  // TODO: wildcard is not capturing spaces
+    public final SkipList<Posting> getListOfPostingsForToken(String normalizedToken) {
         String tokenWithEndOfWord = normalizedToken + END_OF_WORD;
         int indexOfFirstWildcardIfPresent = tokenWithEndOfWord.indexOf(WILDCARD);
         if (indexOfFirstWildcardIfPresent > -1) {
