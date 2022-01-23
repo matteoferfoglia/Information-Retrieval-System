@@ -107,13 +107,15 @@ import java.util.stream.IntStream;
  *
  * @author Matteo Ferfoglia
  */
-class SpellingCorrector {   // TODO: benchmark
+class SpellingCorrector {
 
     /**
      * The length of the suffix to remove from the rotations
      * of words to be corrected (see {@link #getNewCorrections()}).
+     * If the string to be corrected is shorter than the value
+     * specified by this field, no corrections will be applied.
      */
-    private static final int SUFFIX_LENGTH = 2;// TODO: what if the string is shorter?
+    private static final int SUFFIX_LENGTH = 2;
 
     /**
      * The {@link SpellingCorrector} must be able to correct also phrases,
@@ -424,6 +426,7 @@ class SpellingCorrector {   // TODO: benchmark
 
         }
     }
+
     /**
      * If invoked, this method will stop any further spelling-correction
      * procedure, like if no more results are available.
