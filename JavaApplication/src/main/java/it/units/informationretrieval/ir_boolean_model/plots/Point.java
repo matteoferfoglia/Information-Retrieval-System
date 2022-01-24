@@ -69,8 +69,10 @@ public class Point<X extends Number, Y extends Number> extends Pair<X, Y> {
     public static void plotAndSavePNG_ofMultipleSeries(String title, List<Series> xySeries,
                                                        String xAxisLabel, String yAxisLabel, boolean showLegend,
                                                        String pathForOutputFileWhereToSave, int pixelScale) {
-        plotMultipleSeries(title, xySeries, xAxisLabel, yAxisLabel, showLegend);
-        XYLineChart.saveAsPng(pathForOutputFileWhereToSave, pixelScale);
+        synchronized (XYLineChart.class) {
+            plotMultipleSeries(title, xySeries, xAxisLabel, yAxisLabel, showLegend);
+            XYLineChart.saveAsPng(pathForOutputFileWhereToSave, pixelScale);
+        }
     }
 
     /**

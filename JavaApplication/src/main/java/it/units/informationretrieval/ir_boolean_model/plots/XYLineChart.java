@@ -75,13 +75,13 @@ public class XYLineChart extends Application {
      * @param yAxisLabel           The label for the y-axis.
      * @param showLegend           Flag: true if legend must be shown, false otherwise.
      */
-    public static void plot(String title, List<Point.Series> listOfSeriesOfPoints,
-                            String xAxisLabel, String yAxisLabel, boolean showLegend) {
+    public static synchronized void plot(String title, List<Point.Series> listOfSeriesOfPoints,
+                                         String xAxisLabel, String yAxisLabel, boolean showLegend) {
 
         if (!isJavaFxAlreadyStarted()) {
             javaFxThread = new Thread(Application::launch);
             javaFxThread.start();
-            while (currentInstance == null) {   // wait for the setup of the GUI
+            while (!isJavaFxAlreadyStarted()) {   // wait for the setup of the GUI
                 try {
                     Thread.sleep(5);        // gives time for the setup
                 } catch (InterruptedException e) {
@@ -97,7 +97,6 @@ public class XYLineChart extends Application {
                 } catch (Exception e) {
                     Logger.getLogger(XYLineChart.class.getCanonicalName())
                             .log(Level.SEVERE, "Error with JavaFX", e);
-                    e.printStackTrace();
                 }
             });
         }
@@ -110,8 +109,8 @@ public class XYLineChart extends Application {
     /**
      * @return true if JavaFX instance is already started.
      */
-    private static boolean isJavaFxAlreadyStarted() {
-        return currentInstance != null;
+    private static synchronized boolean isJavaFxAlreadyStarted() {
+        return javaFxThread != null && currentInstance != null;
     }
 
     /**
@@ -164,7 +163,7 @@ public class XYLineChart extends Application {
     /**
      * Closes JavaFX.
      */
-    public static void close() {
+    public synchronized static void close() {
         if (isJavaFxAlreadyStarted()) {
             Platform.runLater(Platform::exit);
         }
