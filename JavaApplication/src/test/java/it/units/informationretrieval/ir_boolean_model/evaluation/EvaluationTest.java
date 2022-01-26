@@ -142,6 +142,7 @@ public class EvaluationTest {
                     Set<Document> relevantAndRetrieved = relevantDocuments.stream()
                             .filter(retrievedDocuments::contains).collect(Collectors.toSet());
                     // TODO : investigate on errors (retrievedDocuments.stream().filter(d -> ! relevantDocuments.contains(d)).toList()) to improve precision and recall
+                    //        Stemming problems, e.g.: wildcard f*ow matches "following", because stemming of "following" is "follow" --> add to stop words?
                     precisions.add(retrievedDocuments.size() > 0
                             ? (double) relevantAndRetrieved.size() / retrievedDocuments.size()
                             : relevantDocuments.size() == 0 ? 1 : 0);
@@ -267,7 +268,7 @@ public class EvaluationTest {
         } while (true /*exit via break instruction*/);
 
 
-        // Investigation on the worst query // TODO: investigate on the reeason of low accuracy values
+        // Investigation on the worst query
         List<Double> avgPrecisions = precisionRecallSeries.stream().sequential()   // same order
                 .map(serie -> serie.stream().mapToDouble(Point::getY).average().orElse(0))
                 .sorted().toList();
