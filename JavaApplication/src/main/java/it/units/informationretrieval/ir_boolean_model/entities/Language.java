@@ -50,6 +50,11 @@ public enum Language {
      * The stop words for the given language.
      */
     private final String[] stopWords;
+    /**
+     * The stemmed version of {@link #stopWords}, according to the {@link Stemmer}
+     * currently set for the system.
+     */
+    private final String[] stemmedStopWords;
 
     /**
      * @param pathToStopWordsDataset The path from the context root to the dataset of stop-words fot the language.
@@ -70,6 +75,11 @@ public enum Language {
             e.printStackTrace();
         }
         this.stopWords = tmpStopWords;
+        this.stemmedStopWords = Utility.getStemmer() == null
+                ? tmpStopWords
+                : Arrays.stream(tmpStopWords)
+                .map(stopWord -> Utility.getStemmer().stem(stopWord, this))
+                .toArray(String[]::new);
     }
 
     /**
@@ -77,6 +87,13 @@ public enum Language {
      */
     public String[] getStopWords() {
         return stopWords;
+    }
+
+    /**
+     * @return The stemmed version of stop words for the given language.
+     */
+    public String[] getStemmedStopWords() {
+        return stemmedStopWords;
     }
 
     /**

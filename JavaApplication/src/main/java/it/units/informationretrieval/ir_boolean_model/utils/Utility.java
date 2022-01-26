@@ -140,17 +140,25 @@ public class Utility {
 
         String toReturn = removeInvalidCharsAndToLowerCase(token, fromQuery);
 
-        // Stop-words handling
-        if (shouldExcludeStopWords()) {
-            if (isStopWord(toReturn, language)) {
+        Stemmer stemmer = getStemmer();
+
+        // Stop-words handling (when stemming is not performed)
+        if (stemmer == null && shouldExcludeStopWords()) {
+            if (isStopWord(toReturn, language, false)) {
                 return null;
             }
         }
 
         // Stemming
-        Stemmer stemmer = getStemmer();
         if (stemmer != null) {
             toReturn = stemmer.stem(toReturn, language);
+        }
+
+        // Stop-words handling (when stemming is performed)
+        if (shouldExcludeStopWords()) {
+            if (isStopWord(toReturn, language, true)) {
+                return null;
+            }
         }
 
         return toReturn.isBlank() ? null : toReturn;
@@ -198,10 +206,11 @@ public class Utility {
     /**
      * @param word     The word.
      * @param language The language of the word.
+     * @param stemming True if stemming must be applied to stop-words, false otherwise.
      * @return true if the given word is a stop word for the given language.
      */
-    public static boolean isStopWord(String word, @NotNull Language language) {
-        return Arrays.asList(language.getStopWords()).contains(word);
+    public static boolean isStopWord(String word, @NotNull Language language, boolean stemming) {
+        return Arrays.asList(stemming ? language.getStemmedStopWords() : language.getStopWords()).contains(word);
     }
 
     /**

@@ -410,7 +410,7 @@ class TestQueriesCreator {
                         .replaceAll("[^a-z]", " ")))// remove everything but lowercase characters
                 .sequential()
                 .filter(s -> !s.isBlank())
-                .filter(s -> !removeStopWords || !Utility.isStopWord(s, CORPUS_LANGUAGE));
+                .filter(s -> !removeStopWords || !Utility.isStopWord(s, CORPUS_LANGUAGE, false));
     }
 
     /**
