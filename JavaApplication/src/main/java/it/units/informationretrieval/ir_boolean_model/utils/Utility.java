@@ -60,6 +60,16 @@ public class Utility {
     private static final String REGEX_MULTIPLE_SPACES = "\\s+";
 
     /**
+     * Caches the (eventually null) {@link Stemmer} to use.
+     */
+    @Nullable
+    private static Stemmer cachedStemmed = null;
+    /**
+     * Flag: true if {@link #cachedStemmed} has been initialized.
+     */
+    private static boolean cachedStemmedInitialized;
+
+    /**
      * Tokenize a {@link Document} and return the {@link java.util.List} of tokens as
      * {@link String} (eventually with duplicates) obtained from the {@link Document}.
      *
@@ -152,22 +162,24 @@ public class Utility {
      * name set in the IR System config file.
      */
     @Nullable
-    private static Stemmer getStemmer() {
-        try {
-            String stemmerName = AppProperties.getInstance().get("app.stemmer");
-            if (stemmerName == null || stemmerName.equals("null")) {
-                return null;
+    public static Stemmer getStemmer() {
+        if (!cachedStemmedInitialized) {
+            cachedStemmed = null;
+            try {
+                String stemmerName = AppProperties.getInstance().get("app.stemmer");
+                if (stemmerName != null && !stemmerName.equals("null")) {
+                    cachedStemmed = Stemmer.getStemmer(Stemmer.AvailableStemmer.valueOf(stemmerName.toUpperCase()));
+                }
+            } catch (IOException e) {
+                System.err.println("Error while reading app properties. Stemming will not be performed.");
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                System.err.println("Stemmer not available while reading app properties. Stemming will not be performed.");
+                e.printStackTrace();
             }
-            return Stemmer.getStemmer(Stemmer.AvailableStemmer.valueOf(stemmerName.toUpperCase()));
-        } catch (IOException e) {
-            System.err.println("Error while reading app properties. Stemming will not be performed.");
-            e.printStackTrace();
-            return null;
-        } catch (IllegalArgumentException e) {
-            System.err.println("Stemmer not available while reading app properties. Stemming will not be performed.");
-            e.printStackTrace();
-            return null;
+            cachedStemmedInitialized = true;
         }
+        return cachedStemmed;
     }
 
     /**
