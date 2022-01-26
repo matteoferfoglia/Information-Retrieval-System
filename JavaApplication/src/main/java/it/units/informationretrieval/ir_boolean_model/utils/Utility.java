@@ -39,6 +39,11 @@ public class Utility {
     private static final String REGEX_VALID_CHARACTERS = "a-zA-Z0-9\\s";
 
     /**
+     * Regex of punctuation chars (for string normalization purposes).
+     */
+    private static final String REGEX_PUNCTUATION = "[|!\"£$%&\\/=?^_*\\-+,.:;#]";
+
+    /**
      * Regex used in {@link #normalize(String, boolean, Language)}.
      */
     private static final String REGEX__NOT__VALID_CHARACTERS_WHEN_INDEXING = "[^" + REGEX_VALID_CHARACTERS + "]";
@@ -65,7 +70,8 @@ public class Utility {
     public static String[] tokenize(@NotNull Document document, @NotNull Language language) {
         assert document.getContent() != null;
         return Arrays.stream(
-                        split(/*title is included in the content*/document.getContent().getEntireTextContent()))
+                        split(/*title is included in the content*/document.getContent().getEntireTextContent()
+                                .replaceAll(REGEX_PUNCTUATION, " ")))
                 .filter(text -> !text.isBlank())
                 .map(token -> Utility.normalize(token, false, language))
                 .filter(Objects::nonNull)
