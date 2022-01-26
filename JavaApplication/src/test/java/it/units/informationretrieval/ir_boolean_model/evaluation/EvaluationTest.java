@@ -231,7 +231,7 @@ public class EvaluationTest {
 
     @Test
     @Order(3)
-    void precisionRecallCurve() {
+    void precisionRecallCurve() {   // TODO : look at worst queries and understand why
 
         precisionRecallSeries = CRANFIELD_QUERIES.parallelStream().unordered()
                 .map(query -> {
