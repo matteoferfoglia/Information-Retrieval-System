@@ -2,7 +2,9 @@ package it.units.informationretrieval.ir_boolean_model;
 
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.factories.CorpusFactory;
+import it.units.informationretrieval.ir_boolean_model.queries.BINARY_OPERATOR;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
+import it.units.informationretrieval.ir_boolean_model.queries.UNARY_OPERATOR;
 import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
 import it.units.informationretrieval.ir_boolean_model.utils.ClassLoading;
 import org.jetbrains.annotations.NotNull;
@@ -369,7 +371,15 @@ public class Main {
                 if (wordsInPCorrection.equals(wordsInSCorrection)) {
                     be = bePCorrection;
                 } else {    // no sense to compute OR if the resulting query is the same
-                    be = bePCorrection.or(beSCorrection);
+                    String entireQueryString = bePCorrection.or(beSCorrection).getQueryString();
+                    for (var op : BINARY_OPERATOR.values()) {
+                        entireQueryString = entireQueryString.replaceAll(op.toString(), op.getSymbol());
+                    }
+                    for (var op : UNARY_OPERATOR.values()) {
+                        entireQueryString = entireQueryString.replaceAll(op.toString(), op.getSymbol());
+                    }
+                    be = irs.createNewBooleanExpression().parseQuery(entireQueryString);  // simplify the resulting query string
+                    // because both spelling and phonetic correction might lead to the same corrected words
                 }
             } else if (usePhoneticCorrection.get()) {
                 be = bePCorrection;
