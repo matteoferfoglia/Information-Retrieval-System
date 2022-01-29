@@ -8,12 +8,10 @@ import it.units.informationretrieval.ir_boolean_model.plots.Point;
 import it.units.informationretrieval.ir_boolean_model.plots.XYLineChart;
 import it.units.informationretrieval.ir_boolean_model.user_defined_contents.cranfield.CranfieldCorpusFactory;
 import it.units.informationretrieval.ir_boolean_model.utils.Pair;
-import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import skiplist.SkipList;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -137,11 +135,9 @@ public class EvaluationTest {
         CRANFIELD_QUERIES.stream()
                 .sequential()   // order matters to associate queries to their precisions (if desired)
                 .forEach(query -> {
-                    Set<Document> relevantDocuments = query.getRelevantDocs().keySet()
-                            .stream().map(doc -> (Document) doc).collect(Collectors.toSet());
-                    Set<Document> retrievedDocuments = new HashSet<>(CRANFIELD_IRS.retrieve(query.getQueryText()));
-                    Set<Document> relevantAndRetrieved = relevantDocuments.stream()
-                            .filter(retrievedDocuments::contains).collect(Collectors.toSet());
+                    var relevantDocuments = getRelevantDocsForQuery(query);
+                    var retrievedDocuments = getRetrievedDocsForQuery(query);
+                    Set<Document> relevantAndRetrieved = getRelevantAndRetrieved(relevantDocuments, retrievedDocuments);
                     // TODO : investigate on errors (retrievedDocuments.stream().filter(d -> ! relevantDocuments.contains(d)).toList()) to improve precision and recall
                     //        Stemming problems, e.g.: wildcard f*ow matches "following", because stemming of "following" is "follow" --> add to stop words?
                     precisions.add(retrievedDocuments.size() > 0
@@ -151,6 +147,38 @@ public class EvaluationTest {
                             ? (double) relevantAndRetrieved.size() / relevantDocuments.size()
                             : retrievedDocuments.size() == 0 ? 1 : 0);
                 });
+    }
+
+    /**
+     * @param relevantDocuments  {@link List} of relevant documents (referring to a query).
+     * @param retrievedDocuments {@link List} of retrieved documents (referring ot the same query of the other param).
+     * @return The intersection of relevant and retrieved documents as {@link Set}.
+     */
+    @NotNull
+    private static Set<Document> getRelevantAndRetrieved(
+            @NotNull List<Document> relevantDocuments,
+            @NotNull List<Document> retrievedDocuments) {
+        return relevantDocuments.stream()
+                .filter(retrievedDocuments::contains).collect(Collectors.toSet());
+    }
+
+    /**
+     * @param query A query.
+     * @return The {@link List} of {@link Document}s retrieved for the input query,
+     * sorted as described in {@link InformationRetrievalSystem#retrieve(String)}.
+     */
+    @NotNull
+    private static List<Document> getRetrievedDocsForQuery(@NotNull CranfieldQuery query) {
+        return CRANFIELD_IRS.retrieve(query.getQueryText());
+    }
+
+    /**
+     * @param query A query.
+     * @return The {@link List} of {@link Document}s which are relevant for the input query.
+     */
+    @NotNull
+    private static List<Document> getRelevantDocsForQuery(@NotNull CranfieldQuery query) {
+        return query.getRelevantDocs().keySet().stream().map(doc -> (Document) doc).toList();
     }
 
     @AfterAll
@@ -236,13 +264,12 @@ public class EvaluationTest {
 
         precisionRecallSeries = CRANFIELD_QUERIES.parallelStream().unordered()
                 .map(query -> {
-                    SkipList<Document> relevantDocuments = new SkipList<>(
-                            query.getRelevantDocs().keySet().stream().map(doc -> (Document) doc).toList());
-                    List<Document> retrievedDocuments = CRANFIELD_IRS.retrieve(query.getQueryText());
+                    var relevantDocuments = getRelevantDocsForQuery(query);
+                    var retrievedDocuments = getRetrievedDocsForQuery(query);
                     Point.Series recall_precision_points = new Point.Series(String.valueOf(query.getQueryNumber()));
-                    for (int j = 1; j < retrievedDocuments.size(); j++) {
-                        var retrievedDocsTillJth = new SkipList<>(retrievedDocuments.subList(0, j));
-                        var relevantAndRetrievedTillJth = Utility.intersection(relevantDocuments, retrievedDocsTillJth);
+                    for (int j = 0; j < retrievedDocuments.size(); j++) {
+                        var retrievedDocsTillJth = retrievedDocuments.subList(0, j + 1);
+                        var relevantAndRetrievedTillJth = getRelevantAndRetrieved(relevantDocuments, retrievedDocsTillJth);
                         double precision = (double) relevantAndRetrievedTillJth.size() / retrievedDocsTillJth.size();
                         double recall = (double) relevantAndRetrievedTillJth.size() / relevantDocuments.size();
                         recall_precision_points.add(new Point<>(recall, precision));
@@ -276,7 +303,7 @@ public class EvaluationTest {
                         // sort list of series according to avg precision (the worst series at beginning)
                         precisionRecallSeries.stream()
                                 .map(series -> new Pair<>(
-                                        series.stream().mapToDouble(Point::getY).average().orElse(0),
+                                        series.stream().mapToDouble(Point::getY).average().orElseThrow(),
                                         series.getName()))
                                 .sorted(Comparator.comparingDouble(Map.Entry::getKey))
                                 .limit(MAX_NUM_OF_WORST_QUERIES)
