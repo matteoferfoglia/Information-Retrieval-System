@@ -282,6 +282,9 @@ public class EvaluationTest {
                         recall_precision_points.add(new Point<>(recall, precision));
                     }
 
+                    // TODO: if stemming is     enabled for the system, the system might retrieve less documents than relevant, because the system should have a further index mapping all rotations of all (stemmed and un-stemmed) terms to its stemmed version.
+                    //       if stemming is NOT enabled for the system, the system might retrieve less documents than relevant, because, e.g., for query "shearing", the system will not search for "shear", hence a number of results will be not retrieved
+
                     return recall_precision_points;
                 })
                 .collect(Collectors.toList());
