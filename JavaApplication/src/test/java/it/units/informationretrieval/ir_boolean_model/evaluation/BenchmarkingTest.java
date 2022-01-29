@@ -2,7 +2,6 @@ package it.units.informationretrieval.ir_boolean_model.evaluation;
 
 import benchmark.BenchmarkRunner;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
-import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,20 +16,20 @@ class BenchmarkingTest {
      */
     private static final String FOLDER_NAME_TO_SAVE_RESULTS = "system_evaluation" + File.separator + "benchmarks";
 
-    @Test
-        // this method will be executed with the test suite if annotated with @Test
-    void benchmarkAll() throws IOException {
-        final boolean printBenchmarkProgress = true;
-        BenchmarkRunner benchmarkRunner = new BenchmarkRunner(printBenchmarkProgress);
-        benchmarkRunner.benchmarkAllAnnotatedMethodsAndGetListOfResults();
-        System.out.println(benchmarkRunner);
-        Utility.writeToFile(
-                benchmarkRunner.toString(),
-                new File(FOLDER_NAME_TO_SAVE_RESULTS + File.separator +
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
-                                .withZone(ZoneId.systemDefault())
-                                .format(Instant.now()) + ".txt"),
-                false);
-    }
+//    @Test
+// this method will be executed with the test suite if annotated with @Test // TODO: better to create a specific configuration to run only benchmarking (it requires very long time)
+void benchmarkAll() throws IOException {
+    final boolean printBenchmarkProgress = true;
+    BenchmarkRunner benchmarkRunner = new BenchmarkRunner(printBenchmarkProgress);
+    benchmarkRunner.benchmarkAllAnnotatedMethodsAndGetListOfResults();
+    System.out.println(benchmarkRunner);
+    Utility.writeToFile(
+            benchmarkRunner.toString(),
+            new File(FOLDER_NAME_TO_SAVE_RESULTS + File.separator +
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
+                            .withZone(ZoneId.systemDefault())
+                            .format(Instant.now()) + ".txt"),
+            false);
+}
 
 }
