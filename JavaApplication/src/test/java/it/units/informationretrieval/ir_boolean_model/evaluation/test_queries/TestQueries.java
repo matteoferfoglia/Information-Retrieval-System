@@ -278,14 +278,14 @@ class TestQueries {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Method invalidCharsRemoverAndToLowerCase = Utility.class.getDeclaredMethod(
                 "removeInvalidCharsAndToLowerCase", String.class, boolean.class);
-        Method stopWordsIdentifier = Utility.class.getDeclaredMethod("isStopWord", String.class, Language.class);
+        Method stopWordsIdentifier = Utility.class.getDeclaredMethod("isStopWord", String.class, Language.class, boolean.class);
         Stream.of(invalidCharsRemoverAndToLowerCase, stopWordsIdentifier).forEach(method -> method.setAccessible(true));
         return Arrays.stream(Utility.split(
                         (String) invalidCharsRemoverAndToLowerCase.invoke(
                                 null, Objects.requireNonNull(document.getContent()).getEntireTextContent(), true)))
                 .filter(word -> {
                     try {
-                        return !(boolean) stopWordsIdentifier.invoke(null, word, USED_LANGUAGE);
+                        return !(boolean) stopWordsIdentifier.invoke(null, word, USED_LANGUAGE, true /*true by default, but if the system is not using stemming, then no stemming is performed*/);
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
                         return false;
