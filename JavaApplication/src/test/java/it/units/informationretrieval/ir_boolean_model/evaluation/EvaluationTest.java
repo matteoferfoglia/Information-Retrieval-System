@@ -7,6 +7,7 @@ import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAva
 import it.units.informationretrieval.ir_boolean_model.plots.Point;
 import it.units.informationretrieval.ir_boolean_model.plots.XYLineChart;
 import it.units.informationretrieval.ir_boolean_model.user_defined_contents.cranfield.CranfieldCorpusFactory;
+import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
@@ -198,7 +199,7 @@ public class EvaluationTest {
             sb.append("\tMin:     ").append(formatDouble.apply(min_)).append("\t observed in ").append(occurrencesOfMin).append(" samples").append(System.lineSeparator());
         };
 
-        sb.append(System.lineSeparator()).append("Statistics about ").append(dimensionName).append(System.lineSeparator());
+        sb.append("Statistics about ").append(dimensionName).append(System.lineSeparator());
         statisticsMaker.accept(whatToComputeStatisticsAbout);
         sb.append("Excluding max and min:").append(System.lineSeparator());
         statisticsMaker.accept(whatToComputeStatisticsAbout.stream()
@@ -267,26 +268,32 @@ public class EvaluationTest {
             }
         } while (true /*exit via break instruction*/);
 
-
-        // Investigation on the worst query
-        List<Double> avgPrecisions = precisionRecallSeries.stream().sequential()   // same order
-                .map(serie -> serie.stream().mapToDouble(Point::getY).average().orElse(0))
-                .sorted().toList();
-        // sort list of series according to avg precision (worst series at beginning)
-        SortedMap<Double, Point.Series> avgPrecisionToSeries = new TreeMap<>();
-        for (int i = 0; i < avgPrecisions.size(); i++) {
-            avgPrecisionToSeries.put(avgPrecisions.get(i), precisionRecallSeries.get(i));
+        // Investigation on the worst query (according to the worst precision)
+        final int MAX_NUM_OF_WORST_QUERIES = 10;    // how many to show
+        StringBuilder worstQueriesSummary = new StringBuilder(
+                "The " + MAX_NUM_OF_WORST_QUERIES + " queries with the worst precision:" + System.lineSeparator());
+        worstQueriesSummary.append(
+                        // sort list of series according to avg precision (the worst series at beginning)
+                        precisionRecallSeries.stream()
+                                .map(series -> new Pair<>(
+                                        series.stream().mapToDouble(Point::getY).average().orElse(0),
+                                        series.getName()))
+                                .sorted(Comparator.comparingDouble(Map.Entry::getKey))
+                                .limit(MAX_NUM_OF_WORST_QUERIES)
+                                .map(aAvgPrecisionToSeries -> {
+                                    var avgPrecision = aAvgPrecisionToSeries.getKey();
+                                    var seriesName = aAvgPrecisionToSeries.getValue();
+                                    return "\tQuery " + seriesName + ") \tAvg precision: " + avgPrecision;
+                                })
+                                .collect(Collectors.joining(System.lineSeparator())))
+                .append(System.lineSeparator());
+        System.out.println(worstQueriesSummary);
+        try {
+            WRITER_TO_FILE.write(worstQueriesSummary.toString());
+            WRITER_TO_FILE.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        System.out.println("Worst queries: ");
-        final int MAX_NUM_OF_WORST_QUERIES = 10;
-        avgPrecisionToSeries.entrySet().stream()
-                .sorted(Comparator.comparingDouble(Map.Entry::getKey))
-                .limit(MAX_NUM_OF_WORST_QUERIES)
-                .forEach(avgPrecisionToseries -> {
-                    var avgPrecision = avgPrecisionToseries.getKey();
-                    var seriesName = avgPrecisionToseries.getValue().getName();
-                    System.out.println("\tQuery " + seriesName + ") \tAvg precision: " + avgPrecision);
-                });
 
     }
 
