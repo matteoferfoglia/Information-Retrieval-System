@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -486,6 +487,9 @@ class BooleanTestQueriesCreator {
          * The entire stemmed content of the document.
          */
         @NotNull
+        private final List<String> entireStemmedContent;
+
+        @NotNull
         private final List<String> entireContent;
 
         /**
@@ -493,7 +497,8 @@ class BooleanTestQueriesCreator {
          * @param removeStopWords Flag: true if stop words must be removed, false to keep them.
          */
         public StemmedDocument(@NotNull final Document document, boolean removeStopWords) {
-            this.entireContent = getStemmed(normalizeTestDocument(document, removeStopWords).toList());
+            this.entireContent = normalizeTestDocument(document, removeStopWords).toList();
+            this.entireStemmedContent = getStemmed(this.entireContent);
             if (document instanceof CranfieldDocument cd) {
                 this.docId = cd.getDocNumber();
             } else {
@@ -507,7 +512,7 @@ class BooleanTestQueriesCreator {
          * @return true if this instance contains all the given words, false otherwise.
          */
         public boolean containsAllWords(@NotNull List<String> words) {
-            return entireContent.containsAll(Objects.requireNonNull(words));
+            return entireStemmedContent.containsAll(Objects.requireNonNull(words));
         }
 
         /**
@@ -522,7 +527,7 @@ class BooleanTestQueriesCreator {
          * @return true if this instance contains at least one of the given words, false otherwise.
          */
         public boolean containsAtLeastOneWord(@NotNull List<String> words) {
-            return words.stream().anyMatch(entireContent::contains);
+            return words.stream().anyMatch(entireStemmedContent::contains);
         }
 
         /**
@@ -530,7 +535,7 @@ class BooleanTestQueriesCreator {
          * @return true if this instance contains the given word, false otherwise.
          */
         public boolean contains(@NotNull String word) {
-            return entireContent.contains(word);
+            return entireStemmedContent.contains(word);
         }
 
         /**
@@ -540,13 +545,13 @@ class BooleanTestQueriesCreator {
         public boolean containsConsecutive(@NotNull List<String> words) {
             if (words.size() > 0) {
                 int indexOfFirstWord = 0, prevIndexValue = indexOfFirstWord;
-                while (indexOfFirstWord < entireContent.size()
-                        && (indexOfFirstWord += entireContent.subList(indexOfFirstWord, entireContent.size())    // sublist to examine the remaining part only
+                while (indexOfFirstWord < entireStemmedContent.size()
+                        && (indexOfFirstWord += entireStemmedContent.subList(indexOfFirstWord, entireStemmedContent.size())    // sublist to examine the remaining part only
                         .indexOf(words.get(0))) > prevIndexValue) {
                     prevIndexValue = indexOfFirstWord;
                     int i, j;
-                    for (i = 0; i < words.size() && (j = i + indexOfFirstWord) < entireContent.size(); i++) {
-                        if (!entireContent.get(j).equals(words.get(i))) {
+                    for (i = 0; i < words.size() && (j = i + indexOfFirstWord) < entireStemmedContent.size(); i++) {
+                        if (!entireStemmedContent.get(j).equals(words.get(i))) {
                             break;  // exit from inner for-loop (if here, i<words.size() for sure, because the loop is interrupted for sure before the last incrementation of i
                         }
                     }
@@ -566,7 +571,7 @@ class BooleanTestQueriesCreator {
          * @return true if this instance does <strong>NOT</strong> contain the given word, false otherwise.
          */
         public boolean notContain(@NotNull String word) {
-            return !entireContent.contains(Objects.requireNonNull(word));
+            return !entireStemmedContent.contains(Objects.requireNonNull(word));
         }
 
         /**
@@ -582,9 +587,10 @@ class BooleanTestQueriesCreator {
             }
             final String substringBeforeWildcard = wordWithWildcard.substring(0, indexOfWildcard);
             final String substringAfterWildcard = wordWithWildcard.substring(indexOfWildcard + 1);
-            return entireContent.stream()
-                    .anyMatch(word -> word.length() >= substringBeforeWildcard.length() + substringAfterWildcard.length()
-                            && word.startsWith(substringBeforeWildcard) && word.endsWith(substringAfterWildcard));
+            final Predicate<String> wildcardPredicate = word -> word.length() >= substringBeforeWildcard.length() + substringAfterWildcard.length()
+                    && word.startsWith(substringBeforeWildcard) && word.endsWith(substringAfterWildcard);
+            return entireStemmedContent.stream().anyMatch(wildcardPredicate)
+                    || entireContent.stream().anyMatch(wildcardPredicate);
         }
     }
 }

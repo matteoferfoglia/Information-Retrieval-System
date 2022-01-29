@@ -268,6 +268,7 @@ public class EvaluationTest {
                     var relevantDocuments = getRelevantDocsForQuery(query);
                     var retrievedDocuments = getRetrievedDocsForQuery(query);
                     Point.Series recall_precision_points = new Point.Series(String.valueOf(query.getQueryNumber()));
+
                     for (int j = 0; j < retrievedDocuments.size(); j++) {
                         var retrievedDocsTillJth = retrievedDocuments.subList(0, j + 1);
                         var relevantAndRetrievedTillJth = getRelevantAndRetrieved(relevantDocuments, retrievedDocsTillJth);
@@ -275,6 +276,12 @@ public class EvaluationTest {
                         double recall = (double) relevantAndRetrievedTillJth.size() / relevantDocuments.size();
                         recall_precision_points.add(new Point<>(recall, precision));
                     }
+                    if (retrievedDocuments.isEmpty()) {
+                        double precision = 0D;
+                        double recall = 0D;
+                        recall_precision_points.add(new Point<>(recall, precision));
+                    }
+
                     return recall_precision_points;
                 })
                 .collect(Collectors.toList());
@@ -297,7 +304,8 @@ public class EvaluationTest {
         } while (true /*exit via break instruction*/);
 
         // Investigation on the worst query (according to the worst precision)
-        final int MAX_NUM_OF_WORST_QUERIES = 10;    // how many to show
+        // TODO: low precision results due to wildcard query that, if stemming is applied, do not work correctly (system should have a supplementary index containing all rotations of un-stemmed words!)
+        final int MAX_NUM_OF_WORST_QUERIES = 20;    // how many to show
         StringBuilder worstQueriesSummary = new StringBuilder(
                 "The " + MAX_NUM_OF_WORST_QUERIES + " queries with the worst precision:" + System.lineSeparator());
         worstQueriesSummary.append(

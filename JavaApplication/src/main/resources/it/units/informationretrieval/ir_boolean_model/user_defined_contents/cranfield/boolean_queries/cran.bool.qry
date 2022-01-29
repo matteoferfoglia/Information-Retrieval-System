@@ -1,723 +1,813 @@
 .I 1 
 .W
-! body
+("and wind") | (! circular) | (flow) | (in*tigation)
 .I 2 
 .W
-("stagnation gas") | (f*ow) | (! equations) | (drag)
+("a variety") | (! distance) | (flow) | (lay*r)
 .I 3 
 .W
-("stagnation gas") | (solut*on) | (! analysis) | (drag)
+air & contour
 .I 4 
 .W
-! equations
+set | analysis
 .I 5 
 .W
-extend & symmetry
+! equations
 .I 6 
 .W
-("problem but") & (*ch) & (! equations) & (flow)
+coefficient & propeller
 .I 7 
 .W
-("viscous flow") | (f*ow) | (! analysis) | (drag)
+in*tigation
 .I 8 
 .W
-*ch
+"and wind"
 .I 9 
 .W
-("viscous flow") & (f*ow) & (! analysis) & (flow)
+("numbers from") & (! circular) & (scs) & (ma*h)
 .I 10 
 .W
-("problem but") | (f*ow) | (! body) | (flow)
+("numbers from") & (! equations) & (cone) & (in*tigation)
 .I 11 
 .W
-("problem but") | (f*ow) | (! equations) | (drag)
+ma*h
 .I 12 
 .W
-("viscous flow") & (*ch) & (! body) & (considered)
+scs
 .I 13 
 .W
-"viscous flow"
+depend & pressure
 .I 14 
 .W
-circulation | radius
+! distance
 .I 15 
 .W
-! tunnel
+("a variety") | (! equations) | (cone) | (in*tigation)
 .I 16 
 .W
-("problem but") | (solut*on) | (! analysis) | (drag)
+("a variety") | (! distance) | (cone) | (in*tigation)
 .I 17 
 .W
-("stagnation gas") | (f*ow) | (! body) | (considered)
+shock
 .I 18 
 .W
-hypersonic | flight
+("numbers from") & (! distance) & (cone) & (in*tigation)
 .I 19 
 .W
-shock
+("numbers from") & (! distance) & (cone) & (ma*h)
 .I 20 
 .W
-"properties have"
+("numbers from") & (! distance) & (scs) & (in*tigation)
 .I 21 
 .W
-"density viscosity"
+("numbers from") & (! circular) & (flow) & (ma*h)
 .I 22 
 .W
-thickness & bell
+("a variety") | (! equations) | (flow) | (lay*r)
 .I 23 
 .W
-("viscous flow") | (solut*on) | (! equations) | (drag)
+("numbers from") & (! distance) & (flow) & (lay*r)
 .I 24 
 .W
-wing
+("and wind") | (! distance) | (scs) | (in*tigation)
 .I 25 
 .W
-dimensional | movement
+"is admitted"
 .I 26 
 .W
-("viscous flow") | (*ch) | (! body) | (drag)
+("numbers from") | (! distance) | (cone) | (in*tigation)
 .I 27 
 .W
-("viscous flow") | (solut*on) | (! analysis) | (drag)
+("and wind") | (! distance) | (flow) | (lay*r)
 .I 28 
 .W
-("stagnation gas") | (solut*on) | (! equations) | (drag)
+densities & theory
 .I 29 
 .W
-("viscous flow") | (f*ow) | (! equations) | (drag)
+lay*r
 .I 30 
 .W
-! factor
+layer | injection
 .I 31 
 .W
-*er
+temperature & waves
 .I 32 
 .W
-("stagnation gas") & (*ch) & (! equations) & (flow)
+("and wind") | (! distance) | (cone) | (lay*r)
 .I 33 
 .W
-r*te
+"q j"
 .I 34 
 .W
-measurements
+("a variety") | (! circular) | (scs) | (lay*r)
 .I 35 
 .W
-("problem but") | (f*ow) | (! analysis) | (considered)
+flow | body
 .I 36 
 .W
-("stagnation gas") | (f*ow) | (! analysis) | (drag)
+("and wind") | (! equations) | (cone) | (in*tigation)
 .I 37 
 .W
-("viscous flow") | (f*ow) | (! analysis) | (considered)
+("a variety") | (! equations) | (cone) | (lay*r)
 .I 38 
 .W
-("viscous flow") | (*ch) | (! analysis) | (drag)
+("and wind") & (! circular) & (flow) & (ma*h)
 .I 39 
 .W
-circular | stream
+("numbers from") & (! equations) & (scs) & (lay*r)
 .I 40 
 .W
-"critical transition"
+local & boundary
 .I 41 
 .W
-("stagnation gas") | (solut*on) | (! analysis) | (considered)
+*ed
 .I 42 
 .W
-! thermodynamic
+ambient | expressions
 .I 43 
 .W
-pla*e
+("numbers from") | (! equations) | (flow) | (lay*r)
 .I 44 
 .W
-speed & function
+commercial | viscosity
 .I 45 
 .W
-ratio
+("and wind") | (! equations) | (scs) | (lay*r)
 .I 46 
 .W
-("problem but") & (f*ow) & (! body) & (flow)
+("numbers from") & (! circular) & (cone) & (ma*h)
 .I 47 
 .W
-"of varying"
+("a variety") | (! equations) | (scs) | (ma*h)
 .I 48 
 .W
-"afterbody agreed"
+local & planes
 .I 49 
 .W
-("stagnation gas") | (f*ow) | (! analysis) | (flow)
+! blunt
 .I 50 
 .W
-method & perpendicular
+simulate & flow
 .I 51 
 .W
-("stagnation gas") & (*ch) & (! equations) & (considered)
+remains | flight
 .I 52 
 .W
-("viscous flow") | (*ch) | (! equations) | (considered)
+weapon | calculation
 .I 53 
 .W
-"practical significance"
+b*ry
 .I 54 
 .W
-technique & wires
+"other properties"
 .I 55 
 .W
-! pressure
+("a variety") | (! distance) | (scs) | (ma*h)
 .I 56 
 .W
-"given for"
+("numbers from") | (! equations) | (flow) | (in*tigation)
 .I 57 
 .W
-("stagnation gas") | (*ch) | (! equations) | (considered)
+("a variety") | (! equations) | (scs) | (lay*r)
 .I 58 
 .W
-data | hypersonic
+turbulent
 .I 59 
 .W
-"on a"
+! investigated
 .I 60 
 .W
-tests
+("numbers from") & (! distance) & (flow) & (ma*h)
 .I 61 
 .W
-! approximations
+("numbers from") & (! equations) & (scs) & (in*tigation)
 .I 62 
 .W
-("viscous flow") & (f*ow) & (! analysis) & (considered)
+*lution
 .I 63 
 .W
-! boundary
+("and wind") | (! circular) | (flow) | (ma*h)
 .I 64 
 .W
-("stagnation gas") & (f*ow) & (! equations) & (flow)
+("and wind") | (! equations) | (scs) | (in*tigation)
 .I 65 
 .W
-("stagnation gas") | (solut*on) | (! body) | (drag)
+("a variety") & (! circular) & (flow) & (ma*h)
 .I 66 
 .W
-("problem but") | (solut*on) | (! equations) | (flow)
+aligned | plan
 .I 67 
 .W
-("stagnation gas") | (f*ow) | (! body) | (flow)
+composite & data
 .I 68 
 .W
-("viscous flow") & (f*ow) & (! body) & (flow)
+("a variety") | (! circular) | (cone) | (in*tigation)
 .I 69 
 .W
-mach
+("and wind") | (! equations) | (cone) | (ma*h)
 .I 70 
 .W
-"form of"
+("numbers from") | (! distance) | (flow) | (lay*r)
 .I 71 
 .W
-("problem but") | (*ch) | (! equations) | (drag)
+! pressure
 .I 72 
 .W
-("problem but") | (*ch) | (! analysis) | (considered)
+s*ong
 .I 73 
 .W
-! heat
+("a variety") | (! distance) | (flow) | (in*tigation)
 .I 74 
 .W
-"time and"
+("and wind") | (! circular) | (scs) | (ma*h)
 .I 75 
 .W
-speed
+characteristics | elastic
 .I 76 
 .W
-yaw & internal
+("a variety") | (! equations) | (scs) | (in*tigation)
 .I 77 
 .W
-("problem but") & (*ch) & (! analysis) & (flow)
+("and wind") | (! equations) | (flow) | (in*tigation)
 .I 78 
 .W
-("problem but") & (f*ow) & (! analysis) & (flow)
+("numbers from") | (! equations) | (cone) | (lay*r)
 .I 79 
 .W
-*is
+("a variety") | (! equations) | (cone) | (ma*h)
 .I 80 
 .W
-("stagnation gas") | (*ch) | (! analysis) | (flow)
+("a variety") & (! distance) & (flow) & (ma*h)
 .I 81 
 .W
-la*er
+calculations & configurations
 .I 82 
 .W
-stability | shock
+"object is"
 .I 83 
 .W
-delta & theory
+leading & outer
 .I 84 
 .W
-("viscous flow") | (*ch) | (! body) | (flow)
+"detonation wave"
 .I 85 
 .W
-"from procedures"
+operation | plates
 .I 86 
 .W
-strips & leading
+("numbers from") | (! distance) | (cone) | (lay*r)
 .I 87 
 .W
-calculated & shear
+("numbers from") | (! equations) | (scs) | (in*tigation)
 .I 88 
 .W
-("problem but") & (*ch) & (! body) & (flow)
+"supersonic speeds"
 .I 89 
 .W
-("problem but") | (solut*on) | (! body) | (flow)
+("and wind") & (! distance) & (flow) & (ma*h)
 .I 90 
 .W
-"thickness was"
+! boundary
 .I 91 
 .W
-finite | theoretical
+subcritical | flutter
 .I 92 
 .W
-("viscous flow") | (f*ow) | (! equations) | (flow)
+*emperature
 .I 93 
 .W
-interstellar | supersonic
+boun*ry
 .I 94 
 .W
-("stagnation gas") | (f*ow) | (! analysis) | (considered)
+! investigation
 .I 95 
 .W
-("problem but") | (solut*on) | (! analysis) | (flow)
+response & mass
 .I 96 
 .W
-("viscous flow") | (solut*on) | (! body) | (flow)
+*id
 .I 97 
 .W
-! layer
+! region
 .I 98 
 .W
-fl*w
+("and wind") | (! circular) | (scs) | (lay*r)
 .I 99 
 .W
-*low
+transformed | heights
 .I 100 
 .W
-("viscous flow") & (*ch) & (! equations) & (flow)
+("numbers from") | (! circular) | (flow) | (in*tigation)
 .I 101 
 .W
-"problem but"
+mach
 .I 102 
 .W
-("stagnation gas") | (f*ow) | (! equations) | (considered)
+("and wind") | (! circular) | (scs) | (in*tigation)
 .I 103 
 .W
-("viscous flow") | (*ch) | (! analysis) | (considered)
+("numbers from") | (! circular) | (cone) | (in*tigation)
 .I 104 
 .W
-("viscous flow") & (*ch) & (! analysis) & (flow)
+fuselage & predictions
 .I 105 
 .W
-considered
+"slender body"
 .I 106 
 .W
-("stagnation gas") | (f*ow) | (! body) | (drag)
+responses & investigations
 .I 107 
 .W
-! analysis
+("numbers from") & (! equations) & (cone) & (ma*h)
 .I 108 
 .W
-("problem but") | (f*ow) | (! body) | (considered)
+external | tan
 .I 109 
 .W
-("viscous flow") | (*ch) | (! analysis) | (flow)
+la*er
 .I 110 
 .W
-! gradient
+("numbers from") & (! equations) & (flow) & (ma*h)
 .I 111 
 .W
-! fluid
+intermediate | unified
 .I 112 
 .W
-propellants & equations
+"the velocity"
 .I 113 
 .W
-"stagnation gas"
+("a variety") | (! distance) | (cone) | (lay*r)
 .I 114 
 .W
-("viscous flow") | (*ch) | (! body) | (considered)
+l*yer
 .I 115 
 .W
-("viscous flow") | (solut*on) | (! equations) | (flow)
+! plates
 .I 116 
 .W
-drag
+! layer
 .I 117 
 .W
-("viscous flow") | (f*ow) | (! body) | (considered)
+secondary & attack
 .I 118 
 .W
-math | aeroelastic
+fl*w
 .I 119 
 .W
-flow
+("and wind") | (! circular) | (cone) | (lay*r)
 .I 120 
 .W
-quasi & supersonic
+*low
 .I 121 
 .W
-("viscous flow") | (solut*on) | (! analysis) | (considered)
+("a variety") | (! distance) | (scs) | (in*tigation)
 .I 122 
 .W
-physical & boundary
+! circular
 .I 123 
 .W
-surface
+("a variety") | (! circular) | (flow) | (in*tigation)
 .I 124 
 .W
-("problem but") | (solut*on) | (! body) | (considered)
+("a variety") | (! circular) | (cone) | (lay*r)
 .I 125 
 .W
-("stagnation gas") | (solut*on) | (! body) | (considered)
+("and wind") | (! equations) | (flow) | (ma*h)
 .I 126 
 .W
-involving | analysis
+numerical | matching
 .I 127 
 .W
-("problem but") | (f*ow) | (! equations) | (flow)
+("numbers from") & (! equations) & (scs) & (ma*h)
 .I 128 
 .W
-("problem but") | (f*ow) | (! body) | (drag)
+cone
 .I 129 
 .W
-("viscous flow") | (solut*on) | (! body) | (considered)
+("and wind") | (! equations) | (scs) | (ma*h)
 .I 130 
 .W
-! surface
+"numbers from"
 .I 131 
 .W
-"attack the"
+("and wind") | (! circular) | (flow) | (lay*r)
 .I 132 
 .W
-models | experimental
+("numbers from") | (! equations) | (cone) | (ma*h)
 .I 133 
 .W
-("stagnation gas") | (solut*on) | (! analysis) | (flow)
+"a variety"
 .I 134 
 .W
-lift
+("a variety") | (! equations) | (flow) | (ma*h)
 .I 135 
 .W
-("problem but") | (*ch) | (! body) | (considered)
+formulae & incompressible
 .I 136 
 .W
-! electric
+("and wind") | (! distance) | (cone) | (in*tigation)
 .I 137 
 .W
-contour | reynolds
+"calculated for"
 .I 138 
 .W
-("viscous flow") | (*ch) | (! equations) | (drag)
+("numbers from") | (! circular) | (scs) | (ma*h)
 .I 139 
 .W
-("viscous flow") & (f*ow) & (! analysis) & (drag)
+"vortex and"
 .I 140 
 .W
-theory
+flow
 .I 141 
 .W
-reynolds | plate
+distribution | subsonic
 .I 142 
 .W
-reynolds | investigations
+("a variety") | (! distance) | (flow) | (ma*h)
 .I 143 
 .W
-("problem but") | (solut*on) | (! equations) | (considered)
+surface
 .I 144 
 .W
-f*ow
+method
 .I 145 
 .W
-meth*d
+("numbers from") | (! equations) | (scs) | (ma*h)
 .I 146 
 .W
-cross | experimental
+"the intensity"
 .I 147 
 .W
-shear | flow
+! shock
 .I 148 
 .W
-("viscous flow") | (f*ow) | (! analysis) | (flow)
+cylinders
 .I 149 
 .W
-distribution
+! based
 .I 150 
 .W
-("problem but") | (solut*on) | (! analysis) | (considered)
+! surface
 .I 151 
 .W
-("stagnation gas") & (f*ow) & (! equations) & (considered)
+combinations
 .I 152 
 .W
-! transfer
+("a variety") | (! circular) | (flow) | (lay*r)
 .I 153 
 .W
-! method
+("and wind") | (! distance) | (scs) | (ma*h)
 .I 154 
 .W
-("viscous flow") | (f*ow) | (! body) | (drag)
+wide | phase
 .I 155 
 .W
-("viscous flow") | (solut*on) | (! body) | (drag)
+theory
 .I 156 
 .W
-flat
+supersonic
 .I 157 
 .W
-("problem but") | (f*ow) | (! analysis) | (flow)
+("numbers from") | (! circular) | (cone) | (ma*h)
 .I 158 
 .W
-("stagnation gas") | (*ch) | (! body) | (drag)
+study
 .I 159 
 .W
-! experimental
+f*ow
 .I 160 
 .W
-layer & lift
+("numbers from") | (! distance) | (scs) | (ma*h)
 .I 161 
 .W
-("stagnation gas") | (*ch) | (! body) | (considered)
+revolution | nature
 .I 162 
 .W
-("stagnation gas") | (solut*on) | (! body) | (flow)
+("a variety") & (! circular) & (scs) & (ma*h)
 .I 163 
 .W
-("viscous flow") | (solut*on) | (! analysis) | (flow)
+layer
 .I 164 
 .W
-iterative & solution
+("numbers from") | (! distance) | (scs) | (lay*r)
 .I 165 
 .W
-*ng
+! method
 .I 166 
 .W
-initial
+! transfer
 .I 167 
 .W
-theoretically & flow
+("a variety") & (! equations) & (flow) & (ma*h)
 .I 168 
 .W
-("problem but") | (*ch) | (! analysis) | (drag)
+flat
 .I 169 
 .W
-("viscous flow") & (*ch) & (! body) & (flow)
+press*re
 .I 170 
 .W
-"layer displacement"
+("numbers from") & (! equations) & (flow) & (lay*r)
 .I 171 
 .W
-("viscous flow") & (f*ow) & (! body) & (drag)
+("a variety") & (! equations) & (flow) & (in*tigation)
 .I 172 
 .W
-"general of"
+("a variety") | (! equations) | (flow) | (in*tigation)
 .I 173 
 .W
-("problem but") | (*ch) | (! equations) | (considered)
+! aid
 .I 174 
 .W
-! uniaxial
+("numbers from") | (! distance) | (scs) | (in*tigation)
 .I 175 
 .W
-he*t
+("a variety") | (! circular) | (scs) | (in*tigation)
 .I 176 
 .W
-"of airfoils"
+"high precision"
 .I 177 
 .W
-classification | majority
+stress
 .I 178 
 .W
-"deals with"
+("a variety") & (! distance) & (flow) & (lay*r)
 .I 179 
 .W
-("stagnation gas") | (*ch) | (! analysis) | (drag)
+naca
 .I 180 
 .W
-! laminar
+("numbers from") & (! equations) & (cone) & (lay*r)
 .I 181 
 .W
-theory & loads
+("numbers from") | (! distance) | (flow) | (in*tigation)
 .I 182 
 .W
-dimensional
+("a variety") & (! circular) & (scs) & (lay*r)
 .I 183 
 .W
-flight | simple
+! oscillation
 .I 184 
 .W
-("problem but") | (f*ow) | (! equations) | (considered)
+! uniform
 .I 185 
 .W
-method | tabulated
+("numbers from") | (! distance) | (cone) | (ma*h)
 .I 186 
 .W
-! variables
+("numbers from") | (! circular) | (cone) | (lay*r)
 .I 187 
 .W
-("viscous flow") & (*ch) & (! equations) & (considered)
+"second order"
 .I 188 
 .W
-("viscous flow") & (f*ow) & (! equations) & (considered)
+("and wind") | (! distance) | (scs) | (lay*r)
 .I 189 
 .W
-body
+ratios | penalty
 .I 190 
 .W
-! flow
+cir*lar
 .I 191 
 .W
-("problem but") | (solut*on) | (! body) | (drag)
+("numbers from") & (! equations) & (flow) & (in*tigation)
 .I 192 
 .W
-edge
+("numbers from") & (! circular) & (scs) & (in*tigation)
 .I 193 
 .W
-*ow
+("a variety") & (! equations) & (flow) & (lay*r)
 .I 194 
 .W
-("problem but") & (f*ow) & (! equations) & (flow)
+t*ory
 .I 195 
 .W
-("problem but") | (*ch) | (! body) | (flow)
+("and wind") | (! circular) | (cone) | (ma*h)
 .I 196 
 .W
-("stagnation gas") | (*ch) | (! equations) | (drag)
+! laminar
 .I 197 
 .W
-("stagnation gas") | (*ch) | (! analysis) | (considered)
+"creep deformations"
 .I 198 
 .W
-cones | reduced
+("and wind") | (! circular) | (cone) | (in*tigation)
 .I 199 
 .W
-"this problem"
+solutions & structural
 .I 200 
 .W
-rates & pressure
+("numbers from") | (! distance) | (flow) | (ma*h)
 .I 201 
 .W
-("problem but") | (*ch) | (! equations) | (flow)
+("a variety") & (! circular) & (flow) & (lay*r)
 .I 202 
 .W
-("stagnation gas") | (solut*on) | (! equations) | (considered)
+! flow
 .I 203 
 .W
-("viscous flow") | (f*ow) | (! equations) | (considered)
+"the tabulated"
 .I 204 
 .W
-("viscous flow") | (solut*on) | (! equations) | (considered)
+("a variety") | (! distance) | (cone) | (ma*h)
 .I 205 
 .W
-("viscous flow") & (f*ow) & (! equations) & (flow)
+("and wind") & (! equations) & (flow) & (ma*h)
 .I 206 
 .W
-("viscous flow") | (f*ow) | (! body) | (flow)
+*ow
 .I 207 
 .W
-"perfect gas"
+("numbers from") | (! equations) | (cone) | (in*tigation)
 .I 208 
 .W
-pressure
+("numbers from") & (! distance) & (scs) & (lay*r)
 .I 209 
 .W
-! effects
+"are to"
 .I 210 
 .W
-process | local
+("and wind") | (! equations) | (cone) | (lay*r)
 .I 211 
 .W
-foughner | modulus
+("numbers from") | (! circular) | (flow) | (ma*h)
 .I 212 
 .W
-heat | approximate
+"layer provides"
 .I 213 
 .W
-("problem but") | (solut*on) | (! equations) | (drag)
+("numbers from") | (! circular) | (flow) | (lay*r)
 .I 214 
 .W
-"treated separately"
+investigation | ratio
 .I 215 
 .W
-("problem but") | (*ch) | (! body) | (drag)
+("a variety") & (! distance) & (flow) & (in*tigation)
 .I 216 
 .W
-("stagnation gas") | (*ch) | (! body) | (flow)
+("and wind") | (! distance) | (flow) | (ma*h)
 .I 217 
 .W
-("stagnation gas") | (*ch) | (! equations) | (flow)
+pressure
 .I 218 
 .W
-("viscous flow") & (*ch) & (! analysis) & (considered)
+("numbers from") & (! distance) & (flow) & (in*tigation)
 .I 219 
 .W
-m*od
+"the resulting"
 .I 220 
 .W
-boundary
+effects
 .I 221 
 .W
-("viscous flow") | (*ch) | (! equations) | (flow)
+pressure | efficiency
 .I 222 
 .W
-("problem but") | (*ch) | (! analysis) | (flow)
+"surface and"
 .I 223 
 .W
-("stagnation gas") | (f*ow) | (! equations) | (flow)
+body & shearing
 .I 224 
 .W
-hypersonic
+tes*s
 .I 225 
 .W
-! supersonic
+("numbers from") | (! circular) | (scs) | (in*tigation)
 .I 226 
 .W
-! mach
+("numbers from") & (! distance) & (cone) & (lay*r)
 .I 227 
 .W
-"of air"
+tr*nsfer
 .I 228 
 .W
-cones & waves
+! solutions
 .I 229 
 .W
-"is shown"
+("numbers from") | (! equations) | (flow) | (ma*h)
 .I 230 
 .W
-("stagnation gas") | (solut*on) | (! equations) | (flow)
+analysis | flow
 .I 231 
 .W
-criteria & cambered
+chordwise | cones
 .I 232 
 .W
-("viscous flow") & (f*ow) & (! body) & (considered)
+boundary
 .I 233 
 .W
-classical | transverse
+("numbers from") | (! equations) | (scs) | (lay*r)
 .I 234 
 .W
-consideration | pressure
+! moment
 .I 235 
 .W
-nozzle
+analysis & body
 .I 236 
 .W
-surface & national
+! cylinder
 .I 237 
 .W
-("problem but") | (f*ow) | (! analysis) | (drag)
+poten*ial
 .I 238 
 .W
-conical
+"local change"
 .I 239 
 .W
-wi*g
+("and wind") | (! distance) | (cone) | (ma*h)
 .I 240 
 .W
-investigation
+differential
 .I 241 
 .W
-*sed
+("numbers from") & (! circular) & (flow) & (in*tigation)
+.I 242 
+.W
+gas & cylinder
+.I 243 
+.W
+numerical
+.I 244 
+.W
+("numbers from") & (! circular) & (scs) & (lay*r)
+.I 245 
+.W
+("a variety") & (! distance) & (scs) & (lay*r)
+.I 246 
+.W
+increases | flight
+.I 247 
+.W
+t*eory
+.I 248 
+.W
+("numbers from") & (! circular) & (cone) & (in*tigation)
+.I 249 
+.W
+hypersonic
+.I 250 
+.W
+*at
+.I 251 
+.W
+deflection & electric
+.I 252 
+.W
+"stream temperature"
+.I 253 
+.W
+("a variety") | (! circular) | (flow) | (ma*h)
+.I 254 
+.W
+("numbers from") | (! circular) | (scs) | (lay*r)
+.I 255 
+.W
+("a variety") | (! circular) | (scs) | (ma*h)
+.I 256 
+.W
+scs & single
+.I 257 
+.W
+("numbers from") & (! circular) & (flow) & (lay*r)
+.I 258 
+.W
+("numbers from") & (! distance) & (scs) & (ma*h)
+.I 259 
+.W
+("and wind") | (! equations) | (flow) | (lay*r)
+.I 260 
+.W
+("and wind") | (! distance) | (flow) | (in*tigation)
+.I 261 
+.W
+arc | separation
+.I 262 
+.W
+("a variety") | (! distance) | (scs) | (lay*r)
+.I 263 
+.W
+! pressures
+.I 264 
+.W
+("a variety") & (! equations) & (scs) & (lay*r)
+.I 265 
+.W
+("a variety") & (! circular) & (flow) & (in*tigation)
+.I 266 
+.W
+"course of"
+.I 267 
+.W
+axisymmetric
+.I 268 
+.W
+("numbers from") & (! circular) & (cone) & (lay*r)
+.I 269 
+.W
+simply
+.I 270 
+.W
+("a variety") | (! circular) | (cone) | (ma*h)
+.I 271 
+.W
+usu*l
