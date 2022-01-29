@@ -140,6 +140,7 @@ public class EvaluationTest {
                     Set<Document> relevantAndRetrieved = getRelevantAndRetrieved(relevantDocuments, retrievedDocuments);
                     // TODO : investigate on errors (retrievedDocuments.stream().filter(d -> ! relevantDocuments.contains(d)).toList()) to improve precision and recall
                     //        Stemming problems, e.g.: wildcard f*ow matches "following", because stemming of "following" is "follow" --> add to stop words?
+                    //        Test queries construction problems, e.g.: wildcard "*ch" matches "match"
                     precisions.add(retrievedDocuments.size() > 0
                             ? (double) relevantAndRetrieved.size() / retrievedDocuments.size()
                             : relevantDocuments.size() == 0 ? 1 : 0);
