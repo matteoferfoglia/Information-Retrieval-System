@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  *
  * @author Matteo Ferfoglia
  */
-class TestQueriesCreator {
+class BooleanTestQueriesCreator {
 
     // TODO: use maven exec to run main method of this class
 
@@ -396,7 +396,7 @@ class TestQueriesCreator {
      */
     private static List<String> getAllWordsFromAllDocs(List<Document> docsFromCorpus, boolean removeStopWords) {
         return docsFromCorpus.stream().sequential()
-                .flatMap(doc -> TestQueriesCreator.normalizeTestDocument(doc, removeStopWords))
+                .flatMap(doc -> BooleanTestQueriesCreator.normalizeTestDocument(doc, removeStopWords))
                 .toList();
     }
 
@@ -451,7 +451,7 @@ class TestQueriesCreator {
         }
 
         /**
-         * @param mapQueryStringsToDocIds_ The {@link TestQueriesCreator#mapQueryStringsToDocIdsOfAnswers}
+         * @param mapQueryStringsToDocIds_ The {@link BooleanTestQueriesCreator#mapQueryStringsToDocIdsOfAnswers}
          * @param maxNumOfQueries          Max number of entries to produce in the output list.
          * @return the {@link List} of {@link Map.Entry entries} where the key is
          * a query string and the value is the {@link List} of docIds answering the
