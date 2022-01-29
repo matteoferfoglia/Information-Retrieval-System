@@ -1,19 +1,26 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
+import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
 import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.Soundex;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import it.units.informationretrieval.ir_boolean_model.utils.stemmers.Stemmer;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.jetbrains.annotations.NotNull;
 import skiplist.SkipList;
 import skiplist.SkipListHashMap;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -80,6 +87,12 @@ public class InvertedIndex implements Serializable {
     private final PatriciaTrie<String> permutermIndex;
 
     /**
+     * The {@link Stemmer.AvailableStemmer} used by the system when this instance was created.
+     */
+    @NotNull
+    private final Stemmer.AvailableStemmer stemmer;
+
+    /**
      * Constructor. Creates the instance and indexes the given {@link Corpus}.
      *
      * @param corpus The {@link Corpus} to be indexed.
@@ -102,6 +115,16 @@ public class InvertedIndex implements Serializable {
             indexingProgressPrinterInterrupter.run();
             System.out.println("\nIndexing ended");
         }
+
+        Stemmer.AvailableStemmer stemmerTmp;    // defer assignment to final field
+        try {
+            stemmerTmp = Stemmer.AvailableStemmer.valueOf_(AppProperties.getInstance().get("app.stemmer"));
+        } catch (IOException e) {
+            stemmerTmp = Stemmer.AvailableStemmer.NO_STEMMING;
+            Logger.getLogger(getClass().getCanonicalName())
+                    .log(Level.SEVERE, "Errors while reading app properties", e);
+        }
+        this.stemmer = stemmerTmp;
     }
 
     /**
@@ -448,5 +471,23 @@ public class InvertedIndex implements Serializable {
                 .filter(term -> cf(term) > tfThreshold)
                 .sorted()
                 .toList();
+    }
+
+    @Serial
+    private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+        in.defaultReadObject();
+        try {
+            Stemmer.AvailableStemmer currentAvailableStemmer =
+                    Stemmer.AvailableStemmer.valueOf_(AppProperties.getInstance().get("app.stemmer"));
+            if (currentAvailableStemmer != stemmer/*obtained from deserialization*/) {
+                System.err.println(
+                        "The inverted index was created with different app settings:" + System.lineSeparator() +
+                                "\t Stemmer was " + stemmer + " but now it is " + currentAvailableStemmer + "." + System.lineSeparator() +
+                                "\t Please, re-create the instance for coherent results.");
+            }
+        } catch (IOException e) {
+            Logger.getLogger(getClass().getCanonicalName())
+                    .log(Level.SEVERE, "Errors while reading app properties", e);
+        }
     }
 }

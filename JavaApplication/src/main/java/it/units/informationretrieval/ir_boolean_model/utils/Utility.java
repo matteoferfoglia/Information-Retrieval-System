@@ -175,9 +175,7 @@ public class Utility {
             cachedStemmed = null;
             try {
                 String stemmerName = AppProperties.getInstance().get("app.stemmer");
-                if (stemmerName != null && !stemmerName.equals("null")) {
-                    cachedStemmed = Stemmer.getStemmer(Stemmer.AvailableStemmer.valueOf(stemmerName.toUpperCase()));
-                }
+                cachedStemmed = Stemmer.getStemmer(Stemmer.AvailableStemmer.valueOf_(stemmerName));
             } catch (IOException e) {
                 System.err.println("Error while reading app properties. Stemming will not be performed.");
                 e.printStackTrace();
