@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * An instance of this class is an Inverted Index for a {@link Corpus}
@@ -87,6 +88,12 @@ public class InvertedIndex implements Serializable {
     private final PatriciaTrie<String> permutermIndex;
 
     /**
+     * {@link List} of all <strong>un</strong>stemmed terms composing the dictionary.
+     */
+    @NotNull
+    private final List<String> unstemmedTerms = new ArrayList<>();
+
+    /**
      * The {@link Stemmer.AvailableStemmer} used by the system when this instance was created.
      */
     @NotNull
@@ -143,12 +150,18 @@ public class InvertedIndex implements Serializable {
 
     @NotNull
     private PatriciaTrie<String> createPermutermIndexAndGet() {
-        return getDictionary()
-                .stream().unordered().parallel()
+        Stemmer stemmer = Utility.getStemmer() == null
+                ? Stemmer.getStemmer(Stemmer.AvailableStemmer.NO_STEMMING)
+                : Utility.getStemmer();
+        return Stream.of(getDictionary(), getUnstemmedDictionary())
+                .flatMap(Collection::stream)
+                .distinct().unordered().parallel()
                 .flatMap(strFromDictionary -> {
                     String str = strFromDictionary + END_OF_WORD;
                     return Arrays.stream(Utility.getAllRotationsOf(str))
-                            .map(aRotation -> new Pair<>(aRotation, strFromDictionary));
+                            .map(aRotation -> new Pair<>(
+                                    aRotation,                                           /* the rotation */
+                                    stemmer.stem(strFromDictionary, corpus.getLanguage())/* the eventually stemmed correspondent term in the dictionary*/));
                 })
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
@@ -239,7 +252,7 @@ public class InvertedIndex implements Serializable {
         DocumentIdentifier docIdThisDocument = entryFromCorpusRepresentingOneDocument.getKey();
         Document document = entryFromCorpusRepresentingOneDocument.getValue();
         Map<String, int[]> tokensFromCurrentDocument =
-                Utility.tokenizeAndGetMapWithPositionsInDocument(document, corpus.getLanguage());
+                Utility.tokenizeAndGetMapWithPositionsInDocument(document, corpus.getLanguage(), unstemmedTerms);
 
         return tokensFromCurrentDocument
                 .entrySet()
@@ -311,12 +324,26 @@ public class InvertedIndex implements Serializable {
 
     /**
      * @return the dictionary as sorted {@link java.util.List} of {@link String}s (the terms).
+     * <p/>
+     * <strong>NOTICE</strong>: terms returned by this method are stemmed, if the system is
+     * configured to perform stemming.
      */
+    @NotNull
     public List<String> getDictionary() {
         return invertedIndex.keySet()
                 .stream().sequential()
                 .sorted()
                 .toList();
+    }
+
+    /**
+     * @return the dictionary as sorted {@link java.util.List} of {@link String}s (the terms).
+     * <p/>
+     * <strong>NOTICE</strong>: terms returned by this method are <strong>NOT</strong> stemmed.
+     */
+    @NotNull
+    public List<String> getUnstemmedDictionary() {
+        return unstemmedTerms.stream().toList();
     }
 
     /**

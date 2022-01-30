@@ -6,7 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import skiplist.SkipList;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * This class represents an Information Retrieval System.
@@ -142,56 +145,10 @@ public class InformationRetrievalSystem implements Serializable {
     }
 
     /**
-     * @return all terms (as strings) present in the dictionary.
-     */
-    @NotNull
-    public Collection<String> getDictionary() {
-        return invertedIndex.getDictionary();
-    }
-
-    /**
-     * @param dfThreshold A threshold value for the document-frequency value.
-     * @return all terms (as strings) present in the dictionary and
-     * having a document-frequency value strictly higher than the
-     * specified threshold.
-     */
-    @NotNull
-    public Collection<String> getDictionary(double dfThreshold) {
-        return invertedIndex.getDictionary(dfThreshold);
-    }
-
-    /**
-     * @param tfThreshold A threshold value for the term-frequency value.
-     * @return all terms (as strings) present in the dictionary and
-     * having a term-frequency value strictly higher than the
-     * specified threshold.
-     */
-    @NotNull
-    public Collection<String> getDictionaryOverTf(int tfThreshold) {
-        return invertedIndex.getDictionaryOverTf(tfThreshold);
-    }
-
-    /**
-     * @return the average document-frequency value.
-     */
-    public double avgDf() {
-        return invertedIndex.avgDf();
-    }
-
-    /**
      * @return the number of documents in the {@link Corpus}.
      */
     public int size() {
         return corpus.size();
-    }
-
-    /**
-     * @return the average Wf-Idf value for the given string.
-     * @throws NoSuchElementException if no value is present.
-     */
-    public double avgWfIdf(String str) throws NoSuchElementException {
-        return getListOfPostingForToken(str)
-                .stream().mapToDouble(posting -> posting.wfIdf(size())).average().orElseThrow();
     }
 
     /**
@@ -201,28 +158,6 @@ public class InformationRetrievalSystem implements Serializable {
      */
     public int cf(String str) {
         return invertedIndex.cf(str);
-    }
-
-    /**
-     * @return the average term frequency over the dictionary.
-     * @throws NoSuchElementException if no value is present.
-     */
-    public double avgTf() throws NoSuchElementException {
-        return getDictionary().stream()
-                .mapToInt(invertedIndex::cf)
-                .average()
-                .orElseThrow();
-    }
-
-    /**
-     * @return the average value of Wf-Idf over the dictionary.
-     * @throws NoSuchElementException if no value is present.
-     */
-    public double avgWfIdf() throws NoSuchElementException {
-        return getDictionary().stream()
-                .mapToDouble(this::avgWfIdf)
-                .average()
-                .orElseThrow();
     }
 
 }

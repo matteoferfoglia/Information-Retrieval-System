@@ -113,7 +113,7 @@ class UtilityTest {
             tearDownIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
             commentToReport = COMMENT_FOR_BENCHMARKS)
     static void tokenizeLongDocument() {
-        Utility.tokenize(LONG_DOCUMENT, Language.UNDEFINED);
+        Utility.tokenize(LONG_DOCUMENT, Language.UNDEFINED, new HashSet<>());
     }
 
     @Benchmark(
@@ -249,7 +249,7 @@ class UtilityTest {
         Document document = new FakeDocument_LineOfAFile("a line  ", "  Content of A  line");
         assertEquals(
                 Arrays.asList("a", "line", "content", "of", "a", "line"),   // conversion to lists because the test framework cannot compare arrays
-                Arrays.asList(Utility.tokenize(document, Language.UNDEFINED)));
+                Arrays.asList(Utility.tokenize(document, Language.UNDEFINED, new HashSet<>())));
     }
 
     @ParameterizedTest
@@ -321,7 +321,7 @@ class UtilityTest {
         // Use List instead of array in  tests (otherwise test assertion may fail)
         Map<String, List<Integer>> actualMapTokenToPositions =
                 Utility.tokenizeAndGetMapWithPositionsInDocument(
-                                new FakeDocument_LineOfAFile("", document), Language.UNDEFINED)
+                                new FakeDocument_LineOfAFile("", document), Language.UNDEFINED, new HashSet<>())
                         .entrySet()
                         .stream()
                         .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), Arrays.stream(entry.getValue()).boxed().toList()))

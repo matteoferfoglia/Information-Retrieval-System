@@ -73,17 +73,24 @@ public class Utility {
      * Tokenize a {@link Document} and return the {@link java.util.List} of tokens as
      * {@link String} (eventually with duplicates) obtained from the {@link Document}.
      *
-     * @param document The {@link Document} to tokenize.
-     * @param language The {@link Language} of the document.
+     * @param document       The {@link Document} to tokenize.
+     * @param language       The {@link Language} of the document.
+     * @param unstemmedWords A collection where this method will add terms before stemming
+     *                       (it is used as output parameter if the caller needs to know the
+     *                       un-stemmed version of the input token). Note: token inserted in the
+     *                       collection might be equal to the returned one (e.g., if the system is
+     *                       set to avoid stemming or if no stemming step are required on the
+     *                       input token).
      */
     @NotNull
-    public static String[] tokenize(@NotNull Document document, @NotNull Language language) {
+    public static String[] tokenize(
+            @NotNull Document document, @NotNull Language language, @NotNull Collection<String> unstemmedWords) {
         assert document.getContent() != null;
         return Arrays.stream(
                         split(/*title is included in the content*/document.getContent().getEntireTextContent()
                                 .replaceAll(REGEX_PUNCTUATION, " ")))
                 .filter(text -> !text.isBlank())
-                .map(token -> Utility.normalize(token, false, language))
+                .map(token -> Utility.normalize(token, false, language, unstemmedWords))
                 .filter(Objects::nonNull)
                 .toArray(String[]::new);
     }
@@ -94,13 +101,19 @@ public class Utility {
      * {@link Document} at which the token in the key appears.
      * {@link String} (eventually with duplicates) obtained from the {@link Document}.
      *
-     * @param document The {@link Document} to tokenize.
-     * @param language The {@link Language} of the document.
+     * @param document       The {@link Document} to tokenize.
+     * @param language       The {@link Language} of the document.
+     * @param unstemmedWords A collection where this method will add terms before stemming
+     *                       (it is used as output parameter if the caller needs to know the
+     *                       un-stemmed version of the input token). Note: token inserted in the
+     *                       collection might be equal to the returned one (e.g., if the system is
+     *                       set to avoid stemming or if no stemming step are required on the
+     *                       input token).
      */
     @NotNull
     public static Map<String, int[]> tokenizeAndGetMapWithPositionsInDocument(
-            @NotNull final Document document, @NotNull Language language) {
-        String[] tokensEventuallyDuplicatesSortedByPositionInDocument = tokenize(document, language);
+            @NotNull final Document document, @NotNull Language language, @NotNull Collection<String> unstemmedWords) {
+        String[] tokensEventuallyDuplicatesSortedByPositionInDocument = tokenize(document, language, unstemmedWords);
         Map<String, Set<Integer>> mapTokenToPositionsInDoc = IntStream
                 .range(0, tokensEventuallyDuplicatesSortedByPositionInDocument.length)
                 .mapToObj(i -> new AbstractMap.SimpleEntry<>(
@@ -121,6 +134,60 @@ public class Utility {
     }
 
     /**
+     * Normalize a token ({@link String}) and add to the input collection the normalized
+     * but non-stemmed token.
+     *
+     * @param token          The {@link String token} to be normalized.
+     * @param fromQuery      True if this method was invoked to removeInvalidCharsAndToLowerCase a query,
+     *                       false if it was invoked to removeInvalidCharsAndToLowerCase a word while
+     *                       indexing process. This differentiation is made because
+     *                       the user should be able to insert special characters
+     *                       (like wildcards) in queries, but special characters
+     *                       should not be present in the dictionary of the index.
+     * @param language       The language of the input token.
+     * @param unstemmedWords A collection where this method will add terms before stemming
+     *                       (it is used as output parameter if the caller needs to know the
+     *                       un-stemmed version of the input token). Note: token inserted in the
+     *                       collection might be equal to the returned one (e.g., if the system is
+     *                       set to avoid stemming or if no stemming step are required on the
+     *                       input token).
+     * @return the corresponding normalized token or null either if the normalization
+     * leads to an empty string or (in the case that stop-words must be excluded) if
+     * the input string is a stop word.
+     */
+    @Nullable
+    public static String normalize(
+            @NotNull String token, boolean fromQuery,
+            @NotNull Language language, @NotNull Collection<String> unstemmedWords) {
+
+        String toReturn = removeInvalidCharsAndToLowerCase(token, fromQuery);
+
+        Stemmer stemmer = getStemmer();
+
+        // Stop-words handling (when stemming is not performed)
+        if (stemmer == null && shouldExcludeStopWords()) {
+            if (isStopWord(toReturn, language, false)) {
+                return null;
+            }
+        }
+
+        // Stemming
+        unstemmedWords.add(toReturn);   // before stemming, save the un-stemmed word
+        if (stemmer != null && !toReturn.contains(InvertedIndex.WILDCARD)) {
+            toReturn = stemmer.stem(toReturn, language);
+        }
+
+        // Stop-words handling (when stemming is performed)
+        if (shouldExcludeStopWords()) {
+            if (isStopWord(toReturn, language, true)) {
+                return null;
+            }
+        }
+
+        return toReturn.isBlank() ? null : toReturn;
+    }
+
+    /**
      * Normalize a token ({@link String}).
      *
      * @param token     The {@link String token} to be normalized.
@@ -137,31 +204,7 @@ public class Utility {
      */
     @Nullable
     public static String normalize(@NotNull String token, boolean fromQuery, @NotNull Language language) {
-
-        String toReturn = removeInvalidCharsAndToLowerCase(token, fromQuery);
-
-        Stemmer stemmer = getStemmer();
-
-        // Stop-words handling (when stemming is not performed)
-        if (stemmer == null && shouldExcludeStopWords()) {
-            if (isStopWord(toReturn, language, false)) {
-                return null;
-            }
-        }
-
-        // Stemming
-        if (stemmer != null) {
-            toReturn = stemmer.stem(toReturn, language);
-        }
-
-        // Stop-words handling (when stemming is performed)
-        if (shouldExcludeStopWords()) {
-            if (isStopWord(toReturn, language, true)) {
-                return null;
-            }
-        }
-
-        return toReturn.isBlank() ? null : toReturn;
+        return normalize(token, fromQuery, language, new HashSet<>());
     }
 
     /**
