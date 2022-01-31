@@ -69,7 +69,7 @@ public class InvertedIndexTest {
         PrintStream realStdOut = System.out;
         System.setOut(new PrintStream(new ByteArrayOutputStream()));      // ignore std out for this block
         try {
-            Corpus movieCorpus = new MovieCorpusFactory().createCorpus();                           // used for benchmarks
+            Corpus movieCorpus = new MovieCorpusFactory().createCorpus(); // used for benchmarks
             invertedIndexForMovieCorpus = new InvertedIndex(movieCorpus); // used for benchmarks
             randomTokenFromDictionaryOfMovieInvertedIndex = new Supplier<>() {
 

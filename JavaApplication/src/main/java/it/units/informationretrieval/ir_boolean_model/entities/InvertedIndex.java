@@ -5,6 +5,7 @@ import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.Soundex;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import it.units.informationretrieval.ir_boolean_model.utils.stemmers.Stemmer;
+import it.units.informationretrieval.ir_boolean_model.utils.wildcards.MatcherForPermutermIndex;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.jetbrains.annotations.NotNull;
 import skiplist.SkipList;
@@ -21,7 +22,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -406,13 +406,13 @@ public class InvertedIndex implements Serializable {
             // now the wildcard is removed (via substring) but the token has been rotated correctly
             // and, because we are here, we are sure that there is at least one wildcard
 
-            // Prepare the regex used to match the initial input token (with wildcards)
-            Pattern pattern = Pattern.compile(normalizedToken.replaceAll(ESCAPED_WILDCARD_FOR_REGEX, ".*"));
-
             return new SkipList<>(getDictionaryTermsContainingSubstring(rotatedToken)
                     .stream().unordered().parallel()
                     .distinct()
-                    .filter(tokenFromDictionary -> pattern.matcher(tokenFromDictionary).matches())
+                    .filter(tokenFromDictionary -> MatcherForPermutermIndex
+                            .isWildcardQueryCompatibleWithStemmedTokenFromIndex(
+                                    normalizedToken.replaceAll(ESCAPED_WILDCARD_FOR_REGEX, WILDCARD),
+                                    tokenFromDictionary, corpus.getLanguage()))
                     .map(invertedIndex::get)
                     .filter(Objects::nonNull)
                     .map(Term::getListOfPostings)
