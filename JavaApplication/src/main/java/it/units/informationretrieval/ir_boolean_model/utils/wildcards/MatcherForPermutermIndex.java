@@ -56,9 +56,11 @@ public class MatcherForPermutermIndex {
             /*10      */ {INVALID, INVALID, INVALID, INVALID, INVALID, RECOVERY, INVALID, INVALID, INVALID},
             /*11      */ {INVALID, TMP, INVALID_TMP, INVALID, INVALID, INVALID, INVALID, TMP, TMP},
             /*12      */ {INVALID, INVALID_TMP, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID_TMP, INVALID_TMP},
-            /*13      */ {INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, VALID, INVALID, INVALID},
+            /*13      */ {VALID, VALID, VALID, INVALID, INVALID, INVALID, VALID, VALID, VALID},
             /*14      */ {INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, VALID, INVALID, INVALID},
-            /*15      */ {INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID_TMP, INVALID, INVALID}
+            /*15      */ {INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID_TMP, INVALID, INVALID},
+            /*16      */ {INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, WILDCARD, WILDCARD},
+            /*17      */ {INVALID, INVALID, VALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID}
     };
     /**
      * The wildcard un-stemmed query string.
@@ -85,6 +87,11 @@ public class MatcherForPermutermIndex {
      * The index to scan {@link #t}.
      */
     private int j = 0;
+    /**
+     * Number of hops (each time that the machine evolves, also to same state,
+     * this value increments).
+     */
+    private int step = 0;
     /**
      * The result of the evaluation.
      */
@@ -135,15 +142,16 @@ public class MatcherForPermutermIndex {
      * will be available in {@link #result}.
      */
     private void accept() {
-        long TIMEOUT_MILLIS = 20;
+//        long TIMEOUT_MILLIS = 20;
         long START_MILLIS = System.currentTimeMillis();
         try {
             while (result == null) {
-                if (System.currentTimeMillis() - START_MILLIS > TIMEOUT_MILLIS) {
-                    throw new RuntimeException(
-                            "The finite-state machine did not converge within " + TIMEOUT_MILLIS + " ms."
-                                    + System.lineSeparator() + "\tCurrent instance: " + this);
-                }
+//                if (System.currentTimeMillis() - START_MILLIS > TIMEOUT_MILLIS) {
+//                    throw new RuntimeException(
+//                            "The finite-state machine did not converge within " + TIMEOUT_MILLIS + " ms."
+//                                    + System.lineSeparator() + "\tCurrent instance: " + this);
+//                }
+                assert !currentState.equals(START) || i == 0 && j == 0;    // assert correct initialization
                 switch (currentState) {
                     case NORMAL:
                         i++;
@@ -169,6 +177,7 @@ public class MatcherForPermutermIndex {
                         break;
                 }
                 currentState = transitionMtx[States.getNextSymbol(this).ordinal()][currentState.ordinal()];
+                step++;
             }
         } catch (RuntimeException e) {
             Logger.getLogger(getClass().getCanonicalName()).log(Level.WARNING, e.getMessage(), e);
@@ -244,47 +253,81 @@ public class MatcherForPermutermIndex {
          * according to the current state and the possible evolutions.
          */
         static Symbols getNextSymbol(MatcherForPermutermIndex m) {
+            // TODO : make conditions more precise (finer) to be interchangeable or update the order in enum values
             switch (m.currentState) {
                 case START:
-                    if (m.i < m.q.length() && m.j < m.t.length() && m.q.charAt(m.i) == m.t.charAt(m.j)) {
+                    if (_16.getCondition(m)) {
+                        return _16;
+                    } else if (_01.getCondition(m)) {
                         return _01;
-                    } else if (m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD)) {
+                    } else if (_02.getCondition(m)) {
                         return _02;
-                    } else if (m.i == m.q.length() && m.j == m.t.length()) {
+                    } else if (_05.getCondition(m)) {
                         return _05;
+                    } else if (_13.getCondition(m)) {
+                        return _13;
                     } else {
                         throw new IllegalStateException("Unexpected configuration " + m);
                     }
                 case NORMAL:
+                    if (_01.getCondition(m)) {
+                        return _01;
+                    } else if (_04.getCondition(m)) {
+                        return _04;
+                    } else if (_02.getCondition(m)) {
+                        return _02;
+                    } else if (_05.getCondition(m)) {
+                        return _05;
+                    } else if (_06.getCondition(m)) {
+                        return _06;
+                    } else if (_07.getCondition(m)) {
+                        return _07;
+                    } else if (_08.getCondition(m)) {
+                        return _08;
+                    } else if (_11.getCondition(m)) {
+                        return _11;
+                    } else if (_12.getCondition(m)) {
+                        return _12;
+                    } else if (_13.getCondition(m)) {
+                        return _13;
+                    } else {
+                        throw new IllegalStateException("Unexpected configuration " + m);
+                    }
                 case RECOVERY:
                 case SAVE:
-                    if (m.i < m.q.length() && m.j < m.t.length() && m.q.charAt(m.i) == m.t.charAt(m.j)) {
+                    if (_16.getCondition(m)) {
+                        return _16; // TODO: remove condition _02 if not needed
+                    } else if (_01.getCondition(m)) {
                         return _01;
-                    } else if (m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i + 1) == m.t.charAt(m.j)) {
+                    } else if (_04.getCondition(m)) {
                         return _04;
-                    } else if (m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD)) {
+                    } else if (_02.getCondition(m)) {
                         return _02;
-                    } else if (m.i == m.q.length() && m.j == m.t.length()) {
+                    } else if (_05.getCondition(m)) {
                         return _05;
-                    } else if (m.i == m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD)) {
+                    } else if (_06.getCondition(m)) {
                         return _06;
-                    } else if (m.i == m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && !String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD)) {
+                    } else if (_07.getCondition(m)) {
                         return _07;
-                    } else if (m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && !String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD)) {
+                    } else if (_08.getCondition(m)) {
                         return _08;
-                    } else if (m.i < m.q.length() && m.j == m.t.length()) {
+                    } else if (_11.getCondition(m)) {
                         return _11;
-                    } else if (m.i == m.q.length() && m.j < m.t.length()) {
+                    } else if (_12.getCondition(m)) {
                         return _12;
+                    } else if (_13.getCondition(m)) {
+                        return _13;
                     } else {
                         throw new IllegalStateException("Unexpected configuration " + m);
                     }
                 case WILDCARD:
-                    if (m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i + 1) != m.t.charAt(m.j)) {
+                    if (_03.getCondition(m)) {
                         return _03;
-                    } else if (m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i + 1) == m.t.charAt(m.j)) {
+                    } else if (_17.getCondition(m)) {
+                        return _17;
+                    } else if (_04.getCondition(m)) {
                         return _04;
-                    } else if (m.i < m.q.length() && m.j == m.t.length()) {
+                    } else if (_11.getCondition(m)) {
                         return _11;
                     } else {
                         throw new IllegalStateException("Unexpected configuration " + m);
@@ -293,26 +336,21 @@ public class MatcherForPermutermIndex {
                 case INVALID:
                     return __0;
                 case INVALID_TMP:
-                    if (m.S.isEmpty()) {
+                    if (_09.getCondition(m)) {
                         return _09;
-                    } else //noinspection ConstantConditions // explicit condition in if
-                        if (!m.S.isEmpty()) {
-                            return _10;
-                        } else {
-                            throw new IllegalStateException("Unexpected configuration " + m);
-                        }
+                    } else if (_10.getCondition(m)) {
+                        return _10;
+                    } else {
+                        throw new IllegalStateException("Unexpected configuration " + m);
+                    }
                 case TMP:
-                    if (String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD) && m.i == m.q.length() - 1) {
+                    if (_13.getCondition(m)) {
                         return _13;
-                    } else if ((Utility.getStemmer() == null
-                            ? Stemmer.getStemmer(Stemmer.AvailableStemmer.NO_STEMMING)
-                            : Utility.getStemmer())
-                            .stem(m.t + m.q.substring(m.i).replaceAll("\\*", ""), m.language)
-                            .equals(m.t)) {
+                    } else if (_14.getCondition(m)) {
                         // stemming of the residual of the wildcard query (assuming that the token from the dictionary
                         //  was the correct substitution for the wildcard) leads to the token itself
                         return _14;
-                    } else if (!String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD) || m.i < m.q.length() - 1) {
+                    } else if (_15.getCondition(m)) {
                         return _15;
                     } else {
                         throw new IllegalStateException("Unexpected configuration " + m);
@@ -327,7 +365,43 @@ public class MatcherForPermutermIndex {
     /**
      * Enumeration of symbols for the finite-state machine.
      */
-    enum Symbols {__0/*for unstable states*/, _01, _02, _03, _04, _05, _06, _07, _08, _09, _10, _11, _12, _13, _14, _15}
+    enum Symbols {
+        __0/*for unstable states*/, _01, _02, _03, _04, _05, _06, _07, _08, _09, _10, _11, _12, _13, _14, _15, _16, _17;
+
+        /**
+         * @param m The current {@link MatcherForPermutermIndex}.
+         */
+        boolean getCondition(@NotNull final MatcherForPermutermIndex m) {
+            return switch (this) {
+                case __0 -> true;
+                case _01 -> m.i < m.q.length() && m.j < m.t.length() && m.q.charAt(m.i) == m.t.charAt(m.j);
+                case _02 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD);
+                case _03 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i + 1) != m.t.charAt(m.j);
+                case _04 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i + 1) == m.t.charAt(m.j);
+                case _05 -> m.i == m.q.length() && m.j == m.t.length();
+                case _06 -> m.i == m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD);
+                case _07 -> m.i == m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && !String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD);
+                case _08 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && !String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD);
+                case _09 -> m.S.isEmpty();
+                case _10 -> !m.S.isEmpty();
+                case _11 -> m.i < m.q.length() && m.j == m.t.length();
+                case _12 -> m.i == m.q.length() && m.j < m.t.length();
+                case _13 -> (Utility.getStemmer() == null
+                        ? Stemmer.getStemmer(Stemmer.AvailableStemmer.NO_STEMMING)
+                        : Utility.getStemmer())
+                        .stem(m.t + m.q.substring(m.i).replaceAll("\\*", ""), m.language)
+                        .equals(m.t);
+                case _14 -> String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD) && m.i == m.q.length() - 1;
+                case _15 -> !String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD) || m.i < m.q.length() - 1;
+                case _16 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) == m.t.charAt(m.j) && String.valueOf(m.q.charAt(m.i + 1)).equals(InvertedIndex.WILDCARD) && !String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD);
+                case _17 -> (Utility.getStemmer() == null
+                        ? Stemmer.getStemmer(Stemmer.AvailableStemmer.NO_STEMMING)
+                        : Utility.getStemmer())
+                        .stem(m.t + m.q.substring(m.i + 1).replaceAll("\\*", ""), m.language)
+                        .equals(m.t);
+            };
+        }
+    }
 
     /**
      * Enumeration for the possible results.
