@@ -7,10 +7,11 @@ import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
 import it.units.informationretrieval.ir_boolean_model.queries.UNARY_OPERATOR;
 import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
 import it.units.informationretrieval.ir_boolean_model.utils.ClassLoading;
+import it.units.informationretrieval.ir_boolean_model.utils.ProgressInputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -22,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -219,12 +221,41 @@ public class Main {
             } while (fileWithIrsChosen == null);
 
             System.out.println("Loading the IRSystem from the file system, please wait...");
-            try (ProgressMonitorInputStream pmis =
-                         new ProgressMonitorInputStream(null, "Loading IRS...",
-                                 new FileInputStream(fileWithIrsChosen));
-                 ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(pmis))) {
+            try (
+                    ProgressInputStream pis = new ProgressInputStream(
+                            new FileInputStream(fileWithIrsChosen), fileWithIrsChosen.length());
+                    ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(pis))) {
 
+                PropertyChangeListener listener = evt -> {  // listener to print the progress of IRS loading
+                    Supplier<Boolean> shouldPrintProgress = new Supplier<>() {
+                        private final static long UPDATE_PERIOD_MILLIS = 1000;
+                        private final static double MIN_DELTA_BETWEEN_PRINTED_PERCENTAGES = 0.001; // percentage in [0,1], e.g. 0.001 is 0.1%
+                        private static long lastUpdate = 0;
+                        private static double oldPrintedProgressPercentage = Double.MIN_VALUE;
+
+                        @Override
+                        public Boolean get() {
+                            long now = System.currentTimeMillis();
+                            if (now - lastUpdate > UPDATE_PERIOD_MILLIS) {
+                                double currentProgress = pis.getProgress();
+                                if (currentProgress - oldPrintedProgressPercentage > MIN_DELTA_BETWEEN_PRINTED_PERCENTAGES) {
+                                    oldPrintedProgressPercentage = currentProgress;
+                                    lastUpdate = now;
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+                    };
+                    if (shouldPrintProgress.get()) {
+                        System.out.print("\t" + ((int) (pis.getProgress() * 10000)) / 100.0 + "% ");
+                    }
+                };
+                pis.addPropertyChangeListener(listener);
                 Object irSystem_object = ois.readObject();
+                pis.removePropertyChangeListener(listener);
+                System.out.println();   // add new line for output formatting
+
                 if (irSystem_object instanceof InformationRetrievalSystem irs) {
                     System.out.println("IRSystem loaded from the file system.");
                     return irs;
