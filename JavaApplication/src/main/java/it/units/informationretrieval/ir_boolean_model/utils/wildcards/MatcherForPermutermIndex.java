@@ -253,7 +253,6 @@ public class MatcherForPermutermIndex {
          * according to the current state and the possible evolutions.
          */
         static Symbols getNextSymbol(MatcherForPermutermIndex m) {
-            // TODO : make conditions more precise (finer) to be interchangeable or update the order in enum values
             switch (m.currentState) {
                 case START:
                     if (_16.getCondition(m)) {
@@ -296,7 +295,7 @@ public class MatcherForPermutermIndex {
                 case RECOVERY:
                 case SAVE:
                     if (_16.getCondition(m)) {
-                        return _16; // TODO: remove condition _02 if not needed
+                        return _16;
                     } else if (_01.getCondition(m)) {
                         return _01;
                     } else if (_04.getCondition(m)) {

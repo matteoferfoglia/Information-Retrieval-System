@@ -24,8 +24,7 @@ class ExampleOfUseOfTheIRSystem {
      */
     private final static boolean PRINT_RESULT_CONTENTS = false;
 
-    public static void main(String[] args) {    // TODO: refactor
-
+    public static void main(String[] args) {
         try {
 
             // Load application properties and create working directory

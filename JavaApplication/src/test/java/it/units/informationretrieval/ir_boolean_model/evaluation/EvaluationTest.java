@@ -258,7 +258,7 @@ public class EvaluationTest {
 
     @Test
     @Order(3)
-    void precisionRecallCurve() {   // TODO : look at worst queries and understand why
+    void precisionRecallCurve() {
 
         precisionRecallSeries = CRANFIELD_QUERIES.parallelStream().unordered()
                 .map(query -> {
@@ -278,10 +278,6 @@ public class EvaluationTest {
                         double recall = 0D;
                         recall_precision_points.add(new Point<>(recall, precision));
                     }
-
-                    // TODO: if stemming is     enabled for the system, the system might retrieve less documents than relevant, because the system should have a further index mapping all rotations of all (stemmed and un-stemmed) terms to its stemmed version.
-                    //       if stemming is NOT enabled for the system, the system might retrieve less documents than relevant, because, e.g., for query "shearing", the system will not search for "shear", hence a number of results will be not retrieved
-
                     return recall_precision_points;
                 })
                 .collect(Collectors.toList());
@@ -304,7 +300,6 @@ public class EvaluationTest {
         } while (true /*exit via break instruction*/);
 
         // Investigation on the worst query (according to the worst precision)
-        // TODO: low precision results due to wildcard query that, if stemming is applied, do not work correctly (system should have a supplementary index containing all rotations of un-stemmed words!)
         final int MAX_NUM_OF_WORST_QUERIES = 20;    // how many to show
         StringBuilder worstQueriesSummary = new StringBuilder(
                 "The " + MAX_NUM_OF_WORST_QUERIES + " queries with the worst precision:" + System.lineSeparator());
@@ -335,7 +330,7 @@ public class EvaluationTest {
 
     @Test
     @Order(4)
-    void interpolatedPrecisions() {    // TODO: re-check calculus
+    void interpolatedPrecisions() {
         if (precisionRecallSeries == null) {
             precisionRecallCurve();
         }
@@ -373,7 +368,7 @@ public class EvaluationTest {
     @ParameterizedTest
     @Order(5)
     @ValueSource(ints = {11/*11-point interpolated average precision*/})
-    void NPointInterpolatedAveragePrecision(int NUM_OF_POINTS) {    // TODO: re-check calculus
+    void NPointInterpolatedAveragePrecision(int NUM_OF_POINTS) {
 
         if (interpolatedPrecisionSeries == null) {
             interpolatedPrecisions();
