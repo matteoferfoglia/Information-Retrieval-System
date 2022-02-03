@@ -142,15 +142,15 @@ public class MatcherForPermutermIndex {
      * will be available in {@link #result}.
      */
     private void accept() {
-//        long TIMEOUT_MILLIS = 20;
+        long TIMEOUT_MILLIS = 20;
         long START_MILLIS = System.currentTimeMillis();
         try {
             while (result == null) {
-//                if (System.currentTimeMillis() - START_MILLIS > TIMEOUT_MILLIS) {
-//                    throw new RuntimeException(
-//                            "The finite-state machine did not converge within " + TIMEOUT_MILLIS + " ms."
-//                                    + System.lineSeparator() + "\tCurrent instance: " + this);
-//                }
+                if (System.currentTimeMillis() - START_MILLIS > TIMEOUT_MILLIS) {
+                    throw new RuntimeException(
+                            "The finite-state machine did not converge within " + TIMEOUT_MILLIS + " ms."
+                                    + System.lineSeparator() + "\tCurrent instance: " + this);
+                }
                 assert !currentState.equals(START) || i == 0 && j == 0;    // assert correct initialization
                 switch (currentState) {
                     case NORMAL:
@@ -372,9 +372,13 @@ public class MatcherForPermutermIndex {
          * @param m The current {@link MatcherForPermutermIndex}.
          */
         boolean getCondition(@NotNull final MatcherForPermutermIndex m) {
+            final Stemmer stemmer = (Utility.getStemmer() == null
+                    ? Stemmer.getStemmer(Stemmer.AvailableStemmer.NO_STEMMING)
+                    : Utility.getStemmer());
             return switch (this) {
                 case __0 -> true;
-                case _01 -> m.i < m.q.length() && m.j < m.t.length() && m.q.charAt(m.i) == m.t.charAt(m.j);
+                case _01 -> m.i < m.q.length() && m.j < m.t.length()
+                        && (m.q.charAt(m.i) == m.t.charAt(m.j) || stemmer.stem(m.t.substring(0, m.j) + m.q.substring(m.i).replaceAll("\\*", ""), m.language).equals(m.t));
                 case _02 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD);
                 case _03 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i + 1) != m.t.charAt(m.j);
                 case _04 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i + 1) == m.t.charAt(m.j);
@@ -386,14 +390,10 @@ public class MatcherForPermutermIndex {
                 case _10 -> !m.S.isEmpty();
                 case _11 -> m.i < m.q.length() && m.j == m.t.length();
                 case _12 -> m.i == m.q.length() && m.j < m.t.length();
-                case _13 -> (Utility.getStemmer() == null
-                        ? Stemmer.getStemmer(Stemmer.AvailableStemmer.NO_STEMMING)
-                        : Utility.getStemmer())
-                        .stem(m.t + m.q.substring(m.i).replaceAll("\\*", ""), m.language)
-                        .equals(m.t);
+                case _13 -> stemmer.stem(m.t.substring(0, m.j) + m.q.substring(m.i).replaceAll("\\*", ""), m.language).equals(m.t);
                 case _14 -> String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD) && m.i == m.q.length() - 1;
                 case _15 -> !String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD) || m.i < m.q.length() - 1;
-                case _16 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) == m.t.charAt(m.j) && String.valueOf(m.q.charAt(m.i + 1)).equals(InvertedIndex.WILDCARD) && !String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD);
+                case _16 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && String.valueOf(m.q.charAt(m.i + 1)).equals(InvertedIndex.WILDCARD) && !String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD);
                 case _17 -> (Utility.getStemmer() == null
                         ? Stemmer.getStemmer(Stemmer.AvailableStemmer.NO_STEMMING)
                         : Utility.getStemmer())
