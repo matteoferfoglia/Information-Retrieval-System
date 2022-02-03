@@ -10,6 +10,7 @@ import it.units.informationretrieval.ir_boolean_model.utils.ClassLoading;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -218,8 +219,11 @@ public class Main {
             } while (fileWithIrsChosen == null);
 
             System.out.println("Loading the IRSystem from the file system, please wait...");
-            try (ObjectInputStream ois = new ObjectInputStream(
-                    new BufferedInputStream(new FileInputStream(fileWithIrsChosen)))) {
+            try (ProgressMonitorInputStream pmis =
+                         new ProgressMonitorInputStream(null, "Loading IRS...",
+                                 new FileInputStream(fileWithIrsChosen));
+                 ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(pmis))) {
+
                 Object irSystem_object = ois.readObject();
                 if (irSystem_object instanceof InformationRetrievalSystem irs) {
                     System.out.println("IRSystem loaded from the file system.");
