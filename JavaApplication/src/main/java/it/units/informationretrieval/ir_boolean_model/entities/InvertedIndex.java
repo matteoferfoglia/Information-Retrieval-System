@@ -156,6 +156,7 @@ public class InvertedIndex implements Serializable {
         return Stream.of(getDictionary(), getUnstemmedDictionary())
                 .flatMap(Collection::stream)
                 .distinct().unordered().parallel()
+                .filter(Objects::nonNull)
                 .flatMap(strFromDictionary -> {
                     String str = strFromDictionary + END_OF_WORD;
                     return Arrays.stream(Utility.getAllRotationsOf(str))
@@ -224,10 +225,9 @@ public class InvertedIndex implements Serializable {
         return corpus.getCorpus()
                 .entrySet()
                 .stream().unordered().parallel()
+                .peek(ignored -> numberOfAlreadyProcessedDocuments.getAndIncrement()/*document is going to be processed*/)
                 .filter(documentContentNotNullPredicate)
                 .map(this::getEntrySetOfTokensAndCorrespondingTermsFromADocument)
-                .peek(ignored -> numberOfAlreadyProcessedDocuments.getAndIncrement()/*TODO: threads must wait to increase this value: needed?*/)
-                // TODO: re-see how the indexing progress is updated and printed
                 .flatMap(Collection::stream /*outputs all entries from all the documents*/)
                 .collect(
                         Collectors.toConcurrentMap(
@@ -305,7 +305,7 @@ public class InvertedIndex implements Serializable {
             }
         });
         System.out.println("Indexing started");
-        final int DELAY_PROGRESS_CONTROLLER = 5;    // seconds
+        final int DELAY_PROGRESS_CONTROLLER = 1;    // seconds
         scheduler.scheduleWithFixedDelay(progressControllerThread, DELAY_PROGRESS_CONTROLLER, DELAY_PROGRESS_CONTROLLER, TimeUnit.SECONDS);
 
         return () -> {

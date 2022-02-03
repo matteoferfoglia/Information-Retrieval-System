@@ -197,6 +197,7 @@ public class Main {
     private static InformationRetrievalSystem loadIRS() {
         if (FOLDER_WITH_IRS != null) {
             File[] filesOfIRS = FOLDER_WITH_IRS.listFiles();
+            System.out.println("Available IR Systems:");
             for (int i = 0; i < Objects.requireNonNull(filesOfIRS).length; i++) {
                 System.out.println("\t " + (i + 1) + ") \t" + filesOfIRS[i].getName());
             }
@@ -216,7 +217,7 @@ public class Main {
                 }
             } while (fileWithIrsChosen == null);
 
-            System.out.println("Loading the IRSystem from the file system");
+            System.out.println("Loading the IRSystem from the file system, please wait...");
             try (ObjectInputStream ois = new ObjectInputStream(
                     new BufferedInputStream(new FileInputStream(fileWithIrsChosen)))) {
                 Object irSystem_object = ois.readObject();
@@ -481,6 +482,7 @@ public class Main {
                 } else {
                     System.out.println("File \"" + fileName_irSystem + "\" already exists. It will be replaced.");
                 }
+                System.out.println("Serializing and saving the system on file, please wait...");
                 try (ObjectOutputStream oos = new ObjectOutputStream(
                         new BufferedOutputStream(
                                 new FileOutputStream(fileName_irSystem, false)))) {
