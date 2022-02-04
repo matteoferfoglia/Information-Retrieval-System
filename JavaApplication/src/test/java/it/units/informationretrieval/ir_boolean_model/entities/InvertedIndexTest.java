@@ -12,6 +12,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import skiplist.SkipList;
 
 import java.io.ByteArrayOutputStream;
@@ -237,6 +240,12 @@ public class InvertedIndexTest {
                         .toArray());
     }
 
+    public static Stream<Arguments> getTokenAndCorrespondingListOfPostings() {
+        return expectedMapOfStringWithWildcardAndCorrespondingListOfPostingsFromFile
+                .entrySet().stream()
+                .map(e -> Arguments.of(e.getKey(), e.getValue()));
+    }
+
     @BeforeEach
     void setUp() {
         PrintStream realStdOut = System.out;
@@ -321,21 +330,14 @@ public class InvertedIndexTest {
         assertEquals(sampleCorpus, invertedIndexForTests.getCorpus());
     }
 
-    @Test
-    void getPostingListForToken() {
-        expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings
-                .forEach((token, listOfPostings) ->
-                        assertEquals(
-                                listOfPostings,
-                                invertedIndexForTests.getListOfPostingsForToken(token)));
-    }
-
-    @Test
-    void getListOfPostingForTokenWithWildcard() {
-        expectedMapOfStringWithWildcardAndCorrespondingListOfPostingsFromFile
-                .forEach((token, listOfPostings) ->
-                        assertEquals(
-                                new SkipList<>(listOfPostings, Posting.DOC_ID_COMPARATOR),
-                                new SkipList<>(invertedIndexForTests.getListOfPostingsForToken(token), Posting.DOC_ID_COMPARATOR)));
+    @ParameterizedTest
+    @MethodSource("getTokenAndCorrespondingListOfPostings")
+    void getListOfPostingForTokenWithWildcard(String token, SkipList<Posting> listOfPostings) {
+        assertEquals(
+                // NOTE: a number of postings can have the same docId (one posting for each distinct term),
+                //       but using the comparator Posting.DOC_ID_COMPARATOR, all postings having the same
+                //       docId are considered equals
+                new SkipList<>(listOfPostings, Posting.DOC_ID_COMPARATOR),
+                new SkipList<>(invertedIndexForTests.getListOfPostingsForToken(token), Posting.DOC_ID_COMPARATOR));
     }
 }

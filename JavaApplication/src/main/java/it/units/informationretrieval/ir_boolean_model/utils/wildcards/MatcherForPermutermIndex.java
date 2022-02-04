@@ -40,14 +40,13 @@ public class MatcherForPermutermIndex {
     /**
      * Transition matrix for the finite-state machine.
      */
-    @NotNull
     private static final States[][] transitionMtx = {
             /*            START, NORMAL, WILDCARD, VALID, INVALID, INVALID_TMP, TMP, RECOVERY, SAVE */
             /*unstable*/ {INVALID, INVALID, INVALID, null, null, INVALID, INVALID, INVALID, INVALID},
             /* 1      */ {NORMAL, NORMAL, INVALID, INVALID, INVALID, INVALID, INVALID, NORMAL, NORMAL},
             /* 2      */ {WILDCARD, WILDCARD, INVALID, INVALID, INVALID, INVALID, INVALID, WILDCARD, WILDCARD},
             /* 3      */ {INVALID, INVALID, WILDCARD, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID},
-            /* 4      */ {INVALID, SAVE, SAVE, INVALID, INVALID, INVALID, INVALID, SAVE, SAVE},
+            /* 4      */ {SAVE, SAVE, SAVE, INVALID, INVALID, INVALID, INVALID, SAVE, SAVE},
             /* 5      */ {VALID, VALID, INVALID, INVALID, INVALID, INVALID, INVALID, VALID, VALID},
             /* 6      */ {INVALID, VALID, INVALID, INVALID, INVALID, INVALID, INVALID, VALID, VALID},
             /* 7      */ {INVALID, INVALID_TMP, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID_TMP, INVALID_TMP},
@@ -57,7 +56,7 @@ public class MatcherForPermutermIndex {
             /*11      */ {INVALID, TMP, INVALID_TMP, INVALID, INVALID, INVALID, INVALID, TMP, TMP},
             /*12      */ {INVALID, INVALID_TMP, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID_TMP, INVALID_TMP},
             /*13      */ {VALID, VALID, VALID, INVALID, INVALID, INVALID, VALID, VALID, VALID},
-            /*14      */ {INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, VALID, INVALID, INVALID},
+            /*14      */ {VALID, INVALID, INVALID, INVALID, INVALID, INVALID, VALID, INVALID, INVALID},
             /*15      */ {INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID_TMP, INVALID, INVALID},
             /*16      */ {INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, WILDCARD, WILDCARD},
             /*17      */ {INVALID, INVALID, VALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID}
@@ -146,11 +145,11 @@ public class MatcherForPermutermIndex {
         long START_MILLIS = System.currentTimeMillis();
         try {
             while (result == null) {
-                if (System.currentTimeMillis() - START_MILLIS > TIMEOUT_MILLIS) {
-                    throw new RuntimeException(
-                            "The finite-state machine did not converge within " + TIMEOUT_MILLIS + " ms."
-                                    + System.lineSeparator() + "\tCurrent instance: " + this);
-                }
+//                if (System.currentTimeMillis() - START_MILLIS > TIMEOUT_MILLIS) { // TODO: uncomment
+//                    throw new RuntimeException(
+//                            "The finite-state machine did not converge within " + TIMEOUT_MILLIS + " ms."
+//                                    + System.lineSeparator() + "\tCurrent instance: " + this);
+//                }
                 assert !currentState.equals(START) || i == 0 && j == 0;    // assert correct initialization
                 switch (currentState) {
                     case NORMAL:
@@ -257,6 +256,10 @@ public class MatcherForPermutermIndex {
                 case START:
                     if (_16.getCondition(m)) {
                         return _16;
+                    } else if (_14.getCondition(m)) {
+                        return _14;
+                    } else if (_04.getCondition(m)) {
+                        return _04;
                     } else if (_01.getCondition(m)) {
                         return _01;
                     } else if (_02.getCondition(m)) {
@@ -269,12 +272,12 @@ public class MatcherForPermutermIndex {
                         throw new IllegalStateException("Unexpected configuration " + m);
                     }
                 case NORMAL:
-                    if (_01.getCondition(m)) {
+                    if (_02.getCondition(m)) {
+                        return _02;
+                    } else if (_01.getCondition(m)) {
                         return _01;
                     } else if (_04.getCondition(m)) {
                         return _04;
-                    } else if (_02.getCondition(m)) {
-                        return _02;
                     } else if (_05.getCondition(m)) {
                         return _05;
                     } else if (_06.getCondition(m)) {
@@ -380,8 +383,9 @@ public class MatcherForPermutermIndex {
                         && (m.q.charAt(m.i) == m.t.charAt(m.j) || stemmer.stem(m.t.substring(0, m.j) + m.q.substring(m.i).replaceAll("\\*", ""), m.language).equals(m.t));
                 case _02 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD);
                 case _03 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i + 1) != m.t.charAt(m.j);
-                case _04 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i + 1) == m.t.charAt(m.j);
-                case _05 -> m.i == m.q.length() && m.j == m.t.length();
+                case _04 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i + 1) == m.t.charAt(m.j)
+                        || (m.i == m.q.length() - 2 && m.j == m.t.length() && String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD) && m.q.charAt(m.i + 1) == m.t.charAt(m.j - 1));
+                case _05 -> (m.i == m.q.length() || m.i == m.q.length() - 1) && m.j == m.t.length();
                 case _06 -> m.i == m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD);
                 case _07 -> m.i == m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && !String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD);
                 case _08 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && !String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD);
@@ -389,7 +393,7 @@ public class MatcherForPermutermIndex {
                 case _10 -> !m.S.isEmpty();
                 case _11 -> m.i < m.q.length() && m.j == m.t.length();
                 case _12 -> m.i == m.q.length() && m.j < m.t.length();
-                case _13 -> stemmer.stem(m.t.substring(0, m.j) + m.q.substring(m.i).replaceAll("\\*", ""), m.language).equals(m.t);
+                case _13 -> m.i < m.q.length() && m.j == m.t.length() && stemmer.stem(m.t.substring(0, m.j) + m.q.substring(m.i).replaceAll("\\*", ""), m.language).equals(m.t);
                 case _14 -> String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD) && m.i == m.q.length() - 1;
                 case _15 -> !String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD) || m.i < m.q.length() - 1;
                 case _16 -> m.i < m.q.length() - 1 && m.j < m.t.length() && m.q.charAt(m.i) != m.t.charAt(m.j) && String.valueOf(m.q.charAt(m.i + 1)).equals(InvertedIndex.WILDCARD) && !String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD);
