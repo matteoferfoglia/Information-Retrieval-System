@@ -145,11 +145,11 @@ public class MatcherForPermutermIndex {
         long START_MILLIS = System.currentTimeMillis();
         try {
             while (result == null) {
-//                if (System.currentTimeMillis() - START_MILLIS > TIMEOUT_MILLIS) { // TODO: uncomment
-//                    throw new RuntimeException(
-//                            "The finite-state machine did not converge within " + TIMEOUT_MILLIS + " ms."
-//                                    + System.lineSeparator() + "\tCurrent instance: " + this);
-//                }
+                if (System.currentTimeMillis() - START_MILLIS > TIMEOUT_MILLIS) {
+                    throw new RuntimeException(
+                            "The finite-state machine did not converge within " + TIMEOUT_MILLIS + " ms."
+                                    + System.lineSeparator() + "\tCurrent instance: " + this);
+                }
                 assert !currentState.equals(START) || i == 0 && j == 0;    // assert correct initialization
                 switch (currentState) {
                     case NORMAL:
