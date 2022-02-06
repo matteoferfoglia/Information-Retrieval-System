@@ -1,14 +1,52 @@
 package it.units.informationretrieval.ir_boolean_model.utils.stemmers;
 
 import it.units.informationretrieval.ir_boolean_model.entities.Language;
+import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 /**
  * Interface for stemmer.
  */
 public interface Stemmer {
+
+    /**
+     * {@link BiFunction} that takes a {@link Stemmer} and a
+     * {@link Language} and returns the array of the stemmed stop-words
+     * for the given language, using the given stemmer.
+     */
+    BiFunction<@NotNull Stemmer, @NotNull Language, @NotNull String[]> getStemmedStopWords = new BiFunction<>() {
+
+        /**
+         * Caches the stemmed version of {@link Language#getStopWords() stop-words},
+         * according to the {@link Stemmer}.
+         */
+        @NotNull
+        static final ConcurrentMap<@NotNull Stemmer, @NotNull ConcurrentMap<@NotNull Language, @NotNull String[]>>
+                stemmedStopWords =
+                // in-place initialization, but also lazy initialization could be done
+                //  (to avoid computing and storing immediately all stemmed stop-words for each language
+                //   and for each stemmer, in fact: stemmer is a system property and a corpus generally
+                //   has one language), but this is easier to understand
+                Arrays.stream(AvailableStemmer.values())
+                        .map(Stemmer::getStemmer)
+                        .map(aStemmer -> new Pair<>(aStemmer, Arrays.stream(Language.values())
+                                .map(language -> new Pair<>(language, Arrays.stream(language.getStopWords())
+                                        .map(stopWord -> aStemmer.stem(stopWord, language))
+                                        .toArray(String[]::new)))
+                                .collect(Collectors.toConcurrentMap(Map.Entry::getKey, Map.Entry::getValue))))
+                        .collect(Collectors.toConcurrentMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        @Override
+        public @NotNull String[] apply(@NotNull Stemmer stemmer, @NotNull Language language) {
+            return stemmedStopWords.get(stemmer).get(language);
+        }
+    };
 
     /**
      * @param stemmer the desired stemmer.

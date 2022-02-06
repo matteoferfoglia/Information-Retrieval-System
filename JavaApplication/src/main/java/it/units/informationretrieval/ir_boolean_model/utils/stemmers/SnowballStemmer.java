@@ -20,11 +20,11 @@ import java.util.concurrent.ConcurrentMap;
 class SnowballStemmer implements Stemmer {
 
     /**
-     * Caches stemmers of different language to avoid to re-instantiate them each
+     * Caches stemmers of different languages to avoid to re-instantiate them each
      * time that they are required.
      */
     private static final ConcurrentMap<Language, SnowballStemmer> stemmersByLanguage =
-            new ConcurrentHashMap<>(Language.values().length);
+            new ConcurrentHashMap<>();
 
     /**
      * The actual stemmer or null if not initialized.
@@ -73,7 +73,7 @@ class SnowballStemmer implements Stemmer {
     }
 
     /**
-     * Sets the stemmer for the given {@link Language}, according to the desired language.
+     * Sets the stemmer for the given {@link Language}.
      *
      * @param language The language for the stemmer.
      */
@@ -83,13 +83,16 @@ class SnowballStemmer implements Stemmer {
             stemmerIfPresentOrNull = new SnowballStemmer();
             try {
                 stemmerIfPresentOrNull.initStemmer(language);
-            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                System.err.println("No stemmer available for language " + language);
+            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException
+                    | InstantiationException | IllegalAccessException e) {
+                System.err.println(
+                        getClass().getSimpleName() + " not available for language " + language
+                                + ". No stemming will be performed for that language.");
                 stemmerIfPresentOrNull.noStemmerForTheLanguage = true;
             }
             stemmersByLanguage.put(language, stemmerIfPresentOrNull);
         }
-        assert stemmerIfPresentOrNull.snowballStemmer != null;    // must have been initialized if it was initially null
+        assert stemmerIfPresentOrNull.noStemmerForTheLanguage || stemmerIfPresentOrNull.snowballStemmer != null;    // must have been initialized if it was initially null
         this.snowballStemmer = stemmerIfPresentOrNull.snowballStemmer;
         this.noStemmerForTheLanguage = stemmerIfPresentOrNull.noStemmerForTheLanguage;
     }

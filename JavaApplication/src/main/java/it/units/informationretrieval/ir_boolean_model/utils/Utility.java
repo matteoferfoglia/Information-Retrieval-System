@@ -251,7 +251,12 @@ public class Utility {
      * @return true if the given word is a stop word for the given language.
      */
     public static boolean isStopWord(String word, @NotNull Language language, boolean stemming) {
-        return Arrays.asList(stemming ? language.getStemmedStopWords() : language.getStopWords()).contains(word);
+        return Arrays.asList(stemming
+                ? Stemmer.getStemmedStopWords.apply(
+                getStemmer() == null
+                        ? Stemmer.getStemmer(Stemmer.AvailableStemmer.NO_STEMMING)
+                        : getStemmer(), language)
+                : language.getStopWords()).contains(word);
     }
 
     /**

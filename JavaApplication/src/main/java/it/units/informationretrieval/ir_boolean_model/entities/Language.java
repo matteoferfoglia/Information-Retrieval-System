@@ -50,11 +50,6 @@ public enum Language {
      * The stop words for the given language.
      */
     private final String[] stopWords;
-    /**
-     * The stemmed version of {@link #stopWords}, according to the {@link Stemmer}
-     * currently set for the system.
-     */
-    private final String[] stemmedStopWords;
 
     /**
      * @param pathToStopWordsDataset The path from the context root to the dataset of stop-words fot the language.
@@ -75,11 +70,6 @@ public enum Language {
             e.printStackTrace();
         }
         this.stopWords = tmpStopWords;
-        this.stemmedStopWords = Utility.getStemmer() == null
-                ? tmpStopWords
-                : Arrays.stream(tmpStopWords)
-                .map(stopWord -> Utility.getStemmer().stem(stopWord, this))
-                .toArray(String[]::new);
     }
 
     /**
@@ -90,19 +80,13 @@ public enum Language {
     }
 
     /**
-     * @return The stemmed version of stop words for the given language.
-     */
-    public String[] getStemmedStopWords() {
-        return stemmedStopWords;
-    }
-
-    /**
      * Small utility class usable to get all available languages
      * and print them in a format which is directly usable for the
      * enum {@link Language}.
      * In practice, this inner class is made to create all enum items
      * of the enum class.
      */
+    @SuppressWarnings("unused") // class used to create the code for this enum
     private static class AvailableLanguagesGetter {
         /**
          * Invoking this method causes the print of the enum

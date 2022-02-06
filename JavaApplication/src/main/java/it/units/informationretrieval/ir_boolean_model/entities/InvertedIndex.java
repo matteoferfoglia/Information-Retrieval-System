@@ -157,12 +157,14 @@ public class InvertedIndex implements Serializable {
                 .flatMap(Collection::stream)
                 .distinct().unordered().parallel()
                 .filter(Objects::nonNull)
+                .filter(str -> !str.isBlank())
                 .flatMap(strFromDictionary -> {
                     String str = strFromDictionary + END_OF_WORD;
                     return Arrays.stream(Utility.getAllRotationsOf(str))
                             .map(aRotation -> new Pair<>(
                                     aRotation,                                           /* the rotation */
-                                    stemmer.stem(strFromDictionary, corpus.getLanguage())/* the eventually stemmed correspondent term in the dictionary*/));
+                                    stemmer.stem(strFromDictionary, corpus.getLanguage())/* the eventually stemmed correspondent term in the dictionary*/))
+                            .filter(pair -> !pair.getValue().isBlank());
                 })
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
@@ -271,6 +273,7 @@ public class InvertedIndex implements Serializable {
                             tokenAndPositions.getKey(),
                             new Term(new PostingList(posting), tokenAndPositions.getKey()));
                 })
+                .filter(e -> !e.getKey()/*the token*/.isBlank())
                 .collect(
                         Collectors.toConcurrentMap(
                                 Map.Entry::getKey,
@@ -409,6 +412,9 @@ public class InvertedIndex implements Serializable {
             return new SkipList<>(getDictionaryTermsContainingSubstring(rotatedToken)
                     .stream().unordered().parallel()
                     .distinct()
+                    .peek(tokenFromDictionary -> {
+                        assert tokenFromDictionary != null && !tokenFromDictionary.isBlank();
+                    })
                     .filter(tokenFromDictionary -> MatcherForPermutermIndex
                             .isWildcardQueryCompatibleWithStemmedTokenFromIndex(
                                     normalizedToken.replaceAll(ESCAPED_WILDCARD_FOR_REGEX, WILDCARD),

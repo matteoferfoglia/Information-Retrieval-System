@@ -42,7 +42,7 @@ public class MatcherForPermutermIndex {
      */
     private static final States[][] transitionMtx = {
             /*            START, NORMAL, WILDCARD, VALID, INVALID, INVALID_TMP, TMP, RECOVERY, SAVE */
-            /*unstable*/ {INVALID, INVALID, INVALID, null, null, INVALID, INVALID, INVALID, INVALID},
+            /*unstable*/ {INVALID, INVALID, INVALID, VALID, INVALID, INVALID, INVALID, INVALID, INVALID},
             /* 1      */ {NORMAL, NORMAL, INVALID, INVALID, INVALID, INVALID, INVALID, NORMAL, NORMAL},
             /* 2      */ {WILDCARD, WILDCARD, INVALID, INVALID, INVALID, INVALID, INVALID, WILDCARD, WILDCARD},
             /* 3      */ {INVALID, INVALID, WILDCARD, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID},
@@ -59,7 +59,8 @@ public class MatcherForPermutermIndex {
             /*14      */ {VALID, INVALID, INVALID, INVALID, INVALID, INVALID, VALID, INVALID, INVALID},
             /*15      */ {INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID_TMP, INVALID, INVALID},
             /*16      */ {INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, WILDCARD, WILDCARD},
-            /*17      */ {INVALID, INVALID, VALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID}
+            /*17      */ {INVALID, INVALID, VALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID},
+            /*18      */ {INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID}
     };
     /**
      * The wildcard un-stemmed query string.
@@ -268,6 +269,8 @@ public class MatcherForPermutermIndex {
                         return _05;
                     } else if (_13.getCondition(m)) {
                         return _13;
+                    } else if (_18.getCondition(m)) {
+                        return _18;
                     } else {
                         throw new IllegalStateException("Unexpected configuration " + m);
                     }
@@ -368,7 +371,7 @@ public class MatcherForPermutermIndex {
      * Enumeration of symbols for the finite-state machine.
      */
     enum Symbols {
-        __0/*for unstable states*/, _01, _02, _03, _04, _05, _06, _07, _08, _09, _10, _11, _12, _13, _14, _15, _16, _17;
+        __0/*for unstable states*/, _01, _02, _03, _04, _05, _06, _07, _08, _09, _10, _11, _12, _13, _14, _15, _16, _17, _18;
 
         /**
          * @param m The current {@link MatcherForPermutermIndex}.
@@ -402,6 +405,7 @@ public class MatcherForPermutermIndex {
                         : Utility.getStemmer())
                         .stem(m.t + m.q.substring(m.i + 1).replaceAll("\\*", ""), m.language)
                         .equals(m.t);
+                case _18 -> m.i < m.q.length() && m.j < m.t.length() && !String.valueOf(m.q.charAt(m.i)).equals(InvertedIndex.WILDCARD);
             };
         }
     }
