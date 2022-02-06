@@ -43,7 +43,8 @@ public class EvaluationTest {
     /**
      * The folder name where to save results.
      */
-    private static final String FOLDER_NAME_TO_SAVE_RESULTS = "system_evaluation" + File.separator + "statistics";
+    private static final String FOLDER_NAME_TO_SAVE_RESULTS = "system_evaluation" + File.separator
+            + "statistics" + File.separator + "stemmer=" + BenchmarkingTest.STEMMER_NAME;
 
     /**
      * The {@link java.io.BufferedWriter} to print results to file.
