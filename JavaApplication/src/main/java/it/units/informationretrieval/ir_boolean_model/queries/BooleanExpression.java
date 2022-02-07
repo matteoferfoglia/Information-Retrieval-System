@@ -4,6 +4,7 @@ import com.bpodgursky.jbool_expressions.*;
 import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem;
 import it.units.informationretrieval.ir_boolean_model.entities.*;
 import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
+import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1489,20 +1490,17 @@ public class BooleanExpression {
                                 Double::sum,    // sum scores if more query terms are present in the same document
                                 LinkedHashMap::new))
                         .entrySet().stream().sequential()
-                        .sorted((docToRank1, docToRank2) -> {
+                        // ranking
+                        .map(entry_docToRank -> {
                             // Assign extra rank if any of query terms are present in the title of the document
-                            double score1 = docToRank1.getValue();
-                            double score2 = docToRank2.getValue();
+                            double score = entry_docToRank.getValue();
                             List<String> queryTerms = Arrays.asList(
                                     Utility.split(getQueryWords(false, true)));
-                            long extraScore1 = docToRank1.getKey().howManyCommonNormalizedWords(queryTerms);
-                            long extraScore2 = docToRank2.getKey().howManyCommonNormalizedWords(queryTerms);
-                            BiFunction<Double, Long, Double> assignExtraScore = (initialScore, extraScore) ->
-                                    extraScore > 1 ? initialScore * extraScore : extraScore + initialScore;
-                            score1 = assignExtraScore.apply(score1, extraScore1);
-                            score2 = assignExtraScore.apply(score2, extraScore2);
-
-                            return Double.compare(score2, score1);  // highest scores at top
+                            long extraScore = entry_docToRank.getKey().howManyCommonNormalizedWords(queryTerms);
+                            BiFunction<Double, Long, Double> assignExtraScore = (initialScore, extraScore_) ->
+                                    extraScore_ > 1 ? initialScore * extraScore_ : extraScore_ + initialScore;
+                            score = assignExtraScore.apply(score, extraScore);
+                            return new Pair<>(entry_docToRank.getKey(), score);
                         })
                         .map(Map.Entry::getKey)
                         .limit(maxNumberOfResults)
