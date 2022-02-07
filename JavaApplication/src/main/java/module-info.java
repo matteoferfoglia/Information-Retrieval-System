@@ -14,8 +14,6 @@ open module it.units.informationretrieval.ir_boolean_model {
     requires javafx.graphics;
     requires javafx.swing;
 
-//    exports it.units.informationretrieval.ir_boolean_model.user_defined_contents.cranfield;
-//    exports it.units.informationretrieval.ir_boolean_model.user_defined_contents.movies;
     exports it.units.informationretrieval.ir_boolean_model.entities;
     exports it.units.informationretrieval.ir_boolean_model.queries;
     exports it.units.informationretrieval.ir_boolean_model.utils;
