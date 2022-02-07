@@ -124,17 +124,29 @@
                 <version>3.0.0</version>
                 <executions>
                     <execution>
+                        <id>main</id>
                         <phase>install</phase>
                         <goals>
                             <goal>java</goal>
                         </goals>
+                        <configuration>
+                            <mainClass>${project.main.class}</mainClass>
+                            <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                            <!-- <commandlineArgs></commandlineArgs> -->
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>benchmark</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>${project.main.package}.evaluation.Benchmarking</mainClass>
+                            <!--                            <cleanupDaemonThreads>false</cleanupDaemonThreads>-->
+                            <classpathScope>test</classpathScope>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <mainClass>${project.main.class}</mainClass>
-                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
-                    <!-- <commandlineArgs></commandlineArgs> -->
-                </configuration>
             </plugin>
 
             <plugin>
