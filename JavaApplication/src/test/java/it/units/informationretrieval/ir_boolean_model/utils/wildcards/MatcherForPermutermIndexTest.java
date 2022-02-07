@@ -41,7 +41,9 @@ class MatcherForPermutermIndexTest {
             "ca*, ca, true",
             "tabl*e, table, true",
             "*bl*e, table, true",
-            "*bl*e, blue, true"
+            "*bl*e, blue, true",
+            "*am, jam, true",
+            "*am, yhisam, true"
     })
     void isWildcardQueryCompatibleWithStemmedTokenFromIndex(
             @NotNull String unstemmedInputWildcardQuery, @NotNull String unstemmedTokenFromIndex, boolean compatible) {
