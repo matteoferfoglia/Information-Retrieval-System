@@ -254,8 +254,8 @@ public class Utility {
         return Arrays.asList(stemming
                 ? Stemmer.getStemmedStopWords.apply(
                 getStemmer() == null
-                        ? Stemmer.getStemmer(Stemmer.AvailableStemmer.NO_STEMMING)
-                        : getStemmer(), language)
+                        ? Stemmer.AvailableStemmer.NO_STEMMING
+                        : Stemmer.AvailableStemmer.fromStemmer(getStemmer()), language)
                 : language.getStopWords()).contains(word);
     }
 

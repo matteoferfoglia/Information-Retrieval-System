@@ -125,9 +125,7 @@ class TestQueries {
             List<String> fromSecondDoc = getWordsFromDoc(doc2);
 
             // Handle stemming (if performed)
-            Method stemmerGetter = Utility.class.getDeclaredMethod("getStemmer");
-            stemmerGetter.setAccessible(true);
-            Stemmer stemmer = (Stemmer) stemmerGetter.invoke(null);
+            Stemmer stemmer = Utility.getStemmer();
 
             wordsContainedNeitherInFirstNorInSecondDocumentSupplier =
                     new WordSupplier(Arrays.asList("foo", "bar", "pippo", "pluto", "paperino"));
@@ -342,7 +340,8 @@ class TestQueries {
     void singleWordQuery() throws IOException {
         BooleanExpression be = irs.createNewBooleanExpression()
                 .setMatchingValue(wordsContainedInFirstButNotInSecondDocumentSupplier.get());
-        assertTrue(evaluatePrintAndGetResultsOf(be, WRITER_TO_FILE).contains(doc1));
+        var results = evaluatePrintAndGetResultsOf(be, WRITER_TO_FILE);
+        assertTrue(results.contains(doc1));
     }
 
     @Test
