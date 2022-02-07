@@ -32,7 +32,7 @@ def is_process_still_running(process):
 
 errors = {}
 
-for stemmer in ["null", "Porter", "Snowball"]:
+for stemmer in ["null", "Porter"]:
     set_stemmer_in_env_file(stemmer)
     mvn_test_process = subprocess.Popen(["mvn", "test"],
                                         stdout=subprocess.PIPE,
