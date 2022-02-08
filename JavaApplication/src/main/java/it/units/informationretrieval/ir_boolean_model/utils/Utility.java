@@ -84,7 +84,7 @@ public class Utility {
      */
     @NotNull
     public static String[] tokenize(
-            @NotNull Document document, @NotNull Language language, @NotNull Collection<String> unstemmedWords) {
+            @NotNull Document document, @NotNull Language language, @NotNull SynchronizedSet<String> unstemmedWords) {
         assert document.getContent() != null;
         return Arrays.stream(
                         split(/*title is included in the content*/document.getContent().getEntireTextContent()
@@ -112,7 +112,7 @@ public class Utility {
      */
     @NotNull
     public static Map<String, int[]> tokenizeAndGetMapWithPositionsInDocument(
-            @NotNull final Document document, @NotNull Language language, @NotNull Collection<String> unstemmedWords) {
+            @NotNull final Document document, @NotNull Language language, @NotNull SynchronizedSet<String> unstemmedWords) {
         String[] tokensEventuallyDuplicatesSortedByPositionInDocument = tokenize(document, language, unstemmedWords);
         Map<String, Set<Integer>> mapTokenToPositionsInDoc = IntStream
                 .range(0, tokensEventuallyDuplicatesSortedByPositionInDocument.length)
@@ -145,11 +145,11 @@ public class Utility {
      *                       (like wildcards) in queries, but special characters
      *                       should not be present in the dictionary of the index.
      * @param language       The language of the input token.
-     * @param unstemmedWords A collection where this method will add terms before stemming
-     *                       (it is used as output parameter if the caller needs to know the
-     *                       un-stemmed version of the input token). Note: token inserted in the
-     *                       collection might be equal to the returned one (e.g., if the system is
-     *                       set to avoid stemming or if no stemming step are required on the
+     * @param unstemmedWords A {@link SynchronizedSet} where this method will add terms before
+     *                       stemming (it is used as output parameter if the caller needs to know
+     *                       the un-stemmed version of the input token). Note: token inserted in
+     *                       the collection might be equal to the returned one (e.g., if the system
+     *                       is set to avoid stemming or if no stemming step are required on the
      *                       input token).
      * @return the corresponding normalized token or null either if the normalization
      * leads to an empty string or (in the case that stop-words must be excluded) if
@@ -158,7 +158,7 @@ public class Utility {
     @Nullable
     public static String normalize(
             @NotNull String token, boolean fromQuery,
-            @NotNull Language language, @NotNull Collection<String> unstemmedWords) {
+            @NotNull Language language, @NotNull SynchronizedSet<String> unstemmedWords) {
 
         String toReturn = removeInvalidCharsAndToLowerCase(token, fromQuery);
 
@@ -204,7 +204,7 @@ public class Utility {
      */
     @Nullable
     public static String normalize(@NotNull String token, boolean fromQuery, @NotNull Language language) {
-        return normalize(token, fromQuery, language, new HashSet<>());
+        return normalize(token, fromQuery, language, new SynchronizedSet<>());
     }
 
     /**

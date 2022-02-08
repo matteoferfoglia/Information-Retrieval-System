@@ -1,9 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
-import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
-import it.units.informationretrieval.ir_boolean_model.utils.Pair;
-import it.units.informationretrieval.ir_boolean_model.utils.Soundex;
-import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import it.units.informationretrieval.ir_boolean_model.utils.*;
 import it.units.informationretrieval.ir_boolean_model.utils.stemmers.Stemmer;
 import it.units.informationretrieval.ir_boolean_model.utils.wildcards.MatcherForPermutermIndex;
 import org.apache.commons.collections4.trie.PatriciaTrie;
@@ -91,7 +88,7 @@ public class InvertedIndex implements Serializable {
      * {@link List} of all <strong>un</strong>stemmed terms composing the dictionary.
      */
     @NotNull
-    private final List<String> unstemmedTerms = new ArrayList<>();
+    private final SynchronizedSet<String> unstemmedTerms = new SynchronizedSet<>();
 
     /**
      * The {@link Stemmer.AvailableStemmer} used by the system when this instance was created.

@@ -13,6 +13,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static it.units.informationretrieval.ir_boolean_model.entities.InvertedIndexTest.randomTokenFromDictionaryOfMovieInvertedIndex;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,6 +31,8 @@ class InformationRetrievalSystemTest {
             irs = new InformationRetrievalSystem(new MovieCorpusFactory().createCorpus());
         } catch (NoMoreDocIdsAvailable | IOException e) {
             fail(e);
+            Logger.getLogger(
+                    InformationRetrievalSystemTest.class.getCanonicalName()).log(Level.SEVERE, e.getMessage(), e);
         }
         reSetRealStdOut();
     }
