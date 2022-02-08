@@ -67,6 +67,11 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
+                <configuration>
+                    <fork>false</fork>
+                    <meminitial>1024m</meminitial>
+                    <maxmem>4096m</maxmem>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -270,7 +275,7 @@
         <dependency><!-- Benchmark -->
             <groupId>com.github.matteoferfoglia</groupId>
             <artifactId>java-benchmark</artifactId>
-            <version>3.0.0</version>
+            <version>3.1.1</version>
         </dependency>
 
         <dependency><!-- SkipList -->
