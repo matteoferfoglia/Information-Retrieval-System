@@ -40,8 +40,6 @@ import java.util.stream.Stream;
  */
 class BooleanTestQueriesCreator {
 
-    // TODO: use maven exec to run main method of this class
-
     /**
      * The {@link Language} of the input corpus.
      */
