@@ -55,7 +55,7 @@ public interface Stemmer {
      */
     static Stemmer getStemmer(@NotNull AvailableStemmer stemmer) {
         return switch (stemmer) {
-            case NO_STEMMING -> (input, language) -> input;
+            case NO_STEMMING -> new NoStemming();
             case PORTER -> new PorterStemmer();
         };
     }
@@ -78,12 +78,12 @@ public interface Stemmer {
          * @throws IllegalArgumentException if the given instance is unknown.
          */
         public static AvailableStemmer fromStemmer(@Nullable Stemmer stemmer) {
-            if (stemmer == null) {
+            if (stemmer == null || stemmer instanceof NoStemming) {
                 return NO_STEMMING;
-            } else if (stemmer.getClass().equals(PorterStemmer.class)) {
+            } else if (stemmer instanceof PorterStemmer) {
                 return PORTER;
             } else {
-                throw new IllegalArgumentException("Unknown stemmer" + stemmer);
+                throw new IllegalArgumentException("Unknown stemmer " + stemmer);
             }
         }
 
@@ -105,6 +105,13 @@ public interface Stemmer {
                         + NO_STEMMING + " returned.");
                 return NO_STEMMING;
             }
+        }
+    }
+
+    class NoStemming implements Stemmer {
+        @Override
+        public String stem(@NotNull String input, @NotNull Language ignored) {
+            return input;
         }
     }
 }
