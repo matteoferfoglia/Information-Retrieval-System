@@ -9,32 +9,37 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class Benchmarking {
 
     /**
-     * The name of the {@link it.units.informationretrieval.ir_boolean_model.utils.stemmers.Stemmer} currently used.
+     * Concatenation of all properties from {@link AppProperties}.
      */
-    final static String STEMMER_NAME;
+    public final static String PROPERTY_CONCATENATION;
     /**
      * The folder name where to save results.
      */
     private static final String FOLDER_NAME_TO_SAVE_RESULTS;
 
     static {
-        String stemmerNameTmp;
+        String propertyConcatenationTmp;
         try {
-            stemmerNameTmp = AppProperties.getInstance().get("app.stemmer");
+            propertyConcatenationTmp = AppProperties.getInstance().entrySet().stream()
+                    .sorted(Map.Entry.comparingByKey())
+                    .map(e -> File.separator + e.getKey() + "=" + e.getValue())
+                    .collect(Collectors.joining())
+                    .replaceAll("[^\\w.=\\" + File.separator + "]", "");
         } catch (IOException e) {
+            propertyConcatenationTmp = "";
             Logger.getLogger(Benchmarking.class.getCanonicalName())
                     .log(Level.SEVERE, "Property not found", e);
-            stemmerNameTmp = "null";
         }
-        STEMMER_NAME = stemmerNameTmp;
-        FOLDER_NAME_TO_SAVE_RESULTS = "system_evaluation" + File.separator
-                + "benchmarks" + File.separator + "stemmer=" + STEMMER_NAME;
+        PROPERTY_CONCATENATION = propertyConcatenationTmp;
+        FOLDER_NAME_TO_SAVE_RESULTS = "system_evaluation" + File.separator + "benchmarks" + PROPERTY_CONCATENATION;
     }
 
     static void benchmarkAll() throws IOException {
