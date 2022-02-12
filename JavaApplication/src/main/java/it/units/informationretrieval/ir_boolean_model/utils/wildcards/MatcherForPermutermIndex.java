@@ -142,7 +142,7 @@ public class MatcherForPermutermIndex {
      * will be available in {@link #result}.
      */
     private void accept() {
-        long TIMEOUT_MILLIS = 20;
+        long TIMEOUT_MILLIS = 200;
         long START_MILLIS = System.currentTimeMillis();
         try {
             while (result == null) {
