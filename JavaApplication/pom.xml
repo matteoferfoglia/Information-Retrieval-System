@@ -36,6 +36,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.main.package>it.units.informationretrieval.ir_boolean_model</project.main.package>
         <project.main.class>${project.main.package}.Main</project.main.class>
+        <logging.properties.file.path>src/main/resources/logging.properties</logging.properties.file.path>
     </properties>
 
     <url/><!-- Avoid warning "No project URL defined - decoration links will not be relativized!" -->
@@ -68,9 +69,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <fork>false</fork>
+                    <fork>true</fork>
                     <meminitial>1024m</meminitial>
-                    <maxmem>4096m</maxmem>
+                    <maxmem>10000m</maxmem><!-- Benchmarking requires a lot of memory -->
                 </configuration>
             </plugin>
 
@@ -137,17 +138,19 @@
                         <configuration>
                             <mainClass>${project.main.class}</mainClass>
                             <cleanupDaemonThreads>false</cleanupDaemonThreads>
-                            <!-- <commandlineArgs></commandlineArgs> -->
                         </configuration>
                     </execution>
                     <execution>
+                        <!-- assertions are disabled by default with maven exec -->
                         <id>benchmark</id>
+                        <phase>test-compile
+                        </phase><!-- To execute this, you must first execute the specified phase, otherwise: ClassNotFoundException -->
                         <goals>
                             <goal>java</goal>
                         </goals>
                         <configuration>
                             <mainClass>${project.main.package}.evaluation.Benchmarking</mainClass>
-                            <!--                            <cleanupDaemonThreads>false</cleanupDaemonThreads>-->
+                            <cleanupDaemonThreads>false</cleanupDaemonThreads>
                             <classpathScope>test</classpathScope>
                         </configuration>
                     </execution>
@@ -275,7 +278,7 @@
         <dependency><!-- Benchmark -->
             <groupId>com.github.matteoferfoglia</groupId>
             <artifactId>java-benchmark</artifactId>
-            <version>3.1.1</version>
+            <version>3.1.2</version>
         </dependency>
 
         <dependency><!-- SkipList -->
