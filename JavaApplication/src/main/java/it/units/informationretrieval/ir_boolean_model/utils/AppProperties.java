@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,18 @@ public class AppProperties {
      */
     @NotNull
     private static final String WORKING_DIRECTORY_PROPERTY_NAME = "workingDirectory_name";
+
+    /**
+     * The path to the file where logging properties are saved.
+     */
+    private static final String LOGGING_PROPERTIES_FILE_PATH = "/logging.properties";
+
+    /**
+     * The name of the directory where logs will be saved inside the working directory
+     * (which is specified in {@link #WORKING_DIRECTORY_PROPERTY_NAME}.
+     */
+    @NotNull
+    private static final String LOGS_DIRECTORY_NAME = "logs";
 
     /**
      * {@link Logger} of this class.
@@ -186,6 +199,37 @@ public class AppProperties {
     }
 
     /**
+     * Loads logging properties and sets where to output the log.
+     *
+     * @param workingDirectory The working directory where logs will be saved.
+     */
+    private static void loadLoggingProperties(@NotNull File workingDirectory) {
+        try {
+            if (!workingDirectory.exists()) {
+                throw new IOException(workingDirectory + " does not exist.");
+            } else {
+                File logsFolder = new File(workingDirectory.getAbsolutePath() + "/" + LOGS_DIRECTORY_NAME);
+                if (!logsFolder.exists()) {
+                    if (!logsFolder.mkdir()) {
+                        throw new IOException(logsFolder + " not created");
+                    }
+                }
+
+                LogManager.getLogManager().updateConfiguration(AppProperties.class.getResourceAsStream(LOGGING_PROPERTIES_FILE_PATH),
+                        logPropName -> logPropName.equals("java.util.logging.FileHandler.pattern")
+                                ? (k, v) -> logsFolder.getAbsolutePath() + File.separator + "%g.%u.log" // https://docs.oracle.com/javase/7/docs/api/java/util/logging/FileHandler.html
+                                : (k, v) -> v /*do not modify*/);
+                System.out.println();
+            }
+
+        } catch (IOException e) {
+            System.err.println("Cannot load logging properties");
+            e.printStackTrace();
+            System.exit(-1);
+        }
+    }
+
+    /**
      * Load application properties and create the working directory for the application.
      * First, default properties are loaded from the file named as specified in
      * {@link #DEFAULT_PROPERTIES_FILE_NAME}, then, user-specific properties will be
@@ -205,6 +249,8 @@ public class AppProperties {
         File workingDirectory = new File(Objects.requireNonNull(
                 defaultProps.getProperty(WORKING_DIRECTORY_PROPERTY_NAME)));
         createWorkingDirectoryOnFileSystemIfNotExist(workingDirectory);
+
+        loadLoggingProperties(workingDirectory);
 
         userSpecificPropertyFile = new File(
                 workingDirectory.getAbsolutePath() + File.separator + USER_SPECIFIC_PROPERTIES_FILE_NAME);
