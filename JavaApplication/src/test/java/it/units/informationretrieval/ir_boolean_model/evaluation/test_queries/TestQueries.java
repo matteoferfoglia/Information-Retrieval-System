@@ -4,6 +4,7 @@ import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.Language;
+import it.units.informationretrieval.ir_boolean_model.evaluation.Benchmarking;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
 import it.units.informationretrieval.ir_boolean_model.user_defined_contents.movies.Movie;
@@ -53,7 +54,8 @@ class TestQueries {
     /**
      * The folder name where to save results.
      */
-    static final String FOLDER_NAME_TO_SAVE_RESULTS = "system_evaluation" + File.separator + "test_queries";
+    static final String FOLDER_NAME_TO_SAVE_RESULTS = "system_evaluation" + File.separator
+            + "test_queries" + Benchmarking.PROPERTY_CONCATENATION;
     /**
      * Flag: if set to true, results will be printed to {@link System#out}.
      */
@@ -547,7 +549,11 @@ class TestQueries {
          * @param words The {@link List} of words that will be supplied by this instance.
          */
         public WordSupplier(List<String> words) {
-            this.words = Objects.requireNonNull(words);
+            this.words = Objects.requireNonNull(words)
+                    .stream()
+                    .filter(word -> Utility.normalize(word, true, USED_LANGUAGE) != null) // normalization might remove stop words
+                    //  to solve normalization issues, the system might return *all* documents from the corpus, but it might be computational and time expensive
+                    .toList();
         }
 
         /**
