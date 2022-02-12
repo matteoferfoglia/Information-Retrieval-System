@@ -55,6 +55,9 @@ public class InvertedIndexTest {
 
     static {
 
+        PrintStream realStdOut = System.out;
+        System.setOut(new PrintStream(new ByteArrayOutputStream()));      // ignore std out for this block
+
         try {
             movieCorpus = new MovieCorpusFactory().createCorpus();
         } catch (NoMoreDocIdsAvailable | IOException e) {
@@ -69,65 +72,59 @@ public class InvertedIndexTest {
             fail(e);
         }
 
-        PrintStream realStdOut = System.out;
-        System.setOut(new PrintStream(new ByteArrayOutputStream()));      // ignore std out for this block
-        try {
-            Corpus movieCorpus = new MovieCorpusFactory().createCorpus(); // used for benchmarks
-            invertedIndexForMovieCorpus = new InvertedIndex(movieCorpus); // used for benchmarks
-            randomTokenFromDictionaryOfMovieInvertedIndex = new Supplier<>() {
+        invertedIndexForMovieCorpus = new InvertedIndex(movieCorpus); // used for benchmarks
+        randomTokenFromDictionaryOfMovieInvertedIndex = new Supplier<>() {
 
-                private static final List<String> dictionary = new ArrayList<>(invertedIndexForMovieCorpus.getDictionary());
-                private static final int dictionaryLength = dictionary.size();
-                private static final String[] randomPermutationOfTokensFromDictionary;
-                private static int numberOfGeneratedToken = 0;
+            private static final List<String> dictionary = new ArrayList<>(invertedIndexForMovieCorpus.getDictionary());
+            private static final int dictionaryLength = dictionary.size();
+            private static final String[] randomPermutationOfTokensFromDictionary;
+            private static int numberOfGeneratedToken = 0;
 
-                static {
-                    Collections.shuffle(dictionary);
-                    randomPermutationOfTokensFromDictionary = dictionary.toArray(String[]::new);
-                }
+            static {
+                Collections.shuffle(dictionary);
+                randomPermutationOfTokensFromDictionary = dictionary.toArray(String[]::new);
+            }
 
-                @Override
-                public String get() {
-                    return randomPermutationOfTokensFromDictionary[numberOfGeneratedToken++ % dictionaryLength];
-                }
-            };
-            randomPhraseFromDictionaryOfMovieInvertedIndex = new Supplier<>() {
+            @Override
+            public String get() {
+                return randomPermutationOfTokensFromDictionary[numberOfGeneratedToken++ % dictionaryLength];
+            }
+        };
+        randomPhraseFromDictionaryOfMovieInvertedIndex = new Supplier<>() {
 
-                private static final int PHRASE_LENGTH = 5;
-                private static final int NUM_OF_DOCS_TO_USE = 10000;
+            private static final int PHRASE_LENGTH = 5;
+            private static final int NUM_OF_DOCS_TO_USE = 10000;
 
-                private static final List<Document> movies = new ArrayList<>(invertedIndexForMovieCorpus.getCorpus().getCorpus().values());
-                private static final List<String[]> randomPermutationOfPhrasesFromDocuments =
-                        movies.stream().unordered().sequential()
-                                .map(Document::getContent)
-                                .filter(Objects::nonNull)
-                                .limit(NUM_OF_DOCS_TO_USE)
-                                .map(DocumentContent::getEntireTextContent)
-                                .map(docContent -> {
-                                    var randomStartingPosition = (int) (Math.random() * Math.max(0, docContent.length() - PHRASE_LENGTH));
-                                    return docContent.substring(randomStartingPosition, randomStartingPosition + PHRASE_LENGTH);
-                                })
-                                .map(phrase -> Arrays.stream(phrase.split(" "))
-                                        .filter(Objects::nonNull).toArray(String[]::new))
-                                .collect(Collectors.toList());
-                private static int numberOfGeneratedPhrase = 0;
+            private static final List<Document> movies = new ArrayList<>(invertedIndexForMovieCorpus.getCorpus().getCorpus().values());
+            private static final List<String[]> randomPermutationOfPhrasesFromDocuments =
+                    movies.stream().unordered().sequential()
+                            .map(Document::getContent)
+                            .filter(Objects::nonNull)
+                            .limit(NUM_OF_DOCS_TO_USE)
+                            .map(DocumentContent::getEntireTextContent)
+                            .map(docContent -> {
+                                var randomStartingPosition = (int) (Math.random() * Math.max(0, docContent.length() - PHRASE_LENGTH));
+                                return docContent.substring(randomStartingPosition, randomStartingPosition + PHRASE_LENGTH);
+                            })
+                            .map(phrase -> Arrays.stream(phrase.split(" "))
+                                    .filter(Objects::nonNull).toArray(String[]::new))
+                            .collect(Collectors.toList());
+            private static int numberOfGeneratedPhrase = 0;
 
-                static {
-                    assert randomPermutationOfPhrasesFromDocuments.size() > 0;
-                    Collections.shuffle(randomPermutationOfPhrasesFromDocuments);
-                }
+            static {
+                assert randomPermutationOfPhrasesFromDocuments.size() > 0;
+                Collections.shuffle(randomPermutationOfPhrasesFromDocuments);
+            }
 
-                @Override
-                public String[] get() {
-                    var phraseToReturn = randomPermutationOfPhrasesFromDocuments
-                            .get(numberOfGeneratedPhrase++ % randomPermutationOfPhrasesFromDocuments.size());
-                    assert Arrays.stream(phraseToReturn).noneMatch(Objects::isNull);
-                    return phraseToReturn;
-                }
-            };
-        } catch (NoMoreDocIdsAvailable | IOException e) {
-            fail(e);
-        }
+            @Override
+            public String[] get() {
+                var phraseToReturn = randomPermutationOfPhrasesFromDocuments
+                        .get(numberOfGeneratedPhrase++ % randomPermutationOfPhrasesFromDocuments.size());
+                assert Arrays.stream(phraseToReturn).noneMatch(Objects::isNull);
+                return phraseToReturn;
+            }
+        };
+
         System.setOut(realStdOut);
     }
 
