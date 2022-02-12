@@ -272,13 +272,6 @@ public class AppProperties {
         return appProperties.containsKey(propertyName);
     }
 
-    /**
-     * @return the entry set with all the properties.
-     */
-    public Set<Map.Entry<Object, Object>> entrySet() {
-        return appProperties.entrySet();
-    }
-
     @Override
     public synchronized String toString() {
         return "App Properties (" + appProperties.size() + " props):" + System.lineSeparator()
@@ -288,5 +281,14 @@ public class AppProperties {
                 .sorted()
                 .collect(Collectors.joining(System.lineSeparator()))
                 + System.lineSeparator();
+    }
+
+    /**
+     * @return the entry set with all the properties.
+     */
+    public synchronized Set<Map.Entry<String, String>> entrySet() {
+        return appProperties.entrySet().stream()
+                .map(e -> new Pair<>(String.valueOf(e.getKey()), String.valueOf(e.getValue())))
+                .collect(Collectors.toUnmodifiableSet());
     }
 }
