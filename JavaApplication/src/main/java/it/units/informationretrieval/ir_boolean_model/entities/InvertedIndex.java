@@ -150,7 +150,8 @@ public class InvertedIndex implements Serializable {
         Stemmer stemmer = Utility.getStemmer() == null
                 ? Stemmer.getStemmer(Stemmer.AvailableStemmer.NO_STEMMING)
                 : Utility.getStemmer();
-        return Stream.of(getDictionary(), getUnstemmedDictionary())
+        PatriciaTrie<String> permutermIndex = new PatriciaTrie<>();
+        Stream.of(getDictionary(), getUnstemmedDictionary())
                 .flatMap(Collection::stream)
                 .distinct().unordered().parallel()
                 .filter(Objects::nonNull)
@@ -163,13 +164,10 @@ public class InvertedIndex implements Serializable {
                                     stemmer.stem(strFromDictionary, corpus.getLanguage())/* the eventually stemmed correspondent term in the dictionary*/))
                             .filter(pair -> !pair.getValue().isBlank());
                 })
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (a, b) -> {
-                            throw new IllegalStateException("No duplicates should be present");
-                        },
-                        PatriciaTrie::new));
+                .forEachOrdered(pair -> {   // cannot use "collect" because PatriciaTrie is not thread-safe, so error can occours if PatriciaTrie is used as data-structure and parallel streams are used
+                    permutermIndex.put(pair.getKey(), pair.getValue());
+                });
+        return permutermIndex;
     }
 
     @NotNull
