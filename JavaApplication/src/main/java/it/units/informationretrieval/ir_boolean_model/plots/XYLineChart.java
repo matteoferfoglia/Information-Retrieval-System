@@ -74,18 +74,25 @@ public class XYLineChart extends Application {
      * @param xAxisLabel           The label for the x-axis.
      * @param yAxisLabel           The label for the y-axis.
      * @param showLegend           Flag: true if legend must be shown, false otherwise.
+     * @param minX                 Lower bound for the x-axis.
+     * @param maxX                 Upper bound for the x-axis.
+     * @param minY                 Lower bound for the y-axis.
+     * @param maxY                 Upper bound for the y-axis.
      */
     public static synchronized void plot(String title, List<Point.Series> listOfSeriesOfPoints,
-                                         String xAxisLabel, String yAxisLabel, boolean showLegend) {
+                                         String xAxisLabel, String yAxisLabel, boolean showLegend,
+                                         double minX, double maxX, double minY, double maxY) {
 
         if (!isJavaFxAlreadyStarted()) {
             javaFxThread = new Thread(Application::launch);
             javaFxThread.start();
             while (!isJavaFxAlreadyStarted()) {   // wait for the setup of the GUI
                 try {
+                    //noinspection BusyWait
                     Thread.sleep(5);        // gives time for the setup
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(XYLineChart.class.getCanonicalName())
+                            .log(Level.SEVERE, "Error with JavaFX", e);
                 }
             }
         } else {
@@ -103,7 +110,7 @@ public class XYLineChart extends Application {
         assert currentInstance != null;
 
         parameters = new XYParameter(title, listOfSeriesOfPoints, xAxisLabel, yAxisLabel, showLegend);
-        currentInstance.drawChart();
+        currentInstance.drawChart(minX, maxX, minY, maxY);
     }
 
     /**
@@ -147,7 +154,8 @@ public class XYLineChart extends Application {
 
             while (!hasSaved.get()) {
                 try {
-                    Thread.sleep(5);
+                    //noinspection BusyWait
+                    Thread.sleep(5);            // gives time to save
                 } catch (InterruptedException e) {
                     Logger.getLogger(XYLineChart.class.getCanonicalName())
                             .log(Level.SEVERE, "Interrupted thread while saving the image to file.", e);
@@ -177,8 +185,13 @@ public class XYLineChart extends Application {
 
     /**
      * Draws the X-Y plot according to {@link #parameters}.
+     *
+     * @param minX Lower bound for the x-axis.
+     * @param maxX Upper bound for the x-axis.
+     * @param minY Lower bound for the y-axis.
+     * @param maxY Upper bound for the y-axis.
      */
-    private void drawChart() {
+    private void drawChart(double minX, double maxX, double minY, double maxY) {
 
         AtomicBoolean plotDrawn = new AtomicBoolean(false); // becomes true after the plot has been drawn
 
@@ -209,6 +222,18 @@ public class XYLineChart extends Application {
             xAxis.setLabel(xAxisLabel);
             yAxis.setLabel(yAxisLabel);
 
+            // set range for axis
+            if (minX < maxX && minY < maxY) {
+                xAxis.setAutoRanging(false);
+                yAxis.setAutoRanging(false);
+                xAxis.setLowerBound(minX);
+                yAxis.setLowerBound(minY);
+                xAxis.setUpperBound(maxX);
+                yAxis.setUpperBound(maxY);
+                xAxis.setTickUnit((maxX - minX) / 10);
+                yAxis.setTickUnit((maxY - minY) / 10);
+            }
+
             // Line-chart creation
             final LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
             lineChart.setTitle(title);
@@ -229,6 +254,7 @@ public class XYLineChart extends Application {
 
         while (!plotDrawn.get()) {
             try {
+                //noinspection BusyWait
                 Thread.sleep(5);    // Wait for the JavaFX's thread to draw the chart
             } catch (InterruptedException e) {
                 Logger.getLogger(getClass().getCanonicalName())

@@ -44,7 +44,7 @@ public class EvaluationTest {
      * The folder name where to save results.
      */
     private static final String FOLDER_NAME_TO_SAVE_RESULTS = "system_evaluation" + File.separator
-            + "statistics" + File.separator + "stemmer=" + Benchmarking.STEMMER_NAME;
+            + "statistics" + Benchmarking.PROPERTY_CONCATENATION;
 
     /**
      * The {@link java.io.BufferedWriter} to print results to file.
@@ -286,6 +286,7 @@ public class EvaluationTest {
         do {
             try {
                 Point.plotAndSavePNG_ofMultipleSeries("Precision-Recall curve", precisionRecallSeries, "Recall", "Precision", false,
+                        0, 1, 0, 1,
                         FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_precisionRecallCurves.png", 10);
                 break;
             } catch (OutOfMemoryError e) {
@@ -359,6 +360,7 @@ public class EvaluationTest {
 
         try {
             Point.plotAndSavePNG_ofMultipleSeries("Interpolated precisions curve", interpolatedPrecisionSeries, "Recall", "Precision", false,
+                    0, 1, 0, 1,
                     FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_interpolatedPrecisions.png", 10);
         } catch (OutOfMemoryError e) {
             Logger.getLogger(getClass().getCanonicalName())
@@ -425,6 +427,7 @@ public class EvaluationTest {
         try {
             Point.plotAndSavePNG_ofMultipleSeries(
                     SERIES_NAME, List.of(NPointsInterpolatedAveragePrecision), "Recall", "Precision", false,
+                    0, 1, 0, 1,
                     FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_NPointInterpolatedAveragePrecisions.png", 10);
         } catch (OutOfMemoryError e) {
             Logger.getLogger(getClass().getCanonicalName())
