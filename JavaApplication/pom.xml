@@ -131,7 +131,7 @@
                 <executions>
                     <execution>
                         <id>main</id>
-                        <phase>install</phase>
+                        <!--                        <phase>install</phase>-->
                         <goals>
                             <goal>java</goal>
                         </goals>
@@ -143,8 +143,7 @@
                     <execution>
                         <!-- assertions are disabled by default with maven exec -->
                         <id>benchmark</id>
-                        <phase>test-compile
-                        </phase><!-- To execute this, you must first execute the specified phase, otherwise: ClassNotFoundException -->
+                        <!--                        <phase>test-compile</phase>-->
                         <goals>
                             <goal>java</goal>
                         </goals>
