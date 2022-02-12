@@ -904,12 +904,11 @@ public class BooleanExpression {
     }
 
     /**
-     * @throws IllegalStateException if neither the {@link #matchingValue} nor the {@link #matchingPhrase} is set.
+     * @return true if either the {@link #matchingValue} or the {@link #matchingPhrase} is set, or
+     * if it is aggregated, false otherwise.
      */
-    private void throwIfNotAggregatedButNeitherValueNorPhraseToMatchIsSet() {
-        if (!(isAggregated || isMatchingValueSet() || isMatchingPhraseSet())) {
-            throw new IllegalStateException("Neither matching value or phrase is set.");
-        }
+    private boolean isSet() {
+        return isAggregated || isMatchingValueSet() || isMatchingPhraseSet();
     }
 
     //region query AND
@@ -922,8 +921,9 @@ public class BooleanExpression {
      * @return This instance after setting the AND operand.
      */
     public BooleanExpression and(@NotNull BooleanExpression other) {
-        throwIfNotAggregatedButNeitherValueNorPhraseToMatchIsSet();
-        return set(new BooleanExpression(BINARY_OPERATOR.AND, new BooleanExpression(this), other));
+        return set(isSet()
+                ? new BooleanExpression(BINARY_OPERATOR.AND, new BooleanExpression(this), other)
+                : other);
     }
 
     /**
@@ -959,8 +959,9 @@ public class BooleanExpression {
      * @return This instance after setting the OR operand.
      */
     public BooleanExpression or(@NotNull BooleanExpression other) {
-        throwIfNotAggregatedButNeitherValueNorPhraseToMatchIsSet();
-        return set(new BooleanExpression(BINARY_OPERATOR.OR, new BooleanExpression(this), other));
+        return set(isSet()
+                ? new BooleanExpression(BINARY_OPERATOR.OR, new BooleanExpression(this), other)
+                : other);
     }
 
     /**
@@ -1186,11 +1187,7 @@ public class BooleanExpression {
         if (DEBUG_NOT_QUERY) {
             start = System.nanoTime();
         }
-        var allDocIds = SkipList.createNewInstanceFromSortedCollection(
-                informationRetrievalSystem.getAllDocIds(), Comparator.naturalOrder());
-        // collection of docIds MUST be already sorted
-        // We could create a new SkipList<>(...), so the SkipList construction would implicitly sort elements,
-        //  but it is time-expensive: now we are exploiting the fact that the received collection is already sorted!
+        var allDocIds = getAllDocIds();
 
         assert informationRetrievalSystem.getAllDocIds().stream().sorted().toList()
                 .equals(informationRetrievalSystem.getAllDocIds().stream().toList());   // assert that the document collection was effectively sorted
@@ -1247,6 +1244,18 @@ public class BooleanExpression {
             //            When try to improve speed, disable assertions
         }
         return result;
+    }
+
+    /**
+     * @return the (sorted) {@link SkipList} with <em>all</em> {@link DocumentIdentifier}
+     * which are indexed by the {@link #informationRetrievalSystem} instance.
+     */
+    private SkipList<DocumentIdentifier> getAllDocIds() {
+        return SkipList.createNewInstanceFromSortedCollection(
+                informationRetrievalSystem.getAllDocIds(), Comparator.naturalOrder());
+        // collection of docIds MUST be already sorted
+        // We could create a new SkipList<>(...), so the SkipList construction would implicitly sort elements,
+        //  but it is time-expensive: now we are exploiting the fact that the received collection is already sorted!
     }
 
     /**

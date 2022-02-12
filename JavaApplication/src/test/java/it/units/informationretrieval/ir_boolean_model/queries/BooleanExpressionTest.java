@@ -173,7 +173,7 @@ class BooleanExpressionTest {
                 .evaluate();
     }
 
-    @Benchmark(warmUpIterations = 10, iterations = 10, tearDownIterations = 10, commentToReport = COMMENT_FOR_BENCHMARK)
+    @Benchmark(warmUpIterations = 2, iterations = 3, tearDownIterations = 1, commentToReport = COMMENT_FOR_BENCHMARK)
     static void createAndEvaluatePhraseQueryAndThenNot() {
         irsForBenchmark.createNewBooleanExpression()
                 .setMatchingPhrase(randomPhraseFromDictionaryOfMovieInvertedIndex.get())
@@ -436,31 +436,22 @@ class BooleanExpressionTest {
     }
 
     @Test
-    void throwIfNotAggregatedButNeitherValueNorPhraseToMatchIsSet() {
+    void throwIfTryingToSetMatchingValueInAnAlreadySetQuery() {
         try {
-            booleanExpression.and("");
+            irsForTests.createNewBooleanExpression()                            // query created
+                    .and("foo")                                                 // condition set
+                    .setMatchingValue("impossible to set this");                // should aggregate with a binary operator to another query, not to set directly
             fail("Should have thrown but did not.");
         } catch (IllegalStateException ignored) {
         }
     }
 
     @Test
-    void throwIfTryingToSetMatchingValueInAnAggregatedQuery() {
+    void throwIfTryingToSetMatchingPhraseInAnAlreadySetQuery() {
         try {
-            irsForTests.createNewBooleanExpression()
-                    .and("")
-                    .setMatchingValue("impossible to set this");
-            fail("Should have thrown but did not.");
-        } catch (IllegalStateException ignored) {
-        }
-    }
-
-    @Test
-    void throwIfTryingToSetMatchingPhraseInAnAggregatedQuery() {
-        try {
-            irsForTests.createNewBooleanExpression()
-                    .and("")
-                    .setMatchingPhrase("impossible to set this".split(" "));
+            irsForTests.createNewBooleanExpression()                                // query created
+                    .and("foo")                                                     // condition set
+                    .setMatchingPhrase("impossible to set this".split(" "));  // should aggregate with a binary operator to another query, not to set directly
             fail("Should have thrown but did not.");
         } catch (IllegalStateException ignored) {
         }
