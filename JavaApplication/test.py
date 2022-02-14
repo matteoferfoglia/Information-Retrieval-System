@@ -85,6 +85,7 @@ for exclude_stop_words in booleans:
                 if BENCHMARK:
                     mvn_commands = mvn_commands + ["exec:java@benchmark"]
 
+                try:
                 mvn_test_process = subprocess.Popen(["mvn"] + mvn_commands,
                                                     stdout=subprocess.PIPE,
                                                     stderr=subprocess.PIPE,
@@ -103,6 +104,9 @@ for exclude_stop_words in booleans:
                 if errors_with_this_config != "":
                     errors[current_config] = errors_with_this_config
 
+                except:
+                    pass # error during process execution already saved
+
 set_property_in_env_file(EXCLUDE_STOP_WORDS_PROPERTY_NAME, exclude_stop_words_initial_value)
 set_property_in_env_file(RANK_QUERY_RESULTS_PROPERTY_NAME, rank_query_results_initial_value)
 set_property_in_env_file(USE_WF_IDF_PROPERTY_NAME, use_wf_idf_initial_value)
@@ -116,5 +120,5 @@ if len(errors) > 0:
     for config, errors_ in errors.items():
         print("\nWith " + config + "\n")
         for error in errors_:
-            print("\t" + error + "\n")
-        print("\n\n")
+            print("\t" + error)
+        print("\n")
