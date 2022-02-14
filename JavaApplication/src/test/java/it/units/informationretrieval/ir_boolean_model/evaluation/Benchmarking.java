@@ -60,7 +60,7 @@ public class Benchmarking {
         System.out.println("Benchmarking started" + System.lineSeparator());
         try {
             benchmarkAll();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             Logger.getLogger(Benchmarking.class.getCanonicalName())
                     .log(Level.SEVERE, "Exception thrown", e);
         }
