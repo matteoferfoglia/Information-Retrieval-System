@@ -19,10 +19,12 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -257,30 +259,41 @@ public class EvaluationTest {
         printStatistics("recall", recalls);
     }
 
+    /**
+     * @param query A {@link CranfieldQuery} from {@link #CRANFIELD_QUERIES}.
+     * @return the {@link Point.Series} of (Recall, Precision) points computed
+     * for the given query (the j-th point in the returned series is obtained
+     * considering the first j retrieved documents).
+     */
+    @NotNull
+    private Point.Series getRecallPrecisionPointsForQuery(CranfieldQuery query) {
+        var relevantDocuments = getRelevantDocsForQuery(query);
+        var retrievedDocuments = getRetrievedDocsForQuery(query);
+        List<Point<Double, Double>> recall_precision_points =
+                IntStream.range(0, retrievedDocuments.size()).sequential()
+                        .mapToObj(j -> {
+                            var retrievedDocsTillJth = retrievedDocuments.subList(0, j + 1);
+                            var relevantAndRetrievedTillJth = getRelevantAndRetrieved(relevantDocuments, retrievedDocsTillJth);
+                            double precision = (double) relevantAndRetrievedTillJth.size() / retrievedDocsTillJth.size();
+                            double recall = (double) relevantAndRetrievedTillJth.size() / relevantDocuments.size();
+                            return new Point<>(recall, precision);
+                        })
+                        // stream is sorted by construction according to abscissa (in fact: relevantAndRetrievedTillJth, with J=1, has the minimum recall, while, for J=relevantDocuments.size(), recall will be 1 (maximum))
+                        .toList();
+        if (retrievedDocuments.isEmpty()) {
+            double precision = 0D;
+            double recall = 0D;
+            recall_precision_points = List.of(new Point<>(recall, precision));
+        }
+        return new Point.Series(recall_precision_points, String.valueOf(query.getQueryNumber()));
+    }
+
     @Test
     @Order(3)
     void precisionRecallCurve() {
 
         precisionRecallSeries = CRANFIELD_QUERIES.parallelStream().unordered()
-                .map(query -> {
-                    var relevantDocuments = getRelevantDocsForQuery(query);
-                    var retrievedDocuments = getRetrievedDocsForQuery(query);
-                    Point.Series recall_precision_points = new Point.Series(String.valueOf(query.getQueryNumber()));
-
-                    for (int j = 0; j < retrievedDocuments.size(); j++) {
-                        var retrievedDocsTillJth = retrievedDocuments.subList(0, j + 1);
-                        var relevantAndRetrievedTillJth = getRelevantAndRetrieved(relevantDocuments, retrievedDocsTillJth);
-                        double precision = (double) relevantAndRetrievedTillJth.size() / retrievedDocsTillJth.size();
-                        double recall = (double) relevantAndRetrievedTillJth.size() / relevantDocuments.size();
-                        recall_precision_points.add(new Point<>(recall, precision));
-                    }
-                    if (retrievedDocuments.isEmpty()) {
-                        double precision = 0D;
-                        double recall = 0D;
-                        recall_precision_points.add(new Point<>(recall, precision));
-                    }
-                    return recall_precision_points;
-                })
+                .map(this::getRecallPrecisionPointsForQuery)
                 .collect(Collectors.toList());
 
         do {
@@ -359,7 +372,7 @@ public class EvaluationTest {
                 .toList();
 
         try {
-            Point.plotAndSavePNG_ofMultipleSeries("Interpolated precisions curve", interpolatedPrecisionSeries, "Recall", "Precision", false,
+            Point.plotAndSavePNG_ofMultipleSeries("Interpolated precision curves", interpolatedPrecisionSeries, "Recall", "Precision", false,
                     0, 1, 0, 1,
                     FOLDER_NAME_TO_SAVE_RESULTS + File.separator + currentDateTime + "_interpolatedPrecisions.png", 10);
         } catch (OutOfMemoryError e) {
@@ -455,6 +468,128 @@ public class EvaluationTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    @Order(6)
+    void MAP() {
+        ToDoubleFunction<Point.Series> getAveragePrecisionOfIthQuery =  // average precision for *one* query
+                recall_precision_points ->                              // input points obtained from recall_precision_series
+                        recall_precision_points.size() > 0
+                                ? recall_precision_points.stream()      // order of elements in the stream does not matter thanks to the commutativity of the sum
+                                .mapToDouble(Point::getY)               // get only precision values
+                                .sum() / recall_precision_points.size() // compute the average precision for this query
+                                : 0;
+        double MAP = CRANFIELD_QUERIES.size() > 0
+                ? CRANFIELD_QUERIES.parallelStream().unordered()
+                .map(this::getRecallPrecisionPointsForQuery)
+                .mapToDouble(getAveragePrecisionOfIthQuery) // average on each query
+                .sum() / CRANFIELD_QUERIES.size()           // average over the entire query set, i.e. MAP
+                : 0;
+
+        String output = System.lineSeparator() + "MAP: " + MAP
+                + "\t(computed on " + CRANFIELD_QUERIES.size() + " queries)"
+                + System.lineSeparator() + System.lineSeparator();
+        System.out.print(output);
+        try {
+            WRITER_TO_FILE.write(output);
+            WRITER_TO_FILE.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Compute the Precision@K for a given query in {@link #CRANFIELD_QUERIES}.
+     *
+     * @param K     The K value
+     * @param query The {@link CranfieldQuery} from the {@link #CRANFIELD_QUERIES}.
+     * @return The Precision@K for the given query in {@link #CRANFIELD_QUERIES}
+     * or 0 if the number of retrieved documents is lower than K.
+     */
+    private double getPrecisionAtKForQuery(int K, CranfieldQuery query) {
+
+        Function<@NotNull CranfieldQuery, Point.Series> recallPrecisionPointsForQueryGetter = new Function<>() {
+
+            private static final ConcurrentHashMap<CranfieldQuery, Point.Series> recall_precision_series_forQuery =
+                    new ConcurrentHashMap<>(CRANFIELD_QUERIES.size());// cache the results without re-computing each time
+
+            @Override
+            public Point.Series apply(@NotNull CranfieldQuery query) {
+                var res = recall_precision_series_forQuery.get(query);
+                if (res == null) {
+                    res = getRecallPrecisionPointsForQuery(query);
+                    recall_precision_series_forQuery.put(query, res);
+                }
+                return res;
+            }
+        };
+
+        assert K > 0;
+        return recallPrecisionPointsForQueryGetter.apply(query)
+                .stream().sequential()      // order matters, because we are evaluating also how the system ranked results and Precision@K evaluate the precision considering the K-highest ranked retrieved document
+                .map(Point::getY)           // get precision values
+                .skip(K - 1).findFirst()    // get Kth value
+                .orElse(0D);            // if less than K documents are retrieved, precision@K is set to zero
+    }
+
+    /**
+     * @param K The K value to compute the Precision@K evaluation metric
+     * @return the Precision@K value, averaged over all the queries.
+     */
+    private double getAveragePrecisionAtK(int K) {
+        return CRANFIELD_QUERIES.size() > 0
+                ? CRANFIELD_QUERIES.parallelStream().unordered()            // order does not matter thanks to the commutativity of the sum
+                .mapToDouble(query -> getPrecisionAtKForQuery(K, query))    // precision@K of each query
+                .sum() / CRANFIELD_QUERIES.size()                           // average precision@K over the entire query-set
+                : 0;
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 5, 10, 20, 50})
+    @Order(7)
+    void precisionAtK(int K) {
+        // For each query, get the precision computed after K retrieved documents
+        // (how the system ranked results is evaluated), then consider the average
+        // over all the queries.
+
+        double precisionAtK = getAveragePrecisionAtK(K);
+
+        String output = "Precision@" + K + ": \t" + precisionAtK
+                + "\t(averaged on " + CRANFIELD_QUERIES.size() + " queries)" + System.lineSeparator();
+        System.out.print(output);
+        try {
+            WRITER_TO_FILE.write(output);
+            WRITER_TO_FILE.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    @Order(8)
+    void RPrecision() {
+        // For each query, get the precision computed after K retrieved documents
+        // (how the system ranked results is evaluated), then consider the average
+        // over all the queries.
+
+        double RPrecision = CRANFIELD_QUERIES.size() > 0
+                ? CRANFIELD_QUERIES.parallelStream().unordered()       // order does not matter thanks to the commutativity of the sum
+                .mapToDouble(query -> getPrecisionAtKForQuery(
+                        getRelevantDocsForQuery(query).size(), query)) // each query may have a different number of relevant documents
+                .sum() / CRANFIELD_QUERIES.size()
+                : 0;
+
+        String output = System.lineSeparator() + "R-Precision" + ": \t" + RPrecision
+                + "\t(averaged on " + CRANFIELD_QUERIES.size() + " queries)" + System.lineSeparator();
+        System.out.print(output);
+        try {
+            WRITER_TO_FILE.write(output);
+            WRITER_TO_FILE.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
