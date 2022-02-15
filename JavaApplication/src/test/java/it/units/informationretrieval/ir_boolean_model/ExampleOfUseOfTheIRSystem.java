@@ -24,6 +24,7 @@ class ExampleOfUseOfTheIRSystem {
      */
     private final static boolean PRINT_RESULT_CONTENTS = false;
 
+
     public static void main(String[] args) {
         try {
 
@@ -37,6 +38,7 @@ class ExampleOfUseOfTheIRSystem {
             // Load the IR System if already exists
             InformationRetrievalSystem irs;
 
+            //noinspection SwitchStatementWithTooFewBranches  // exploits switch statement with break, default, etc..
             switch (file_irSystem.isFile() ? 1 : 0) {
                 case 1:    // file exists
                     System.out.println("Loading the IRSystem from the file system");
@@ -158,12 +160,7 @@ class ExampleOfUseOfTheIRSystem {
                     System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE, MAX_N_RESULTS));
                     System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection, useEditDistance), MAX_N_RESULTS));
                     System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection, useEditDistance), MAX_N_RESULTS));// edit distance increases each time
-//                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
-//                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
-//                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
-//                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
-//                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
-//                System.out.println(queryAndReturnResultsAsString(wrongPhraseQueryBE.spellingCorrection(phoneticCorrection), MAX_N_RESULTS));
+
                 }
             }
 
@@ -176,7 +173,8 @@ class ExampleOfUseOfTheIRSystem {
 
     static String andQueryAndReturnResultsAsString(@NotNull final InformationRetrievalSystem irs,
                                                    @NotNull final Collection<@NotNull String> stringsToBePresent,
-                                                   int maxNumberOfResultsToReturn) {
+                                                   @SuppressWarnings("SameParameterValue")/*parameter may be parametrized*/ int maxNumberOfResultsToReturn) {
+
         BooleanExpression be = Objects.requireNonNull(stringsToBePresent)
                 .stream()
                 .map(aValueToBePresent -> irs.createNewBooleanExpression().setMatchingValue(aValueToBePresent))

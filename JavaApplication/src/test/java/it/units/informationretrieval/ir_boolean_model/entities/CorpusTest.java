@@ -6,7 +6,6 @@ import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_de
 import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocument_LineOfAFile;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.utils.SynchronizedCounter;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,10 +43,6 @@ class CorpusTest {
     static void createCorpusFromDocumentCollectionOfLength1000() throws NoMoreDocIdsAvailable {
         final int COLLECTION_LENGTH = 1000;
         Corpus.createCorpusFromDocumentCollectionAndGet(FakeDocument_LineOfAFile.produceDocuments(COLLECTION_LENGTH));
-    }
-
-    @AfterEach
-    void tearDown() {
     }
 
     @Benchmark(commentToReport = "First " + HOW_MANY_DOCS_TO_RETRIEVE + " documents are retrieved")

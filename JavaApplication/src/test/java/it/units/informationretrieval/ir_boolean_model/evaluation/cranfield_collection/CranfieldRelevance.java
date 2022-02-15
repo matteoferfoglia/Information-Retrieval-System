@@ -46,6 +46,7 @@ public enum CranfieldRelevance {
     /**
      * Description for the enum value.
      */
+    @SuppressWarnings("FieldCanBeLocal")
     @NotNull
     private final String description;
 

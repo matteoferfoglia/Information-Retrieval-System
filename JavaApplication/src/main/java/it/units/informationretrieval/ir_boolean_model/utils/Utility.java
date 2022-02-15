@@ -393,6 +393,7 @@ public class Utility {
      * @param listsToIntersect The lists to intersect.
      * @return the {@link SkipList} corresponding to the intersection of the given input lists.
      */
+    @SuppressWarnings("UnusedReturnValue") // utility method
     @SafeVarargs
     @NotNull
     public static <T extends Comparable<T>> SkipList<T> intersection(
@@ -440,6 +441,7 @@ public class Utility {
      * @param listsToUnion The lists for which the union will be computed.
      * @return the {@link SkipList} corresponding to the union of the given input lists.
      */
+    @SuppressWarnings("UnusedReturnValue") // utility method
     @SafeVarargs
     @NotNull
     public static <T extends Comparable<T>> SkipList<T> union(

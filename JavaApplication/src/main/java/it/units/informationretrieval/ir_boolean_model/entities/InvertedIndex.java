@@ -345,22 +345,6 @@ public class InvertedIndex implements Serializable {
     }
 
     /**
-     * @param dfThreshold A threshold value for the document-frequency value.
-     * @return all terms (as strings) present in the dictionary and
-     * having a document-frequency value strictly higher than the
-     * specified threshold.
-     */
-    @NotNull
-    public Collection<String> getDictionary(double dfThreshold) {
-        return invertedIndex.entrySet()
-                .stream().sequential()
-                .filter(entryTerm -> entryTerm.getValue().df() > dfThreshold)
-                .map(Map.Entry::getKey)
-                .sorted()
-                .toList();
-    }
-
-    /**
      * Getter for {@link #corpus}.
      *
      * @return The {@link Corpus} on which indexing was done for this instance.
@@ -474,31 +458,6 @@ public class InvertedIndex implements Serializable {
         return phoneticHashes == null
                 ? new ArrayList<>(0)
                 : phoneticHashes.stream().map(Term::getTermString).toList();
-    }
-
-    /**
-     * @return the average document-frequency value.
-     */
-    public double avgDf() {
-        return invertedIndex.values().stream()
-                .mapToInt(Term::df)
-                .average()
-                .orElseThrow();
-    }
-
-    /**
-     * @param tfThreshold A threshold value for the term-frequency value.
-     * @return all terms (as strings) present in the dictionary and
-     * having a term-frequency value strictly higher than the
-     * specified threshold.
-     */
-    @NotNull
-    public Collection<String> getDictionaryOverTf(int tfThreshold) {
-        return invertedIndex.keySet()
-                .stream().sequential()
-                .filter(term -> cf(term) > tfThreshold)
-                .sorted()
-                .toList();
     }
 
     @Serial

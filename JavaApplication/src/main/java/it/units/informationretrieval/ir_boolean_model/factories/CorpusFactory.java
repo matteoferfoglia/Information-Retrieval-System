@@ -54,6 +54,7 @@ public abstract class CorpusFactory<T extends Document> {
     /**
      * @return the actual class of the documents composing the corpus created by {@link #createCorpus()}.
      */
+    @NotNull
     public Class<T> getDocumentClass() {
         return documentClass;
     }
@@ -61,6 +62,7 @@ public abstract class CorpusFactory<T extends Document> {
     /**
      * @return the name for the corpus created by this factory.
      */
+    @NotNull
     public String getCorpusName() {
         return corpusName;
     }

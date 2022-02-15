@@ -16,7 +16,6 @@ import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -76,7 +75,7 @@ public class Main {
     /**
      * Main method, used by the system to communicate with the user.
      */
-    public static void main(String[] args) throws NoMoreDocIdsAvailable, URISyntaxException, IOException {
+    public static void main(String[] args) throws IOException {
 
         System.out.println("=========================================================================================");
         System.out.println("=====                  Information Retrieval System - Boolean Model                  ====");

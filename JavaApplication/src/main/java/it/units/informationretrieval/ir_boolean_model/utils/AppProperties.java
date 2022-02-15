@@ -194,7 +194,7 @@ public class AppProperties {
      * @return the desired resource or null if it is not found.
      */
     @Nullable
-    private static InputStream getInputResource(@NotNull String resourceName) {
+    private static InputStream getInputResource(@SuppressWarnings("SameParameterValue") /*parameter may be parametrized*/ @NotNull String resourceName) {
         return CLASS_LOADER.getResourceAsStream(resourceName);
     }
 

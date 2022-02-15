@@ -455,11 +455,6 @@ public class Movie extends Document implements Serializable {
         return movieTitle.compareTo(otherMovie.movieTitle);
     }
 
-    @Override
-    public @Nullable DocumentContent getContent() {
-        return super.getContent();
-    }
-
     /**
      * Enum all metadata which are present in the corpus of movies,
      * saving the position in which they appear in the input file.

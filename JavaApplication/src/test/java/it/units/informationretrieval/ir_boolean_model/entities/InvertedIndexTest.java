@@ -8,7 +8,6 @@ import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAva
 import it.units.informationretrieval.ir_boolean_model.user_defined_contents.movies.MovieCorpusFactory;
 import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,9 +41,9 @@ public class InvertedIndexTest {
     private static final String POSTINGS_SEPARATOR_IN_CSV_FILE = "\\|";
     private static final String LIST_ELEMENTS_SEPARATOR_IN_CSV_FILE = "#";
     private static final String END_OF_WORD_PERMUTERM_USED_IN_TESTS = "\\$";
-    public static InvertedIndex invertedIndexForMovieCorpus;
-    public static Supplier<String> randomTokenFromDictionaryOfMovieInvertedIndex;
-    public static Supplier<String[]> randomPhraseFromDictionaryOfMovieInvertedIndex;
+    public static final InvertedIndex invertedIndexForMovieCorpus;
+    public static final Supplier<String> randomTokenFromDictionaryOfMovieInvertedIndex;
+    public static final Supplier<String[]> randomPhraseFromDictionaryOfMovieInvertedIndex;
     private static String END_OF_WORD_PERMUTERM_USED_IN_INVERTED_INDEX;
     private static Corpus sampleCorpus;
     private static Corpus movieCorpus;
@@ -249,10 +248,6 @@ public class InvertedIndexTest {
         System.setOut(new PrintStream(new ByteArrayOutputStream()));      // ignore std out for this block
         invertedIndexForTests = new InvertedIndex(sampleCorpus);
         System.setOut(realStdOut);
-    }
-
-    @AfterEach
-    void tearDown() {
     }
 
     private Map<String, SkipList<Posting>> getMapOfTermAndCorrespondingListOfPostingsFromInvertedIndex(

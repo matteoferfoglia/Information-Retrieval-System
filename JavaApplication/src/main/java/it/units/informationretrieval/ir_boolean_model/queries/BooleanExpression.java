@@ -1282,7 +1282,6 @@ public class BooleanExpression {
         }
 
         final var corpus = informationRetrievalSystem.getCorpus();
-        final var entireCorpusSize = corpus.size();
         if (RANK_RESULTS) {
             return new QueryResultsRanking().getRankedDocuments();
         } else {

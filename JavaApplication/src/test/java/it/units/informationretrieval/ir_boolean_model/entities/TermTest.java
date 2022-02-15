@@ -19,6 +19,7 @@ import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "MismatchedReadAndWriteOfArray"}) // testing purposes
 class TermTest {
 
     private static final double EPSILON_FOR_DOUBLE_COMPARISON = 1e-9;
