@@ -86,26 +86,26 @@ for exclude_stop_words in booleans:
                     mvn_commands = mvn_commands + ["exec:java@benchmark"]
 
                 try:
-                mvn_test_process = subprocess.Popen(["mvn"] + mvn_commands,
-                                                    stdout=subprocess.PIPE,
-                                                    stderr=subprocess.PIPE,
-                                                    shell=True)
-                errors_with_this_config = ""
-                while is_process_still_running(mvn_test_process):
-                    ENCODING = "utf-8"
-                    try:
-                        line = mvn_test_process.stdout.readline().decode(ENCODING)
-                    except Exception:
-                        line = ""   # ignore decoding errors
-                    if line.startswith("[ERROR]") or line.startswith("[WARNING]") or line.startswith("java"):
-                        errors_with_this_config += line
-                    print(current_config + " \t" + line, end='')
+                    mvn_test_process = subprocess.Popen(["mvn"] + mvn_commands,
+                                                        stdout=subprocess.PIPE,
+                                                        stderr=subprocess.PIPE,
+                                                        shell=True)
+                    errors_with_this_config = ""
+                    while is_process_still_running(mvn_test_process):
+                        ENCODING = "utf-8"
+                        try:
+                            line = mvn_test_process.stdout.readline().decode(ENCODING)
+                        except Exception:
+                            line = ""  # ignore decoding errors
+                        if line.startswith("[ERROR]") or line.startswith("[WARNING]") or line.startswith("java"):
+                            errors_with_this_config += line
+                        print(current_config + " \t" + line, end='')
 
-                if errors_with_this_config != "":
-                    errors[current_config] = errors_with_this_config
+                    if errors_with_this_config != "":
+                        errors[current_config] = errors_with_this_config
 
                 except:
-                    pass # error during process execution already saved
+                    pass  # error during process execution already saved
 
 set_property_in_env_file(EXCLUDE_STOP_WORDS_PROPERTY_NAME, exclude_stop_words_initial_value)
 set_property_in_env_file(RANK_QUERY_RESULTS_PROPERTY_NAME, rank_query_results_initial_value)
