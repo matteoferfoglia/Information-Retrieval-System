@@ -283,13 +283,13 @@
         <dependency><!-- SkipList -->
             <groupId>com.github.matteoferfoglia</groupId>
             <artifactId>skiplist</artifactId>
-            <version>1.8.1</version>
+            <version>1.8.3</version>
         </dependency>
 
         <dependency><!-- Edit distance -->
             <groupId>com.github.matteoferfoglia</groupId>
             <artifactId>edit-distance</artifactId>
-            <version>2.0.1</version>
+            <version>2.0.2</version>
         </dependency>
 
         <!-- JavaFX -->
