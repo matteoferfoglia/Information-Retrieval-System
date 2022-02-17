@@ -199,83 +199,88 @@ public class Main {
     private static InformationRetrievalSystem loadIRS() {
         if (FOLDER_WITH_IRS != null) {
             File[] filesOfIRS = FOLDER_WITH_IRS.listFiles();
-            System.out.println("Available IR Systems:");
-            for (int i = 0; i < Objects.requireNonNull(filesOfIRS).length; i++) {
-                System.out.println("\t " + (i + 1) + ") \t" + filesOfIRS[i].getName());
-            }
-            File fileWithIrsChosen = null;
-            do {
-                System.out.print("Insert the number of the IRS that you want to load: ");
-                try {
-                    int insertedIrsIndex = Integer.parseInt(
-                            SCANNER_READER.nextLine().replaceAll("\\s+", ""));
-                    if (1 <= insertedIrsIndex && insertedIrsIndex <= filesOfIRS.length) {
-                        fileWithIrsChosen = filesOfIRS[insertedIrsIndex - 1];
+            if (Objects.requireNonNull(filesOfIRS).length == 0) {
+                System.out.println("No IR Systems are available");
+                return null;
+            } else {
+                System.out.println("Available IR Systems:");
+                for (int i = 0; i < Objects.requireNonNull(filesOfIRS).length; i++) {
+                    System.out.println("\t " + (i + 1) + ") \t" + filesOfIRS[i].getName());
+                }
+                File fileWithIrsChosen = null;
+                do {
+                    System.out.print("Insert the number of the IRS that you want to load: ");
+                    try {
+                        int insertedIrsIndex = Integer.parseInt(
+                                SCANNER_READER.nextLine().replaceAll("\\s+", ""));
+                        if (1 <= insertedIrsIndex && insertedIrsIndex <= filesOfIRS.length) {
+                            fileWithIrsChosen = filesOfIRS[insertedIrsIndex - 1];
+                        }
+                    } catch (Exception ignored) {
                     }
-                } catch (Exception ignored) {
-                }
-                if (fileWithIrsChosen == null) {
-                    System.out.println("Please insert an integer between 1 and " + filesOfIRS.length + ".");
-                }
-            } while (fileWithIrsChosen == null);
+                    if (fileWithIrsChosen == null) {
+                        System.out.println("Please insert an integer between 1 and " + filesOfIRS.length + ".");
+                    }
+                } while (fileWithIrsChosen == null);
 
-            System.out.println("Loading the IRSystem from the file system, please wait...");
-            try (
-                    ProgressInputStream pis = new ProgressInputStream(
-                            new FileInputStream(fileWithIrsChosen), fileWithIrsChosen.length());
-                    ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(pis))) {
+                System.out.println("Loading the IRSystem from the file system, please wait...");
+                try (
+                        ProgressInputStream pis = new ProgressInputStream(
+                                new FileInputStream(fileWithIrsChosen), fileWithIrsChosen.length());
+                        ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(pis))) {
 
-                PropertyChangeListener listener = evt -> {  // listener to print the progress of IRS loading
-                    Supplier<Boolean> shouldPrintProgress = new Supplier<>() {
-                        private final static long UPDATE_PERIOD_MILLIS = 1000;
-                        private final static double MIN_DELTA_BETWEEN_PRINTED_PERCENTAGES = 0.001; // percentage in [0,1], e.g. 0.001 is 0.1%
-                        private static long lastUpdate = 0;
-                        private static double oldPrintedProgressPercentage = Double.MIN_VALUE;
+                    PropertyChangeListener listener = evt -> {  // listener to print the progress of IRS loading
+                        Supplier<Boolean> shouldPrintProgress = new Supplier<>() {
+                            private final static long UPDATE_PERIOD_MILLIS = 1000;
+                            private final static double MIN_DELTA_BETWEEN_PRINTED_PERCENTAGES = 0.001; // percentage in [0,1], e.g. 0.001 is 0.1%
+                            private static long lastUpdate = 0;
+                            private static double oldPrintedProgressPercentage = Double.MIN_VALUE;
 
-                        @Override
-                        public Boolean get() {
-                            long now = System.currentTimeMillis();
-                            if (now - lastUpdate > UPDATE_PERIOD_MILLIS) {
-                                double currentProgress = pis.getProgress();
-                                if (currentProgress - oldPrintedProgressPercentage > MIN_DELTA_BETWEEN_PRINTED_PERCENTAGES) {
-                                    oldPrintedProgressPercentage = currentProgress;
-                                    lastUpdate = now;
-                                    return true;
+                            @Override
+                            public Boolean get() {
+                                long now = System.currentTimeMillis();
+                                if (now - lastUpdate > UPDATE_PERIOD_MILLIS) {
+                                    double currentProgress = pis.getProgress();
+                                    if (currentProgress - oldPrintedProgressPercentage > MIN_DELTA_BETWEEN_PRINTED_PERCENTAGES) {
+                                        oldPrintedProgressPercentage = currentProgress;
+                                        lastUpdate = now;
+                                        return true;
+                                    }
                                 }
+                                return false;
                             }
-                            return false;
+                        };
+                        if (shouldPrintProgress.get()) {
+                            System.out.print("\t" + ((int) (pis.getProgress() * 10000)) / 100.0 + "% ");
                         }
                     };
-                    if (shouldPrintProgress.get()) {
-                        System.out.print("\t" + ((int) (pis.getProgress() * 10000)) / 100.0 + "% ");
-                    }
-                };
-                pis.addPropertyChangeListener(listener);
-                Object irSystem_object = ois.readObject();
-                pis.removePropertyChangeListener(listener);
-                System.out.println();   // add new line for output formatting
+                    pis.addPropertyChangeListener(listener);
+                    Object irSystem_object = ois.readObject();
+                    pis.removePropertyChangeListener(listener);
+                    System.out.println();   // add new line for output formatting
 
-                if (irSystem_object instanceof InformationRetrievalSystem irs) {
-                    System.out.println("IRSystem loaded from the file system.");
-                    return irs;
-                } else {
-                    System.err.println("Invalid file.");
-                    if (!fileWithIrsChosen.delete()) {
-                        Logger.getLogger(Main.class.getCanonicalName())
-                                .log(Level.SEVERE, "Unable to delete file " + fileWithIrsChosen.getAbsolutePath());
+                    if (irSystem_object instanceof InformationRetrievalSystem irs) {
+                        System.out.println("IRSystem loaded from the file system.");
+                        return irs;
+                    } else {
+                        System.err.println("Invalid file.");
+                        if (!fileWithIrsChosen.delete()) {
+                            Logger.getLogger(Main.class.getCanonicalName())
+                                    .log(Level.SEVERE, "Unable to delete file " + fileWithIrsChosen.getAbsolutePath());
+                        }
+                        throw new Exception("Deserialized object is not an instance of "
+                                + InformationRetrievalSystem.class.getCanonicalName());
                     }
-                    throw new Exception("Deserialized object is not an instance of "
-                            + InformationRetrievalSystem.class.getCanonicalName());
+                } catch (Exception e) {
+                    System.err.println("Errors occurred when reading the IR System from the file system. " +
+                            "Please, create it");
+                    Logger.getLogger(Main.class.getCanonicalName())
+                            .log(Level.SEVERE, "Error reading IR system from file.", e);
+                    System.out.println();
+                    return null;
                 }
-            } catch (Exception e) {
-                System.err.println("Errors occurred when reading the IR System from the file system. " +
-                        "Please, create it");
-                Logger.getLogger(Main.class.getCanonicalName())
-                        .log(Level.SEVERE, "Error reading IR system from file.", e);
-                System.out.println();
-                return null;
-            }
 
+            }
         } else {
             System.out.println("No IR System found in the file system.");
             return null;
