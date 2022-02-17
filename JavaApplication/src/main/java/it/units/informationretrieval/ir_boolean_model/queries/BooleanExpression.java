@@ -1493,12 +1493,11 @@ public class BooleanExpression {
 
                 return results.stream()
                         .collect(Collectors.toMap(
-                                posting -> corpus.getDocumentByDocId(posting.getDocId()),
-                                posting -> USE_WF_IDF ? posting.wfIdf(entireCorpusSize) : posting.tfIdf(entireCorpusSize),         // score
+                                posting -> corpus.getDocumentByDocId(posting.getDocId()),                                   // docId as key
+                                posting -> USE_WF_IDF ? posting.wfIdf(entireCorpusSize) : posting.tfIdf(entireCorpusSize),  // score as value
                                 Double::sum,    // sum scores if more query terms are present in the same document
                                 LinkedHashMap::new))
                         .entrySet().stream().sequential()
-                        // ranking
                         .map(entry_docToRank -> {
                             // Assign extra rank if any of query terms are present in the title of the document
                             double score = entry_docToRank.getValue();
@@ -1510,6 +1509,7 @@ public class BooleanExpression {
                             score = assignExtraScore.apply(score, extraScore);
                             return new Pair<>(entry_docToRank.getKey(), score);
                         })
+                        .sorted(Map.Entry.<Document, Double>comparingByValue().reversed()) // highest rank first
                         .map(Map.Entry::getKey)
                         .limit(maxNumberOfResults)
                         .toList();
