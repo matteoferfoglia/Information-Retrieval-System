@@ -21,7 +21,7 @@ public class ProgressInputStream extends FilterInputStream {
      * The name of the property which is fired when new bytes are read
      * from the {@link InputStream}.
      */
-    public static final String NUM_OF_ALREADY_READ_BYTES = "numOfAlreadyReadBytes";
+    public static final String NUM_OF_ALREADY_READ_BYTES_PROP_NAME = "numOfAlreadyReadBytes";
     /**
      * The {@link PropertyChangeSupport} to notify (event-based) when
      * additional bytes are read.
@@ -133,12 +133,15 @@ public class ProgressInputStream extends FilterInputStream {
      * Update the counting of the already read bytes, and notify all
      * {@link PropertyChangeListener listeners} listening to the
      * {@link PropertyChangeSupport support} of this instance.
+     *
+     * @param numBytesRead The number of read bytes.
+     * @return The number of read bytes.
      */
     private synchronized long updateAmountOfReadBytesAndNotify(long numBytesRead) {
         if (numBytesRead > 0) {
             long oldTotalNumBytesRead = this.numOfAlreadyReadBytes;
             this.numOfAlreadyReadBytes += numBytesRead;
-            propertyChangeSupport.firePropertyChange(NUM_OF_ALREADY_READ_BYTES, oldTotalNumBytesRead, this.numOfAlreadyReadBytes);
+            propertyChangeSupport.firePropertyChange(NUM_OF_ALREADY_READ_BYTES_PROP_NAME, oldTotalNumBytesRead, this.numOfAlreadyReadBytes);
         }
         return numBytesRead;
     }
