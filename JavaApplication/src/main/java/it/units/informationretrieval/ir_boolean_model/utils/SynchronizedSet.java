@@ -2,6 +2,7 @@ package it.units.informationretrieval.ir_boolean_model.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
@@ -13,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Matteo Ferfoglia
  */
-public class SynchronizedSet<T> implements Set<T> {
+public class SynchronizedSet<T> implements Set<T>, Serializable {
 
     /**
      * The synchronized set.
