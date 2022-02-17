@@ -272,7 +272,7 @@ public class Main {
                                 + InformationRetrievalSystem.class.getCanonicalName());
                     }
                 } catch (Exception e) {
-                    System.err.println("Errors occurred when reading the IR System from the file system. " +
+                    System.err.println("\nErrors occurred when reading the IR System from the file system. " +
                             "Please, create it");
                     Logger.getLogger(Main.class.getCanonicalName())
                             .log(Level.SEVERE, "Error reading IR system from file.", e);
@@ -505,6 +505,7 @@ public class Main {
                             "Please insert an integer between 1 and " + availableCorpusFactories.size() + ".");
                 }
             } while (corpusFactoryOfCollectionToIndex == null);
+            System.out.println("Creating IR system, please wait...");
 
             var irs = new InformationRetrievalSystem(corpusFactoryOfCollectionToIndex.createCorpus());
 
