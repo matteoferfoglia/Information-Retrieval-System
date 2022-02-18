@@ -575,7 +575,7 @@ public class BooleanExpression {
      *
      * @param phoneticCorrection true if phonetic correction is desired, false if
      *                           "classic" spelling correction is preferred.
-     * @param useEditDistance    Is a flag which is <strong>ignored if</strong> a
+     * @param useEditDistance    is a flag which is <strong>ignored if</strong> a
      *                           <strong>non</strong> phonetic correction is being
      *                           performed, and, if it is set to true, the edit distance
      *                           is used (like in normal spelling correction), while if
@@ -583,7 +583,7 @@ public class BooleanExpression {
      *                           will be considered, independently of how far the resulting
      *                           correction is from the initial query.
      *                           <strong>NOTICE</strong>: it can be <strong>dangerous</strong>
-     *                           to set this parameter to <code>false</code>, due to the high level
+     *                           to set this parameter to <code>false</code>, due to the high
      *                           number of combinations in which the correction can take place
      *                           (very high computational cost) and it might lead to
      *                           {@link StackOverflowError}.

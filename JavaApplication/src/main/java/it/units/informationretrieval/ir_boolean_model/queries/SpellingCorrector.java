@@ -281,7 +281,7 @@ class SpellingCorrector {
      * each invocation will return a different instance (until any correction
      * will be possible) and each element of each returned instance will have an
      * edit-distance which is greater than equal to (&ge;) the instance returned
-     * at the previous invocation.
+     * from the previous invocation.
      *
      * <strong>Important</strong>: this method involves a lot of combinations
      * hence it is computationally very expensive.
