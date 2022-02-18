@@ -313,14 +313,10 @@ public class InvertedIndex implements Serializable {
             final double EPSILON = 0.001;
             double oldProgressValue = progressValue.get();
             progressValue.set(Math.round((0.0 + numberOfAlreadyProcessedDocuments.get()) / corpusSize * 10000) / 100.0);
-            String currentProgress = "";
+            String currentProgress;
             if (progressValue.get() - oldProgressValue > EPSILON) {
                 currentProgress = progressValue.toString();
                 System.out.print(currentProgress + " % \t ");
-            }
-            if (numberOfAlreadyProcessedDocuments.get() == corpusSize && !currentProgress.equals(progressValue.toString())) {
-                // Avoid duplicate prints
-                System.out.print("100 % \t ");
             }
         });
         System.out.println("Indexing started");
