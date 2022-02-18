@@ -44,6 +44,11 @@ public class Main {
      */
     public static final String SPELLING_CORRECTION_REQUEST_PREFIX = "-" + OptionsSpellingCorrection.USE_SPELLING_CORRECTION;
     /**
+     * The flag to insert if the system must automatically try to correct the input query
+     * (if no results are found).
+     */
+    public static final String AUTOMATIC_SPELLING_CORRECTION_REQUEST_PREFIX = "-" + OptionsSpellingCorrection.USE_AUTOMATIC_SPELLING_CORRECTION;
+    /**
      * The name of the folder where pre-created IR Systems are saved.
      */
     @Nullable // null if problems when getting the folder name from app properties
@@ -169,8 +174,11 @@ public class Main {
                 "string to enable the phonetic correction, " + System.lineSeparator() +
                 "\t'" + SPELLING_CORRECTION_REQUEST_PREFIX + "' before the query " +
                 "string to enable the spelling correction, " + System.lineSeparator() +
-                "\tthe query string only to retrieve exact matches." +
-                System.lineSeparator() +
+                "\t'" + AUTOMATIC_SPELLING_CORRECTION_REQUEST_PREFIX + "' before the query " + System.lineSeparator() +
+                "string to enable the automatic \"word-wise\" spelling correction, performed " + System.lineSeparator() +
+                "by the system directly, without specifying further parameters, if no " + System.lineSeparator() +
+                "results are found by the system for the given query, " + System.lineSeparator() +
+                "\tthe query string only to retrieve exact matches." + System.lineSeparator() +
                 "Spelling and phonetic correction can be used together. For each of them, " + System.lineSeparator() +
                 "the number of corrections to attempt can be specified by " + System.lineSeparator() +
                 "adding the number (the edit distance) after the flag (e.g., \"" +
@@ -308,6 +316,7 @@ public class Main {
         AtomicInteger phoneticCorrectionMaxEditDistance = new AtomicInteger();
         AtomicBoolean useSpellingCorrection = new AtomicBoolean(false);
         AtomicInteger spellingCorrectionMaxEditDistance = new AtomicInteger();
+        AtomicBoolean useAutomaticSpellingCorrection = new AtomicBoolean(false);
 
         {
             // parse the query string to decide if applying spelling/phonetic correction
@@ -317,12 +326,15 @@ public class Main {
                                     "((" + PHONETIC_CORRECTION_REQUEST_PREFIX + ")(\\d*))" +
                                     "|" +
                                     "((" + SPELLING_CORRECTION_REQUEST_PREFIX + ")(\\d*))" +
+                                    "|" +
+                                    "(" + AUTOMATIC_SPELLING_CORRECTION_REQUEST_PREFIX + ")" +
                                     ")\\s*){0,2}\\s*.*")
                     .matcher(queryString);
             final int USE_PHONETIC_CORRECTION_GROUP = 4;
             final int EDIT_DISTANCE_PHONETIC_CORRECTION_GROUP = 5;
             final int USE_SPELLING_CORRECTION_GROUP = 7;
             final int EDIT_DISTANCE_SPELLING_CORRECTION_GROUP = 8;
+            final int USE_AUTOMATIC_SPELLING_CORRECTION_GROUP = 9;
 
             Function<@Nullable String, @NotNull Integer> get1IfNullOrParseTheValue =
                     nullableStringRepresentingAnInteger -> Math.max(
@@ -336,6 +348,7 @@ public class Main {
                     int groupNumberInRegex = switch (correctionType) {
                         case USE_PHONETIC_CORRECTION -> USE_PHONETIC_CORRECTION_GROUP;
                         case USE_SPELLING_CORRECTION -> USE_SPELLING_CORRECTION_GROUP;
+                        case USE_AUTOMATIC_SPELLING_CORRECTION -> USE_AUTOMATIC_SPELLING_CORRECTION_GROUP;
                     };
                     String groupValue = USE_CORRECTIONS.group(groupNumberInRegex);
                     return groupValue != null && !groupValue.isBlank();
@@ -358,10 +371,19 @@ public class Main {
                                     queryStringPrefixSpecifyingTheCorrectionToApply = SPELLING_CORRECTION_REQUEST_PREFIX;
                                     yield EDIT_DISTANCE_SPELLING_CORRECTION_GROUP;
                                 }
+                                case USE_AUTOMATIC_SPELLING_CORRECTION -> {
+                                    useCorrection = useAutomaticSpellingCorrection;
+                                    maxEditDistance = new AtomicInteger();
+                                    queryStringPrefixSpecifyingTheCorrectionToApply = AUTOMATIC_SPELLING_CORRECTION_REQUEST_PREFIX;
+                                    yield -1;
+                                }
                                 default -> throw new IllegalStateException("Unexpected value: " + correctionType);
                             };
                             useCorrection.set(true);
-                            String editDistanceIfInserted = USE_CORRECTIONS.group(editDistanceGroupInRegex);
+                            String editDistanceIfInserted =
+                                    correctionType.equals(OptionsSpellingCorrection.USE_AUTOMATIC_SPELLING_CORRECTION)
+                                            ? null // no edit distance for automatic spelling correction
+                                            : USE_CORRECTIONS.group(editDistanceGroupInRegex);
                             editDistanceIfInserted = editDistanceIfInserted == null ? "" : editDistanceIfInserted;
                             maxEditDistance.set(get1IfNullOrParseTheValue.apply(editDistanceIfInserted));
                             return queryString_.replace(
@@ -376,10 +398,10 @@ public class Main {
                                 return queryString_;
                             }
                         };
-                queryString = applyCorrectionIfRequiredAndGetCleanedQueryString.apply(
-                        OptionsSpellingCorrection.USE_PHONETIC_CORRECTION, queryString);
-                queryString = applyCorrectionIfRequiredAndGetCleanedQueryString.apply(
-                        OptionsSpellingCorrection.USE_SPELLING_CORRECTION, queryString);
+                for (var option_sc : OptionsSpellingCorrection.values()) {
+                    queryString = applyCorrectionIfRequiredAndGetCleanedQueryString.apply(
+                            option_sc, queryString);
+                }
             }
         }
 
@@ -426,6 +448,8 @@ public class Main {
             } else if (useSpellingCorrection.get()) {
                 be = beSCorrection;
             }
+
+            be = be.setAutomaticCorrectionEnabled(useAutomaticSpellingCorrection.get());
         }
 
         long start, end;
@@ -439,6 +463,12 @@ public class Main {
             System.out.println(" for " + be.getQueryString());
         } else {
             System.out.println();
+        }
+        if (useAutomaticSpellingCorrection.get()) {
+            // Printing this may confuse the user if stemming/normalization is used
+            // because s/he may not recognize normalized words thinks that the system
+            // is suggesting wrongly spelled words (while they are simply normalized).
+            System.out.print(be.getAutomaticCorrections());
         }
         final int DEFAULT_NUM_OF_RESULTS_TO_PRINT = 10;
         boolean userWantsMoreResults;
@@ -615,7 +645,15 @@ public class Main {
         /**
          * Option for which phonetic correction must be used.
          */
-        USE_PHONETIC_CORRECTION('p');
+        USE_PHONETIC_CORRECTION('p'),
+        /**
+         * Option for which spelling correction must be tried automatically.
+         * This option differs from the others, because spelling correction
+         * will be "word-wise", so it will be less general, but probably
+         * more "effective" and the user will obtain results in a reasonable
+         * time, assuming he wrongly inserted the query.
+         */
+        USE_AUTOMATIC_SPELLING_CORRECTION('a');
 
         /**
          * A character associated with the option.

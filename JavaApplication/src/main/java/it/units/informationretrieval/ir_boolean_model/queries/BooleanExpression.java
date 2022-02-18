@@ -251,6 +251,23 @@ public class BooleanExpression {
      * already invoked).
      */
     private boolean alreadyEvaluated = false;
+    /**
+     * {@link Map} that saves the applied automatic correction (when
+     * {@link #automaticCorrectionEnabled} is enabled, see its description).
+     * For each entry of the map, the key is the token as inserted by
+     * the user and the corresponding value is the {@link List} of
+     * corrections proposed by the system and searched (note: the same
+     * wrongly token inserted by the user can lead to a number of "nearest"
+     * corrections, this the reason because a {@link List} is used).
+     */
+    @NotNull
+    private final ConcurrentHashMap<String, List<String>> automaticCorrections = new ConcurrentHashMap<>();
+    /**
+     * Flag: if true, in the case that query evaluation does not produce
+     * any results, try to correct the input query word-by-word,
+     * automatically.
+     */
+    private boolean automaticCorrectionEnabled = false;
 
     /**
      * Constructor. Creates a non-aggregated expression.
@@ -316,6 +333,7 @@ public class BooleanExpression {
         this.informationRetrievalSystem = booleanExpression.informationRetrievalSystem;
         this.leftChildOperand = booleanExpression.leftChildOperand;
         this.rightChildOperand = booleanExpression.rightChildOperand;
+        this.automaticCorrectionEnabled = booleanExpression.automaticCorrectionEnabled;
         this.queryString = booleanExpression.queryString;
         this.spellingCorrector = booleanExpression.spellingCorrector;
         this.spellingCorrectedQueryWordsComparator =
@@ -374,6 +392,34 @@ public class BooleanExpression {
                 .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_TRUE_LITERAL, VALID_CHAR_FOR_PARSER), "true")
                 .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW, VALID_CHAR_FOR_PARSER), NUM_OF_WORDS_FOLLOWS_CHARACTER)
                 .replaceAll(Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_WILDCARD, VALID_CHAR_FOR_PARSER), WILDCARD);
+    }
+
+    /**
+     * @return true if this instance is set to automatically try to
+     * correct the input query inserted by the user, false otherwise.
+     */
+    public boolean isAutomaticCorrectionEnabled() {
+        return automaticCorrectionEnabled;
+    }
+
+    /**
+     * Set this instance to automatically try to correct the input query
+     * inserted by the user, according to the input parameter.
+     *
+     * @param automaticCorrectionEnabled true if this instance must be set to automatically try to
+     *                                   correct the input query inserted by the user, false otherwise.
+     * @return this instance, after setting the new value for the property.
+     */
+    public BooleanExpression setAutomaticCorrectionEnabled(boolean automaticCorrectionEnabled) {
+        this.automaticCorrectionEnabled = automaticCorrectionEnabled;
+        if (this.isAggregated) {
+            // propagate the decision to children
+            assert this.leftChildOperand != null;
+            assert this.rightChildOperand != null;
+            this.leftChildOperand.setAutomaticCorrectionEnabled(automaticCorrectionEnabled);
+            this.rightChildOperand.setAutomaticCorrectionEnabled(automaticCorrectionEnabled);
+        }
+        return this;
     }
 
     /**
@@ -1064,6 +1110,8 @@ public class BooleanExpression {
 
                 } else {
 
+                    SkipList<Posting> tmpResults;
+
                     if (isMatchingPhraseSet()) {
                         //noinspection unchecked    // generic array creation
                         BiPredicate<Posting, Posting>[] biPredicatesForCheckingPositionsForPhrasalQueries =
@@ -1128,22 +1176,93 @@ public class BooleanExpression {
                                     biPredicatesForCheckingPositionsForPhrasalQueries[i - 1], Posting.DOC_ID_COMPARATOR);
                         }
 
-                        yield phraseQueryIntersection;
-                    }
-
-                    if (isMatchingValueSet()) {
-                        yield new SkipList<>(
+                        tmpResults = phraseQueryIntersection;
+                    } else if (isMatchingValueSet()) {
+                        tmpResults = new SkipList<>(
                                 informationRetrievalSystem.getListOfPostingForToken(matchingValue),
                                 Posting.DOC_ID_COMPARATOR);
                     } else {
                         // normalization of input matching value leads to null, hence no results can be found
-                        yield new SkipList<>(Posting.DOC_ID_COMPARATOR);
+                        tmpResults = new SkipList<>(Posting.DOC_ID_COMPARATOR);
                     }
+
+                    if (tmpResults.isEmpty() && automaticCorrectionEnabled) {
+                        if (isMatchingValueSet()) {
+                            var old = matchingValue;
+                            var nearestWords = findNearest(matchingValue);
+                            if (!nearestWords.isEmpty()) {
+                                matchingValue = nearestWords.get(0);
+                                for (int i = 1; i < nearestWords.size(); i++) {
+                                    set(or(nearestWords.get(i)));
+                                }
+                                automaticCorrections.put(old, nearestWords);
+                                tmpResults = evaluateBothSimpleAndAggregatedExpressionRecursively();
+                            }
+                        }
+                    }
+
+                    yield tmpResults;
                 }
             }
         };
         return results;
 
+    }
+
+    /**
+     * @return all the automatic corrections (see {@link #automaticCorrections}), summarized in
+     * a string, or an empty string if no automatic corrections were made.
+     */
+    @NotNull
+    public String getAutomaticCorrections() {
+        String toReturn = "";
+        if (automaticCorrections.size() > 0) {
+            toReturn = automaticCorrections.entrySet().stream()
+                    .map(wrongWord_correctionList_entry ->
+                            "\"" + wrongWord_correctionList_entry.getKey() + "\""
+                                    + " not found, corrected with "
+                                    + (wrongWord_correctionList_entry.getValue().size() == 1
+                                    ? "" : "one of the following: ")
+                                    + wrongWord_correctionList_entry.getValue()
+                                    .stream().map(correction -> "\"" + correction + "\"")
+                                    .collect(Collectors.joining(", ")))
+                    .collect(Collectors.joining(System.lineSeparator()))
+                    + System.lineSeparator();
+        }
+        if (isAggregated) {
+            assert leftChildOperand != null;
+            assert rightChildOperand != null;
+            toReturn += leftChildOperand.getAutomaticCorrections()
+                    + rightChildOperand.getAutomaticCorrections();
+        }
+
+        return toReturn;
+    }
+
+    /**
+     * Searches for the nearest tokens in the dictionary of the {@link InvertedIndex}
+     * of the {@link #informationRetrievalSystem} wrt. the input word and return them.
+     * No normalization actions are taken on the input word.
+     * This method makes use of the edit-distance concept.
+     *
+     * @param word A word (e.g., from an input query).
+     * @return the {@link List} of the nearest word in the dictionary of the IR System
+     * wrt. the input parameter, or null if not corrections are found. A {@link List}
+     * is needed because there may exist more than one token with the same edit-distance
+     * from the input word and that distance is the nearest.
+     */
+    @NotNull
+    private List<String> findNearest(@NotNull String word) {
+        //noinspection ConstantConditions
+        assert word != null;
+
+        return new SpellingCorrector(
+                new it.units.informationretrieval.ir_boolean_model.utils.Phrase(List.of(word)), false, true, informationRetrievalSystem, String::compareTo)
+                .getNewCorrections()
+                .stream()
+                .map(it.units.informationretrieval.ir_boolean_model.utils.Phrase::getListOfWords)
+                .flatMap(Collection::stream)
+                .toList();
     }
 
     /**
