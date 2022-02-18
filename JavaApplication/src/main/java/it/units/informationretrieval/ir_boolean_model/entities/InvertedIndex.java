@@ -85,6 +85,18 @@ public class InvertedIndex implements Serializable {
     private final PatriciaTrie<String> permutermIndex;
 
     /**
+     * Like the {@link #permutermIndex}, but keys omit the {@link #END_OF_WORD} symbol.
+     * This is done because the {@link #END_OF_WORD} symbol may be needed when handling
+     * wildcard queries, but must be omitted when performing spelling correction, and
+     * the only way to exploit the fast performances of {@link PatriciaTrie} data-structure
+     * in searching by prefix is to create this data-structure, even if it is very
+     * similar to the {@link #permutermIndex}: prox: fast, cons: memory waste and
+     * updating problems.
+     */
+    @NotNull
+    private final PatriciaTrie<String> permutermIndexWithoutEndOfWord;
+
+    /**
      * {@link List} of all <strong>un</strong>stemmed terms composing the dictionary.
      */
     @NotNull
@@ -113,7 +125,8 @@ public class InvertedIndex implements Serializable {
         try {
             invertedIndex = indexCorpusAndGet(corpus, numberOfAlreadyProcessedDocuments);
             phoneticHashes = getPhoneticHashesOfDictionary();
-            permutermIndex = createPermutermIndexAndGet();
+            permutermIndex = createPermutermIndexAndGet(END_OF_WORD);
+            permutermIndexWithoutEndOfWord = createPermutermIndexAndGet("");// NO end-of-word symbol
         } finally {
             // Join the thread used to print the indexing progress
             indexingProgressPrinterInterrupter.run();
@@ -145,8 +158,16 @@ public class InvertedIndex implements Serializable {
                         PatriciaTrie::new));
     }
 
+    /**
+     * Creates the permuterm index.
+     *
+     * @param endOfWordSymbol The (eventually empty, but not-null) end-of-word symbol
+     *                        to use in keys of the permuterm-index created by this method.
+     * @return the permuterm index.
+     */
     @NotNull
-    private PatriciaTrie<String> createPermutermIndexAndGet() {
+    private PatriciaTrie<String> createPermutermIndexAndGet(@NotNull String endOfWordSymbol) {
+        Objects.requireNonNull(endOfWordSymbol);
         Stemmer stemmer = Utility.getStemmer() == null
                 ? Stemmer.getStemmer(Stemmer.AvailableStemmer.NO_STEMMING)
                 : Utility.getStemmer();
@@ -157,7 +178,7 @@ public class InvertedIndex implements Serializable {
                 .filter(Objects::nonNull)
                 .filter(str -> !str.isBlank())
                 .flatMap(strFromDictionary -> {
-                    String str = strFromDictionary + END_OF_WORD;
+                    String str = strFromDictionary + endOfWordSymbol;
                     return Arrays.stream(Utility.getAllRotationsOf(str))
                             .map(aRotation -> new Pair<>(
                                     aRotation,                                           /* the rotation */
@@ -388,7 +409,7 @@ public class InvertedIndex implements Serializable {
             // now the wildcard is removed (via substring) but the token has been rotated correctly
             // and, because we are here, we are sure that there is at least one wildcard
 
-            return new SkipList<>(getDictionaryTermsContainingSubstring(rotatedToken)
+            return new SkipList<>(getDictionaryTermsContainingSubstring(rotatedToken, false)
                     .stream().unordered().parallel()
                     .distinct()
                     .peek(tokenFromDictionary -> {
@@ -415,12 +436,18 @@ public class InvertedIndex implements Serializable {
      * Exploits the permuterm index to get all terms in the dictionary having
      * a substring which is equal to the given input.
      *
-     * @param substring The substring which must match with some term in the dictionary.
+     * @param substring       The substring which must match with some term in the dictionary.
+     * @param ignoreEndOfWord Flag: if true, the {@link #END_OF_WORD} (present in terms
+     *                        of the {@link #permutermIndex}) is not consider for the
+     *                        execution (this is because the {@link #END_OF_WORD} may
+     *                        be needed when handling wildcard query, but must be omitted
+     *                        when performing spelling correction).
      * @return The {@link Collection} (eventually with duplicates) of terms in the
      * dictionary having a substring which is equal to the given one.
      */
-    public Collection<String> getDictionaryTermsContainingSubstring(@NotNull String substring) {
-        return permutermIndex.prefixMap(substring).values();
+    public Collection<String> getDictionaryTermsContainingSubstring(@NotNull String substring, boolean ignoreEndOfWord) {
+        var permutermIndexToUse = ignoreEndOfWord ? permutermIndexWithoutEndOfWord : permutermIndex;
+        return permutermIndexToUse.prefixMap(substring).values();
     }
 
     /**

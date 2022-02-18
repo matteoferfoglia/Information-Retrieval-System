@@ -73,12 +73,17 @@ public class InformationRetrievalSystem implements Serializable {
      * Exploits the permuterm index to get all terms in the dictionary having
      * a substring which is equal to the given input.
      *
-     * @param substring The substring which must match with some term in the dictionary.
+     * @param substring       The substring which must match with some term in the dictionary.
+     * @param ignoreEndOfWord Flag: if true, the end-of-word symbol (present in terms
+     *                        of the permuterm index) is not consider for the execution
+     *                        (this is because the end-of-word symbol may be needed when
+     *                        handling wildcard query, but must be omitted when
+     *                        performing spelling correction).
      * @return The {@link Collection} (eventually with duplicates) of terms in the
      * dictionary having a substring which is equal to the given one.
      */
-    public Collection<String> getDictionaryTermsContainingSubstring(@NotNull String substring) {
-        return invertedIndex.getDictionaryTermsContainingSubstring(substring);
+    public Collection<String> getDictionaryTermsContainingSubstring(@NotNull String substring, boolean ignoreEndOfWord) {
+        return invertedIndex.getDictionaryTermsContainingSubstring(substring, ignoreEndOfWord);
     }
 
     /**
