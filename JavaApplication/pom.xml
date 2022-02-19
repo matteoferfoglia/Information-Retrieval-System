@@ -6,7 +6,7 @@
 
     <groupId>it.units.informationretrieval</groupId>
     <artifactId>ir_boolean_model</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <name>Information Retrieval Project</name>
     <description>
@@ -71,7 +71,7 @@
                 <configuration>
                     <fork>true</fork>
                     <meminitial>1024m</meminitial>
-                    <maxmem>10000m</maxmem><!-- Benchmarking requires a lot of memory -->
+                    <maxmem>12000m</maxmem><!-- Benchmarking requires a lot of memory -->
                 </configuration>
             </plugin>
 
@@ -111,7 +111,7 @@
                 <configuration>
                     <reuseForks>false</reuseForks>
                     <forkCount>1</forkCount>
-                    <argLine>-Xmx10240m</argLine><!-- JVM size -->
+                    <argLine>-Xmx12000m</argLine><!-- JVM size -->
                 </configuration>
             </plugin>
 
