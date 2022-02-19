@@ -580,6 +580,7 @@ public class Main {
                 .filter(CorpusFactory.class::isAssignableFrom)
                 .filter(aClass -> !Modifier.isAbstract(aClass.getModifiers())
                         && !aClass.isEnum() && !aClass.isInterface())
+                .distinct()
                 .map(aClass -> (Class<CorpusFactory<?>>) aClass)
                 .map(corpusFactoryClass -> {
                     CorpusFactory<?> corpusFactory = null;

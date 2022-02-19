@@ -3,8 +3,12 @@ package it.units.informationretrieval.ir_boolean_model.utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.stream.Stream;
 
 /**
  * Utility class about class loading.
@@ -17,10 +21,57 @@ public class ClassLoading {
      */
     public static List<Class<?>> getAllClasses() throws IOException {
         List<Class<?>> classes = new ArrayList<>();
+
+        // Search classes from the root directory
         for (File directory : Objects.requireNonNull(getRootDirectoryOfProject().listFiles())) {
             classes.addAll(findClasses(directory));
         }
+
+        // Search classes from the JAR file (if the program is executed from JAR)
+        classes.addAll(findClassesFromCurrentJar());
+
         return classes;
+    }
+
+    /**
+     * Searches and return all classes present in the "current" JAR file, where
+     * "current" means that a JAR file for this application was created and the
+     * program has been launched from the jar (i.e., with
+     * <code>java -jar programName.jar argsToMain</code>
+     * ).
+     *
+     * @return the {@link Collection} of classes in this JAR file
+     */
+    private static Collection<Class<?>> findClassesFromCurrentJar() {
+        try {
+            String folderNameWhereToSearchForJarFiles = ".";    // current directory
+            return Stream.of(Objects.requireNonNull(new File(folderNameWhereToSearchForJarFiles).listFiles()))
+                    .map(File::getAbsolutePath)
+                    .filter(fileName -> fileName.endsWith(".jar"))
+                    .flatMap(jarFileName -> {
+                        try {
+                            return new JarFile(new File(jarFileName)).stream()
+                                    .map(JarEntry::getRealName)
+                                    .filter(s -> s.endsWith(".class"))
+                                    .map(className -> className.substring(0, className.length() - ".class".length())) // remove .class extension
+                                    .map(className -> className.replaceAll("/", "."))                   // replace path separator "/" with "." (class name)
+                                    .map(className -> {
+                                        try {
+                                            return Class.forName(className, false, ClassLoading.class.getClassLoader());
+                                        } catch (Throwable ignored) {
+                                            return (Class<?>) null;
+                                        }
+                                    })
+                                    .filter(Objects::nonNull);
+                        } catch (Throwable ignored) {
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .toList();
+        } catch (Throwable ignored) {
+            return new ArrayList<>(0);
+        }
     }
 
     /**
