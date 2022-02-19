@@ -5,17 +5,17 @@ import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.DocumentContent;
 import it.units.informationretrieval.ir_boolean_model.entities.Language;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Class representing a document taken from the Cranfield collection.
@@ -73,7 +73,7 @@ public class CranfieldDocument extends Document {
                     + "(.*?)\\s+\\.A\\s*"           // (.*?)  matches the doc title     (group 2 of the overall regex)
                     + "(.*?)\\s+\\.B\\s*"           // (.*?)  matches the doc authors   (group 3 of the overall regex)
                     + "(.*?)\\s+\\.W\\s*"           // (.*?)  matches the doc source    (group 4 of the overall regex)
-                    + "(.*?)\\s+((\\.I\\s*)|\\z)"); // (.*?)  matches the doc actual content (group 5 of the overall regex), matching goes on until either the next doc beginning or the end of file
+                    + "(.*?)\\s*((\\.I\\s*)|\\z)"); // (.*?)  matches the doc actual content (group 5 of the overall regex), matching goes on until either the next doc beginning or the end of file
     /**
      * The number of the document in the collection.
      */
@@ -122,7 +122,7 @@ public class CranfieldDocument extends Document {
                                 return (Document)
                                         new CranfieldDocument(docNumber, title, authors, source, actualContent);
                             } else {
-                                throw new IllegalArgumentException("Not matching the pattern for documents:"
+                                throw new IllegalArgumentException("Not matching the pattern for document:"
                                         + System.lineSeparator() + "\tPattern: " + REGEX_ENTIRE_DOCUMENT
                                         + System.lineSeparator() + "\tDocument: "
                                         + System.lineSeparator() + docAsStr.replaceAll("\\n", "\t\n")/*only for printing*/);
@@ -137,11 +137,12 @@ public class CranfieldDocument extends Document {
      * the collection, represented as string.
      */
     @NotNull
-    private static List<String> getDocuments() throws IOException, URISyntaxException {
+    private static List<String> getDocuments() {
 
         final String PATH_TO_FILE_WITH_DOCS = "cran.all.1400";
-        String allLinesFromFile = Files.readString(Path.of(Objects.requireNonNull(
-                CranfieldDocument.class.getResource(PATH_TO_FILE_WITH_DOCS)).toURI()));
+        String allLinesFromFile = Utility.readAllLines(Objects.requireNonNull(
+                        CranfieldDocument.class.getResourceAsStream(PATH_TO_FILE_WITH_DOCS)))
+                .stream().collect(Collectors.joining(System.lineSeparator()));
 
         final String START_OF_DOC = ".I ";
         var corpusAsListOfDocs = Arrays.stream(allLinesFromFile.split(START_OF_DOC))

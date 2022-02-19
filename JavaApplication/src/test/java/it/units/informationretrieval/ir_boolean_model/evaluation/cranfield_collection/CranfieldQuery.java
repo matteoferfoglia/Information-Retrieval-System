@@ -3,12 +3,11 @@ package it.units.informationretrieval.ir_boolean_model.evaluation.cranfield_coll
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.user_defined_contents.cranfield.CranfieldCorpusFactory;
 import it.units.informationretrieval.ir_boolean_model.user_defined_contents.cranfield.CranfieldDocument;
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -107,12 +106,12 @@ public class CranfieldQuery {
         // Get answers to queries
         var docsAnsweringQueriesAssociationTmp = "";
         try {
-            var pathToQueries = Path.of(
-                    Objects.requireNonNull(CranfieldDocument.class.getResource(
-                                    PATH_TO_CRANFIELD_RESOURCE_FOLDER + RELATIVE_PATH_TO_DOCS_ANSWERING_QUERIES))
-                            .toURI());
-            docsAnsweringQueriesAssociationTmp = Files.readString(pathToQueries); // not working with large files
-        } catch (URISyntaxException | IOException | OutOfMemoryError e) {
+            var queryAsInputStream =
+                    Objects.requireNonNull(CranfieldDocument.class.getResourceAsStream(
+                            PATH_TO_CRANFIELD_RESOURCE_FOLDER + RELATIVE_PATH_TO_DOCS_ANSWERING_QUERIES));
+            docsAnsweringQueriesAssociationTmp = Utility.readAllLines(queryAsInputStream)
+                    .stream().collect(Collectors.joining(System.lineSeparator()));
+        } catch (OutOfMemoryError e) {
             System.err.println("Error reading queries answers association.");
             e.printStackTrace();
         } finally {
@@ -182,10 +181,10 @@ public class CranfieldQuery {
     @NotNull
     public static List<CranfieldQuery> readQueries() throws URISyntaxException, IOException {
 
-        var pathToQueries = Path.of(Objects.requireNonNull(
-                        CranfieldDocument.class.getResource(PATH_TO_CRANFIELD_RESOURCE_FOLDER + RELATIVE_PATH_TO_QUERIES))
-                .toURI());
-        String allQueriesInAString = Files.readString(pathToQueries);
+        var queriesAsInputString = Objects.requireNonNull(
+                CranfieldDocument.class.getResourceAsStream(PATH_TO_CRANFIELD_RESOURCE_FOLDER + RELATIVE_PATH_TO_QUERIES));
+        String allQueriesInAString = Utility.readAllLines(queriesAsInputString)
+                .stream().collect(Collectors.joining(System.lineSeparator()));
         List<CranfieldQuery> queries = Arrays.stream(allQueriesInAString.split(TEXT_START_OF_QUERY))
                 .filter(s -> !s.isBlank())
                 .map(queryAsString -> {
