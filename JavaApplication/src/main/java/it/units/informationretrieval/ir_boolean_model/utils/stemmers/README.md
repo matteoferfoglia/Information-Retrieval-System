@@ -1,21 +1,12 @@
 Stemmers
 ========
 
-This package contains the source code for stemmers.
-
-## Snowball stemmer
-
-The source code for the Snowball stemmer was taken from [source](https://github.com/snowballstem/snowball), on 8th
-January 2022.
-
-### License
-
-On 8th January 2022 (date of download), the source code is distributed under the BSD License, which is reported in the
-file "LICENSE" in the package containing the source code.
+This package contains the source code for stemmers. Further stemmers can be added: they must implement the *Stemmer*
+interface.
 
 ## Porter stemmer
 
-The source code has been taken and adapted from [source](https://tartarus.org/martin/PorterStemmer/java.txt), on 8th
+The source code has been taken and adapted from [[source]](https://tartarus.org/martin/PorterStemmer/java.txt), on 8th
 January 2022.
 
 ### License

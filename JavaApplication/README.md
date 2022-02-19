@@ -1,8 +1,8 @@
 Information Retrieval System - Java Application
 ===============================================
 
-In this repository you can find a Java application that implements an information retrieval system. The application is
-designed for textual documents and implements the Boolean Model and is able to answer:
+In this repository you can find a Java application that implements an Information Retrieval System. The application is
+designed for textual documents. It implements the Boolean Model and it is able to answer:
 
 - Boolean queries with AND, OR, and NOT.
 - Wildcard and phrase queries.
