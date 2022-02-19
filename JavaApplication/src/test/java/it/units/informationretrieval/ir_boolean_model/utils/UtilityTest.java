@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import skiplist.SkipList;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -388,5 +389,13 @@ class UtilityTest {
         assertEquals(expected, Utility.normalize(input, false, Language.ENGLISH));
         assert oldPropertyValue != null;
         AppProperties.getInstance().set(STOP_WORDS_EXCLUSION_PROP_NAME, oldPropertyValue);
+    }
+
+    @Test
+    void readAllLines() {
+        String TEXT = "Foo bar\nHello\r\nWorld";
+        List<String> EXPECTED = Arrays.asList("Foo bar", "Hello", "World");
+        List<String> ACTUAL = Utility.readAllLines(new ByteArrayInputStream(TEXT.getBytes()));
+        assertEquals(EXPECTED, ACTUAL);
     }
 }

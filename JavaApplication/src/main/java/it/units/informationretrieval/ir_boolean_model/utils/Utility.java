@@ -10,19 +10,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import skiplist.SkipList;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static java.util.logging.Level.SEVERE;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -557,6 +556,28 @@ public class Utility {
     @NotNull
     public static String getNReplicationsOfString(int N, String stringToReplicate) {
         return new String(new char[N]).replace("\0", stringToReplicate);
+    }
+
+    /**
+     * Read all lines from the given {@link InputStream} and returns
+     * a {@link List} where each element is a line from the input stream.
+     *
+     * @param is The {@link InputStream}.
+     * @return a  {@link List} where each element is a line from the input stream.
+     */
+    @NotNull
+    public static List<String> readAllLines(@NotNull InputStream is) {
+        List<String> lines = new ArrayList<>();
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                lines.add(line);
+            }
+        } catch (IOException e) {
+            Logger.getLogger(Utility.class.getCanonicalName())
+                    .log(SEVERE, "IOException reading all lines from input stream", e);
+        }
+        return lines;
     }
 
 }
