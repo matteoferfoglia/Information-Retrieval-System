@@ -174,17 +174,19 @@ public class Main {
                 "string to enable the phonetic correction, " + System.lineSeparator() +
                 "\t'" + SPELLING_CORRECTION_REQUEST_PREFIX + "' before the query " +
                 "string to enable the spelling correction, " + System.lineSeparator() +
-                "\t'" + AUTOMATIC_SPELLING_CORRECTION_REQUEST_PREFIX + "' before the query " + System.lineSeparator() +
-                "string to enable the automatic \"word-wise\" spelling correction, performed " + System.lineSeparator() +
-                "by the system directly, without specifying further parameters, if no " + System.lineSeparator() +
-                "results are found by the system for the given query, " + System.lineSeparator() +
-                "\tthe query string only to retrieve exact matches." + System.lineSeparator() +
-                "Spelling and phonetic correction can be used together. For each of them, " + System.lineSeparator() +
-                "the number of corrections to attempt can be specified by " + System.lineSeparator() +
-                "adding the number (the edit distance) after the flag (e.g., \"" +
-                PHONETIC_CORRECTION_REQUEST_PREFIX + "2 foo&bar\" " + System.lineSeparator() +
+                "\t'" + AUTOMATIC_SPELLING_CORRECTION_REQUEST_PREFIX + "' before the query " +
+                "string to enable the automatic \"word-wise\" " + System.lineSeparator() +
+                "\t     spelling correction, performed directly by the system, " + System.lineSeparator() +
+                "\t     without specifying any further parameters (automatic " + System.lineSeparator() +
+                "\t     correction will work only if no results are found by the " + System.lineSeparator() +
+                "\t     system for the given query), " + System.lineSeparator() +
+                "\tthe query string without any flags to retrieve exact matches only." + System.lineSeparator() +
+                "A combination of the previous flags can be used together. For phonetic " + System.lineSeparator() +
+                "and spelling corrections, the number of corrections to attempt can be " + System.lineSeparator() +
+                "specified by adding the number (the edit distance) after the flag (e.g.," + System.lineSeparator() +
+                "   " + PHONETIC_CORRECTION_REQUEST_PREFIX + "2 foo&bar    " + System.lineSeparator() +
                 "means to try to correct (phonetic correction) two times; this does " + System.lineSeparator() +
-                "not mean that the final query string (after correction) will have " + System.lineSeparator() +
+                "not mean that the final query string (after the correction) will have " + System.lineSeparator() +
                 "edit distance of 2 from the initial query string, but it means that " + System.lineSeparator() +
                 "it will have an edit distance of at least 2, in fact, suppose that " + System.lineSeparator() +
                 "no corrections are available at distance 1, so the system automatically " + System.lineSeparator() +
@@ -193,8 +195,10 @@ public class Main {
                 "but in the input string we specified to try to correct 2 times, hence " + System.lineSeparator() +
                 "another correction attempt will be made and the resulting edit distance " + System.lineSeparator() +
                 "will be >=2).");
-        System.out.println("The query string can have AND, OR or NOT operations (use the symbols '&', '|', '!' " +
-                System.lineSeparator() + "respectively, spaces are interpreted as AND queries).");
+        System.out.println("The query string can have AND, OR or NOT operations (use the symbols '&', " +
+                System.lineSeparator() + "'|', '!' respectively, spaces are interpreted as AND queries).");
+        System.out.println("The system recognizes parenthesis, which can be used in any query string"
+                + System.lineSeparator() + "to specify the precedences.");
     }
 
     /**
