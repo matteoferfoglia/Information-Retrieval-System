@@ -75,6 +75,13 @@ public class Corpus implements Serializable {
         this.corpus = new ConcurrentHashMap<>();
     }
 
+    /**
+     * Given a , creates and returns the
+     * corresponding {@link Corpus} instance.
+     *
+     * @param documents The input {@link Collection} of {@link Document}s.
+     * @return the {@link Corpus} instance.
+     */
     @NotNull
     protected static ConcurrentMap<DocumentIdentifier, Document> createCorpusFromDocumentCollectionAndGet(
             @NotNull final Collection<? extends Document> documents) throws NoMoreDocIdsAvailable {
