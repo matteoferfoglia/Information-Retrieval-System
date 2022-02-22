@@ -1,6 +1,7 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -44,6 +45,7 @@ public class Posting implements Comparable<Posting>, Serializable {
      * value, which can be combined with the {@link #tf()} to obtain
      * the tf-idf value.
      */
+    @Nullable
     private Term term = null;
 
     /**
@@ -53,7 +55,6 @@ public class Posting implements Comparable<Posting>, Serializable {
      * @param positions The positions where the {@link Term} to which this instance refers
      *                  in the document to which this instance refers.
      */
-    //* @param positions The {@link TermPositionsInADocument} object (see the description of the class). */
     public Posting(@NotNull DocumentIdentifier docId, final int[] positions) {
         this.docId = Objects.requireNonNull(docId, "The docId cannot be null");
         creationInstant = Instant.now();
