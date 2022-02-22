@@ -3,6 +3,7 @@ package it.units.informationretrieval.ir_boolean_model.entities;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.utils.SynchronizedCounter;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 
@@ -20,6 +21,7 @@ public class DocumentIdentifier implements Comparable<DocumentIdentifier>, Seria
     /**
      * Static counter to generate new docIDs without duplicates.
      */
+    @NotNull
     private final static SynchronizedCounter counter = new SynchronizedCounter();
 
     /**
