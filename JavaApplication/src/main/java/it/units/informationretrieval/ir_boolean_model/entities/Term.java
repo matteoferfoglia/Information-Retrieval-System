@@ -72,6 +72,8 @@ public class Term implements Comparable<Term>, Serializable {
      *
      * @param other The other {@link Term} to be merged into this one.
      * @return this instance after merging.
+     * @throws ImpossibleTermsMergingException If trying to merge with a {@link Term}
+     *                                         instance which is not equals to this one.
      */
     public Term merge(@NotNull final Term other) {
         if (this.term.equals(other.term)) {
