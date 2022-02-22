@@ -190,18 +190,6 @@ public class Corpus implements Serializable {
     }
 
     /**
-     * Searches a {@link Document} in this instance by its title and returns
-     * the (eventually empty) {@link List} of documents matching the search.
-     *
-     * @param documentTitle The title of the {@link Document} to find.
-     * @return the (eventually empty) {@link List} of documents matching the search.
-     */
-    @Nullable
-    public List<Document> findByTitle(@Nullable String documentTitle) {
-        return corpus.values().stream().filter(document -> Objects.equals(document.getTitle(), documentTitle)).toList();
-    }
-
-    /**
      * @return the documents contained in this instance.
      */
     public Collection<Document> getListOfDocuments() {
