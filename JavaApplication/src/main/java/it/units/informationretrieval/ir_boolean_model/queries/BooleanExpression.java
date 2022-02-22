@@ -1622,7 +1622,7 @@ public class BooleanExpression {
                             double score = entry_docToRank.getValue();
                             List<String> queryTerms = Arrays.asList(
                                     Utility.split(getQueryWords(false, true)));
-                            long extraScore = entry_docToRank.getKey().howManyCommonNormalizedWords(queryTerms);
+                            long extraScore = entry_docToRank.getKey().howManyCommonNormalizedWordsWithDocTitle(queryTerms);
                             BiFunction<Double, Long, Double> assignExtraScore = (initialScore, extraScore_) ->
                                     extraScore_ > 1 ? initialScore * extraScore_ : extraScore_ + initialScore;
                             score = assignExtraScore.apply(score, extraScore);

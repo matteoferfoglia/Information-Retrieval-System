@@ -163,7 +163,7 @@ public abstract class Document implements Serializable, Comparable<Document> {
      * @return the number of (normalized) words in common between
      * the title of this instance and the input parameters of the method.
      */
-    public long howManyCommonNormalizedWords(List<String> stringList) {
+    public long howManyCommonNormalizedWordsWithDocTitle(List<String> stringList) {
         if (title == null) {
             return 0;
         } else {
