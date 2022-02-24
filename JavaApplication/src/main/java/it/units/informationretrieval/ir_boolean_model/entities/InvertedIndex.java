@@ -59,7 +59,8 @@ public class InvertedIndex implements Serializable {
      * corresponding value the {@link Set} of {@link Posting} referring to
      * that {@link DocumentIdentifier}. This field can be used to answer
      * NOT queries when also positions of words in {@link Document} matters
-     * (because positions are saved in {@link Posting}s).
+     * (because positions are saved in {@link Posting}s, so knowing all the
+     * docIds is not enough, but also all the postings are required).
      */
     @NotNull
     private final SkipListHashMap<DocumentIdentifier, Set<Posting>> postingsByDocId;
@@ -274,7 +275,7 @@ public class InvertedIndex implements Serializable {
 
         return tokensFromCurrentDocument
                 .entrySet()
-                .stream().unordered()
+                .stream().unordered().parallel()
                 .map(tokenAndPositions -> {
                     Posting posting = new Posting(docIdThisDocument, tokenAndPositions.getValue());
                     var setOfPostingsWithSameDocId = postingsByDocId.get(docIdThisDocument);
