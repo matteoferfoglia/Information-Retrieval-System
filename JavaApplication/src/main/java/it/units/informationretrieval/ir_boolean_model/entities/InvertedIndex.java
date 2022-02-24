@@ -58,9 +58,10 @@ public class InvertedIndex implements Serializable {
      * The {@link Map} collecting as keys {@link DocumentIdentifier}s and ad
      * corresponding value the {@link Set} of {@link Posting} referring to
      * that {@link DocumentIdentifier}. This field can be used to answer
-     * NOT queries when also positions of words in {@link Document} matters
-     * (because positions are saved in {@link Posting}s, so knowing all the
-     * docIds is not enough, but also all the postings are required).
+     * NOT queries, where knowing all {@link DocumentIdentifier} is needed,
+     * and to cache an association between each {@link DocumentIdentifier}
+     * and the {@link Set} of {@link Posting} referring to that document.
+     * It might be a waste of memory, but fast retrieval is improved.
      */
     @NotNull
     private final SkipListHashMap<DocumentIdentifier, Set<Posting>> postingsByDocId;
