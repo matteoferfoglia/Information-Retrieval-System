@@ -219,7 +219,6 @@ public class AppProperties {
                         logPropName -> logPropName.equals("java.util.logging.FileHandler.pattern")
                                 ? (k, v) -> logsFolder.getAbsolutePath() + File.separator + "%g.%u.log" // https://docs.oracle.com/javase/7/docs/api/java/util/logging/FileHandler.html
                                 : (k, v) -> v /*do not modify*/);
-                System.out.println();
             }
 
         } catch (IOException e) {
