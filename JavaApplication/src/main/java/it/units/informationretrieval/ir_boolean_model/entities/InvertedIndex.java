@@ -275,7 +275,7 @@ public class InvertedIndex implements Serializable {
 
         return tokensFromCurrentDocument
                 .entrySet()
-                .stream().unordered().parallel()
+                .stream().unordered()
                 .map(tokenAndPositions -> {
                     Posting posting = new Posting(docIdThisDocument, tokenAndPositions.getValue());
                     var setOfPostingsWithSameDocId = postingsByDocId.get(docIdThisDocument);
