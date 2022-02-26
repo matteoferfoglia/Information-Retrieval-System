@@ -3,6 +3,7 @@ package it.units.informationretrieval.ir_boolean_model;
 import benchmark.Benchmark;
 import it.units.informationretrieval.ir_boolean_model.entities.Corpus;
 import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndexTest;
+import it.units.informationretrieval.ir_boolean_model.entities.Posting;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.user_defined_contents.movies.MovieCorpusFactory;
 import org.junit.jupiter.api.AfterEach;
@@ -15,6 +16,7 @@ import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static it.units.informationretrieval.ir_boolean_model.entities.InvertedIndexTest.randomTokenFromDictionaryOfMovieInvertedIndex;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -65,6 +67,8 @@ class InformationRetrievalSystemTest {
         Corpus sampleCorpus = InvertedIndexTest.getSampleCorpus();
         assert sampleCorpus.size() > 0;
         irs = new InformationRetrievalSystem(sampleCorpus);
-        assertEquals(sampleCorpus.getCorpus().keySet(), irs.getAllDocIds());
+        assertEquals(
+                sampleCorpus.getCorpus().keySet(),
+                irs.getAllPostings().stream().map(Posting::getDocId).collect(Collectors.toSet()));
     }
 }

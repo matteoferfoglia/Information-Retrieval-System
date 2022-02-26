@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * This class represents an Information Retrieval System.
@@ -104,11 +103,11 @@ public class InformationRetrievalSystem implements Serializable {
     }
 
     /**
-     * @return The sorted {@link Set} of all (distinct) {@link DocumentIdentifier}s in the System.
+     * @return The sorted {@link SkipList} of all (distinct) {@link Posting}s in the System.
      */
     @NotNull
-    public Set<DocumentIdentifier> getAllDocIds() {
-        return invertedIndex.getAllDocIds();
+    public SkipList<Posting> getAllPostings() {
+        return invertedIndex.getAllPostings();
     }
 
     /**
@@ -125,16 +124,6 @@ public class InformationRetrievalSystem implements Serializable {
     @NotNull
     public Language getLanguage() {
         return corpus.getLanguage();
-    }
-
-    /**
-     * @param docId The {@link DocumentIdentifier} to find.
-     * @return the {@link Set} (eventually empty) with all {@link Posting}s
-     * having the given {@link DocumentIdentifier}.
-     */
-    @NotNull
-    public Set<Posting> getPostingList(@NotNull DocumentIdentifier docId) {
-        return invertedIndex.getPostingList(docId);
     }
 
     /**

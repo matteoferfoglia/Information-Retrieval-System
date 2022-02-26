@@ -183,6 +183,17 @@ public class BooleanExpression {
     @NotNull
     private final Map<String, String> mapReplacedContentInQueryParsing = new HashMap<>(10);
     /**
+     * {@link Map} that saves the applied automatic correction (when
+     * {@link #automaticCorrectionEnabled} is enabled, see its description).
+     * For each entry of the map, the key is the token as inserted by
+     * the user and the corresponding value is the {@link List} of
+     * corrections proposed by the system and searched (note: the same
+     * wrongly token inserted by the user can lead to a number of "nearest"
+     * corrections, this the reason because a {@link List} is used).
+     */
+    @NotNull
+    private final ConcurrentHashMap<String, List<String>> automaticCorrections = new ConcurrentHashMap<>();
+    /**
      * This field save the results retrieved at the previous invocation of
      * {@link #evaluate()} (if it was invoked), for caching reasons.
      */
@@ -244,24 +255,12 @@ public class BooleanExpression {
      */
     @NotNull
     private String queryString = "";
-
     /**
      * Flag: true if this instance has already been evaluated
      * (i.e., method {@link #evaluateBothSimpleAndAggregatedExpressionRecursively()}
      * already invoked).
      */
     private boolean alreadyEvaluated = false;
-    /**
-     * {@link Map} that saves the applied automatic correction (when
-     * {@link #automaticCorrectionEnabled} is enabled, see its description).
-     * For each entry of the map, the key is the token as inserted by
-     * the user and the corresponding value is the {@link List} of
-     * corrections proposed by the system and searched (note: the same
-     * wrongly token inserted by the user can lead to a number of "nearest"
-     * corrections, this the reason because a {@link List} is used).
-     */
-    @NotNull
-    private final ConcurrentHashMap<String, List<String>> automaticCorrections = new ConcurrentHashMap<>();
     /**
      * Flag: if true, in the case that query evaluation does not produce
      * any results, try to correct the input query word-by-word,
@@ -1292,89 +1291,36 @@ public class BooleanExpression {
         if (DEBUG_NOT_QUERY) {
             start = System.nanoTime();
         }
-        List<DocumentIdentifier> listOfDocIdToBeExcluded =
+        SkipList<Posting> listOfPostingsToBeExcluded =
                 new BooleanExpression(this)
                         .setUnaryOperator(UNARY_OPERATOR.IDENTITY)
-                        .evaluateBothSimpleAndAggregatedExpressionRecursively()
-                        .stream().sequential().map(Posting::getDocId).distinct().toList();
+                        .evaluateBothSimpleAndAggregatedExpressionRecursively();
         if (DEBUG_NOT_QUERY) {
             stop = System.nanoTime();
-            System.out.println("List of docIds to exclude computed in          " + (stop - start) / 1e6 + " ms.");
-        }
-        assert listOfDocIdToBeExcluded.stream().sorted().toList().equals(listOfDocIdToBeExcluded);
-
-        if (DEBUG_NOT_QUERY) {
-            start = System.nanoTime();
-        }
-        var allDocIds = getAllDocIds();
-
-        assert informationRetrievalSystem.getAllDocIds().stream().sorted().toList()
-                .equals(informationRetrievalSystem.getAllDocIds().stream().toList());   // assert that the document collection was effectively sorted
-
-        if (DEBUG_NOT_QUERY) {
-            stop = System.nanoTime();
-            System.out.println("SkipList of all docIds in the index created in " + (stop - start) / 1e6 + " ms.");
+            System.out.println("SkipList of postings to exclude computed in          " + (stop - start) / 1e6 + " ms.");
         }
 
         if (DEBUG_NOT_QUERY) {
             start = System.nanoTime();
         }
-        var docIdsToExclude = SkipList.createNewInstanceFromSortedCollection(
-                listOfDocIdToBeExcluded, null);
+        var allPostings = informationRetrievalSystem.getAllPostings();
         if (DEBUG_NOT_QUERY) {
             stop = System.nanoTime();
-            System.out.println("SkipList of docIds to exclude created in       " + (stop - start) / 1e6 + " ms.");
+            System.out.println("SkipList of all postings in the index created in " + (stop - start) / 1e6 + " ms.");
         }
 
         if (DEBUG_NOT_QUERY) {
             start = System.nanoTime();
         }
         var difference = SkipList.difference(
-                allDocIds, docIdsToExclude,
-                (BiPredicate<DocumentIdentifier, DocumentIdentifier>) (a, b) -> true);
+                allPostings, listOfPostingsToBeExcluded,
+                Posting.DOC_ID_COMPARATOR); // "true predicate" means "classical" difference between sets
         if (DEBUG_NOT_QUERY) {
             stop = System.nanoTime();
-            System.out.println("SkipList of difference computed in             " + (stop - start) / 1e6 + " ms.");
+            System.out.println("SkipList of difference computed in               " + (stop - start) / 1e6 + " ms.");
         }
 
-        if (DEBUG_NOT_QUERY) {
-            start = System.nanoTime();
-        }
-        var resultListOfPosting = difference
-                .stream().sequential()
-                .flatMap(docId -> informationRetrievalSystem.getPostingList(docId).stream().sequential())
-                .toList();
-        if (DEBUG_NOT_QUERY) {
-            stop = System.nanoTime();
-            System.out.println("List of posting (via stream) computed in       " + (stop - start) / 1e6 + " ms.");
-        }
-        assert resultListOfPosting.stream().sorted(Posting.DOC_ID_COMPARATOR).toList().equals(resultListOfPosting);
-        assert resultListOfPosting.stream().sorted(Posting.DOC_ID_COMPARATOR).distinct().toList().equals(resultListOfPosting);
-
-        if (DEBUG_NOT_QUERY) {
-            start = System.nanoTime();
-        }
-        var result = SkipList.createNewInstanceFromSortedCollection(
-                resultListOfPosting, Posting.DOC_ID_COMPARATOR);
-        if (DEBUG_NOT_QUERY) {
-            stop = System.nanoTime();
-            System.out.println("SkipList of results created in                 " + (stop - start) / 1e6 + " ms.");
-            // IMPORTANT: high computation time might be due to all assertions (here and in SkipList)
-            //            When try to improve speed, disable assertions
-        }
-        return result;
-    }
-
-    /**
-     * @return the (sorted) {@link SkipList} with <em>all</em> {@link DocumentIdentifier}
-     * which are indexed by the {@link #informationRetrievalSystem} instance.
-     */
-    private SkipList<DocumentIdentifier> getAllDocIds() {
-        return SkipList.createNewInstanceFromSortedCollection(
-                informationRetrievalSystem.getAllDocIds(), Comparator.naturalOrder());
-        // collection of docIds MUST be already sorted
-        // We could create a new SkipList<>(...), so the SkipList construction would implicitly sort elements,
-        //  but it is time-expensive: now we are exploiting the fact that the received collection is already sorted!
+        return difference;
     }
 
     /**

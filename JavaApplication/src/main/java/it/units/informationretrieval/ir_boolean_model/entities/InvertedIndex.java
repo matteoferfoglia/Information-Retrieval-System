@@ -6,7 +6,6 @@ import it.units.informationretrieval.ir_boolean_model.utils.wildcards.MatcherFor
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.jetbrains.annotations.NotNull;
 import skiplist.SkipList;
-import skiplist.SkipListHashMap;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -53,18 +52,6 @@ public class InvertedIndex implements Serializable {
      */
     @NotNull
     private final ConcurrentMap<String, Term> invertedIndex;   // each Term has its own posting list
-
-    /**
-     * The {@link Map} collecting as keys {@link DocumentIdentifier}s and ad
-     * corresponding value the {@link Set} of {@link Posting} referring to
-     * that {@link DocumentIdentifier}. This field can be used to answer
-     * NOT queries, where knowing all {@link DocumentIdentifier} is needed,
-     * and to cache an association between each {@link DocumentIdentifier}
-     * and the {@link Set} of {@link Posting} referring to that document.
-     * It might be a waste of memory, but fast retrieval is improved.
-     */
-    @NotNull
-    private final SkipListHashMap<DocumentIdentifier, Set<Posting>> postingsByDocId;
 
     /**
      * The (reference to the) {@link Corpus} on which indexing is done.
@@ -118,7 +105,6 @@ public class InvertedIndex implements Serializable {
     public InvertedIndex(@NotNull final Corpus corpus) {
 
         this.corpus = corpus;
-        this.postingsByDocId = new SkipListHashMap<>();
 
         AtomicLong numberOfAlreadyProcessedDocuments = new AtomicLong(0L);
         Runnable indexingProgressPrinterInterrupter =
@@ -277,20 +263,11 @@ public class InvertedIndex implements Serializable {
         return tokensFromCurrentDocument
                 .entrySet()
                 .stream().unordered()
-                .map(tokenAndPositions -> {
-                    Posting posting = new Posting(docIdThisDocument, tokenAndPositions.getValue());
-                    var setOfPostingsWithSameDocId = postingsByDocId.get(docIdThisDocument);
-                    final int INITIAL_SET_CAPACITY = 50;
-                    if (setOfPostingsWithSameDocId == null) {
-                        setOfPostingsWithSameDocId = ConcurrentHashMap.newKeySet(INITIAL_SET_CAPACITY);
-                        postingsByDocId.put(docIdThisDocument, setOfPostingsWithSameDocId);
-                    }
-                    boolean postingWasNotAlreadyPresent = setOfPostingsWithSameDocId.add(posting);
-                    assert postingWasNotAlreadyPresent;
-                    return new AbstractMap.SimpleEntry<>(
-                            tokenAndPositions.getKey(),
-                            new Term(new PostingList(posting), tokenAndPositions.getKey()));
-                })
+                .map(tokenAndPositions -> new AbstractMap.SimpleEntry<>(
+                        tokenAndPositions.getKey(),
+                        new Term(
+                                new PostingList(new Posting(docIdThisDocument, tokenAndPositions.getValue())),
+                                tokenAndPositions.getKey())))
                 .filter(e -> !e.getKey()/*the token*/.isBlank())
                 .collect(
                         Collectors.toConcurrentMap(
@@ -449,25 +426,21 @@ public class InvertedIndex implements Serializable {
     }
 
     /**
-     * @return the sorted {@link Set} of all {@link DocumentIdentifier}s currently present.
-     * <strong>Notice</strong>: the returned collection is the keySet of a {@link SkipListHashMap},
-     * this means that it is sorted, because it is based on a skipList.
+     * @return the sorted {@link SkipList} of all {@link Posting}s currently present.
+     * <strong>Notice</strong>: the returned collection is sorted.
      * </ol>
      */
     @NotNull
-    public Set<DocumentIdentifier> getAllDocIds() {
-        return postingsByDocId.keySet();
-    }
-
-    /**
-     * @param docId The {@link DocumentIdentifier} to find.
-     * @return the {@link Set} (eventually empty) with all {@link Posting}s
-     * having the given {@link DocumentIdentifier}.
-     */
-    @NotNull
-    public Set<Posting> getPostingList(@NotNull DocumentIdentifier docId) {
-        var results = postingsByDocId.get(docId);
-        return results == null ? ConcurrentHashMap.newKeySet(0) : results;
+    public SkipList<Posting> getAllPostings() {
+        return SkipList.createNewInstanceFromSortedCollection(
+                invertedIndex.entrySet()
+                        .stream().unordered().parallel()
+                        .map(Map.Entry::getValue)
+                        .map(Term::getListOfPostings)
+                        .flatMap(Collection::stream)
+                        .sorted()
+                        .toList(),
+                Posting.DOC_ID_COMPARATOR);
     }
 
     /**
