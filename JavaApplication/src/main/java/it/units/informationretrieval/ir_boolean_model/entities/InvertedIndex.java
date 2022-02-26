@@ -60,6 +60,13 @@ public class InvertedIndex implements Serializable {
     private final Corpus corpus;
 
     /**
+     * The {@link SkipList} of all {@link Posting}s in this system,
+     * needed to answer efficiently to Boolean NOT queries.
+     */
+    @NotNull
+    private final SkipList<Posting> postings;
+
+    /**
      * The phonetic hash.
      */
     @NotNull
@@ -112,6 +119,15 @@ public class InvertedIndex implements Serializable {
 
         try {
             invertedIndex = indexCorpusAndGet(corpus, numberOfAlreadyProcessedDocuments);
+            postings = SkipList.createNewInstanceFromSortedCollection(
+                    invertedIndex.entrySet()
+                            .stream().unordered().parallel()
+                            .map(Map.Entry::getValue)
+                            .map(Term::getListOfPostings)
+                            .flatMap(Collection::stream)
+                            .sorted()
+                            .toList()/*unmodifiable list*/,
+                    Posting.DOC_ID_COMPARATOR);
             phoneticHashes = getPhoneticHashesOfDictionary();
             permutermIndex = createPermutermIndexAndGet(END_OF_WORD);
             permutermIndexWithoutEndOfWord = createPermutermIndexAndGet("");// NO end-of-word symbol
@@ -432,15 +448,7 @@ public class InvertedIndex implements Serializable {
      */
     @NotNull
     public SkipList<Posting> getAllPostings() {
-        return SkipList.createNewInstanceFromSortedCollection(
-                invertedIndex.entrySet()
-                        .stream().unordered().parallel()
-                        .map(Map.Entry::getValue)
-                        .map(Term::getListOfPostings)
-                        .flatMap(Collection::stream)
-                        .sorted()
-                        .toList(),
-                Posting.DOC_ID_COMPARATOR);
+        return postings;
     }
 
     /**

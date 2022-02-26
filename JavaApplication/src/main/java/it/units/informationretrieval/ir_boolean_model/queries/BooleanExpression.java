@@ -1306,7 +1306,7 @@ public class BooleanExpression {
         var allPostings = informationRetrievalSystem.getAllPostings();
         if (DEBUG_NOT_QUERY) {
             stop = System.nanoTime();
-            System.out.println("SkipList of all postings in the index created in " + (stop - start) / 1e6 + " ms.");
+            System.out.println("SkipList of all postings in the index obtained in    " + (stop - start) / 1e6 + " ms.");
         }
 
         if (DEBUG_NOT_QUERY) {
