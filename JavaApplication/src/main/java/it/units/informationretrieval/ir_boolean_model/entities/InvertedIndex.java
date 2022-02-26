@@ -155,6 +155,7 @@ public class InvertedIndex implements Serializable {
     /**
      * @return a copy of {@link #permutermIndex}.
      */
+    @NotNull
     public PatriciaTrie<String> getCopyOfPermutermIndex() {
         return permutermIndex.entrySet().stream().sequential()
                 .collect(Collectors.toMap(
@@ -239,6 +240,7 @@ public class InvertedIndex implements Serializable {
      * @return The result of indexing represented as {@link Map} having a {@link DocumentIdentifier}
      * as key and the {@link Term} as corresponding value.
      */
+    @NotNull
     protected ConcurrentMap<String, Term> indexCorpusAndGet(
             @NotNull Corpus corpus, @NotNull AtomicLong numberOfAlreadyProcessedDocuments) {
 
@@ -441,6 +443,7 @@ public class InvertedIndex implements Serializable {
      * @return The {@link Collection} (eventually with duplicates) of terms in the
      * dictionary having a prefix which is equal to the given one.
      */
+    @NotNull
     public Collection<String> getDictionaryTermsContainingPrefix(@NotNull String prefix, boolean ignoreEndOfWord) {
         var permutermIndexToUse = ignoreEndOfWord ? permutermIndexWithoutEndOfWord : permutermIndex;
         return permutermIndexToUse.prefixMap(prefix).values();
@@ -464,6 +467,7 @@ public class InvertedIndex implements Serializable {
      * @return The {@link Collection} (without duplicates) having the same
      * phonetic hash as the input word.
      */
+    @NotNull
     public Collection<String> getDictionaryTermsFromSoundexCorrectionOf(@NotNull String word) {
         var phoneticHashes = this.phoneticHashes.get(Soundex.getPhoneticHash(word));
         return phoneticHashes == null
