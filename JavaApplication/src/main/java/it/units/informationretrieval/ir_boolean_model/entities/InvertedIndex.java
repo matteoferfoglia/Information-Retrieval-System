@@ -90,7 +90,7 @@ public class InvertedIndex implements Serializable {
      * wildcard queries, but must be omitted when performing spelling correction, and
      * the only way to exploit the fast performances of {@link PatriciaTrie} data-structure
      * in searching by prefix is to create this data-structure, even if it is very
-     * similar to the {@link #permutermIndex}: prox: fast, cons: memory waste and
+     * similar to the {@link #permutermIndex}: pros: fast, cons: memory waste and
      * updating problems.
      */
     @NotNull
