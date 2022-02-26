@@ -180,11 +180,8 @@ public class InvertedIndex implements Serializable {
                 ? Stemmer.getStemmer(Stemmer.AvailableStemmer.NO_STEMMING)
                 : Utility.getStemmer();
         PatriciaTrie<String> permutermIndex = new PatriciaTrie<>();
-        Stream.of(
-                        getDictionary(),
-                        endOfWordSymbol.isBlank() ? getUnstemmedDictionary() : new ArrayList<String>()
-                        // use unstemmed words only if creating the permuterm index for spelling correction, i.e., without the end-of-symbol
-                )
+        Stream.of(getUnstemmedDictionary())
+                        // always use un-stemmed words, which are eventually mapped to stemmed words (if stemming must be performed)
                 .flatMap(Collection::stream)
                 .distinct().unordered().parallel()
                 .filter(Objects::nonNull)
