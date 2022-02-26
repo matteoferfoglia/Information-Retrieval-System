@@ -416,7 +416,7 @@ class SpellingCorrector {
                                 .map(s -> PHONETIC_CORRECTION ? s : s.substring(SUFFIX_LENGTH))
                                 .map(s -> PHONETIC_CORRECTION
                                         ? informationRetrievalSystem.getDictionaryTermsFromSoundexCorrectionOf(s)
-                                        : informationRetrievalSystem.getDictionaryTermsContainingSubstring(s, true))
+                                        : informationRetrievalSystem.getDictionaryTermsContainingPrefix(s, true))
                                 .flatMap(Collection::stream)
                                 .distinct()
                                 .map(termFromDictionary -> new Pair<>(
