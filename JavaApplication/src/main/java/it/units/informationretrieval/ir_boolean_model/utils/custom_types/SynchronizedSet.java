@@ -1,4 +1,4 @@
-package it.units.informationretrieval.ir_boolean_model.utils;
+package it.units.informationretrieval.ir_boolean_model.utils.custom_types;
 
 import org.jetbrains.annotations.NotNull;
 

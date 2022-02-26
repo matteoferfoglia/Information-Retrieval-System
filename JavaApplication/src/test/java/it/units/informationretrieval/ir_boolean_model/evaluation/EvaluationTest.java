@@ -7,7 +7,7 @@ import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAva
 import it.units.informationretrieval.ir_boolean_model.plots.Point;
 import it.units.informationretrieval.ir_boolean_model.plots.XYLineChart;
 import it.units.informationretrieval.ir_boolean_model.user_defined_contents.cranfield.CranfieldCorpusFactory;
-import it.units.informationretrieval.ir_boolean_model.utils.Pair;
+import it.units.informationretrieval.ir_boolean_model.utils.custom_types.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;

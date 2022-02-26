@@ -1,6 +1,10 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
-import it.units.informationretrieval.ir_boolean_model.utils.*;
+import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
+import it.units.informationretrieval.ir_boolean_model.utils.Soundex;
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import it.units.informationretrieval.ir_boolean_model.utils.custom_types.Pair;
+import it.units.informationretrieval.ir_boolean_model.utils.custom_types.SynchronizedSet;
 import it.units.informationretrieval.ir_boolean_model.utils.stemmers.Stemmer;
 import it.units.informationretrieval.ir_boolean_model.utils.wildcards.MatcherForPermutermIndex;
 import org.apache.commons.collections4.trie.PatriciaTrie;

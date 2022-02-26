@@ -2,9 +2,9 @@ package it.units.informationretrieval.ir_boolean_model.queries;
 
 import edit_distance.entities.EditDistanceCalculator;
 import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem;
-import it.units.informationretrieval.ir_boolean_model.utils.Pair;
-import it.units.informationretrieval.ir_boolean_model.utils.Phrase;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import it.units.informationretrieval.ir_boolean_model.utils.custom_types.Pair;
+import it.units.informationretrieval.ir_boolean_model.utils.custom_types.Phrase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

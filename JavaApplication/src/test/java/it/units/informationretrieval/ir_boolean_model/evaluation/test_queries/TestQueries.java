@@ -9,8 +9,8 @@ import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAva
 import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
 import it.units.informationretrieval.ir_boolean_model.user_defined_contents.movies.Movie;
 import it.units.informationretrieval.ir_boolean_model.user_defined_contents.movies.MovieCorpusFactory;
-import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import it.units.informationretrieval.ir_boolean_model.utils.custom_types.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.stemmers.Stemmer;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;

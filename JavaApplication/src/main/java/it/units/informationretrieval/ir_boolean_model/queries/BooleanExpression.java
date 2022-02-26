@@ -4,8 +4,8 @@ import com.bpodgursky.jbool_expressions.*;
 import it.units.informationretrieval.ir_boolean_model.InformationRetrievalSystem;
 import it.units.informationretrieval.ir_boolean_model.entities.*;
 import it.units.informationretrieval.ir_boolean_model.utils.AppProperties;
-import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import it.units.informationretrieval.ir_boolean_model.utils.custom_types.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import skiplist.SkipList;
@@ -662,12 +662,12 @@ public class BooleanExpression {
 
                         if (isMatchingValueSet()) {
                             spellingCorrector = new SpellingCorrector(
-                                    new it.units.informationretrieval.ir_boolean_model.utils.Phrase(matchingValue),
+                                    new it.units.informationretrieval.ir_boolean_model.utils.custom_types.Phrase(matchingValue),
                                     phoneticCorrection, useEditDistance,
                                     informationRetrievalSystem, spellingCorrectedQueryWordsComparator);
                         } else if (isMatchingPhraseSet()) {
                             spellingCorrector = new SpellingCorrector(
-                                    new it.units.informationretrieval.ir_boolean_model.utils.Phrase(matchingPhrase.words),
+                                    new it.units.informationretrieval.ir_boolean_model.utils.custom_types.Phrase(matchingPhrase.words),
                                     phoneticCorrection, useEditDistance,
                                     informationRetrievalSystem, spellingCorrectedQueryWordsComparator);
                         } else {
@@ -691,7 +691,7 @@ public class BooleanExpression {
                         } else if (isMatchingPhraseSet()) {
                             booleanExpressionWithCorrection =
                                     corrections.stream()
-                                            .map(it.units.informationretrieval.ir_boolean_model.utils.Phrase::getArrayOfWords)
+                                            .map(it.units.informationretrieval.ir_boolean_model.utils.custom_types.Phrase::getArrayOfWords)
                                             .map(correctedPhrase -> new BooleanExpression(this, true)
                                                     .setMatchingPhraseWithoutCheckingIfAggregatedQueryNeitherIfAlreadySet(
                                                             correctedPhrase, matchingPhrase.distanceFromFirstWord))
@@ -1256,10 +1256,10 @@ public class BooleanExpression {
         assert word != null;
 
         return new SpellingCorrector(
-                new it.units.informationretrieval.ir_boolean_model.utils.Phrase(List.of(word)), false, true, informationRetrievalSystem, String::compareTo)
+                new it.units.informationretrieval.ir_boolean_model.utils.custom_types.Phrase(List.of(word)), false, true, informationRetrievalSystem, String::compareTo)
                 .getNewCorrections()
                 .stream()
-                .map(it.units.informationretrieval.ir_boolean_model.utils.Phrase::getListOfWords)
+                .map(it.units.informationretrieval.ir_boolean_model.utils.custom_types.Phrase::getListOfWords)
                 .flatMap(Collection::stream)
                 .toList();
     }

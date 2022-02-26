@@ -6,7 +6,7 @@ import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_de
 import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocument_LineOfAFile;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
 import it.units.informationretrieval.ir_boolean_model.user_defined_contents.movies.MovieCorpusFactory;
-import it.units.informationretrieval.ir_boolean_model.utils.Pair;
+import it.units.informationretrieval.ir_boolean_model.utils.custom_types.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

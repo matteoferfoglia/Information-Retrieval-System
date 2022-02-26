@@ -1,5 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.utils;
 
+import it.units.informationretrieval.ir_boolean_model.utils.custom_types.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.functional.SupplierThrowingException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

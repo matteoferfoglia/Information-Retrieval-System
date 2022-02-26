@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex;
 import it.units.informationretrieval.ir_boolean_model.entities.Language;
+import it.units.informationretrieval.ir_boolean_model.utils.custom_types.SynchronizedSet;
 import it.units.informationretrieval.ir_boolean_model.utils.stemmers.Stemmer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

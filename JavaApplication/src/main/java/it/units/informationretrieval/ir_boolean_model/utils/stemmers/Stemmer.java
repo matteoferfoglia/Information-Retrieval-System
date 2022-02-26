@@ -1,7 +1,7 @@
 package it.units.informationretrieval.ir_boolean_model.utils.stemmers;
 
 import it.units.informationretrieval.ir_boolean_model.entities.Language;
-import it.units.informationretrieval.ir_boolean_model.utils.Pair;
+import it.units.informationretrieval.ir_boolean_model.utils.custom_types.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

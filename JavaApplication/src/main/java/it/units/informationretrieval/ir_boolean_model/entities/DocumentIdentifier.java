@@ -1,8 +1,8 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
-import it.units.informationretrieval.ir_boolean_model.utils.SynchronizedCounter;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import it.units.informationretrieval.ir_boolean_model.utils.custom_types.SynchronizedCounter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;

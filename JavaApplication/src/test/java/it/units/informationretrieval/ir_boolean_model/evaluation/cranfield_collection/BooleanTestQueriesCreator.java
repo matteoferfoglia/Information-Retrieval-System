@@ -10,8 +10,8 @@ import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
 import it.units.informationretrieval.ir_boolean_model.queries.UNARY_OPERATOR;
 import it.units.informationretrieval.ir_boolean_model.user_defined_contents.cranfield.CranfieldCorpusFactory;
 import it.units.informationretrieval.ir_boolean_model.user_defined_contents.cranfield.CranfieldDocument;
-import it.units.informationretrieval.ir_boolean_model.utils.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.Utility;
+import it.units.informationretrieval.ir_boolean_model.utils.custom_types.Pair;
 import it.units.informationretrieval.ir_boolean_model.utils.stemmers.Stemmer;
 import org.jetbrains.annotations.NotNull;
 

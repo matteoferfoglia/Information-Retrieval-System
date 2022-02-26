@@ -5,7 +5,7 @@ import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_de
 import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocumentIdentifier;
 import it.units.informationretrieval.ir_boolean_model.entities.fake_documents_descriptors.FakeDocument_LineOfAFile;
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
-import it.units.informationretrieval.ir_boolean_model.utils.SynchronizedCounter;
+import it.units.informationretrieval.ir_boolean_model.utils.custom_types.SynchronizedCounter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

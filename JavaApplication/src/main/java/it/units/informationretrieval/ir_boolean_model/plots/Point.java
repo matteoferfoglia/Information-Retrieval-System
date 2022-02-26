@@ -1,6 +1,6 @@
 package it.units.informationretrieval.ir_boolean_model.plots;
 
-import it.units.informationretrieval.ir_boolean_model.utils.Pair;
+import it.units.informationretrieval.ir_boolean_model.utils.custom_types.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
