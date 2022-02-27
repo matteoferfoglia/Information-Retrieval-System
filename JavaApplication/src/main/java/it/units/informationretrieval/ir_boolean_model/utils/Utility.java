@@ -138,16 +138,16 @@ public class Utility {
      * but non-stemmed token.
      *
      * @param token          The {@link String token} to be normalized.
-     * @param fromQuery      True if this method was invoked to removeInvalidCharsAndToLowerCase a query,
-     *                       false if it was invoked to removeInvalidCharsAndToLowerCase a word while
+     * @param fromQuery      True if this method is invoked to normalize a query, or
+     *                       false if it is invoked to normalize a word during the
      *                       indexing process. This differentiation is made because
      *                       the user should be able to insert special characters
      *                       (like wildcards) in queries, but special characters
      *                       should not be present in the dictionary of the index.
-     * @param language       The language of the input token.
+     * @param language       The {@link Language} of the input token.
      * @param unstemmedWords A {@link SynchronizedSet} where this method will add terms before
      *                       stemming (it is used as output parameter if the caller needs to know
-     *                       the un-stemmed version of the input token). Note: token inserted in
+     *                       the un-stemmed version of the input token). Notice: token inserted in
      *                       the collection might be equal to the returned one (e.g., if the system
      *                       is set to avoid stemming or if no stemming step are required on the
      *                       input token).
