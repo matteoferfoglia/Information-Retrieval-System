@@ -44,18 +44,18 @@ public class Utility {
     private static final String REGEX_PUNCTUATION = "[|!\"£$%&\\/=?^_*\\-+,.:;#]";
 
     /**
-     * Regex used in {@link #normalize(String, boolean, Language)}.
+     * Regex used in {@link #preprocess(String, boolean, Language)}.
      */
     private static final String REGEX__NOT__VALID_CHARACTERS_WHEN_INDEXING = "[^" + REGEX_VALID_CHARACTERS + "]";
 
     /**
-     * Regex used in {@link #normalize(String, boolean, Language)}.
+     * Regex used in {@link #preprocess(String, boolean, Language)}.
      */
     private static final String REGEX__NOT__VALID_CHARACTERS_WHEN_QUERYING =
             "[^" + REGEX_VALID_CHARACTERS + InvertedIndex.ESCAPED_WILDCARD_FOR_REGEX + "]";
 
     /**
-     * Regex used in {@link #normalize(String, boolean, Language)}.
+     * Regex used in {@link #preprocess(String, boolean, Language)}.
      */
     private static final String REGEX_MULTIPLE_SPACES = "\\s+";
 
@@ -90,7 +90,7 @@ public class Utility {
                         split(/*title is included in the content*/document.getContent().getEntireTextContent()
                                 .replaceAll(REGEX_PUNCTUATION, " ")))
                 .filter(text -> !text.isBlank())
-                .map(token -> Utility.normalize(token, false, language, unstemmedWords))
+                .map(token -> Utility.preprocess(token, false, language, unstemmedWords))
                 .filter(Objects::nonNull)
                 .toArray(String[]::new);
     }
@@ -134,33 +134,33 @@ public class Utility {
     }
 
     /**
-     * Normalize a token ({@link String}) and add to the input collection the normalized
-     * but non-stemmed token.
+     * Preprocess a token (normalization + stemming + stop-words removal)
+     * and save its un-stemmed version to the input collection of unstemmedTokens.
      *
-     * @param token          The {@link String token} to be normalized.
-     * @param fromQuery      True if this method is invoked to normalize a query, or
-     *                       false if it is invoked to normalize a word during the
-     *                       indexing process. This differentiation is made because
-     *                       the user should be able to insert special characters
-     *                       (like wildcards) in queries, but special characters
-     *                       should not be present in the dictionary of the index.
-     * @param language       The {@link Language} of the input token.
-     * @param unstemmedWords A {@link SynchronizedSet} where this method will add terms before
-     *                       stemming (it is used as output parameter if the caller needs to know
-     *                       the un-stemmed version of the input token). Notice: token inserted in
-     *                       the collection might be equal to the returned one (e.g., if the system
-     *                       is set to avoid stemming or if no stemming step are required on the
-     *                       input token).
-     * @return the corresponding normalized token or null either if the normalization
-     * leads to an empty string or (in the case that stop-words must be excluded) if
-     * the input string is a stop word.
+     * @param token           The {@link String token} to be preprocessed.
+     * @param fromQuery       True if this method is invoked to preprocess a query, or
+     *                        false if it is invoked to preprocess a word during the
+     *                        indexing process. This differentiation is made because
+     *                        the user should be able to insert special characters
+     *                        (like wildcards) in queries, but special characters
+     *                        should not be present in the dictionary of the index.
+     * @param language        The {@link Language} of the input token.
+     * @param unstemmedTokens A {@link SynchronizedSet} where this method will add terms before
+     *                        stemming (it is used as output parameter if the caller needs to know
+     *                        the un-stemmed version of the input token). Notice: token inserted in
+     *                        the collection might be equal to the returned one (e.g., if the system
+     *                        is set to avoid stemming or if no stemming step are required on the
+     *                        input token).
+     * @return the corresponding preprocessed token or null if the preprocessing
+     * leads to an empty string (e.g., if the input token is a stop-word and must
+     * be removed or if the stemming leads to the empty string).
      */
     @Nullable
-    public static String normalize(
+    public static String preprocess(
             @NotNull String token, boolean fromQuery,
-            @NotNull Language language, @NotNull SynchronizedSet<String> unstemmedWords) {
+            @NotNull Language language, @NotNull SynchronizedSet<String> unstemmedTokens) {
 
-        String toReturn = removeInvalidCharsAndToLowerCase(token, fromQuery);
+        String toReturn = normalize(token, fromQuery);
 
         Stemmer stemmer = getStemmer();
 
@@ -172,7 +172,7 @@ public class Utility {
         }
 
         // Stemming
-        unstemmedWords.add(toReturn);   // before stemming, save the un-stemmed word
+        unstemmedTokens.add(toReturn);   // before stemming, save the un-stemmed word
         if (stemmer != null && !toReturn.contains(InvertedIndex.WILDCARD)) {
             toReturn = stemmer.stem(toReturn, language);
         }
@@ -188,23 +188,35 @@ public class Utility {
     }
 
     /**
-     * Normalize a token ({@link String}).
+     * Removes superficial differences in the input token to be normalized,
+     * like ignoring the case and removing some characters considered invalid.
      *
-     * @param token     The {@link String token} to be normalized.
-     * @param fromQuery True if this method was invoked to removeInvalidCharsAndToLowerCase a query,
-     *                  false if it was invoked to removeInvalidCharsAndToLowerCase a word while
+     * @param token The {@link String token} to be normalized.
+     * @return The normalized token.
+     */
+    @NotNull
+    private static String normalize(@NotNull String token, boolean fromQuery) {
+        return removeInvalidCharsAndToLowerCase(token, fromQuery);
+    }
+
+    /**
+     * Preprocess a token ({@link String}).
+     *
+     * @param token     The {@link String token} to be preprocessed.
+     * @param fromQuery True if this method was invoked while preprocessing a query term,
+     *                  false if it was invoked to preprocess a word during the
      *                  indexing process. This differentiation is made because
      *                  the user should be able to insert special characters
      *                  (like wildcards) in queries, but special characters
      *                  should not be present in the dictionary of the index.
      * @param language  The language of the input token.
-     * @return the corresponding normalized token or null either if the normalization
-     * leads to an empty string or (in the case that stop-words must be excluded) if
-     * the input string is a stop word.
+     * @return the corresponding preprocessed token or null if the preprocessing
+     * leads to an empty string (e.g., if the input token is a stop-word and must
+     * be removed or if the stemming leads to the empty string).
      */
     @Nullable
-    public static String normalize(@NotNull String token, boolean fromQuery, @NotNull Language language) {
-        return normalize(token, fromQuery, language, new SynchronizedSet<>());
+    public static String preprocess(@NotNull String token, boolean fromQuery, @NotNull Language language) {
+        return preprocess(token, fromQuery, language, new SynchronizedSet<>());
     }
 
     /**
@@ -260,7 +272,7 @@ public class Utility {
     }
 
     /**
-     * Like {@link #normalize(String, boolean, Language)}, but without stop-words removal.
+     * Like {@link #preprocess(String, boolean, Language)}, but without stop-words removal.
      */
     @NotNull
     public static String removeInvalidCharsAndToLowerCase(@NotNull String token, boolean fromQuery) {

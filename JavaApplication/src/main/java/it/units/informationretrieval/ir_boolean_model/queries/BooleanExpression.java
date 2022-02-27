@@ -747,7 +747,7 @@ public class BooleanExpression {
         // This query string will NOT be used for the evaluation but only for toString methods
         this.queryString = matchingValue;
 
-        this.matchingValue = Utility.normalize(matchingValue, true, informationRetrievalSystem.getLanguage());
+        this.matchingValue = Utility.preprocess(matchingValue, true, informationRetrievalSystem.getLanguage());
         return this;
     }
 
@@ -828,7 +828,7 @@ public class BooleanExpression {
         }
 
         String[] tmpPhrase = Arrays.stream(matchingPhrase)
-                .map(word -> Utility.normalize(word, true, informationRetrievalSystem.getLanguage()))
+                .map(word -> Utility.preprocess(word, true, informationRetrievalSystem.getLanguage()))
                 .toArray(String[]::new);    // null elements might be present
 
         String[] phrase = new String[tmpPhrase.length];
@@ -1393,7 +1393,7 @@ public class BooleanExpression {
                     }
                 } else {
                     if (normalize) {
-                        var normalized = Utility.normalize(queryString, true, informationRetrievalSystem.getLanguage());
+                        var normalized = Utility.preprocess(queryString, true, informationRetrievalSystem.getLanguage());
                         yield normalized == null ? "" : normalized;
                     } else {
                         yield queryString;

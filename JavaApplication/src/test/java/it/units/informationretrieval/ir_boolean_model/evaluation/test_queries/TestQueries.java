@@ -551,7 +551,7 @@ class TestQueries {
         public WordSupplier(List<String> words) {
             this.words = Objects.requireNonNull(words)
                     .stream()
-                    .filter(word -> Utility.normalize(word, true, USED_LANGUAGE) != null) // normalization might remove stop words
+                    .filter(word -> Utility.preprocess(word, true, USED_LANGUAGE) != null) // normalization might remove stop words
                     //  to solve normalization issues, the system might return *all* documents from the corpus, but it might be computational and time expensive
                     .toList();
         }

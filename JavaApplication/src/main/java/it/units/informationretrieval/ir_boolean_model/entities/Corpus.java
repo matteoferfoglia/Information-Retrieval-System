@@ -202,7 +202,7 @@ public class Corpus implements Serializable {
                     normalizedTokens = document.getTitle() == null
                             ? new ArrayList<>(0)
                             : Arrays.stream(Utility.split(document.getTitle()))
-                            .map(token -> Utility.normalize(token, true, language))
+                            .map(token -> Utility.preprocess(token, true, language))
                             .filter(Objects::nonNull)
                             .toList();
                     listOfNormalizedTokensForDocument.put(document, normalizedTokens);

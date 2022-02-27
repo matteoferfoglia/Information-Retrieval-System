@@ -137,8 +137,8 @@ class UtilityTest {
             iterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
             tearDownIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
             commentToReport = COMMENT_FOR_BENCHMARKS)
-    static void normalizeLongDocument() {
-        Utility.normalize(stringFromLongDocumentSupplier.get(), false, Language.UNDEFINED);
+    static void preprocessLongDocument() {
+        Utility.preprocess(stringFromLongDocumentSupplier.get(), false, Language.UNDEFINED);
     }
 
     @Benchmark
@@ -276,7 +276,7 @@ class UtilityTest {
             "a*, a"
     })
     void normalize(String inputToken, String expectedOutput) {
-        assertEquals(expectedOutput, Utility.normalize(inputToken, false, Language.UNDEFINED));
+        assertEquals(expectedOutput, Utility.preprocess(inputToken, false, Language.UNDEFINED));
     }
 
     @ParameterizedTest
@@ -403,7 +403,7 @@ class UtilityTest {
         final String STOP_WORDS_EXCLUSION_PROP_NAME = "app.exclude_stop_words";
         var oldPropertyValue = AppProperties.getInstance()
                 .set(STOP_WORDS_EXCLUSION_PROP_NAME, String.valueOf(true));
-        assertEquals(expected, Utility.normalize(input, false, Language.ENGLISH));
+        assertEquals(expected, Utility.preprocess(input, false, Language.ENGLISH));
         assert oldPropertyValue != null;
         AppProperties.getInstance().set(STOP_WORDS_EXCLUSION_PROP_NAME, oldPropertyValue);
     }
