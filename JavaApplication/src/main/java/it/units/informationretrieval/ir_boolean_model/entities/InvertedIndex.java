@@ -182,9 +182,9 @@ public class InvertedIndex implements Serializable {
                 : Utility.getStemmer();
         PatriciaTrie<String> permutermIndex = new PatriciaTrie<>();
         Stream.of(getUnstemmedDictionary())
-                        // always use un-stemmed words, which are eventually mapped to stemmed words (if stemming must be performed)
+                // always use un-stemmed words, which are eventually mapped to stemmed words (if stemming must be performed)
                 .flatMap(Collection::stream)
-                .distinct().unordered().parallel()
+                .distinct().unordered()
                 .filter(Objects::nonNull)
                 .filter(str -> !str.isBlank())
                 .flatMap(strFromDictionary -> {
