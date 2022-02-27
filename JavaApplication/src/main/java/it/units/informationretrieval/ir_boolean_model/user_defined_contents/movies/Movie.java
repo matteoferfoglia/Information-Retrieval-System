@@ -119,7 +119,7 @@ public class Movie extends Document implements Serializable {
      * all other fields will be set to the default value.
      */
     private Movie(@Nullable final String description) {
-        super(MOVIE_CORPUS_LANGUAGE);
+        super();
         this.description = description;
     }
 
@@ -130,7 +130,7 @@ public class Movie extends Document implements Serializable {
      * contain the metadata in the correct order, as specified by {@link MOVIE_METADATA}.
      */
     private Movie(Object[] metadata) {
-        super(MOVIE_CORPUS_LANGUAGE);
+        super();
 
         this.movieTitle = (String) metadata[MOVIE_METADATA.MOVIE_NAME.getPositionInFile()];
         assert this.movieTitle != null;
@@ -184,7 +184,7 @@ public class Movie extends Document implements Serializable {
                  long boxOfficeRevenue, int runTime,
                  @NotNull List<String> languageKeys, @NotNull List<String> countryKeys,
                  @NotNull List<String> genreKeys, @NotNull String movieDescription) {
-        super(MOVIE_CORPUS_LANGUAGE);
+        super();
         this.movieTitle = Objects.requireNonNull(movieTitle);
         this.releaseDate = releaseDate;
         this.boxOfficeRevenue = boxOfficeRevenue;
@@ -218,7 +218,7 @@ public class Movie extends Document implements Serializable {
      * No-args constructor.
      */
     public Movie() {
-        super(MOVIE_CORPUS_LANGUAGE);
+        super();
     }
 
     /**

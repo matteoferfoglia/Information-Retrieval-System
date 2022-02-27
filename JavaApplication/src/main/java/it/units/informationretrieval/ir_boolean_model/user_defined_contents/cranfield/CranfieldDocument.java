@@ -101,12 +101,15 @@ public class CranfieldDocument extends Document {
     public CranfieldDocument(
             int docNumber, @NotNull String title, @NotNull String authors,
             @NotNull String source, @NotNull String actualContent) {
-        super(title, new DocumentContent(Arrays.asList(title, authors, source, actualContent)), LANGUAGE);
+        super(title, new DocumentContent(Arrays.asList(title, authors, source, actualContent)));
         this.docNumber = docNumber;
         this.authors = authors;
         this.source = source;
     }
 
+    /**
+     * Create the {@link Corpus} for the Cranfield collection.
+     */
     static Corpus createCorpus() throws URISyntaxException, IOException, NoMoreDocIdsAvailable {
         return new Corpus(
                 getDocuments()

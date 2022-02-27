@@ -2,7 +2,6 @@ package it.units.informationretrieval.ir_boolean_model.entities.fake_documents_d
 
 import it.units.informationretrieval.ir_boolean_model.entities.Document;
 import it.units.informationretrieval.ir_boolean_model.entities.DocumentContent;
-import it.units.informationretrieval.ir_boolean_model.entities.Language;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ public class FakeDocument_LineOfAFile extends Document {
     private static final String SAMPLE_DOCUMENT_CONTENT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
     public FakeDocument_LineOfAFile(@NotNull final String title, @NotNull final DocumentContent content) {
-        super(title, content, Language.UNDEFINED);
+        super(title, content);
     }
 
     /**

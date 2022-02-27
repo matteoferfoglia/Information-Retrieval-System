@@ -1,6 +1,7 @@
 package it.units.informationretrieval.ir_boolean_model.entities;
 
 import it.units.informationretrieval.ir_boolean_model.exceptions.NoMoreDocIdsAvailable;
+import it.units.informationretrieval.ir_boolean_model.utils.Utility;
 import it.units.informationretrieval.ir_boolean_model.utils.custom_types.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,6 +11,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -164,6 +166,52 @@ public class Corpus implements Serializable {
                 .limit(howManyDocsToReturn)
                 .map(entry -> entry.getKey() + " = " + entry.getValue())
                 .collect(Collectors.joining(System.lineSeparator()));
+    }
+
+    /**
+     * Searches how many words (after normalization) are present in the title of
+     * the given {@link Document} among the ones given as input parameter.
+     * This method can be used for heuristics to give a higher rank
+     * (when answering a query) to documents which have in the title terms in
+     * common with a query (it would mean that some query terms are present in the
+     * title, and so the document is probably more relevant).
+     *
+     * @param document   The {@link Document} for which to compute the number of normalized
+     *                   tokens composing its title in common with the given input string list.
+     * @param stringList The string list to be searched in the title for the matching.
+     *                   <strong>No normalization</strong> is performed on the input
+     *                   parameters.
+     * @return the number of (normalized) words in common between
+     * the title of this instance and the input parameters of the method.
+     */
+    public long howManyCommonNormalizedWordsWithDocTitle(
+            @NotNull Document document, @NotNull List<String> stringList) {
+
+        Function<Document, List<String>> getNormalizedTokensOfDocTitle = new Function<>() {
+            /** For each {@link Document}, the {@link List} of normalized tokens
+             * composing the {@link Document} title is cached, in the case it will
+             * be asked again in the future. */
+            @NotNull
+            static final ConcurrentHashMap<Document, List<String>> listOfNormalizedTokensForDocument =
+                    new ConcurrentHashMap<>();
+
+            @Override
+            public List<String> apply(Document document) {
+                var normalizedTokens = listOfNormalizedTokensForDocument.get(document);
+                if (normalizedTokens == null) {
+                    normalizedTokens = document.getTitle() == null
+                            ? new ArrayList<>(0)
+                            : Arrays.stream(Utility.split(document.getTitle()))
+                            .map(token -> Utility.normalize(token, true, language))
+                            .filter(Objects::nonNull)
+                            .toList();
+                    listOfNormalizedTokensForDocument.put(document, normalizedTokens);
+                }
+                return normalizedTokens;
+            }
+        };
+
+        return getNormalizedTokensOfDocTitle.apply(document).stream().filter(stringList::contains).count();
     }
 
     /**
