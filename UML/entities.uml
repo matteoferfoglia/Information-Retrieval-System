@@ -3,178 +3,164 @@
   <ID>JAVA</ID>
   <OriginalElement>C:/Users/matte/Desktop/GitHub-repos/InformationRetrieval_BooleanModel_Project/JavaApplication/src/main/java/it/units/informationretrieval/ir_boolean_model/entities</OriginalElement>
   <nodes>
-    <node x="303.6233498349836" y="152.0">it.units.informationretrieval.ir_boolean_model.entities.Term</node>
-    <node x="425.1901815181519" y="69.0">it.units.informationretrieval.ir_boolean_model.entities.DocumentIdentifier</node>
-    <node x="335.62369966996727" y="240.25">it.units.informationretrieval.ir_boolean_model.entities.PostingList</node>
-    <node x="425.1901815181519" y="152.0">it.units.informationretrieval.ir_boolean_model.entities.Posting</node>
-    <node x="130.43686963696385" y="78.0">it.units.informationretrieval.ir_boolean_model.entities.Language</node>
-    <node x="185.93672772277233" y="152.0">it.units.informationretrieval.ir_boolean_model.entities.Corpus</node>
-    <node x="130.43686963696385" y="240.25">it.units.informationretrieval.ir_boolean_model.entities.Document</node>
-    <node x="229.99869966996727" y="328.5">it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex</node>
-    <node x="42.604" y="328.5">it.units.informationretrieval.ir_boolean_model.entities.DocumentContent</node>
+    <node x="76.38179824561405" y="162.0">it.units.informationretrieval.ir_boolean_model.entities.Term</node>
+    <node x="194.93026315789479" y="81.0">it.units.informationretrieval.ir_boolean_model.entities.DocumentIdentifier</node>
+    <node x="107.31578947368405" y="232.0">it.units.informationretrieval.ir_boolean_model.entities.PostingList</node>
+    <node x="194.93026315789479" y="162.0">it.units.informationretrieval.ir_boolean_model.entities.Posting</node>
+    <node x="-110.41666666666666" y="81.0">it.units.informationretrieval.ir_boolean_model.entities.Language</node>
+    <node x="-37.89216666666668" y="162.0">it.units.informationretrieval.ir_boolean_model.entities.Corpus</node>
+    <node x="-97.41666666666666" y="232.0">it.units.informationretrieval.ir_boolean_model.entities.Document</node>
+    <node x="-5.550438596491304" y="302.0">it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex</node>
+    <node x="-187.41666666666666" y="302.0">it.units.informationretrieval.ir_boolean_model.entities.DocumentContent</node>
   </nodes>
   <notes />
   <edges>
-    <edge source="it.units.informationretrieval.ir_boolean_model.entities.Document" target="it.units.informationretrieval.ir_boolean_model.entities.Language" relationship="DEPENDENCY">
-      <point x="-34.93686963696385" y="-15.5" />
-      <point x="-32.93686963696385" y="15.5" />
-    </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex" target="it.units.informationretrieval.ir_boolean_model.entities.Document" relationship="DEPENDENCY">
-      <point x="-63.5" y="-15.5" />
-      <point x="237.49869966996727" y="336.875" />
-      <point x="46.56183003300342" y="15.5" />
+      <point x="-57.449561403508696" y="-13.5" />
+      <point x="8.0" y="254.5" />
+      <point x="60.5" y="7.0" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Term" target="it.units.informationretrieval.ir_boolean_model.entities.PostingList" relationship="TO_ONE">
-      <point x="-0.12334983498362817" y="9.0" />
-      <point x="346.5" y="240.75" />
-      <point x="-48.623699669967266" y="-15.0" />
+      <point x="15.000201754385955" y="15.5" />
+      <point x="-34.433789473684044" y="-15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Document" target="it.units.informationretrieval.ir_boolean_model.entities.DocumentContent" relationship="DEPENDENCY">
-      <point x="-53.0" y="15.5" />
-      <point x="137.93686963696385" y="336.875" />
-      <point x="8.832869636963864" y="-15.5" />
+      <point x="0.0" y="15.5" />
+      <point x="64.0" y="-15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.DocumentContent" target="it.units.informationretrieval.ir_boolean_model.entities.Document" relationship="DEPENDENCY">
-      <point x="69.39600000000002" y="-15.5" />
-      <point x="198.5" y="336.875" />
-      <point x="7.5631303630361515" y="15.5" />
+      <point x="26.0" y="-15.5" />
+      <point x="-38.0" y="15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Posting" target="it.units.informationretrieval.ir_boolean_model.entities.DocumentIdentifier" relationship="TO_ONE">
-      <point x="-31.59919141914179" y="-15.5" />
-      <point x="-71.59919141914179" y="15.5" />
+      <point x="0.0" y="-15.5" />
+      <point x="-40.0" y="15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.PostingList" target="it.units.informationretrieval.ir_boolean_model.entities.Posting" relationship="DEPENDENCY">
-      <point x="35.56648184818465" y="-15.5" />
+      <point x="33.614473684210736" y="-15.5" />
       <point x="-43.0" y="15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Corpus" target="it.units.informationretrieval.ir_boolean_model.entities.DocumentIdentifier" relationship="CREATE">
-      <point x="35.008427628477136" y="-14.857142857142861" />
-      <point x="269.94515535124947" y="93.5" />
-      <point x="-90.5" y="9.0" />
+      <point x="-49.0" y="0.0" />
+      <point x="42.049295774647874" y="177.5" />
+      <point x="42.049295774647874" y="105.5" />
+      <point x="285.4302631578948" y="105.5" />
+      <point x="0.0" y="-15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.PostingList" target="it.units.informationretrieval.ir_boolean_model.entities.Posting" relationship="TO_MANY">
       <point x="54.0" y="-15.5" />
-      <point x="-24.56648184818465" y="15.5" />
+      <point x="-22.614473684210736" y="15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex" target="it.units.informationretrieval.ir_boolean_model.entities.Posting" relationship="CREATE">
-      <point x="71.0" y="0.0" />
-      <point x="520.6899900990101" y="344.0" />
-      <point x="44.999808580858144" y="15.5" />
+      <point x="30.000438596491307" y="15.5" />
+      <point x="95.45" y="323.06097560975604" />
+      <point x="287.8052631578948" y="323.06097560975604" />
+      <point x="287.8052631578948" y="177.5" />
+      <point x="50.5" y="0.0" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex" target="it.units.informationretrieval.ir_boolean_model.entities.Posting" relationship="TO_MANY">
-      <point x="42.125" y="-15.5" />
-      <point x="343.12369966996727" y="335.75" />
-      <point x="505.68999009901006" y="335.75" />
-      <point x="29.999808580858144" y="15.5" />
+      <point x="69.46961152882217" y="-9.074688049912083" />
+      <point x="275.54417293233087" y="308.4253119500879" />
+      <point x="30.11390977443608" y="14.675311950087888" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Term" target="it.units.informationretrieval.ir_boolean_model.entities.Corpus" relationship="DEPENDENCY">
-      <point x="-15.000349834983638" y="-15.5" />
-      <point x="331.623" y="167.5" />
-      <point x="234.93672772277233" y="167.5" />
-      <point x="0.0" y="-15.5" />
+      <point x="-42.999798245614045" y="0.0" />
+      <point x="48.999666666666684" y="0.0" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.DocumentIdentifier" target="it.units.informationretrieval.ir_boolean_model.entities.Posting" relationship="DEPENDENCY">
-      <point x="-40.0" y="15.5" />
-      <point x="0.0" y="-15.5" />
+      <point x="-55.00026315789478" y="15.5" />
+      <point x="-15.000263157894778" y="-15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Posting" target="it.units.informationretrieval.ir_boolean_model.entities.DocumentIdentifier" relationship="DEPENDENCY">
-      <point x="-46.59919141914179" y="-15.5" />
-      <point x="-86.59919141914179" y="15.5" />
+      <point x="25.0" y="-15.5" />
+      <point x="-15.0" y="15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Term" target="it.units.informationretrieval.ir_boolean_model.entities.PostingList" relationship="DEPENDENCY">
-      <point x="16.876650165016372" y="15.0" />
-      <point x="363.5" y="243.75" />
-      <point x="-16.623699669967266" y="-12.0" />
+      <point x="35.5" y="15.5" />
+      <point x="-13.93399122807" y="-15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.PostingList" target="it.units.informationretrieval.ir_boolean_model.entities.Term" relationship="DEPENDENCY">
-      <point x="-15.000349834983638" y="-15.5" />
-      <point x="35.5" y="15.5" />
+      <point x="-49.433789473684044" y="-15.5" />
+      <point x="2.0175438595515516E-4" y="15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex" target="it.units.informationretrieval.ir_boolean_model.entities.Term" relationship="TO_MANY">
-      <point x="26.501300330032734" y="-3.5" />
-      <point x="327.5" y="180.5" />
-      <point x="-12.123349834983628" y="13.0" />
+      <point x="-29.999561403508693" y="15.5" />
+      <point x="35.45" y="317.5" />
+      <point x="89.382" y="317.5" />
+      <point x="-29.999798245614045" y="-15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Posting" target="it.units.informationretrieval.ir_boolean_model.entities.Term" relationship="TO_ONE">
-      <point x="-16.59919141914179" y="-15.5" />
-      <point x="459.0909900990101" y="159.0" />
-      <point x="346.6233498349836" y="159.0" />
-      <point x="0.0" y="-15.5" />
+      <point x="-50.5" y="-10.5" />
+      <point x="43.0" y="-10.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex" target="it.units.informationretrieval.ir_boolean_model.entities.Corpus" relationship="DEPENDENCY">
-      <point x="-37.061830033003446" y="-15.5" />
-      <point x="29.000141914191488" y="15.5" />
+      <point x="-12.841728070175378" y="-15.5" />
+      <point x="41.5" y="15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Corpus" target="it.units.informationretrieval.ir_boolean_model.entities.DocumentIdentifier" relationship="TO_MANY">
-      <point x="23.29414191419147" y="-15.5" />
-      <point x="258.2308696369638" y="84.5" />
-      <point x="515.69" y="84.5" />
-      <point x="-1.8151815186229214E-4" y="15.5" />
+      <point x="10.250000000000028" y="-15.5" />
+      <point x="21.357833333333346" y="90.5" />
+      <point x="-90.5" y="-6.0" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex" target="it.units.informationretrieval.ir_boolean_model.entities.PostingList" relationship="CREATE">
-      <point x="63.5" y="-15.5" />
-      <point x="364.49869966996727" y="336.875" />
-      <point x="-32.625" y="15.5" />
-    </edge>
-    <edge source="it.units.informationretrieval.ir_boolean_model.entities.Document" target="it.units.informationretrieval.ir_boolean_model.entities.Language" relationship="TO_ONE">
-      <point x="-49.93686963696385" y="-15.5" />
-      <point x="-47.93686963696385" y="15.5" />
+      <point x="63.500000000000014" y="-15.5" />
+      <point x="-39.86622807017534" y="15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Corpus" target="it.units.informationretrieval.ir_boolean_model.entities.Language" relationship="TO_ONE">
       <point x="-41.5" y="-15.5" />
-      <point x="4.499858085808484" y="15.5" />
+      <point x="21.524499999999975" y="15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Posting" target="it.units.informationretrieval.ir_boolean_model.entities.Term" relationship="DEPENDENCY">
-      <point x="14.999808580858144" y="15.5" />
-      <point x="490.68999009901006" y="177.5" />
-      <point x="310.623" y="177.5" />
-      <point x="-36.00034983498364" y="15.5" />
+      <point x="2.385736842105217" y="15.5" />
+      <point x="247.816" y="177.5" />
+      <point x="119.382" y="177.5" />
+      <point x="2.0175438595515516E-4" y="-15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Term" target="it.units.informationretrieval.ir_boolean_model.entities.Posting" relationship="DEPENDENCY">
-      <point x="-3.4983498363772014E-4" y="15.5" />
-      <point x="346.623" y="171.0" />
-      <point x="475.68999009901006" y="171.0" />
-      <point x="-1.9141914185638598E-4" y="15.5" />
+      <point x="44.47534461152878" y="9.59022556390974" />
+      <point x="177.7624285714286" y="187.09022556390974" />
+      <point x="177.7624285714286" y="186.37593984962405" />
+      <point x="-51.573120300751924" y="8.875939849624046" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex" target="it.units.informationretrieval.ir_boolean_model.entities.Term" relationship="CREATE">
-      <point x="8.501300330032734" y="-13.5" />
-      <point x="309.5" y="177.5" />
-      <point x="-31.123349834983628" y="10.0" />
+      <point x="15.000438596491307" y="15.5" />
+      <point x="80.45" y="325.5" />
+      <point x="104.382" y="325.5" />
+      <point x="-14.999798245614045" y="-15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Corpus" target="it.units.informationretrieval.ir_boolean_model.entities.Document" relationship="DEPENDENCY">
-      <point x="-26.5" y="15.5" />
-      <point x="208.43672772277233" y="243.5" />
-      <point x="213.43672772277233" y="243.5" />
-      <point x="22.499858085808484" y="-15.5" />
+      <point x="-41.5" y="15.5" />
+      <point x="6.524499999999975" y="-15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Corpus" target="it.units.informationretrieval.ir_boolean_model.entities.Language" relationship="DEPENDENCY">
-      <point x="-15.0" y="-15.5" />
-      <point x="30.999858085808484" y="15.5" />
+      <point x="-12.024499999999975" y="-15.5" />
+      <point x="51.0" y="15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex" target="it.units.informationretrieval.ir_boolean_model.entities.DocumentIdentifier" relationship="DEPENDENCY">
-      <point x="14.999650165016362" y="-15.5" />
-      <point x="315.9983498349836" y="355.0" />
-      <point x="593.0" y="355.0" />
-      <point x="593.0" y="100.0" />
-      <point x="31.59881848184807" y="15.5" />
+      <point x="53.93243859649131" y="15.5" />
+      <point x="119.382" y="329.875" />
+      <point x="354.4302631578947" y="329.875" />
+      <point x="354.4302631578947" y="96.5" />
+      <point x="90.5" y="0.0" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Document" target="it.units.informationretrieval.ir_boolean_model.entities.DocumentContent" relationship="TO_ONE">
-      <point x="-7.4368696369638485" y="15.5" />
-      <point x="183.5" y="336.875" />
-      <point x="54.396000000000015" y="-15.5" />
+      <point x="-53.0" y="15.5" />
+      <point x="11.0" y="-15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.Corpus" target="it.units.informationretrieval.ir_boolean_model.entities.Document" relationship="TO_MANY">
       <point x="0.0" y="15.5" />
-      <point x="234.93672772277233" y="243.5" />
-      <point x="239.93672772277233" y="243.5" />
-      <point x="48.999858085808484" y="-15.5" />
+      <point x="48.024499999999975" y="-15.5" />
     </edge>
     <edge source="it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex" target="it.units.informationretrieval.ir_boolean_model.entities.Corpus" relationship="TO_ONE">
-      <point x="-24.561971947194934" y="-15.5" />
-      <point x="41.5" y="15.5" />
+      <point x="-14.999561403508693" y="15.5" />
+      <point x="50.45" y="317.5" />
+      <point x="35.45" y="317.5" />
+      <point x="35.45" y="172.0" />
+      <point x="53.357833333333346" y="172.0" />
+      <point x="42.25000000000003" y="-15.5" />
     </edge>
   </edges>
-  <settings layout="Hierarchic" zoom="1.0" showDependencies="true" x="324.5" y="246.0" />
+  <settings layout="Hierarchic" zoom="1.0" showDependencies="true" x="94.0" y="202.0" />
   <SelectedNodes />
   <Categories />
   <SCOPE>All</SCOPE>
