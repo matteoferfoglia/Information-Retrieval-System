@@ -270,11 +270,13 @@ class UtilityTest {
 
     @ParameterizedTest
     @CsvSource({
-            "Foo  bar, foo bar",
+            "Foo§ , foo",
+            " bç?aèr  , bar",
+            "Foo bar, foo bar",
             "a*, a"
     })
-    void normalize(String input, String expectedOutput) {
-        assertEquals(expectedOutput, Utility.normalize(input, false, Language.UNDEFINED));
+    void normalize(String inputToken, String expectedOutput) {
+        assertEquals(expectedOutput, Utility.normalize(inputToken, false, Language.UNDEFINED));
     }
 
     @ParameterizedTest
