@@ -98,12 +98,26 @@ class UtilityTest {
     };
     private static Document LONG_DOCUMENT;
     private static String LONG_DOCUMENT_CONTENT;
+    private static Supplier<String> stringFromLongDocumentSupplier;
 
     static {
         try {
             LONG_DOCUMENT_CONTENT = Files.readString(Path.of(
                     Objects.requireNonNull(FakeDocument_LineOfAFile.class.getResource(LONG_DOCUMENT_PATH)).toURI()));
             LONG_DOCUMENT = new FakeDocument_LineOfAFile("title", LONG_DOCUMENT_CONTENT);
+            stringFromLongDocumentSupplier = new Supplier<>() {
+                /**
+                 * {@link List} of all non-normalized tokens.
+                 */
+                private final static String[] tokens = Utility.split(LONG_DOCUMENT_CONTENT);
+                private final static int size = tokens.length;
+                private static int counter = 0;
+
+                @Override
+                public String get() {
+                    return tokens[counter++ % size];
+                }
+            };
         } catch (IOException | URISyntaxException e) {
             fail(e);
         }
@@ -124,7 +138,7 @@ class UtilityTest {
             tearDownIterations = DEFAULT_NUM_OF_ITERATIONS_BENCHMARK,
             commentToReport = COMMENT_FOR_BENCHMARKS)
     static void normalizeLongDocument() {
-        Utility.normalize(LONG_DOCUMENT_CONTENT, false, Language.UNDEFINED);
+        Utility.normalize(stringFromLongDocumentSupplier.get(), false, Language.UNDEFINED);
     }
 
     @Benchmark
