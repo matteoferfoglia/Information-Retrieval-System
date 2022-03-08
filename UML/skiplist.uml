@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>skiplist.SkipListIterator</OriginalElement>
+  <nodes>
+    <node x="296.0" y="0.0">skiplist.SkipListNode</node>
+    <node x="8.0" y="437.0">skiplist.SkipListHashMap</node>
+    <node x="0.0" y="561.0">skiplist.NodeFinder</node>
+    <node x="597.0" y="0.0">skiplist.SkipList</node>
+    <node x="336.0" y="561.0">skiplist.SkipListIterator</node>
+    <node x="0.0" y="0.0">skiplist.SkipListMap</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="skiplist.SkipListHashMap" target="skiplist.SkipListMap" relationship="GENERALIZATION">
+      <point x="0.0" y="-39.5" />
+      <point x="0.0" y="193.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.8942731277533039" showDependencies="false" x="420.0" y="330.5" />
+  <SelectedNodes>
+    <node>skiplist.SkipListIterator</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
