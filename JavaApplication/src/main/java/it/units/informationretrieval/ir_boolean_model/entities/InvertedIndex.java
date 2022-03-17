@@ -395,7 +395,7 @@ public class InvertedIndex implements Serializable {
 
             if (moreThanOneWildcardIsPresent) {
                 // Consider the simplified wildcard input token where everything between the first and
-                // the last wildcard is folded in a single wildcard and
+                // the last wildcard is folded in a single wildcard
                 tokenWithEndOfWord = tokenWithEndOfWord.replaceAll(
                         ESCAPED_WILDCARD_FOR_REGEX + ".*" + ESCAPED_WILDCARD_FOR_REGEX,
                         ESCAPED_WILDCARD_FOR_REGEX);
