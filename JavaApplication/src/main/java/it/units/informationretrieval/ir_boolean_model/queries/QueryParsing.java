@@ -17,7 +17,7 @@ import static it.units.informationretrieval.ir_boolean_model.queries.BooleanExpr
 import static it.units.informationretrieval.ir_boolean_model.queries.UNARY_OPERATOR.NOT;
 
 /**
- * This class provides the functionalities to parseBinaryExpression an input
+ * This class provides the functionalities to parse an input
  * query string and translate it to a {@link BooleanExpression}.
  * Expressions allowed are:
  * <ul>
