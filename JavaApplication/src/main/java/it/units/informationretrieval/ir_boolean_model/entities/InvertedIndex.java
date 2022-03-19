@@ -80,9 +80,25 @@ public class InvertedIndex implements Serializable {
      * The permuterm index, having as keys all rotations of all tokens in the dictionary
      * followed by the EndOfWord symbol and as corresponding values the corresponding
      * (un-rotated) token from the dictionary.
+     * <p>
+     * <strong>Important</strong>: values are saved as {@link Set} to keep compatibility
+     * with {@link #permutermIndexWithoutEndOfWord}, but, in this permuterm index (in
+     * which also the {@link #END_OF_WORD} is saved), there is a perfect correspondence
+     * "1-to-1" between keys and value. This last sentence is <strong>not</strong> true
+     * anymore if the {@link #END_OF_WORD} is not saved (that is the case of
+     * {@link #permutermIndexWithoutEndOfWord}, where one key (the rotated words of the
+     * permuterm index) can map to a set of un-rotated words. An example follows.
+     * </p>
+     * <p>
+     * Example (with the end-of-word, $): the rotation "e$spac" maps directly
+     * to the un-rotated word "space$", while the rotation "es$pac" maps directly
+     * to the un-rotated word "paces$"<br/>
+     * Example (with the end-of-word, $): the rotation "espac" maps to the set of
+     * words &#10100;space, paces, ...&#10101;
+     * </p>
      */
     @NotNull
-    private final PatriciaTrie<String> permutermIndex;
+    private final PatriciaTrie<Set<String>> permutermIndex;
 
     /**
      * Like the {@link #permutermIndex}, but keys omit the {@link #END_OF_WORD} symbol.
@@ -92,9 +108,10 @@ public class InvertedIndex implements Serializable {
      * in searching by prefix is to create this data-structure, even if it is very
      * similar to the {@link #permutermIndex}: pros: fast, cons: memory waste and
      * updating problems.
+     * See also the description of {@link #permutermIndex}.
      */
     @NotNull
-    private final PatriciaTrie<String> permutermIndexWithoutEndOfWord;
+    private final PatriciaTrie<Set<String>> permutermIndexWithoutEndOfWord;
 
     /**
      * {@link List} of all <strong>un</strong>stemmed terms composing the dictionary.
@@ -156,7 +173,7 @@ public class InvertedIndex implements Serializable {
      * @return a copy of {@link #permutermIndex}.
      */
     @NotNull
-    public PatriciaTrie<String> getCopyOfPermutermIndex() {
+    public PatriciaTrie<Set<String>> getCopyOfPermutermIndex() {
         return permutermIndex.entrySet().stream().sequential()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
@@ -172,15 +189,15 @@ public class InvertedIndex implements Serializable {
      *
      * @param endOfWordSymbol The (eventually empty, but not-null) end-of-word symbol
      *                        to use in keys of the permuterm-index created by this method.
-     * @return the permuterm index.
+     * @return the permuterm index (see description of {@link #permutermIndex}).
      */
     @NotNull
-    private PatriciaTrie<String> createPermutermIndexAndGet(@NotNull String endOfWordSymbol) {
+    private PatriciaTrie<Set<String>> createPermutermIndexAndGet(@NotNull String endOfWordSymbol) {
         Objects.requireNonNull(endOfWordSymbol);
         Stemmer stemmer = Utility.getStemmer() == null
                 ? Stemmer.getStemmer(Stemmer.AvailableStemmer.NO_STEMMING)
                 : Utility.getStemmer();
-        PatriciaTrie<String> permutermIndex = new PatriciaTrie<>();
+        PatriciaTrie<Set<String>> permutermIndex = new PatriciaTrie<>();
         Stream.of(getUnstemmedDictionary())
                 // always use un-stemmed words, which are eventually mapped to stemmed words (if stemming must be performed)
                 .flatMap(Collection::stream)
@@ -196,7 +213,16 @@ public class InvertedIndex implements Serializable {
                             .filter(pair -> !pair.getValue().isBlank());
                 })
                 .forEachOrdered(pair -> {   // cannot use "collect" because PatriciaTrie is not thread-safe, so error can occur if PatriciaTrie is used as data-structure and parallel streams are used
-                    permutermIndex.put(pair.getKey(), pair.getValue());
+                    var key = pair.getKey();
+                    var rotation = pair.getValue();
+                    var rotationsForThisKey = permutermIndex.get(key);
+                    if (rotationsForThisKey == null) { // true if the key is not present
+                        Set<String> setOfRotations = ConcurrentHashMap.newKeySet();
+                        setOfRotations.add(rotation);
+                        permutermIndex.put(key, setOfRotations);
+                    } else {
+                        rotationsForThisKey.add(rotation);
+                    }
                 });
         return permutermIndex;
     }
@@ -446,7 +472,8 @@ public class InvertedIndex implements Serializable {
     @NotNull
     public Collection<String> getDictionaryTermsContainingPrefix(@NotNull String prefix, boolean ignoreEndOfWord) {
         var permutermIndexToUse = ignoreEndOfWord ? permutermIndexWithoutEndOfWord : permutermIndex;
-        return permutermIndexToUse.prefixMap(prefix).values();
+        return permutermIndexToUse.prefixMap(prefix).values()
+                .stream().flatMap(Collection::stream).toList();
     }
 
     /**

@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -49,7 +50,7 @@ public class InvertedIndexTest {
     private static Corpus movieCorpus;
     private static InvertedIndex invertedIndexForTests;
     private static Map<String, SkipList<Posting>> expectedInvertedIndexFromFileAsMapOfStringAndCorrespondingListOfPostings;
-    private static Map<String, String> expectedPermutermIndexFromFileAsMapOfStringAndCorrespondingStringFromDictionary;
+    private static Map<String, Set<String>> expectedPermutermIndexFromFileAsMapOfStringAndCorrespondingStringFromDictionary;
     private static Map<String, SkipList<Posting>> expectedMapOfStringWithWildcardAndCorrespondingListOfPostingsFromFile;
 
     static {
@@ -193,7 +194,9 @@ public class InvertedIndexTest {
                                 .map(val -> val.replaceAll(END_OF_WORD_PERMUTERM_USED_IN_TESTS, END_OF_WORD_PERMUTERM_USED_IN_INVERTED_INDEX))
                                 .toArray(String[]::new))
                         .map(aRow -> new Pair<>(aRow[0], aRow[1]))
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                        .collect(Collectors.groupingByConcurrent(
+                                Map.Entry::getKey,
+                                Collectors.mapping(Map.Entry::getValue, toSet())));
     }
 
     @BeforeAll
