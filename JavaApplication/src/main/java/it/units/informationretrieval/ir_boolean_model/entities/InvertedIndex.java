@@ -195,7 +195,7 @@ public class InvertedIndex implements Serializable {
                                     stemmer.stem(strFromDictionary, corpus.getLanguage())/* the eventually stemmed correspondent term in the dictionary*/))
                             .filter(pair -> !pair.getValue().isBlank());
                 })
-                .forEachOrdered(pair -> {   // cannot use "collect" because PatriciaTrie is not thread-safe, so error can occours if PatriciaTrie is used as data-structure and parallel streams are used
+                .forEachOrdered(pair -> {   // cannot use "collect" because PatriciaTrie is not thread-safe, so error can occur if PatriciaTrie is used as data-structure and parallel streams are used
                     permutermIndex.put(pair.getKey(), pair.getValue());
                 });
         return permutermIndex;

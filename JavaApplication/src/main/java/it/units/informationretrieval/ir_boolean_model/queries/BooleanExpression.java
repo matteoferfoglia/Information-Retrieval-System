@@ -671,7 +671,7 @@ public class BooleanExpression {
                                     phoneticCorrection, useEditDistance,
                                     informationRetrievalSystem, spellingCorrectedQueryWordsComparator);
                         } else {
-                            throw new IllegalStateException("Unexpected that neither the value nor the phrase were not set.");
+                            throw new IllegalStateException("Unexpected that neither the value nor the phrase were set.");
                         }
                     }
 
