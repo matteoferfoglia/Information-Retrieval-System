@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  *
  * @author Matteo Ferfoglia
  */
-public class InvertedIndex implements Externalizable {
+public class InvertedIndex implements Serializable {
 
     /**
      * Wildcard to indicate 0, 1 or more characters,
@@ -46,6 +46,39 @@ public class InvertedIndex implements Externalizable {
      */
     @NotNull
     private static final String END_OF_WORD = "\3";
+    /**
+     * {@link List} of all <strong>un</strong>stemmed terms composing the dictionary.
+     */
+    @NotNull
+    private final SynchronizedSet<String> unstemmedTerms = new SynchronizedSet<>();
+    /**
+     * The {@link Stemmer.AvailableStemmer} used by the system when this instance was created.
+     */
+    @NotNull
+    private final Stemmer.AvailableStemmer stemmer;
+    /**
+     * The phonetic hash.
+     */
+    @NotNull
+    private final ConcurrentMap<String, List<Term>> phoneticHashes;
+    /**
+     * The inverted index, i.e., a {@link Map} having tokens as keys and a {@link Term}
+     * as corresponding values, where the {@link Term} in the entry, if tokenized,
+     * returns the corresponding key.
+     */
+    @NotNull
+    private final ConcurrentMap<String, Term> invertedIndex;   // each Term has its own posting list
+    /**
+     * The (reference to the) {@link Corpus} on which indexing is done.
+     */
+    @NotNull
+    private final Corpus corpus;
+    /**
+     * The {@link SkipList} of all {@link Posting}s in this system,
+     * needed to answer efficiently to Boolean NOT queries.
+     */
+    @NotNull
+    private final SkipList<Posting> postings;
     /**
      * The permuterm index, having as keys all rotations of all tokens in the dictionary
      * followed by the EndOfWord symbol and as corresponding values the corresponding
@@ -68,7 +101,7 @@ public class InvertedIndex implements Externalizable {
      * </p>
      */
     @NotNull
-    private PatriciaTrie<Set<String>> permutermIndex;
+    private transient PatriciaTrie<Set<String>> permutermIndex;
     /**
      * Like the {@link #permutermIndex}, but keys omit the {@link #END_OF_WORD} symbol.
      * This is done because the {@link #END_OF_WORD} symbol may be needed when handling
@@ -80,40 +113,7 @@ public class InvertedIndex implements Externalizable {
      * See also the description of {@link #permutermIndex}.
      */
     @NotNull
-    private PatriciaTrie<Set<String>> permutermIndexWithoutEndOfWord;
-    /**
-     * {@link List} of all <strong>un</strong>stemmed terms composing the dictionary.
-     */
-    @NotNull
-    private SynchronizedSet<String> unstemmedTerms = new SynchronizedSet<>();
-    /**
-     * The {@link Stemmer.AvailableStemmer} used by the system when this instance was created.
-     */
-    @NotNull
-    private Stemmer.AvailableStemmer stemmer;
-    /**
-     * The phonetic hash.
-     */
-    @NotNull
-    private ConcurrentMap<String, List<Term>> phoneticHashes;
-    /**
-     * The inverted index, i.e., a {@link Map} having tokens as keys and a {@link Term}
-     * as corresponding values, where the {@link Term} in the entry, if tokenized,
-     * returns the corresponding key.
-     */
-    @NotNull
-    private ConcurrentMap<String, Term> invertedIndex;   // each Term has its own posting list
-    /**
-     * The (reference to the) {@link Corpus} on which indexing is done.
-     */
-    @NotNull
-    private Corpus corpus;
-    /**
-     * The {@link SkipList} of all {@link Posting}s in this system,
-     * needed to answer efficiently to Boolean NOT queries.
-     */
-    @NotNull
-    private SkipList<Posting> postings;
+    private transient PatriciaTrie<Set<String>> permutermIndexWithoutEndOfWord;
 
     /**
      * Constructor. Creates the instance and indexes the given {@link Corpus}.
@@ -492,145 +492,17 @@ public class InvertedIndex implements Externalizable {
                 : phoneticHashes.stream().map(Term::getTermString).toList();
     }
 
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        Map<Term, String> mapTermToKeyInInvertedIndex = new ConcurrentHashMap<>(invertedIndex.size()); // used for compression of serialized data
-
-        out.writeObject(invertedIndex.size());
-        for (var e : invertedIndex.entrySet()) {
-            out.writeObject(e.getKey());
-            out.writeObject(e.getValue());
-            mapTermToKeyInInvertedIndex.put(e.getValue(), e.getKey());
-        }
-        out.writeObject(corpus);
-
-        out.writeObject(postings);
-
-        { // Phonetic hashes serialization
-            ByteArrayOutputStream baosPhoneticHashes = new ByteArrayOutputStream();
-            ObjectOutputStream oosPhoneticHashes = new ObjectOutputStream(baosPhoneticHashes);
-            int numOfCorrectlySerializedPhoneticHashed = 0;
-            for (var phoneticHash : phoneticHashes.entrySet()) {
-                ByteArrayOutputStream baosOneEntryOfPhoneticHashes = new ByteArrayOutputStream();
-                ObjectOutputStream oosOneEntryOfPhoneticHashes = new ObjectOutputStream(baosOneEntryOfPhoneticHashes);
-                int numOfCorrectlySerializedTermsCorrespondingToAnHash = 0;
-                for (Term t : phoneticHash.getValue()) {
-                    var keyInTheIndex = mapTermToKeyInInvertedIndex.get(t);
-                    if (keyInTheIndex != null) {
-                        oosOneEntryOfPhoneticHashes.writeObject(keyInTheIndex); // write simply the key in the inverted index instead of re-serializing the term
-                        numOfCorrectlySerializedTermsCorrespondingToAnHash++;
-                    } else {
-                        System.err.println("Error during serialization of the inverted index: term "
-                                + t + " not present in the inverted index. It will not present in the serialization");
-                    }
-                }
-                if (numOfCorrectlySerializedTermsCorrespondingToAnHash > 0) {
-                    oosPhoneticHashes.writeObject(numOfCorrectlySerializedTermsCorrespondingToAnHash);
-                    oosPhoneticHashes.writeObject(phoneticHash.getKey());                  // the hash
-                    oosPhoneticHashes.writeObject(baosOneEntryOfPhoneticHashes.toByteArray());
-                    numOfCorrectlySerializedPhoneticHashed++;
-                }
-            }
-            if (numOfCorrectlySerializedPhoneticHashed > 0) {
-                out.writeObject(numOfCorrectlySerializedPhoneticHashed);
-                out.writeObject(baosPhoneticHashes.toByteArray());
-            }
-        }
-
-        out.writeObject(permutermIndex.size());// TODO: refactor
-        for (var e : permutermIndex.entrySet()) {
-            String token = e.getKey();
-            Set<String> sset = e.getValue();
-            out.writeObject(token);
-            out.writeObject(sset.size());
-            for (var str : sset) {
-                out.writeObject(str);
-            }
-        }
-        out.writeObject(permutermIndexWithoutEndOfWord.size());// TODO: refactor
-        for (var e : permutermIndexWithoutEndOfWord.entrySet()) {
-            String token = e.getKey();
-            Set<String> sset = e.getValue();
-            out.writeObject(token);
-            out.writeObject(sset.size());
-            for (var str : sset) {
-                out.writeObject(str);
-            }
-        }
-        out.writeObject(unstemmedTerms);
-        out.writeObject(stemmer);
+    @Serial
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
     }
 
-    @SuppressWarnings("unchecked") // cast for deserialization
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        final int invertedIndexSize = (int) in.readObject();
-        invertedIndex = new ConcurrentHashMap<>(invertedIndexSize);
-        for (int i = 0; i < invertedIndexSize; i++) {
-            String token = (String) in.readObject();
-            Term term = (Term) in.readObject();
-            invertedIndex.put(token, term);
-        }
+    @Serial
+    private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+        in.defaultReadObject();
 
-        corpus = (Corpus) in.readObject();
-        postings = (SkipList<Posting>) in.readObject();
-
-
-        { // Phonetic hashes deserialization
-            final int numOfCorrectlySerializedPhoneticHashed = (int) in.readObject();
-            phoneticHashes = new ConcurrentHashMap<>(numOfCorrectlySerializedPhoneticHashed);
-            ByteArrayInputStream baisPhoneticHashes = new ByteArrayInputStream((byte[]) in.readObject());
-            ObjectInputStream oisPhoneticHashes = new ObjectInputStream(baisPhoneticHashes);
-            for (int i = 0; i < numOfCorrectlySerializedPhoneticHashed; i++) {
-                int numOfCorrectlySerializedTermsCorrespondingToAnHash = (int) oisPhoneticHashes.readObject();
-                for (int j = 0; j < numOfCorrectlySerializedTermsCorrespondingToAnHash; j++) {
-                    final int numOfTermsForThisPhoneticHash = (int) oisPhoneticHashes.readObject();
-                    final String phoneticHash = (String) oisPhoneticHashes.readObject();
-                    ByteArrayInputStream baisOneEntryOfPhoneticHashes =
-                            new ByteArrayInputStream((byte[]) oisPhoneticHashes.readObject());
-                    ObjectInputStream oisOneEntryOfPhoneticHashes = new ObjectInputStream(baisOneEntryOfPhoneticHashes);
-                    List<Term> termsForThisHash = new ArrayList<>(numOfTermsForThisPhoneticHash);
-                    phoneticHashes.put(phoneticHash, termsForThisHash);
-                    for (int k = 0; k < numOfTermsForThisPhoneticHash; k++) {
-                        String token = (String) oisOneEntryOfPhoneticHashes.readObject();
-                        Term t = invertedIndex.get(token);
-                        if (t != null) {
-                            termsForThisHash.add(t);
-                        } else {
-                            System.err.println("Error during deserialization of phonetic hash in class "
-                                    + getClass().getCanonicalName() + ": token \"" + token + "\" not found in index.");
-                        }
-                    }
-                }
-            }
-        }
-
-        final int permutermSize = (int) in.readObject(); // TODO: refactor
-        permutermIndex = new PatriciaTrie<>();
-        for (int i = 0; i < permutermSize; i++) {
-            String key = (String) in.readObject();
-            int permutemsSize = (int) in.readObject();
-            Set<String> permuterms = ConcurrentHashMap.newKeySet(permutemsSize);
-            for (int j = 0; j < permutemsSize; j++) {
-                permuterms.add((String) in.readObject());
-            }
-            permutermIndex.put(key, permuterms);
-        }
-
-        final int permutermSize2 = (int) in.readObject(); // TODO: refactor
-        permutermIndexWithoutEndOfWord = new PatriciaTrie<>();
-        for (int i = 0; i < permutermSize2; i++) {
-            String key = (String) in.readObject();
-            int permutemsSize = (int) in.readObject();
-            Set<String> permuterms = ConcurrentHashMap.newKeySet(permutemsSize);
-            for (int j = 0; j < permutemsSize; j++) {
-                permuterms.add((String) in.readObject());
-            }
-            permutermIndexWithoutEndOfWord.put(key, permuterms);
-        }
-
-        unstemmedTerms = (SynchronizedSet<String>) in.readObject();
-        stemmer = (Stemmer.AvailableStemmer) in.readObject();
+        permutermIndex = createPermutermIndexAndGet(END_OF_WORD);
+        permutermIndexWithoutEndOfWord = createPermutermIndexAndGet("");// NO end-of-word symbol
 
         try {
             Stemmer.AvailableStemmer currentAvailableStemmer =

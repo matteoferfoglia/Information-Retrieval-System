@@ -5,10 +5,7 @@ import it.units.informationretrieval.ir_boolean_model.queries.BooleanExpression;
 import org.jetbrains.annotations.NotNull;
 import skiplist.SkipList;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -18,19 +15,19 @@ import java.util.Objects;
  *
  * @author Matteo Ferfoglia
  */
-public class InformationRetrievalSystem implements Externalizable {
+public class InformationRetrievalSystem implements Serializable {
 
     /**
      * The {@link Corpus}.
      */
     @NotNull
-    private Corpus corpus;
+    private final Corpus corpus;
 
     /**
      * The {@link InvertedIndex}.
      */
     @NotNull
-    private InvertedIndex invertedIndex;
+    private final InvertedIndex invertedIndex;
 
     /**
      * Constructor.
@@ -50,9 +47,6 @@ public class InformationRetrievalSystem implements Externalizable {
     public InformationRetrievalSystem(@NotNull InvertedIndex invertedIndex) {
         this.invertedIndex = invertedIndex;
         this.corpus = invertedIndex.getCorpus();
-    }
-
-    public InformationRetrievalSystem() {
     }
 
     /**
@@ -160,14 +154,4 @@ public class InformationRetrievalSystem implements Externalizable {
         return invertedIndex.cf(str);
     }
 
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(invertedIndex);
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        invertedIndex = (InvertedIndex) in.readObject();
-        corpus = invertedIndex.getCorpus();
-    }
 }
