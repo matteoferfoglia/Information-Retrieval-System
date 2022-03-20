@@ -22,7 +22,7 @@ import java.util.stream.IntStream;
  * wrt. the initial phrase.
  * <p>
  * Applying spelling correction on phrase is quit difficult, because
- * the algorithm must care about considering all combination (correcting
+ * the algorithm must care about considering all the combinations (correcting
  * first words once per time, then keeping one word corrected and
  * correcting the other once per time and then correcting the one word
  * twice and keep the other un-corrected and so on).
@@ -154,7 +154,7 @@ class SpellingCorrector {
     private final boolean PHONETIC_CORRECTION;
 
     /**
-     * True if this edit distance must be ignored.
+     * False if this edit distance must be ignored.
      * This flag is ignored if {@link #PHONETIC_CORRECTION} is false.
      */
     private final boolean USE_EDIT_DISTANCE;
@@ -413,7 +413,7 @@ class SpellingCorrector {
                         Arrays.stream(rotations)
                                 .parallel()
                                 .filter(s -> PHONETIC_CORRECTION || s.length() > SUFFIX_LENGTH)
-                                .map(s -> PHONETIC_CORRECTION ? s : s.substring(SUFFIX_LENGTH))
+                                .map(s -> PHONETIC_CORRECTION ? s : s.substring(0, s.length() - SUFFIX_LENGTH))
                                 .map(s -> PHONETIC_CORRECTION
                                         ? informationRetrievalSystem.getDictionaryTermsFromSoundexCorrectionOf(s)
                                         : informationRetrievalSystem.getDictionaryTermsContainingPrefix(s, true))
