@@ -160,6 +160,51 @@ public class InvertedIndex implements Serializable {
     }
 
     /**
+     * Serializes a permuterm index instance to the given {@link OutputStream}.
+     *
+     * @param out            The {@link ObjectOutputStream} where to serialize the instance.
+     * @param permutermIndex the permuterm index to serialize.
+     */
+    private static void serializePermutermIndex(
+            @NotNull ObjectOutputStream out, @NotNull PatriciaTrie<Set<String>> permutermIndex) throws IOException {
+        out.writeObject(permutermIndex.size());
+        long counter = 0;
+        for (var e : permutermIndex.entrySet()) {
+            out.writeObject(e.getKey());
+            out.writeObject(e.getValue().size());
+            for (var str : e.getValue()) {
+                out.writeObject(str);
+            }
+            if (++counter % 100000 == 0) { // "clean" every 100000 iterations to avoid heap problems
+                out.flush();
+                System.gc();
+            }
+        }
+    }
+
+    /**
+     * Deserializes a permuterm index instance from the given {@link InputStream}.
+     *
+     * @param in The {@link ObjectOutputStream} where to deserialize the instance from.
+     * @return The deserialized {@link PatriciaTrie} instance.
+     */
+    private static PatriciaTrie<Set<String>> deserializePatriciaTrie(@NotNull ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        final int patriciaTrieSize = (int) in.readObject();
+        PatriciaTrie<Set<String>> patriciaTrie = new PatriciaTrie<>();
+        for (int i = 0; i < patriciaTrieSize; i++) {
+            final String keyPermuterm = (String) in.readObject();
+            final int numOfStrings = (int) in.readObject();
+            Set<String> values = ConcurrentHashMap.newKeySet(numOfStrings);
+            for (int j = 0; j < numOfStrings; j++) {
+                values.add((String) in.readObject());
+            }
+            patriciaTrie.put(keyPermuterm, values);
+        }
+        return patriciaTrie;
+    }
+
+    /**
      * @return a copy of {@link #permutermIndex}.
      */
     @NotNull
@@ -495,14 +540,15 @@ public class InvertedIndex implements Serializable {
     @Serial
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
+        serializePermutermIndex(out, permutermIndex);
+        serializePermutermIndex(out, permutermIndexWithoutEndOfWord);
     }
 
     @Serial
     private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
         in.defaultReadObject();
-
-        permutermIndex = createPermutermIndexAndGet(END_OF_WORD);
-        permutermIndexWithoutEndOfWord = createPermutermIndexAndGet("");// NO end-of-word symbol
+        permutermIndex = deserializePatriciaTrie(in);
+        permutermIndexWithoutEndOfWord = deserializePatriciaTrie(in);
 
         try {
             Stemmer.AvailableStemmer currentAvailableStemmer =
