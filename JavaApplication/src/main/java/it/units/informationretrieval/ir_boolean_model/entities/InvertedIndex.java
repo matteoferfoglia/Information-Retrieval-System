@@ -168,16 +168,24 @@ public class InvertedIndex implements Serializable {
     private static void serializePermutermIndex(
             @NotNull ObjectOutputStream out, @NotNull PatriciaTrie<Set<String>> permutermIndex) throws IOException {
         out.writeObject(permutermIndex.size());
-        long counter = 0;
         for (var e : permutermIndex.entrySet()) {
-            out.writeObject(e.getKey());
-            out.writeObject(e.getValue().size());
-            for (var str : e.getValue()) {
-                out.writeObject(str);
-            }
-            if (++counter % 100000 == 0) { // "clean" every 100000 iterations to avoid heap problems
+            try {
+                out.writeObject(e.getKey());
+                out.writeObject(e.getValue().size());
+                for (var str : e.getValue()) {
+                    out.writeObject(str);
+                }
+            } catch (OutOfMemoryError err) {// "clean" to avoid heap problems
+                // Clean
                 out.flush();
                 System.gc();
+
+                // Retry writing
+                out.writeObject(e.getKey());
+                out.writeObject(e.getValue().size());
+                for (var str : e.getValue()) {
+                    out.writeObject(str);
+                }
             }
         }
     }
