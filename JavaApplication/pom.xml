@@ -71,7 +71,7 @@
                 <configuration>
                     <fork>true</fork>
                     <meminitial>1024m</meminitial>
-                    <maxmem>12000m</maxmem><!-- Benchmarking requires a lot of memory -->
+                    <maxmem>14000m</maxmem><!-- Benchmarking requires a lot of memory -->
                 </configuration>
             </plugin>
 
