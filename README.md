@@ -16,3 +16,6 @@ The source code for the Java Application can be found in the subfolder [JavaAppl
 (for stemming you can use a library)
 - You can implement spelling correction.
 - Evaluate the system on a set of test queries.
+
+## Presentation
+The repository contains a detailed [presentation](Presentation-IRSystem-BooleanModel.pdf) about the system.
