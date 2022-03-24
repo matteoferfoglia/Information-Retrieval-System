@@ -20,7 +20,6 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * An instance of this class is an Inverted Index for a {@link Corpus}
@@ -473,7 +472,7 @@ public class InvertedIndex implements Serializable {
             String rotatedToken = tokenWithEndOfWord.substring(indexOfFirstWildcardIfPresent + 1)
                     + tokenWithEndOfWord.substring(0, indexOfFirstWildcardIfPresent);
             // now the wildcard is removed (via substring) but the token has been rotated correctly
-            // and, because we are here, we are sure that there is at least one wildcard
+            // and, since we are here, we are sure that there is at least one wildcard
 
             return new SkipList<>(getDictionaryTermsContainingPrefix(rotatedToken, false)
                     .stream().unordered().parallel()

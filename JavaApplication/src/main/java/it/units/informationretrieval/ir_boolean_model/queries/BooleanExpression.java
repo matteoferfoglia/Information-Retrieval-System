@@ -249,7 +249,7 @@ public class BooleanExpression {
      * The {@link UNARY_OPERATOR} to apply to this instance.
      */
     @NotNull
-    private UNARY_OPERATOR unaryOperator = UNARY_OPERATOR.IDENTITY; // default is the unary operator
+    private UNARY_OPERATOR unaryOperator = UNARY_OPERATOR.IDENTITY; // default is the identity operator
     /**
      * The query represented as {@link String} for this instance.
      */
@@ -350,7 +350,7 @@ public class BooleanExpression {
      */
     @NotNull
     private static String escapeSpecialCharacters(@NotNull String queryString) {
-        // escaping is done my replicating a valid char for the parser
+        // escaping is done by replicating a valid char for the parser
 
         return queryString
                 .replaceAll(VALID_CHAR_FOR_PARSER + "+", VALID_CHAR_FOR_PARSER) // remove duplicates
@@ -363,7 +363,7 @@ public class BooleanExpression {
                         NUM_OF_WORDS_FOLLOWS_CHARACTER,
                         Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_NUM_OF_WORDS_FOLLOW, VALID_CHAR_FOR_PARSER))
 
-                // words with logical meaning are evaluated like literal expression by the parse, hence they need kind of escaping
+                // words with logical meaning are evaluated like literal expressions by the parser, hence they need kind of escaping
                 .replaceAll(
                         "true",
                         Utility.getNReplicationsOfString(VALID_PARSING_CHAR_REPETITIONS_FOR_TRUE_LITERAL, VALID_CHAR_FOR_PARSER))
@@ -840,7 +840,6 @@ public class BooleanExpression {
         //noinspection StatementWithEmptyBody
         for (; wordCounter < tmpPhrase.length && tmpPhrase[wordCounter] == null; wordCounter++) {
             // find the first non-null word and increment the counter
-            // if the first word is NOT null, the counter is however incremented to 1
         }
         if (wordCounter == tmpPhrase.length) { // true if all words are null
             return this;    // do not set anything
@@ -1317,7 +1316,7 @@ public class BooleanExpression {
                 Posting.DOC_ID_COMPARATOR); // "true predicate" means "classical" difference between sets
         if (DEBUG_NOT_QUERY) {
             stop = System.nanoTime();
-            System.out.println("SkipList of difference computed in               " + (stop - start) / 1e6 + " ms.");
+            System.out.println("SkipList of difference computed in                   " + (stop - start) / 1e6 + " ms.");
         }
 
         return difference;
@@ -1564,7 +1563,7 @@ public class BooleanExpression {
                                 LinkedHashMap::new))
                         .entrySet().stream().sequential()
                         .map(entry_docToRank -> {
-                            // Assign extra rank if any of query terms are present in the title of the document
+                            // Assign extra rank if any query term is present in the title of the document
                             double score = entry_docToRank.getValue();
                             List<String> queryTerms = Arrays.asList(
                                     Utility.split(getQueryWords(false, true)));
