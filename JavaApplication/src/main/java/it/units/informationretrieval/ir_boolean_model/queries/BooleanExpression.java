@@ -198,7 +198,7 @@ public class BooleanExpression {
      * {@link #evaluate()} (if it was invoked), for caching reasons.
      */
     @NotNull
-    private SkipList<Posting> results = new SkipList<>(new ArrayList<>(), Posting.DOC_ID_COMPARATOR);
+    private SkipList<Posting> results = new SkipList<>();
     /**
      * The {@link SpellingCorrector} used for this instance. It is important
      * to save this field to handle multiple invocation of {@link #spellingCorrection(boolean, boolean)}.
@@ -1082,7 +1082,7 @@ public class BooleanExpression {
                                         new BooleanExpression(leftChildOperand)
                                                 .setUnaryOperator(UNARY_OPERATOR.IDENTITY)
                                                 .evaluateBothSimpleAndAggregatedExpressionRecursively();
-                                yield SkipList.difference(fromRightChild, fromLeftChildNotNegated, Posting.DOC_ID_COMPARATOR);
+                                yield SkipList.difference(fromRightChild, fromLeftChildNotNegated, Comparator.naturalOrder());
                             } else if (rightChildOperand.unaryOperator.equals(UNARY_OPERATOR.NOT)) { // A AND NOT(B) = A \ B
                                 SkipList<Posting> fromLeftChild =
                                         leftChildOperand.evaluateBothSimpleAndAggregatedExpressionRecursively();
@@ -1090,17 +1090,17 @@ public class BooleanExpression {
                                         new BooleanExpression(rightChildOperand)
                                                 .setUnaryOperator(UNARY_OPERATOR.IDENTITY)
                                                 .evaluateBothSimpleAndAggregatedExpressionRecursively();
-                                yield SkipList.difference(fromLeftChild, fromRightChildNotNegated, Posting.DOC_ID_COMPARATOR);
+                                yield SkipList.difference(fromLeftChild, fromRightChildNotNegated, Comparator.naturalOrder());
                             } else {
                                 SkipList<Posting> fromLeftChild = leftChildOperand.evaluateBothSimpleAndAggregatedExpressionRecursively();
                                 SkipList<Posting> fromRightChild = rightChildOperand.evaluateBothSimpleAndAggregatedExpressionRecursively();
-                                yield Utility.intersection(fromLeftChild, fromRightChild, Posting.DOC_ID_COMPARATOR);
+                                yield Utility.intersection(fromLeftChild, fromRightChild);
                             }
                         }
                         case OR -> {
                             SkipList<Posting> fromLeftChild = leftChildOperand.evaluateBothSimpleAndAggregatedExpressionRecursively();
                             SkipList<Posting> fromRightChild = rightChildOperand.evaluateBothSimpleAndAggregatedExpressionRecursively();
-                            yield Utility.union(fromLeftChild, fromRightChild, Posting.DOC_ID_COMPARATOR);
+                            yield Utility.union(fromLeftChild, fromRightChild);
                         }
                         //noinspection UnnecessaryDefault
                         default -> throw new UnsupportedOperationException("Unknown operator");
@@ -1159,8 +1159,7 @@ public class BooleanExpression {
                                 // posting list for the term was not cached
                                 correspondingPostingList = new SkipList<>(
                                         informationRetrievalSystem.getListOfPostingForToken(
-                                                word.replaceAll(VALID_CHAR_FOR_PARSER, WILDCARD)),
-                                        Posting.DOC_ID_COMPARATOR);
+                                                word.replaceAll(VALID_CHAR_FOR_PARSER, WILDCARD)));
                                 cachedPostings.put(word, correspondingPostingList);
                             }
                             return correspondingPostingList;
@@ -1171,17 +1170,16 @@ public class BooleanExpression {
                             SkipList<Posting> postings = getPostingListOfIthWordInPhrase.apply(i);
                             phraseQueryIntersection = SkipList.intersection(
                                     phraseQueryIntersection, postings,
-                                    biPredicatesForCheckingPositionsForPhrasalQueries[i - 1], Posting.DOC_ID_COMPARATOR);
+                                    biPredicatesForCheckingPositionsForPhrasalQueries[i - 1]);
                         }
 
                         tmpResults = phraseQueryIntersection;
                     } else if (isMatchingValueSet()) {
                         tmpResults = new SkipList<>(
-                                informationRetrievalSystem.getListOfPostingForToken(matchingValue),
-                                Posting.DOC_ID_COMPARATOR);
+                                informationRetrievalSystem.getListOfPostingForToken(matchingValue));
                     } else {
                         // normalization of input matching value leads to null, hence no results can be found
-                        tmpResults = new SkipList<>(Posting.DOC_ID_COMPARATOR);
+                        tmpResults = new SkipList<>();
                     }
 
                     if (tmpResults.isEmpty() && automaticCorrectionEnabled) {
@@ -1312,8 +1310,7 @@ public class BooleanExpression {
             start = System.nanoTime();
         }
         var difference = SkipList.difference(
-                allPostings, listOfPostingsToBeExcluded,
-                Posting.DOC_ID_COMPARATOR); // "true predicate" means "classical" difference between sets
+                allPostings, listOfPostingsToBeExcluded, Comparator.naturalOrder()); // "true predicate" means "classical" difference between sets
         if (DEBUG_NOT_QUERY) {
             stop = System.nanoTime();
             System.out.println("SkipList of difference computed in                   " + (stop - start) / 1e6 + " ms.");

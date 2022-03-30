@@ -332,7 +332,7 @@ public class InvertedIndexTest {
                 // NOTE: a number of postings can have the same docId (one posting for each distinct term),
                 //       but using the comparator Posting.DOC_ID_COMPARATOR, all postings having the same
                 //       docId are considered equals
-                new SkipList<>(listOfPostings, Posting.DOC_ID_COMPARATOR),
-                new SkipList<>(invertedIndexForTests.getListOfPostingsForToken(token), Posting.DOC_ID_COMPARATOR));
+                new SkipList<>(listOfPostings),
+                new SkipList<>(invertedIndexForTests.getListOfPostingsForToken(token)));
     }
 }

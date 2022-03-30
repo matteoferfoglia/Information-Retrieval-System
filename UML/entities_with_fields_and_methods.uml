@@ -5,15 +5,15 @@
   <nodes>
     <node x="47.0" y="835.0">it.units.informationretrieval.ir_boolean_model.entities.Language.AvailableLanguagesGetter</node>
     <node x="1194.5" y="0.0">it.units.informationretrieval.ir_boolean_model.entities.Term</node>
-    <node x="0.0" y="1371.0">it.units.informationretrieval.ir_boolean_model.entities.DocumentIdentifier</node>
+    <node x="1470.0" y="959.0">it.units.informationretrieval.ir_boolean_model.entities.DocumentIdentifier</node>
+    <node x="0.0" y="1370.0">it.units.informationretrieval.ir_boolean_model.entities.PostingList</node>
     <node x="1152.0" y="373.0">it.units.informationretrieval.ir_boolean_model.entities.Term.ImpossibleTermsMergingException</node>
-    <node x="311.0" y="1371.0">it.units.informationretrieval.ir_boolean_model.entities.PostingList</node>
-    <node x="0.0" y="959.0">it.units.informationretrieval.ir_boolean_model.entities.Posting</node>
+    <node x="796.0" y="959.0">it.units.informationretrieval.ir_boolean_model.entities.Posting</node>
     <node x="0.0" y="0.0">it.units.informationretrieval.ir_boolean_model.entities.Language</node>
-    <node x="343.0" y="959.0">it.units.informationretrieval.ir_boolean_model.entities.Corpus</node>
-    <node x="1139.0" y="959.0">it.units.informationretrieval.ir_boolean_model.entities.Document</node>
+    <node x="1086.0" y="959.0">it.units.informationretrieval.ir_boolean_model.entities.Document</node>
+    <node x="0.0" y="959.0">it.units.informationretrieval.ir_boolean_model.entities.Corpus</node>
     <node x="365.0" y="0.0">it.units.informationretrieval.ir_boolean_model.entities.InvertedIndex</node>
-    <node x="549.0" y="1371.0">it.units.informationretrieval.ir_boolean_model.entities.DocumentContent</node>
+    <node x="238.0" y="1370.0">it.units.informationretrieval.ir_boolean_model.entities.DocumentContent</node>
   </nodes>
   <notes />
   <edges>
@@ -26,7 +26,7 @@
       <point x="0.0" y="161.5" />
     </edge>
   </edges>
-  <settings layout="Hierarchic" zoom="0.4304428044280443" showDependencies="false" x="1057.7064007264198" y="865.1675953707672" />
+  <settings layout="Hierarchic" zoom="0.5021538461538462" showDependencies="false" x="868.0" y="648.1648284313725" />
   <SelectedNodes />
   <Categories>
     <Category>Constructors</Category>

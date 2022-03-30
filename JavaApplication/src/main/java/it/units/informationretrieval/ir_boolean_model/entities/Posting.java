@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -15,12 +14,6 @@ import java.util.Objects;
  * @author Matteo Ferfoglia.
  */
 public class Posting implements Comparable<Posting>, Serializable {
-
-    /**
-     * Compare postings considering only their {@link DocumentIdentifier}s.
-     */
-    @NotNull
-    public static final Comparator<Posting> DOC_ID_COMPARATOR = Comparator.comparing(o -> o.docId);
 
     /**
      * The {@link DocumentIdentifier} of the document associated with this posting.
@@ -137,11 +130,7 @@ public class Posting implements Comparable<Posting>, Serializable {
      */
     @Override
     public int compareTo(@NotNull Posting o) {
-        var docIdComparison = this.docId.compareTo(o.docId);
-        if (docIdComparison == 0) {  // same docId
-            return Arrays.compare(this.termPositionsInTheDocument, o.termPositionsInTheDocument);
-        }
-        return docIdComparison;
+        return this.docId.compareTo(o.docId);
     }
 
     /**

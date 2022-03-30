@@ -136,8 +136,7 @@ public class InvertedIndex implements Serializable {
                             .map(Term::getListOfPostings)
                             .flatMap(Collection::stream)
                             .sorted()
-                            .toList()/*unmodifiable list*/,
-                    Posting.DOC_ID_COMPARATOR);
+                            .toList()/*unmodifiable list*/, Comparator.naturalOrder());
             phoneticHashes = getPhoneticHashesOfDictionary();
             permutermIndex = createPermutermIndexAndGet(END_OF_WORD);
             permutermIndexWithoutEndOfWord = createPermutermIndexAndGet("");// NO end-of-word symbol
